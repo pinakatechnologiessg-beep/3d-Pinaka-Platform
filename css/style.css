@@ -480,6 +480,8 @@ header {
 /* Shop By Brand */
 .brands {
   text-align: center;
+  overflow: hidden;
+  padding-bottom: 2rem;
 }
 .brands h3 {
   margin-bottom: 1.5rem;
@@ -487,9 +489,17 @@ header {
 .brand-carousel {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 2rem;
-  flex-wrap: wrap;
+  width: max-content;
+  animation: scrollBrands 30s linear infinite;
+  padding: 1rem 0;
+}
+.brand-carousel:hover {
+  animation-play-state: paused;
+}
+@keyframes scrollBrands {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(calc(-50% - 1rem)); }
 }
 .brand-logo {
   border: 1px solid var(--border-color);
@@ -497,7 +507,34 @@ header {
   border-radius: 8px;
   font-weight: 600;
   color: var(--text-muted);
+  background: white;
+  min-width: 160px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+  transition: all 0.3s ease;
+  text-decoration: none;
 }
+.brand-logo:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px rgba(0,0,0,0.08);
+  border-color: var(--primary);
+}
+
+/* Global Reveal Animations */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+}
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+.delay-100 { transition-delay: 100ms; }
+.delay-200 { transition-delay: 200ms; }
+.delay-300 { transition-delay: 300ms; }
 
 /* Why Choose Us */
 .dark-section {
