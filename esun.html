@@ -3,43 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Cart | 3D Print Hub</title>
+    <title>eSun Products | 3D Print Hub</title>
     <link rel="stylesheet" href="css/style.css">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <style>
-        .cart-container { padding: 4rem 20px; min-height: 60vh; }
-        .cart-item {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            padding: 20px;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
-        }
-        .cart-item img {
-            width: 100px;
-            height: 100px;
-            object-fit: contain;
-            border-radius: 8px;
-            background: var(--light-bg);
-        }
-        .cart-item-info {
-            flex: 1;
-        }
-        .cart-empty {
-            text-align: center;
-            padding: 4rem;
-            color: var(--text-muted);
-        }
-        .cart-total {
-            text-align: right;
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-top: 20px;
-        }
-    </style>
 </head>
 <body>
     <header>
@@ -50,7 +16,7 @@
             <nav class="nav-links">
                 <a href="index.html">Home</a>
                 <div class="dropdown">
-                    <a href="javascript:void(0)" class="dropbtn">Products <i class="ph ph-caret-down"></i></a>
+                    <a href="javascript:void(0)" class="dropbtn" style="color:var(--primary)">Products <i class="ph ph-caret-down"></i></a>
                     <div class="dropdown-content mega-menu">
                         <div class="mega-menu-grid">
                             <div class="mega-col">
@@ -126,31 +92,27 @@
             <div class="nav-icons">
                 <i class="ph ph-magnifying-glass"></i>
                 <i class="ph ph-heart"></i>
-                <a href="cart.html" class="cart-icon-wrap" style="color:var(--text-dark); text-decoration:none;">
-                    <i class="ph ph-shopping-cart"></i>
-                    <span class="cart-badge">0</span>
-                </a>
+                <a href="cart.html" class="cart-icon-wrap" style="color:var(--text-dark); text-decoration:none;"><i class="ph ph-shopping-cart"></i><span class="cart-badge">0</span></a>
                 <i class="ph ph-list menu-btn"></i>
             </div>
         </div>
     </header>
 
-    <div class="container cart-container">
-        <a href="index.html" class="back-home-btn"><i class="ph ph-arrow-left"></i> Continue Shopping</a>
-        <h1 style="margin-bottom: 2rem;">Your Shopping Cart</h1>
-        
-        <div id="cart-items">
-            <!-- Items injected by JS -->
-        </div>
-        
-        <div id="cart-actions" style="display: none; border-top: 1px solid var(--border-color); padding-top:20px;">
-            <button class="btn btn-dark" onclick="clearCart()" style="background:#ef4444;">Clear Cart</button>
-            <div class="cart-total">Total: ₹<span id="cart-total-price">0</span></div>
-            <div style="text-align:right; margin-top:20px;">
-                <button class="btn btn-primary" onclick="alert('Proceeding to Checkout!')">Proceed to Checkout</button>
+    <div style="background:var(--dark-bg); padding:4rem 0; text-align:center; color:white;">
+        <a href="index.html" class="back-home-btn"><i class="ph ph-arrow-left"></i> Back to Home</a>
+        <h1>eSun Printers</h1>
+        <p style="color:#94a3b8; margin-top:1rem;">Explore the latest collection from eSun</p>
+    </div>
+
+    <section class="section container">
+        <div class="products-grid">
+            <div style="grid-column: 1 / -1; padding: 4rem; text-align: center; background: var(--light-bg); border-radius: 12px; margin-bottom: 2rem;">
+                <h2 style="font-size: 2rem; color: var(--text-dark); margin-bottom: 1rem;">eSun Collection</h2>
+                <p style="color: var(--text-muted); font-size: 1.1rem;">Products and images for this brand will be added here later.</p>
+                <a href="products.html" class="btn btn-primary" style="margin-top: 2rem; display: inline-block;">View All General Products</a>
             </div>
         </div>
-    </div>
+    </section>
 
     <!-- Footer -->
     <footer>
@@ -166,6 +128,26 @@
                 </div>
             </div>
             <div class="footer-col">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="index.html">About Us</a></li>
+                    <li><a href="products.html">All Products</a></li>
+                    <li><a href="products.html">Best Sellers</a></li>
+                    <li><a href="products.html">New Arrivals</a></li>
+                    <li><a href="#">Blog</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Customer Service</h4>
+                <ul>
+                    <li><a href="support.html">Help Center</a></li>
+                    <li><a href="support.html">Track Order</a></li>
+                    <li><a href="support.html">Shipping Info</a></li>
+                    <li><a href="support.html">Returns</a></li>
+                    <li><a href="support.html">Warranty</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
                 <h4>Contact Us</h4>
                 <ul style="gap: 1rem;">
                     <li style="display:flex; gap:10px;"><i class="ph ph-map-pin" style="font-size:1.2rem; color:var(--primary);"></i> 123 Innovation Street, Tech Park, Bangalore</li>
@@ -175,64 +157,7 @@
             </div>
         </div>
     </footer>
-
-    <a href="https://wa.me/1234567890" class="whatsapp-float" target="_blank"><i class="ph ph-whatsapp-logo"></i></a>
-
     <script src="js/main.js"></script>
-    <script>
-        function updateBadgeSafe() {
-            const num = (JSON.parse(localStorage.getItem('cart')) || []).length;
-            document.querySelectorAll('.cart-badge').forEach(b => b.innerText = num);
-        }
-
-        function renderCart() {
-            const container = document.getElementById('cart-items');
-            const actions = document.getElementById('cart-actions');
-            const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-            
-            if(cartItems.length === 0) {
-                container.innerHTML = '<div class="cart-empty"><i class="ph ph-shopping-cart" style="font-size:4rem; color:var(--text-muted); margin-bottom:1rem;"></i><h3>Your cart is empty</h3><p>Looks like you have not added anything to your cart yet.</p></div>';
-                actions.style.display = 'none';
-                return;
-            }
-
-            let html = '';
-            let total = 0;
-            cartItems.forEach((item, index) => {
-                // simple parsing for total
-                const num = parseInt(item.price.replace(/[^0-9]/g, ''));
-                if(!isNaN(num)) total += num;
-                
-                html += `
-                <div class="cart-item">
-                    <img src="${item.image}" alt="${item.title}">
-                    <div class="cart-item-info">
-                        <h3 style="margin-bottom:5px;">${item.title}</h3>
-                        <div style="font-size:1.2rem; font-weight:bold; color:var(--primary);">${item.price}</div>
-                    </div>
-                    <button class="btn" style="background:transparent; color:#ef4444; border:1px solid #ef4444; padding: 6px 12px; font-size: 0.9rem;" onclick="removeItem(${index})"><i class="ph ph-trash"></i> Remove</button>
-                </div>`;
-            });
-            container.innerHTML = html;
-            actions.style.display = 'block';
-            document.getElementById('cart-total-price').innerText = total.toLocaleString('en-IN');
-        }
-
-        function removeItem(index) {
-            let cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-            cartItems.splice(index, 1);
-            localStorage.setItem('cart', JSON.stringify(cartItems));
-            updateBadgeSafe();
-            renderCart();
-        }
-
-        function clearCart() {
-            localStorage.removeItem('cart');
-            updateBadgeSafe();
-            renderCart();
-        }
-
-        document.addEventListener('DOMContentLoaded', renderCart);
-    </script>
+    <a href="https://wa.me/1234567890" class="whatsapp-float" target="_blank"><i class="ph ph-whatsapp-logo"></i></a>
 </body>
 </html>

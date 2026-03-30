@@ -113,17 +113,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Brand Filtering (Simple logic based on title)
+    // Brand & Category Filtering
     const urlParams = new URLSearchParams(window.location.search);
     const brandFilter = urlParams.get('brand');
-    if (brandFilter) {
+    const categoryFilter = urlParams.get('category');
+    
+    if (brandFilter || categoryFilter) {
         const title = document.querySelector('h1');
         if(title && title.innerText.includes('All 3D Printers')) {
-            title.innerText = brandFilter + ' Printers';
+            if(brandFilter) title.innerText = brandFilter + ' Printers';
+            else if(categoryFilter) title.innerText = categoryFilter + 's';
         }
         document.querySelectorAll('.product-card').forEach(card => {
             const productTitle = card.querySelector('.product-title').innerText.toLowerCase();
-            if (!productTitle.includes(brandFilter.toLowerCase())) {
+            const productCat = card.querySelector('.product-cat') ? card.querySelector('.product-cat').innerText.toLowerCase() : '';
+            
+            let show = true;
+            if (brandFilter && !productTitle.includes(brandFilter.toLowerCase())) {
+                show = false;
+            }
+            if (categoryFilter) {
+                // If the user searches for "3D Printer", we strip "3d " so it matches "FDM Printer", "Resin Printer"
+                const query = categoryFilter.toLowerCase().replace('3d ', '');
+                if (!productCat.includes(query) && !productTitle.includes(query)) {
+                    show = false;
+                }
+            }
+            if (!show) {
                 card.style.display = 'none';
             }
         });
