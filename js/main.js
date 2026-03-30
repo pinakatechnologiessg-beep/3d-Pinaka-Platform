@@ -1,3 +1,13 @@
+// Redirect to home page on refresh
+if (window.performance && window.performance.getEntriesByType('navigation').length > 0) {
+    if (window.performance.getEntriesByType('navigation')[0].type === 'reload') {
+        const path = window.location.pathname;
+        if (!path.endsWith('index.html') && path !== '/' && path !== '') {
+            window.location.href = 'index.html';
+        }
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     // Mobile Navigation Toggle
     const menuBtn = document.querySelector('.menu-btn');
