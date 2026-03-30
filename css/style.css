@@ -764,14 +764,27 @@ footer {
 }
 
 @media (max-width: 768px) {
+  html, body {
+    overflow-x: hidden !important;
+    width: 100%;
+    position: relative;
+  }
   .nav-links { display: none; }
   .menu-btn { display: block; }
+  .nav-icons > a[href="login.html"] { display: none !important; }
   .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 2rem; }
   .testi-grid { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr 1fr; }
   .footer-col:nth-child(1), .footer-col:nth-child(4) { grid-column: 1 / -1; }
   .hero h1 { font-size: 2.5rem; }
   .hero-features { display: none; }
+  .subscribe-form {
+    flex-direction: column;
+    gap: 15px;
+  }
+  .subscribe-form button {
+    width: 100%;
+  }
 }
 
 /* Cart Badge */
@@ -1006,6 +1019,8 @@ footer {
   .support-section {
     grid-template-columns: 1fr;
     gap: 2rem;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
   }
 }
 
