@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart | 3D Print Hub</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        .cart-container { padding: 4rem 20px; min-height: 60vh; }
+        .cart-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+        .cart-item img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            border-radius: 8px;
+            background: var(--light-bg);
+        }
+        .cart-item-info {
+            flex: 1;
+        }
+        .cart-empty {
+            text-align: center;
+            padding: 4rem;
+            color: var(--text-muted);
+        }
+        .cart-total {
+            text-align: right;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container navbar">
+            <a href="index.html" class="logo">
+                <span class="logo-box">3D</span> Print Hub
+            </a>
+            <nav class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="products.html">Products</a>
+                <a href="materials.html">Materials</a>
+                <a href="support.html">Bulk Enquiry</a>
+                <a href="products.html">Refurbished Store</a>
+                <a href="support.html">Support</a>
+                <a href="support.html">Printing Services</a>
+            </nav>
+            <div class="nav-icons">
+                <i class="ph ph-magnifying-glass"></i>
+                <i class="ph ph-heart"></i>
+                <a href="cart.html" class="cart-icon-wrap" style="color:var(--text-dark); text-decoration:none;">
+                    <i class="ph ph-shopping-cart"></i>
+                    <span class="cart-badge">0</span>
+                </a>
+                <i class="ph ph-list menu-btn"></i>
+            </div>
+        </div>
+    </header>
+
+    <div class="container cart-container">
+        <a href="index.html" class="back-home-btn"><i class="ph ph-arrow-left"></i> Continue Shopping</a>
+        <h1 style="margin-bottom: 2rem;">Your Shopping Cart</h1>
+        
+        <div id="cart-items">
+            <!-- Items injected by JS -->
+        </div>
+        
+        <div id="cart-actions" style="display: none; border-top: 1px solid var(--border-color); padding-top:20px;">
+            <button class="btn btn-dark" onclick="clearCart()" style="background:#ef4444;">Clear Cart</button>
+            <div class="cart-total">Total: ₹<span id="cart-total-price">0</span></div>
+            <div style="text-align:right; margin-top:20px;">
+                <button class="btn btn-primary" onclick="alert('Proceeding to Checkout!')">Proceed to Checkout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-grid">
+            <div class="footer-col">
+                <div class="logo-box footer-logo">3D</div> <span style="color:white; font-size:1.5rem; font-weight:700;">Print Hub</span>
+                <p style="margin-top: 1rem; max-width: 300px;">Your one-stop destination for premium 3D printers, materials, and accessories. Bringing innovation to life.</p>
+                <div class="social-icons">
+                    <a href="#"><i class="ph ph-facebook-logo"></i></a>
+                    <a href="#"><i class="ph ph-twitter-logo"></i></a>
+                    <a href="#"><i class="ph ph-instagram-logo"></i></a>
+                    <a href="#"><i class="ph ph-youtube-logo"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Contact Us</h4>
+                <ul style="gap: 1rem;">
+                    <li style="display:flex; gap:10px;"><i class="ph ph-map-pin" style="font-size:1.2rem; color:var(--primary);"></i> 123 Innovation Street, Tech Park, Bangalore</li>
+                    <li style="display:flex; gap:10px;"><i class="ph ph-phone" style="font-size:1.2rem; color:var(--primary);"></i> +91 1800-123-4567</li>
+                    <li style="display:flex; gap:10px;"><i class="ph ph-envelope" style="font-size:1.2rem; color:var(--primary);"></i> support@printhub.com</li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <a href="https://wa.me/1234567890" class="whatsapp-float" target="_blank"><i class="ph ph-whatsapp-logo"></i></a>
+
+    <script src="js/main.js"></script>
+    <script>
+        function renderCart() {
+            const container = document.getElementById('cart-items');
+            const actions = document.getElementById('cart-actions');
+            const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+            
+            if(cartItems.length === 0) {
+                container.innerHTML = '<div class="cart-empty"><i class="ph ph-shopping-cart" style="font-size:4rem; color:var(--text-muted); margin-bottom:1rem;"></i><h3>Your cart is empty</h3><p>Looks like you have not added anything to your cart yet.</p></div>';
+                actions.style.display = 'none';
+                return;
+            }
+
+            let html = '';
+            let total = 0;
+            cartItems.forEach((item, index) => {
+                // simple parsing for total
+                const num = parseInt(item.price.replace(/[^0-9]/g, ''));
+                if(!isNaN(num)) total += num;
+                
+                html += `
+                <div class="cart-item">
+                    <img src="${item.image}" alt="${item.title}">
+                    <div class="cart-item-info">
+                        <h3 style="margin-bottom:5px;">${item.title}</h3>
+                        <div style="font-size:1.2rem; font-weight:bold; color:var(--primary);">${item.price}</div>
+                    </div>
+                    <button class="btn" style="background:transparent; color:#ef4444; border:1px solid #ef4444; padding: 6px 12px; font-size: 0.9rem;" onclick="removeItem(${index})"><i class="ph ph-trash"></i> Remove</button>
+                </div>`;
+            });
+            container.innerHTML = html;
+            actions.style.display = 'block';
+            document.getElementById('cart-total-price').innerText = total.toLocaleString('en-IN');
+        }
+
+        function removeItem(index) {
+            let cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+            cartItems.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cartItems));
+            cart = cartItems; 
+            if(typeof updateCartBadge === 'function') updateCartBadge();
+            renderCart();
+        }
+
+        function clearCart() {
+            localStorage.removeItem('cart');
+            cart = []; 
+            updateCartBadge();
+            renderCart();
+        }
+
+        document.addEventListener('DOMContentLoaded', renderCart);
+    </script>
+</body>
+</html>

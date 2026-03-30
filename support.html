@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support | 3D Print Hub</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+    <header>
+        <div class="container navbar">
+            <a href="index.html" class="logo">
+                <span class="logo-box">3D</span> Print Hub
+            </a>
+            <nav class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="products.html">Products</a>
+                <a href="materials.html">Materials</a>
+                <a href="support.html">Bulk Enquiry</a>
+                <a href="products.html">Refurbished Store</a>
+                <a href="support.html" style="color:var(--primary)">Support</a>
+                <a href="support.html">Printing Services</a>
+            </nav>
+            <div class="nav-icons">
+                <i class="ph ph-magnifying-glass"></i>
+                <i class="ph ph-heart"></i>
+                <a href="cart.html" class="cart-icon-wrap" style="color:var(--text-dark); text-decoration:none;"><i class="ph ph-shopping-cart"></i><span class="cart-badge">0</span></a>
+                <i class="ph ph-list menu-btn"></i>
+            </div>
+        </div>
+    </header>
+
+    <div style="background:var(--gradient); padding:4rem 0; text-align:center; color:white;">
+        <a href="index.html" class="back-home-btn"><i class="ph ph-arrow-left"></i> Back to Home</a>
+        <h1>How can we help you?</h1>
+        <p style="color:#f8fafc; margin-top:1rem; opacity:0.9;">Our experts are 24/7 ready to assist you</p>
+    </div>
+
+    <section class="section container" style="display:grid; grid-template-columns:1fr 1fr; gap:4rem;">
+        <div>
+            <h2>Get in touch</h2>
+            <p style="color:var(--text-muted); margin-bottom: 2rem;">Fill out the form below and we will contact you within 24 hours.</p>
+            
+            <form style="display:flex; flex-direction:column; gap:1.5rem;" onsubmit="event.preventDefault(); alert('Message sent!');">
+                <div>
+                    <label style="font-weight:600; font-size:0.9rem;">Full Name</label>
+                    <input type="text" style="width:100%; padding:10px; border:1px solid var(--border-color); border-radius:6px; margin-top:5px;" required>
+                </div>
+                <div>
+                    <label style="font-weight:600; font-size:0.9rem;">Email Address</label>
+                    <input type="email" style="width:100%; padding:10px; border:1px solid var(--border-color); border-radius:6px; margin-top:5px;" required>
+                </div>
+                <div>
+                    <label style="font-weight:600; font-size:0.9rem;">Enquiry Type</label>
+                    <select style="width:100%; padding:10px; border:1px solid var(--border-color); border-radius:6px; margin-top:5px;">
+                        <option>General Support</option>
+                        <option>Bulk Enquiry</option>
+                        <option>Printing Services</option>
+                        <option>Refurbished Item Info</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="font-weight:600; font-size:0.9rem;">Message</label>
+                    <textarea rows="5" style="width:100%; padding:10px; border:1px solid var(--border-color); border-radius:6px; margin-top:5px;" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="align-self:flex-start;">Submit Message</button>
+            </form>
+        </div>
+        
+        <div>
+            <h2>Contact Information</h2>
+            <div style="margin-top:2rem; display:flex; flex-direction:column; gap:2rem;">
+                <div style="display:flex; gap:1rem; align-items:flex-start;">
+                    <div style="background:var(--light-bg); padding:1rem; border-radius:12px; color:var(--primary); font-size:1.5rem;">
+                        <i class="ph ph-map-pin"></i>
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom:0.3rem;">Office Address</h4>
+                        <p style="color:var(--text-muted); font-size:0.9rem;">123 Innovation Street, Tech Park,<br>Bangalore - 560001</p>
+                    </div>
+                </div>
+                <div style="display:flex; gap:1rem; align-items:flex-start;">
+                    <div style="background:var(--light-bg); padding:1rem; border-radius:12px; color:var(--primary); font-size:1.5rem;">
+                        <i class="ph ph-phone"></i>
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom:0.3rem;">Phone Number</h4>
+                        <p style="color:var(--text-muted); font-size:0.9rem;">Toll Free: +91 1800-123-4567<br>Support: +91 98765-43210</p>
+                    </div>
+                </div>
+                <div style="display:flex; gap:1rem; align-items:flex-start;">
+                    <div style="background:var(--light-bg); padding:1rem; border-radius:12px; color:var(--primary); font-size:1.5rem;">
+                        <i class="ph ph-envelope"></i>
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom:0.3rem;">Email Addresses</h4>
+                        <p style="color:var(--text-muted); font-size:0.9rem;">support@printhub.com<br>sales@printhub.com</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-grid">
+            <div class="footer-col">
+                <div class="logo-box footer-logo">3D</div> <span style="color:white; font-size:1.5rem; font-weight:700;">Print Hub</span>
+                <p style="margin-top: 1rem; max-width: 300px;">Your one-stop destination for premium 3D printers, materials, and accessories. Bringing innovation to life.</p>
+                <div class="social-icons">
+                    <a href="#"><i class="ph ph-facebook-logo"></i></a>
+                    <a href="#"><i class="ph ph-twitter-logo"></i></a>
+                    <a href="#"><i class="ph ph-instagram-logo"></i></a>
+                    <a href="#"><i class="ph ph-youtube-logo"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="index.html">About Us</a></li>
+                    <li><a href="products.html">All Products</a></li>
+                    <li><a href="products.html">Best Sellers</a></li>
+                    <li><a href="products.html">New Arrivals</a></li>
+                    <li><a href="#">Blog</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Customer Service</h4>
+                <ul>
+                    <li><a href="support.html">Help Center</a></li>
+                    <li><a href="support.html">Track Order</a></li>
+                    <li><a href="support.html">Shipping Info</a></li>
+                    <li><a href="support.html">Returns</a></li>
+                    <li><a href="support.html">Warranty</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Contact Us</h4>
+                <ul style="gap: 1rem;">
+                    <li style="display:flex; gap:10px;"><i class="ph ph-map-pin" style="font-size:1.2rem; color:var(--primary);"></i> 123 Innovation Street, Tech Park, Bangalore</li>
+                    <li style="display:flex; gap:10px;"><i class="ph ph-phone" style="font-size:1.2rem; color:var(--primary);"></i> +91 1800-123-4567</li>
+                    <li style="display:flex; gap:10px;"><i class="ph ph-envelope" style="font-size:1.2rem; color:var(--primary);"></i> support@printhub.com</li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+    <script src="js/main.js"></script>
+    <a href="https://wa.me/1234567890" class="whatsapp-float" target="_blank"><i class="ph ph-whatsapp-logo"></i></a>
+</body>
+</html>
