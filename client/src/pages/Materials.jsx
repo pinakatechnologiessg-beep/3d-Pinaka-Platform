@@ -40,7 +40,7 @@ const Materials = () => {
     };
 
     const handleAddToWishlist = (item) => {
-        cartService.addToWishlist(item);
+        cartService.toggleWishlist(item);
     };
 
     return (

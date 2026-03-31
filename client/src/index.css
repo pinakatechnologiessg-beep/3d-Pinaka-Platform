@@ -642,9 +642,36 @@ header {
 /* Technology section */
 .tech-section {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1.2fr;
   gap: 4rem;
   align-items: center;
+}
+
+.tech-images {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 250px);
+  gap: 1.5rem;
+}
+
+.tech-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: white;
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease;
+}
+
+.tech-img:hover {
+  transform: scale(1.02);
+}
+
+.tech-img:nth-child(1) {
+  grid-row: span 2;
+  height: 100%;
 }
 
 .tech-info h2 {

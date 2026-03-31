@@ -52,9 +52,12 @@ export const cartService = {
   
   getWishlistCount: () => getFromStorage('wishlist').length,
   
-  addToWishlist: (product) => {
+  toggleWishlist: (product) => {
     const wishlist = getFromStorage('wishlist');
-    if (!wishlist.find(item => item.title === product.title)) {
+    const index = wishlist.findIndex(item => item.title === product.title);
+    
+    if (index === -1) {
+      // Add
       wishlist.push({
         id: Date.now() + Math.random(),
         productId: product.id,
@@ -68,8 +71,12 @@ export const cartService = {
         detail: { message: `${product.title} added to wishlist!`, type: 'success' } 
       }));
     } else {
+      // Remove
+      wishlist.splice(index, 1);
+      saveToStorage('wishlist', wishlist);
+      window.dispatchEvent(new Event(WISHLIST_UPDATED));
       window.dispatchEvent(new CustomEvent(SHOW_TOAST, { 
-        detail: { message: `${product.title} is already in wishlist!`, type: 'info' } 
+        detail: { message: `${product.title} removed from wishlist!`, type: 'info' } 
       }));
     }
   },
@@ -80,6 +87,15 @@ export const cartService = {
     saveToStorage('wishlist', filtered);
     window.dispatchEvent(new Event(WISHLIST_UPDATED));
     window.dispatchEvent(new Event('storage'));
+  },
+
+  clearWishlist: () => {
+    localStorage.removeItem('wishlist');
+    window.dispatchEvent(new Event(WISHLIST_UPDATED));
+    window.dispatchEvent(new Event('storage'));
+    window.dispatchEvent(new CustomEvent(SHOW_TOAST, { 
+      detail: { message: `Wishlist cleared!`, type: 'info' } 
+    }));
   },
 
   isInWishlist: (productTitle) => {

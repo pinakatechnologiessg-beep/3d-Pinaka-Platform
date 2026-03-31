@@ -278,7 +278,7 @@ const Products = () => {
                             <div key={product.id} className={`product-card reveal ${!product.inStock ? 'sold-out' : ''}`} ref={addToRevealRefs}>
                                 <button 
                                     className={`wishlist-btn ${wishlist.some(item => item.title === product.title) ? 'active' : ''}`} 
-                                    onClick={() => cartService.addToWishlist(product)}
+                                    onClick={() => cartService.toggleWishlist(product)}
                                     title="Add to Wishlist"
                                 >
                                     <Heart size={20} weight={wishlist.some(item => item.title === product.title) ? "fill" : "bold"} />

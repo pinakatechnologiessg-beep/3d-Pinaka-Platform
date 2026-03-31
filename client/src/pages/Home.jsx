@@ -96,7 +96,7 @@ const Home = () => {
   };
 
   const handleAddToWishlist = (product) => {
-    cartService.addToWishlist(product);
+    cartService.toggleWishlist(product);
   };
 
   return (
@@ -331,9 +331,9 @@ const Home = () => {
             </div>
             
             <div className="tech-images">
-                <img src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=800&q=80" alt="Tech Setup" className="tech-img" />
-                <img src="https://images.unsplash.com/photo-1615822606541-118c7d6bc31d?auto=format&fit=crop&w=400&q=80" alt="Printing Object" className="tech-img" />
-                <img src="https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=400&q=80" alt="Components" className="tech-img" />
+                <img src="/images/Creality K1 Max 3D Printer.png" alt="High Speed Printing" className="tech-img" />
+                <img src="/images/Snapmaker 2.0 A350T 3-in-1 3D Printer.png" alt="Cutting Edge Tech" className="tech-img" />
+                <img src="/images/3D Printing Kit.png" alt="Precision Components" className="tech-img" />
             </div>
         </div>
       </section>

@@ -66,7 +66,7 @@ const BrandProductCard = ({ product, revealRef }) => {
                             </button>
                             <button 
                                 className={`add-cart-btn wishlist-btn ${isInWishlist ? 'active' : ''}`} 
-                                onClick={() => cartService.addToWishlist(product)} 
+                                onClick={() => cartService.toggleWishlist(product)} 
                                 style={{ marginLeft: '10px' }} 
                                 title="Add to Wishlist"
                             >

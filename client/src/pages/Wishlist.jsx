@@ -30,7 +30,18 @@ const Wishlist = () => {
         <main>
             <div className="container wishlist-container reveal active" style={{ padding: '4rem 20px', minHeight: '60vh' }}>
                 <Link to="/" className="back-home-btn"><ArrowLeft /> Continue Shopping</Link>
-                <h1 style={{ marginBottom: '2.5rem', marginTop: '1rem' }}>My Wishlist</h1>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem', marginTop: '1rem' }}>
+                    <h1 style={{ marginBottom: 0 }}>My Wishlist</h1>
+                    {wishlistItems.length > 0 && (
+                        <button 
+                            className="btn btn-outline-danger" 
+                            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', borderRadius: '8px', border: '1px solid #f43f5e', color: '#f43f5e', background: 'transparent', cursor: 'pointer', fontWeight: 600 }}
+                            onClick={() => cartService.clearWishlist()}
+                        >
+                            <Trash size={18} /> Remove All
+                        </button>
+                    )}
+                </div>
                 
                 <div className="products-grid">
                     {wishlistItems.length === 0 ? (
