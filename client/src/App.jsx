@@ -146,6 +146,10 @@ function App() {
           <Route path="/zortrax.html" element={<BrandPage />} />
           <Route path="/esun.html" element={<BrandPage />} />
           <Route path="/zmorph.html" element={<BrandPage />} />
+          <Route path="/flashforge.html" element={<BrandPage />} />
+          <Route path="/magforms.html" element={<BrandPage />} />
+          <Route path="/elegoo.html" element={<BrandPage />} />
+          <Route path="/skriware.html" element={<BrandPage />} />
           <Route path="/hotrios.html" element={<BrandPage />} />
           <Route path="/modix.html" element={<BrandPage />} />
         </Routes>

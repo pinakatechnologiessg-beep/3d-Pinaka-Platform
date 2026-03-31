@@ -29,12 +29,12 @@ const Header = ({ cartCount, wishlistCount, toggleMobileMenu }) => {
                     <li><Link to="/creality.html">Creality</Link></li>
                     <li><Link to="/snapmaker.html">Snapmaker</Link></li>
                     <li><Link to="/rotrics.html">Rotrics</Link></li>
-                    <li><Link to="/3dmakerpro.html">3DMAKERPRO</Link></li>
-                    <li><Link to="/flsun.html">Flsun</Link></li>
-                    <li><Link to="/sunlu.html">Sunlu</Link></li>
-                    <li><Link to="/zortrax.html">Zortrax</Link></li>
-                    <li><Link to="/esun.html">eSun</Link></li>
+                    <li><Link to="/flashforge.html">Flashforge</Link></li>
+                    <li><Link to="/skriware.html">Skriware</Link></li>
+                    <li><Link to="/magforms.html">Magforms</Link></li>
                     <li><Link to="/zmorph.html">Zmorph</Link></li>
+                    <li><Link to="/sunlu.html">Sunlu</Link></li>
+                    <li><Link to="/elegoo.html">Elegoo</Link></li>
                   </ul>
                 </div>
                 <div className="mega-col">

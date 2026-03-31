@@ -3,10 +3,18 @@ import { Link, useParams, useLocation } from 'react-router-dom';
 import { ArrowLeft, WhatsappLogo, Heart, ShoppingCart, FunnelSimple, CaretDown, X } from '@phosphor-icons/react';
 import { BRANDS } from '../constants/data';
 import { ANYCUBIC_PRODUCTS } from '../constants/anycubic_data';
+import { BAMBU_PRODUCTS } from '../constants/bambu_data';
+import { CREALITY_PRODUCTS } from '../constants/creality_data';
+import { SNAPMAKER_PRODUCTS } from '../constants/snapmaker_data';
+import { ROTRICS_PRODUCTS } from '../constants/rotrics_data';
+import { FLASHFORGE_PRODUCTS } from '../constants/flashforge_data';
+import { MAGFORMS_PRODUCTS } from '../constants/magforms_data';
+import { ZMORPH_PRODUCTS } from '../constants/zmorph_data';
+import { ELEGOO_PRODUCTS } from '../constants/elegoo_data';
 import { cartService } from '../services/cartService';
 
 const BrandProductCard = ({ product, revealRef }) => (
-    <div className="brand-product-card reveal" ref={revealRef}>
+    <div className={`brand-product-card reveal ${!product.inStock ? 'sold-out' : ''}`} ref={revealRef}>
         <div className="badges-row">
             {product.badges?.map((b, i) => (
                 <span key={i} className={`mini-badge ${b}`}>
@@ -16,6 +24,11 @@ const BrandProductCard = ({ product, revealRef }) => (
         </div>
         <div className="image-wrapper">
             <img src={product.image} alt={product.title} className="product-img" />
+            {!product.inStock && (
+                <div className="sold-out-overlay">
+                    <div className="sold-out-circle">Sold Out</div>
+                </div>
+            )}
         </div>
         <div className="content">
             <h3 className="title">{product.title}</h3>
@@ -35,13 +48,18 @@ const BrandProductCard = ({ product, revealRef }) => (
                 <div className="price-section">
                     <span className="current-price">{product.price}</span>
                     {product.oldPrice && <span className="old-price">{product.oldPrice}</span>}
+                    {!product.inStock && <span className="out-of-stock-label">Out Of Stock</span>}
                 </div>
-                <button className="add-cart-btn" onClick={() => cartService.addToCart(product)} title="Add to Cart">
-                    <ShoppingCart size={22} weight="bold" />
-                </button>
-                <button className="add-cart-btn" onClick={() => cartService.addToWishlist(product)} style={{ marginLeft: '10px' }} title="Add to Wishlist">
-                    <Heart size={22} weight="bold" />
-                </button>
+                {product.inStock ? (
+                    <>
+                        <button className="add-cart-btn" onClick={() => cartService.addToCart(product)} title="Add to Cart">
+                            <ShoppingCart size={22} weight="bold" />
+                        </button>
+                        <button className="add-cart-btn" onClick={() => cartService.addToWishlist(product)} style={{ marginLeft: '10px' }} title="Add to Wishlist">
+                            <Heart size={22} weight="bold" />
+                        </button>
+                    </>
+                ) : null}
             </div>
         </div>
     </div>
@@ -71,7 +89,16 @@ const BrandPage = () => {
     const effectiveBrandName = brandName || location.pathname.split('/').pop().replace('.html', '');
     const brand = BRANDS.find(b => b.path === effectiveBrandName) || { name: effectiveBrandName.charAt(0).toUpperCase() + effectiveBrandName.slice(1) };
     const isAnycubic = effectiveBrandName.toLowerCase() === 'anycubic';
-    const allProducts = isAnycubic ? ANYCUBIC_PRODUCTS : [];
+    const isBambu = effectiveBrandName.toLowerCase() === 'bambu';
+    const isCreality = effectiveBrandName.toLowerCase() === 'creality';
+    const isSnapmaker = effectiveBrandName.toLowerCase() === 'snapmaker';
+    const isRotrics = effectiveBrandName.toLowerCase() === 'rotrics';
+    const isFlashforge = effectiveBrandName.toLowerCase() === 'flashforge';
+    const isSkriware = effectiveBrandName.toLowerCase() === 'skriware';
+    const isMagforms = effectiveBrandName.toLowerCase() === 'magforms';
+    const isZmorph = effectiveBrandName.toLowerCase() === 'zmorph';
+    const isElegoo = effectiveBrandName.toLowerCase() === 'elegoo';
+    const allProducts = isAnycubic ? ANYCUBIC_PRODUCTS : isBambu ? BAMBU_PRODUCTS : isCreality ? CREALITY_PRODUCTS : isSnapmaker ? SNAPMAKER_PRODUCTS : isRotrics ? ROTRICS_PRODUCTS : isFlashforge ? FLASHFORGE_PRODUCTS : isMagforms ? MAGFORMS_PRODUCTS : isZmorph ? ZMORPH_PRODUCTS : isElegoo ? ELEGOO_PRODUCTS : [];
 
     const realMaxPrice = useMemo(() => Math.max(...allProducts.map(p => parsePrice(p.price)), 100000), [allProducts]);
     const realMinPrice = useMemo(() => Math.min(...allProducts.map(p => parsePrice(p.price)), 0), [allProducts]);
@@ -251,7 +278,9 @@ const BrandPage = () => {
                     <div className="products-grid">
                         <div className="reveal" style={{ gridColumn: '1 / -1', padding: '4rem', textAlign: 'center', background: 'var(--light-bg)', borderRadius: '12px' }} ref={addToRevealRefs}>
                             <h2 style={{ fontSize: '2rem', color: 'var(--text-dark)', marginBottom: '1rem' }}>{brand.name} Collection</h2>
-                            <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>Products and images for this brand will be added here later.</p>
+                            <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>
+                                {['Skriware', 'Sunlu'].includes(brand.name) ? 'No products available' : 'Products and images for this brand will be added here later.'}
+                            </p>
                             <Link to="/products" className="btn btn-primary" style={{ marginTop: '2rem', display: 'inline-block' }}>View All General Products</Link>
                         </div>
                     </div>
