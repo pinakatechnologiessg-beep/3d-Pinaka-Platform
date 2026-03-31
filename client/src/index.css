@@ -313,6 +313,51 @@ header {
   100% { transform: translateX(-50%); }
 }
 
+/* Shop by Brand Marquee */
+.brand-marquee-wrapper {
+  overflow: hidden;
+  width: 100%;
+  padding: 1rem 0;
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+.brand-marquee-track {
+  display: flex;
+  gap: 1.2rem;
+  width: max-content;
+  animation: brandScroll 25s linear infinite;
+}
+
+.brand-marquee-wrapper:hover .brand-marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes brandScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.brand-marquee-card {
+  flex-shrink: 0;
+  padding: 1rem 2rem;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  white-space: nowrap;
+}
+
+.brand-marquee-card:hover {
+  border-color: var(--brand-color, var(--primary));
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+  transform: translateY(-3px);
+}
+
 /* Sections */
 .section {
   padding: 4rem 0;

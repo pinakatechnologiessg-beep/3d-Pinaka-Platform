@@ -2,7 +2,22 @@ import React, { useEffect, useRef } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, WhatsappLogo, Heart } from '@phosphor-icons/react';
 import { PRODUCTS } from '../constants/data';
+import { ANYCUBIC_PRODUCTS } from '../constants/anycubic_data';
 import { cartService } from '../services/cartService';
+
+const ALL_PRODUCTS = [
+    ...PRODUCTS,
+    ...ANYCUBIC_PRODUCTS.map(p => ({
+        id: p.id,
+        title: p.title,
+        price: p.price,
+        category: p.category,
+        image: p.image,
+        stars: p.stars,
+        badge: p.badges?.[0] === 'sale' ? 'Sale' : p.badges?.[0] === 'new' ? 'New' : p.badges?.[0] === 'top' ? 'Top' : undefined,
+        badgeStyle: p.badges?.[0] === 'sale' ? { background: '#ef4444', color: 'white' } : undefined
+    }))
+];
 
 const Products = () => {
     const [searchParams] = useSearchParams();
@@ -47,7 +62,7 @@ const Products = () => {
 
             <section className="section container">
                 <div className="products-grid">
-                    {PRODUCTS.map((product) => (
+                    {ALL_PRODUCTS.map((product) => (
                         <div key={product.id} className="product-card reveal" ref={addToRevealRefs}>
                             <button 
                                 className="wishlist-btn" 

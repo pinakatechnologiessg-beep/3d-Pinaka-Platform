@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Cube, Stack, Wrench, Sparkle, ShieldCheck, Truck, Headphones, Medal, ClockCounterClockwise, CreditCard, Lightning, Cpu, Eye, Thermometer, WhatsappLogo, Heart } from '@phosphor-icons/react';
-import { PRODUCTS } from '../constants/data';
+import { PRODUCTS, BRANDS } from '../constants/data';
 import { cartService } from '../services/cartService';
 
 const Home = () => {
@@ -222,6 +222,33 @@ const Home = () => {
                     </div>
                 </div>
             ))}
+        </div>
+      </section>
+
+      {/* Shop by Brand */}
+      <section className="section container">
+        <div className="section-header reveal" ref={addToRevealRefs}>
+          <h2>Shop By Brand</h2>
+          <p>Explore top 3D printing brands</p>
+        </div>
+        <div className="brand-marquee-wrapper">
+          <div className="brand-marquee-track">
+            {[...BRANDS, ...BRANDS].map((brand, i) => (
+              <div
+                key={i}
+                className="brand-marquee-card"
+                onClick={() => navigate(`/brand/${brand.path}`)}
+                style={{ '--brand-color': brand.color }}
+              >
+                <span style={{ color: brand.color, fontStyle: brand.italic ? 'italic' : 'normal' }}>
+                  {brand.name}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+          <button className="btn btn-dark" onClick={() => navigate('/products')}>View All Products</button>
         </div>
       </section>
 
