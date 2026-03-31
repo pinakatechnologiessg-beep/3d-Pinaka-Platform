@@ -1,24 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Trash, ShoppingCart, WhatsappLogo } from '@phosphor-icons/react';
+import { cartService } from '../services/cartService';
 
 const Cart = () => {
     const [cartItems, setCartItems] = useState([]);
     const [total, setTotal] = useState(0);
 
     const updateCart = () => {
-        const items = JSON.parse(localStorage.getItem('cart')) || [];
+        const items = cartService.getCartItems();
         setCartItems(items);
         
         let sum = 0;
         items.forEach(item => {
-            const num = parseInt(item.price.replace(/[^0-9]/g, ''));
+            const priceStr = item.price || "0";
+            const num = parseInt(priceStr.replace(/[^0-9]/g, ''));
             if(!isNaN(num)) sum += num;
         });
         setTotal(sum);
-        
-        // Update badges globally if needed (App.jsx handles this usually, but we can trigger a storage event)
-        window.dispatchEvent(new Event('storage'));
     };
 
     useEffect(() => {
@@ -27,15 +26,13 @@ const Cart = () => {
         return () => window.removeEventListener('storage', updateCart);
     }, []);
 
-    const removeItem = (index) => {
-        const items = JSON.parse(localStorage.getItem('cart')) || [];
-        items.splice(index, 1);
-        localStorage.setItem('cart', JSON.stringify(items));
+    const removeItem = (id) => {
+        cartService.removeFromCartById(id);
         updateCart();
     };
 
     const clearCart = () => {
-        localStorage.removeItem('cart');
+        cartService.clearCart();
         updateCart();
     };
 
@@ -60,7 +57,7 @@ const Cart = () => {
                                     <h3 style={{ marginBottom: '5px' }}>{item.title}</h3>
                                     <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--primary)' }}>{item.price}</div>
                                 </div>
-                                <button className="btn" style={{ background: 'transparent', color: '#ef4444', border: '1px solid #ef4444', padding: '6px 12px', fontSize: '0.9rem' }} onClick={() => removeItem(index)}>
+                                <button className="btn" style={{ background: 'transparent', color: '#ef4444', border: '1px solid #ef4444', padding: '6px 12px', fontSize: '0.9rem' }} onClick={() => removeItem(item.id)}>
                                     <Trash size={16} /> Remove
                                 </button>
                             </div>

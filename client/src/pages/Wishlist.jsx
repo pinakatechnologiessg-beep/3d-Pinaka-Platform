@@ -1,41 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Trash, ShoppingCart, Heart, WhatsappLogo } from '@phosphor-icons/react';
+import { cartService, WISHLIST_UPDATED } from '../services/cartService';
 
 const Wishlist = () => {
     const [wishlistItems, setWishlistItems] = useState([]);
 
     const updateWishlist = () => {
-        const items = JSON.parse(localStorage.getItem('wishlist')) || [];
+        const items = cartService.getWishlistItems();
         setWishlistItems(items);
-        window.dispatchEvent(new Event('wishlistUpdated'));
     };
 
     useEffect(() => {
         updateWishlist();
-        window.addEventListener('wishlistUpdated', updateWishlist);
-        return () => window.removeEventListener('wishlistUpdated', updateWishlist);
+        window.addEventListener(WISHLIST_UPDATED, updateWishlist);
+        return () => window.removeEventListener(WISHLIST_UPDATED, updateWishlist);
     }, []);
 
     const removeItem = (id) => {
-        const items = JSON.parse(localStorage.getItem('wishlist')) || [];
-        const filtered = items.filter(item => item.id !== id);
-        localStorage.setItem('wishlist', JSON.stringify(filtered));
+        cartService.removeFromWishlistById(id);
         updateWishlist();
-        window.dispatchEvent(new CustomEvent('showToast', { detail: { message: 'Item removed from wishlist', type: 'info' } }));
     };
 
     const addToCart = (product) => {
-        const cart = JSON.parse(localStorage.getItem('cart')) || [];
-        cart.push({
-            id: Date.now(),
-            title: product.title,
-            price: product.price,
-            image: product.image
-        });
-        localStorage.setItem('cart', JSON.stringify(cart));
-        window.dispatchEvent(new Event('cartUpdated'));
-        window.dispatchEvent(new CustomEvent('showToast', { detail: { message: `${product.title} added to cart!` } }));
+        cartService.addToCart(product);
     };
 
     return (

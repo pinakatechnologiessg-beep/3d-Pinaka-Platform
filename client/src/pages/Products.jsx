@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, WhatsappLogo, Heart } from '@phosphor-icons/react';
 import { PRODUCTS } from '../constants/data';
+import { cartService } from '../services/cartService';
 
 const Products = () => {
     const [searchParams] = useSearchParams();
@@ -29,33 +30,11 @@ const Products = () => {
     };
 
     const handleAddToCart = (product) => {
-        const cart = JSON.parse(localStorage.getItem('cart')) || [];
-        cart.push({
-            id: Date.now(),
-            title: product.title,
-            price: product.price,
-            image: product.image
-        });
-        localStorage.setItem('cart', JSON.stringify(cart));
-        window.dispatchEvent(new Event('cartUpdated'));
-        window.dispatchEvent(new CustomEvent('showToast', { detail: { message: `${product.title} added to cart!` } }));
+        cartService.addToCart(product);
     };
 
     const handleAddToWishlist = (product) => {
-        const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
-        if (!wishlist.find(item => item.title === product.title)) {
-            wishlist.push({
-                id: Date.now(),
-                title: product.title,
-                price: product.price,
-                image: product.image
-            });
-            localStorage.setItem('wishlist', JSON.stringify(wishlist));
-            window.dispatchEvent(new Event('wishlistUpdated'));
-            window.dispatchEvent(new CustomEvent('showToast', { detail: { message: `${product.title} added to wishlist!` } }));
-        } else {
-            window.dispatchEvent(new CustomEvent('showToast', { detail: { message: `${product.title} is already in wishlist!`, type: 'info' } }));
-        }
+        cartService.addToWishlist(product);
     };
 
     return (

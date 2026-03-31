@@ -11,6 +11,7 @@ import Cart from './pages/Cart';
 import Login from './pages/Login';
 import Wishlist from './pages/Wishlist';
 import BrandPage from './pages/BrandPage';
+import { cartService, CART_UPDATED, WISHLIST_UPDATED, SHOW_TOAST } from './services/cartService';
 import './index.css';
 
 // Scroll to top on route change
@@ -37,13 +38,11 @@ function App() {
   });
 
   const updateCartCount = () => {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    setCartCount(cart.length);
+    setCartCount(cartService.getCartCount());
   };
 
   const updateWishlistCount = () => {
-    const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
-    setWishlistCount(wishlist.length);
+    setWishlistCount(cartService.getWishlistCount());
   };
 
   const showToast = (e) => {
@@ -54,17 +53,19 @@ function App() {
   useEffect(() => {
     updateCartCount();
     updateWishlistCount();
-    window.addEventListener('storage', updateCartCount);
-    window.addEventListener('storage', updateWishlistCount);
-    window.addEventListener('cartUpdated', updateCartCount);
-    window.addEventListener('wishlistUpdated', updateWishlistCount);
-    window.addEventListener('showToast', showToast);
+    window.addEventListener('storage', () => {
+        updateCartCount();
+        updateWishlistCount();
+    });
+    window.addEventListener(CART_UPDATED, updateCartCount);
+    window.addEventListener(WISHLIST_UPDATED, updateWishlistCount);
+    window.addEventListener(SHOW_TOAST, showToast);
     return () => {
       window.removeEventListener('storage', updateCartCount);
       window.removeEventListener('storage', updateWishlistCount);
-      window.removeEventListener('cartUpdated', updateCartCount);
-      window.removeEventListener('wishlistUpdated', updateWishlistCount);
-      window.removeEventListener('showToast', showToast);
+      window.removeEventListener(CART_UPDATED, updateCartCount);
+      window.removeEventListener(WISHLIST_UPDATED, updateWishlistCount);
+      window.removeEventListener(SHOW_TOAST, showToast);
     };
   }, []);
 
