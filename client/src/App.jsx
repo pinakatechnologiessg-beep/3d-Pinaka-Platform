@@ -38,7 +38,8 @@ function App() {
     exclusive: false,
     material: false,
     bulk: false,
-    refurbished: false
+    refurbished: false,
+    refurbishedCategories: false
   });
 
   const updateCartCount = () => {

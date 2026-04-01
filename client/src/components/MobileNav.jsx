@@ -80,7 +80,28 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
                 ) : item.key === 'bulk' ? (
                   <li><Link to="/support.html" onClick={onClose}>Contact Form</Link></li>
                 ) : item.key === 'refurbished' ? (
-                  <li><Link to="/products.html" onClick={onClose}>View Refurbished</Link></li>
+                  <div className="nested-dropdown">
+                    <div className="menu-dropdown-toggle nested" onClick={() => toggleDropdown('refurbishedCategories')}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <span className="bullet">•</span> Categories
+                      </div>
+                      {activeDropdowns.refurbishedCategories ? <Minus size={14} /> : <Plus size={14} />}
+                    </div>
+                    {activeDropdowns.refurbishedCategories && (
+                      <ul className="menu-dropdown-items nested-items" style={{ display: 'block', background: 'transparent' }}>
+                        <li><Link to="/products.html?q=Refurbished&category=3D Printer" onClick={onClose}><span className="bullet">•</span> 3D Printer</Link></li>
+                        <li><Link to="/products.html?q=Refurbished&category=Laser Engraver" onClick={onClose}><span className="bullet">•</span> Lasaer Engraver</Link></li>
+                        <li><Link to="/products.html?q=Refurbished&category=Food Printer" onClick={onClose}><span className="bullet">•</span> Food Printer</Link></li>
+                        <li><Link to="/products.html?q=Refurbished&category=3D Scanner" onClick={onClose}><span className="bullet">•</span> 3D Scanner</Link></li>
+                        <li><Link to="/products.html?q=Refurbished&category=CNC Router" onClick={onClose}><span className="bullet">•</span> CNC Router</Link></li>
+                        <li><Link to="/products.html?q=Refurbished&category=3D Pens" onClick={onClose}><span className="bullet">•</span> 3D Pens</Link></li>
+                        <li><Link to="/products.html?q=Refurbished&category=Filaments" onClick={onClose}><span className="bullet">•</span> Filaments</Link></li>
+                        <li><Link to="/products.html?q=Refurbished&category=Resins" onClick={onClose}><span className="bullet">•</span> Resins</Link></li>
+                        <li><Link to="/products.html?q=Refurbished&category=Spare Parts" onClick={onClose}><span className="bullet">•</span> Spare Parts</Link></li>
+                        <li><Link to="/products.html?q=Refurbished&category=Accessories" onClick={onClose}><span className="bullet">•</span> Accessories</Link></li>
+                      </ul>
+                    )}
+                  </div>
                 ) : (
                   <li><Link to="/products.html" onClick={onClose}>View All {item.label}</Link></li>
                 )}

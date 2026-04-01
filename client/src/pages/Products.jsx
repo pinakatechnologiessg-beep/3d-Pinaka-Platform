@@ -11,6 +11,7 @@ import { FLASHFORGE_PRODUCTS } from '../constants/flashforge_data';
 import { MAGFORMS_PRODUCTS } from '../constants/magforms_data';
 import { ZMORPH_PRODUCTS } from '../constants/zmorph_data';
 import { ELEGOO_PRODUCTS } from '../constants/elegoo_data';
+import { REFURBISHED_PRODUCTS } from '../constants/refurbished_data';
 import { cartService } from '../services/cartService';
 import { useState, useMemo } from 'react';
 
@@ -34,6 +35,7 @@ const ALL_PRODUCTS = [
     ...MAGFORMS_PRODUCTS.map(toCard),
     ...ZMORPH_PRODUCTS.map(toCard),
     ...ELEGOO_PRODUCTS.map(toCard),
+    ...REFURBISHED_PRODUCTS.map(toCard),
 ];
 
 const Products = () => {
@@ -98,6 +100,17 @@ const Products = () => {
                     return pCat.includes(c.replace(/s$/, '')) || c.includes(pCat.replace(/s$/, ''));
                 });
             });
+        }
+
+        const query = searchParams.get('q')?.toLowerCase();
+        if (query === 'refurbished') {
+            filtered = filtered.filter(p => p.title.toLowerCase().includes('refurbished'));
+        } else {
+            // Exclude refurbished from general browsing
+            filtered = filtered.filter(p => !p.title.toLowerCase().includes('refurbished'));
+            if (query) {
+                filtered = filtered.filter(p => p.title.toLowerCase().includes(query));
+            }
         }
 
         filtered = filtered.filter(p => {
@@ -180,7 +193,7 @@ const Products = () => {
         <main>
             <div style={{ background: 'var(--dark-bg)', padding: '4rem 0', textAlign: 'center', color: 'white' }}>
                 <Link to="/" className="back-home-btn"><ArrowLeft /> Back to Home</Link>
-                <h1>{activeTags.length === 1 ? activeTags[0].label : 'All 3D Printers'}</h1>
+                <h1>{activeTags.length === 2 && searchParams.get('q') === 'Refurbished' ? `Refurbished ${searchParams.get('category')}s` : activeTags.length === 1 ? activeTags[0].label : 'All 3D Printers'}</h1>
                 <p style={{ color: '#94a3b8', marginTop: '1rem' }}>Professional FDM, Resin & Industrial Graded Printers</p>
             </div>
 
@@ -243,6 +256,17 @@ const Products = () => {
                             <div className="filter-section">
                                 <div className="filter-section-header"><h4>Brand</h4></div>
                                 <div className="filter-scroll-area">
+                                    <label className="filter-checkbox all-option">
+                                        <input 
+                                            type="checkbox" 
+                                            checked={selectedBrands.length === BRANDS.length} 
+                                            onChange={() => {
+                                                if (selectedBrands.length === BRANDS.length) setSearchParams(prev => { prev.delete('brand'); return prev; });
+                                                else setSearchParams(prev => { prev.set('brand', BRANDS.map(b => b.name).join(',')); return prev; });
+                                            }} 
+                                        />
+                                        <span style={{ fontWeight: 600 }}>All</span>
+                                    </label>
                                     {BRANDS.map(b => (
                                         <label key={b.path} className="filter-checkbox">
                                             <input type="checkbox" checked={selectedBrands.includes(b.name)} onChange={() => toggleBrand(b.name)} />
@@ -300,7 +324,17 @@ const Products = () => {
                                     <div className="stars">{product.stars}</div>
                                     <div className="product-price">
                                         {product.price}
-                                        {product.oldPrice && <strike>{product.oldPrice}</strike>}
+                                        {product.oldPrice && (
+                                            <>
+                                                <span className="mrp-label">MRP: {product.oldPrice}</span>
+                                                {(() => {
+                                                    const cur = parsePriceLocal(product.price);
+                                                    const old = parsePriceLocal(product.oldPrice);
+                                                    const off = Math.round(((old - cur) / old) * 100);
+                                                    return off > 0 ? <span className="off-badge">{off}% Off</span> : null;
+                                                })()}
+                                            </>
+                                        )}
                                         {!product.inStock && <span className="out-of-stock-label">Out Of Stock</span>}
                                     </div>
                                     {product.inStock ? (
@@ -311,9 +345,8 @@ const Products = () => {
                                 </div>
                             </div>
                         )) : (
-                            <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '4rem', color: 'var(--text-muted)' }}>
-                                <p>No products match your filters.</p>
-                                <button className="btn btn-primary" style={{ marginTop: '1rem' }} onClick={clearAll}>Clear Filters</button>
+                            <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '6rem 1rem', color: 'var(--text-dark)' }}>
+                                <h2 style={{ fontSize: '2.5rem', fontWeight: 600 }}>No more product available</h2>
                             </div>
                         )}
                     </div>

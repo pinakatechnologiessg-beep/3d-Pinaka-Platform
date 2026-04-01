@@ -88,7 +88,66 @@ const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu }) => {
           </div>
           <Link to="/materials.html">Materials</Link>
           <Link to="/support.html">Bulk Enquiry</Link>
-          <Link to="/products.html">Refurbished Store</Link>
+          <div className="dropdown">
+            <Link to="/products.html?q=Refurbished" className="dropbtn">
+              Refurbished Store <CaretDown size={14} weight="bold" />
+            </Link>
+            <div className="dropdown-content mega-menu refurbished-mega">
+              <div className="mega-menu-grid refurbished-grid">
+                <div className="mega-col categories-col">
+                  <div className="col-header">
+                    <h4>Categories</h4>
+                  </div>
+                  <ul className="mega-list">
+                    <li><Link to="/products.html?q=Refurbished&category=3D Printer">3D Printer</Link></li>
+                    <li><Link to="/products.html?q=Refurbished&category=Laser Engraver">Laser Engraver</Link></li>
+                    <li><Link to="/products.html?q=Refurbished&category=Food Printer">Food Printer</Link></li>
+                    <li><Link to="/products.html?q=Refurbished&category=3D Scanner">3D Scanner</Link></li>
+                    <li><Link to="/products.html?q=Refurbished&category=CNC Router">CNC Router</Link></li>
+                    <li><Link to="/products.html?q=Refurbished&category=3D Pens">3D Pens</Link></li>
+                    <li><Link to="/products.html?q=Refurbished&category=Filaments">Filaments</Link></li>
+                    <li><Link to="/products.html?q=Refurbished&category=Resins">Resins</Link></li>
+                    <li><Link to="/products.html?q=Refurbished&category=Spare Parts">Spare Parts</Link></li>
+                    <li><Link to="/products.html?q=Refurbished&category=Accessories">Accessories</Link></li>
+                  </ul>
+                </div>
+                <div className="mega-col products-col">
+                    <div className="col-header">
+                      <h4>Top Products</h4>
+                    </div>
+                    <div className="refurbished-products-list">
+                      <div className="refurbished-product-item">
+                        <div className="product-thumb">
+                          <img src="/images/Refurbished Anycubic Kobra 3 Combo 3D Printer.png" alt="Refurbished Anycubic Kobra 3 Combo 3D Printer" />
+                        </div>
+                        <div className="product-details">
+                          <Link to="/products.html?q=Refurbished" className="product-name">Refurbished Anycubic Kobra 3 Combo 3D Printer</Link>
+                          <span className="product-price">₹36,999.00</span>
+                        </div>
+                      </div>
+                      <div className="refurbished-product-item">
+                        <div className="product-thumb">
+                          <img src="/images/Refurbished Ender-3 S1 Pro 3D Printer.png" alt="Refurbished Ender-3 S1 Pro 3D Printer" />
+                        </div>
+                        <div className="product-details">
+                          <Link to="/products.html?q=Refurbished" className="product-name">Refurbished Ender-3 S1 Pro 3D Printer</Link>
+                          <span className="product-price">₹34,999.00</span>
+                        </div>
+                      </div>
+                      <div className="refurbished-product-item">
+                        <div className="product-thumb">
+                          <img src="/images/Refurbished Anycubic Kobra 3 Combo 3D Printer with 4 Color 3Idea PLA Filaments (Green,Purple,Sky Blue,Skin).png" alt="Refurbished Anycubic Kobra 3 Combo 3D Printer with 4 Color 3Idea PLA Filaments" />
+                        </div>
+                        <div className="product-details">
+                          <Link to="/products.html?q=Refurbished" className="product-name">Refurbished Anycubic Kobra 3 Combo 3D Printer with 4 Color 3Idea PLA Filaments (Green,Purple,Sky Blue,Skin)</Link>
+                          <span className="product-price">₹49,999.00</span>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+              </div>
+            </div>
+          </div>
           <Link to="/support.html">Support</Link>
           <Link to="/printing-services">Printing Services</Link>
           <Link to="/about-us.html">About Us</Link>
