@@ -12,6 +12,7 @@ import Login from './pages/Login';
 import Wishlist from './pages/Wishlist';
 import BrandPage from './pages/BrandPage';
 import About from './pages/About';
+import Testimonials from './pages/Testimonials';
 import { cartService, CART_UPDATED, WISHLIST_UPDATED, SHOW_TOAST } from './services/cartService';
 import './index.css';
 
@@ -171,6 +172,7 @@ function App() {
           <Route path="/modix.html" element={<BrandPage />} />
           <Route path="/about" element={<About />} />
           <Route path="/about-us.html" element={<About />} />
+          <Route path="/testimonials" element={<Testimonials />} />
         </Routes>
 
         <Footer />

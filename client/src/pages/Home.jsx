@@ -360,6 +360,9 @@ const Home = () => {
                 </div>
             ))}
         </div>
+        <div style={{ textAlign: 'center', marginTop: '3rem' }}>
+          <button className="btn btn-dark" onClick={() => navigate('/testimonials')}>View All Testimonials</button>
+        </div>
       </section>
 
       {/* Whatsapp Float */}
