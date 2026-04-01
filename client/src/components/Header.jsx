@@ -90,7 +90,7 @@ const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu }) => {
           <Link to="/support.html">Bulk Enquiry</Link>
           <Link to="/products.html">Refurbished Store</Link>
           <Link to="/support.html">Support</Link>
-          <Link to="/support.html">Printing Services</Link>
+          <Link to="/printing-services">Printing Services</Link>
           <Link to="/about-us.html">About Us</Link>
         </nav>
 

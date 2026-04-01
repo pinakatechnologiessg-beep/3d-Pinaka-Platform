@@ -88,7 +88,7 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
             </li>
           ))}
           
-          <li><Link to="/support.html" onClick={onClose}>Printing Services</Link></li>
+          <li><Link to="/printing-services" onClick={onClose}>Printing Services</Link></li>
           <li><Link to="/support.html" onClick={onClose}>Support</Link></li>
           <li><Link to="/about-us.html" onClick={onClose}>About Us</Link></li>
         </ul>
