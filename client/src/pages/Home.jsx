@@ -363,7 +363,7 @@ const Home = () => {
       </section>
 
       {/* Whatsapp Float */}
-      <a href="https://wa.me/1234567890" className="whatsapp-float" target="_blank" rel="noreferrer"><WhatsappLogo size={32} /></a>
+      <a href="https://wa.me/918299475268" className="whatsapp-float" target="_blank" rel="noreferrer"><WhatsappLogo size={32} /></a>
     </main>
   );
 };

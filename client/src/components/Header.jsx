@@ -2,27 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { CaretDown, MagnifyingGlass, User, Heart, ShoppingCart, List } from '@phosphor-icons/react';
 
-const Header = ({ cartCount, wishlistCount, toggleMobileMenu }) => {
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      try { setUser(JSON.parse(storedUser)); } catch(e) {}
-    }
-    
-    // Listen for storage changes if they login in another tab or same tab
-    const handleStorage = () => {
-      const u = localStorage.getItem('user');
-      setUser(u ? JSON.parse(u) : null);
-    };
-    window.addEventListener('storage', handleStorage);
-    return () => window.removeEventListener('storage', handleStorage);
-  }, []);
-
+const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu }) => {
   return (
     <header>
       <div className="container navbar">
+        <div className="mobile-menu-trigger">
+          <List size={22} className="menu-btn" onClick={toggleMobileMenu} />
+        </div>
+
         <Link to="/" className="logo">
           <span className="logo-box">3D</span> Print Hub
         </Link>
@@ -59,7 +46,7 @@ const Header = ({ cartCount, wishlistCount, toggleMobileMenu }) => {
                     <h4>CATEGORIES</h4>
                   </div>
                   <ul className="mega-list">
-                    <li><Link to="/products.html?category=3D Printer">3D Printer <span className="hot-badge">Hot</span></Link></li>
+                    <li><Link to="/products.html?category=3D Printer" onClick={() => {}}>3D Printer <span className="hot-badge">Hot</span></Link></li>
                     <li><Link to="/products.html?category=Laser Engraver">Laser Engraver</Link></li>
                     <li><Link to="/products.html?category=Food Printer">Food Printer</Link></li>
                     <li><Link to="/products.html?category=3D Scanner">3D Scanner</Link></li>
@@ -104,27 +91,34 @@ const Header = ({ cartCount, wishlistCount, toggleMobileMenu }) => {
           <Link to="/products.html">Refurbished Store</Link>
           <Link to="/support.html">Support</Link>
           <Link to="/support.html">Printing Services</Link>
+          <Link to="/about-us.html">About Us</Link>
         </nav>
 
         <div className="nav-icons">
-          <MagnifyingGlass size={20} />
-          {user ? (
-            <Link to="/login.html" style={{ color: 'var(--text-dark)', textDecoration: 'none', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <User size={20} />
-              <span style={{ fontSize: '0.85rem' }}>{user.name.split(' ')[0]}</span>
-            </Link>
-          ) : (
-            <Link to="/login.html" style={{ color: 'var(--text-dark)', textDecoration: 'none' }}><User size={20} /></Link>
-          )}
-          <Link to="/wishlist.html" className="heart-icon-wrap" style={{ color: 'var(--text-dark)', textDecoration: 'none' }}>
+          <div className="desktop-only">
+            {user ? (
+                <Link to="/login.html" style={{ color: 'var(--text-dark)', textDecoration: 'none', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <User size={20} />
+                <span style={{ fontSize: '0.85rem' }}>{user.name.split(' ')[0]}</span>
+                </Link>
+            ) : (
+                <Link to="/login.html" style={{ color: 'var(--text-dark)', textDecoration: 'none' }}><User size={20} /></Link>
+            )}
+          </div>
+
+          <Link to="/wishlist.html" className="heart-icon-wrap desktop-only" style={{ color: 'var(--text-dark)', textDecoration: 'none' }}>
             <Heart size={20} />
             {wishlistCount > 0 && <span className="heart-badge">{wishlistCount}</span>}
           </Link>
+          
+          <Link to="/products.html" className="search-icon-mobile" style={{ color: 'var(--text-dark)', textDecoration: 'none' }}>
+            <MagnifyingGlass size={22} />
+          </Link>
+
           <Link to="/cart.html" className="cart-icon-wrap" style={{ color: 'var(--text-dark)', textDecoration: 'none' }}>
-            <ShoppingCart size={20} />
+            <ShoppingCart size={22} />
             <span className="cart-badge">{cartCount}</span>
           </Link>
-          <List size={20} className="menu-btn" onClick={toggleMobileMenu} />
         </div>
       </div>
     </header>

@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { X, CaretDown, House, Storefront, Flask, ChatTeardropText, User, ShoppingCart, Heart, MagnifyingGlass, Plus, Minus, SquaresFour, ShoppingBag } from '@phosphor-icons/react';
 
-const MobileNav = ({ isOpen, onClose, activeDropdowns, toggleDropdown, cartCount, wishlistCount }) => {
+const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, cartCount, wishlistCount }) => {
   return (
     <>
       {/* Overlay */}
@@ -17,10 +17,22 @@ const MobileNav = ({ isOpen, onClose, activeDropdowns, toggleDropdown, cartCount
         </div>
 
         <div className="mobile-menu-actions">
-          <Link to="/login.html" className="menu-action-btn" onClick={onClose}>
-            <User size={18} /> Login
-          </Link>
-          <Link to="/wishlist.html" className="menu-action-btn" onClick={onClose}>
+          {user ? (
+            <div className="menu-user-info" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '0 1rem 1.5rem', borderBottom: '1px solid var(--border-color)', width: '100%' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', fontWeight: 'bold' }}>
+                    {user.name.charAt(0).toUpperCase()}
+                </div>
+                <div>
+                    <div style={{ fontWeight: 'bold', color: 'var(--text-dark)' }}>{user.name}</div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{user.email}</div>
+                </div>
+            </div>
+          ) : (
+            <Link to="/login.html" className="menu-action-btn" onClick={onClose}>
+                <User size={18} /> Login / Register
+            </Link>
+          )}
+          <Link to="/wishlist.html" className="menu-action-btn" style={{ border: user ? '1px solid #e2e8f0' : undefined, flex: user ? 'none' : '1' }} onClick={onClose}>
             <Heart size={18} /> Wishlist
           </Link>
         </div>
@@ -78,6 +90,7 @@ const MobileNav = ({ isOpen, onClose, activeDropdowns, toggleDropdown, cartCount
           
           <li><Link to="/support.html" onClick={onClose}>Printing Services</Link></li>
           <li><Link to="/support.html" onClick={onClose}>Support</Link></li>
+          <li><Link to="/about-us.html" onClick={onClose}>About Us</Link></li>
         </ul>
 
         <div className="mobile-menu-footer">
@@ -93,11 +106,17 @@ const MobileNav = ({ isOpen, onClose, activeDropdowns, toggleDropdown, cartCount
       {/* Mobile Bottom Navigation Bar (Fixed) */}
       <nav className="mobile-bottom-nav">
         <Link to="/index.html" className="mobile-nav-item active" onClick={onClose}>
-            <SquaresFour size={20} weight={true ? "fill" : "regular"} />
+            <SquaresFour size={20} />
             <span>Home</span>
         </Link>
         <Link to="/login.html" className="mobile-nav-item" onClick={onClose}>
-            <User size={20} />
+            {user ? (
+                <div className="user-initial-circle">
+                    {user.name.charAt(0).toUpperCase()}
+                </div>
+            ) : (
+                <User size={20} />
+            )}
             <span>Account</span>
         </Link>
         <Link to="/products.html" className="mobile-nav-item" onClick={onClose}>

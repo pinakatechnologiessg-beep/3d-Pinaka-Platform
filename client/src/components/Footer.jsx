@@ -19,11 +19,11 @@ const Footer = () => {
         <div className="footer-col">
           <h4>Quick Links</h4>
           <ul>
-            <li><Link to="/index.html">About Us</Link></li>
+            <li><Link to="/about-us.html">About Us</Link></li>
             <li><Link to="/products.html">All Products</Link></li>
-            <li><Link to="/products.html">Best Sellers</Link></li>
-            <li><Link to="/products.html">New Arrivals</Link></li>
-            <li><a href="#">Blog</a></li>
+            <li><Link to="/products.html?sort=popularity">Best Sellers</Link></li>
+            <li><Link to="/products.html?sort=newest">New Arrivals</Link></li>
+            <li><Link to="/support.html">Contact Us</Link></li>
           </ul>
         </div>
         <div className="footer-col">
@@ -40,7 +40,7 @@ const Footer = () => {
           <h4>Contact Us</h4>
           <ul style={{ gap: '1rem' }}>
             <li style={{ display: 'flex', gap: '10px' }}><MapPin size={20} style={{ color: 'var(--primary)' }} /> 123 Innovation Street, Tech Park, Bangalore - 560001</li>
-            <li style={{ display: 'flex', gap: '10px' }}><Phone size={20} style={{ color: 'var(--primary)' }} /> +91 1800-123-4567</li>
+            <li style={{ display: 'flex', gap: '10px' }}><Phone size={20} style={{ color: 'var(--primary)' }} /> +91 8299475268</li>
             <li style={{ display: 'flex', gap: '10px' }}><Envelope size={20} style={{ color: 'var(--primary)' }} /> support@printhub.com</li>
           </ul>
         </div>

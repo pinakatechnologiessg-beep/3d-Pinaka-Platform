@@ -11,6 +11,7 @@ import Cart from './pages/Cart';
 import Login from './pages/Login';
 import Wishlist from './pages/Wishlist';
 import BrandPage from './pages/BrandPage';
+import About from './pages/About';
 import { cartService, CART_UPDATED, WISHLIST_UPDATED, SHOW_TOAST } from './services/cartService';
 import './index.css';
 
@@ -27,6 +28,7 @@ function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [cartCount, setCartCount] = useState(0);
   const [wishlistCount, setWishlistCount] = useState(0);
+  const [user, setUser] = useState(null);
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
   
   const [activeDropdowns, setActiveDropdowns] = useState({
@@ -45,6 +47,15 @@ function App() {
     setWishlistCount(cartService.getWishlistCount());
   };
 
+  const updateUser = () => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try { setUser(JSON.parse(storedUser)); } catch(e) { setUser(null); }
+    } else {
+      setUser(null);
+    }
+  };
+
   const showToast = (e) => {
     setToast({ show: true, message: e.detail.message, type: e.detail.type || 'success' });
     setTimeout(() => setToast({ show: false, message: '', type: 'success' }), 3000);
@@ -53,16 +64,20 @@ function App() {
   useEffect(() => {
     updateCartCount();
     updateWishlistCount();
-    window.addEventListener('storage', () => {
+    updateUser();
+
+    const handleStorage = () => {
         updateCartCount();
         updateWishlistCount();
-    });
+        updateUser();
+    };
+
+    window.addEventListener('storage', handleStorage);
     window.addEventListener(CART_UPDATED, updateCartCount);
     window.addEventListener(WISHLIST_UPDATED, updateWishlistCount);
     window.addEventListener(SHOW_TOAST, showToast);
     return () => {
-      window.removeEventListener('storage', updateCartCount);
-      window.removeEventListener('storage', updateWishlistCount);
+      window.removeEventListener('storage', handleStorage);
       window.removeEventListener(CART_UPDATED, updateCartCount);
       window.removeEventListener(WISHLIST_UPDATED, updateWishlistCount);
       window.removeEventListener(SHOW_TOAST, showToast);
@@ -95,6 +110,7 @@ function App() {
       <ScrollToTop />
       <div className="app-container">
         <Header 
+          user={user}
           cartCount={cartCount} 
           wishlistCount={wishlistCount}
           toggleMobileMenu={toggleMobileMenu} 
@@ -109,6 +125,7 @@ function App() {
         )}
         
         <MobileNav 
+          user={user}
           isOpen={isMobileMenuOpen} 
           onClose={closeMobileMenu} 
           activeDropdowns={activeDropdowns}
@@ -152,6 +169,8 @@ function App() {
           <Route path="/skriware.html" element={<BrandPage />} />
           <Route path="/hotrios.html" element={<BrandPage />} />
           <Route path="/modix.html" element={<BrandPage />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/about-us.html" element={<About />} />
         </Routes>
 
         <Footer />

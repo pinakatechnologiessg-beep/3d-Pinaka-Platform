@@ -4,6 +4,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import productRoutes from './routes/productRoutes.js';
 import authRoutes from './routes/authRoutes.js';
+import supportRoutes from './routes/supportRoutes.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -23,6 +24,7 @@ app.use(express.json());
 // Routes
 app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/support', supportRoutes);
 
 // Serve static files from the React frontend app
 app.use(express.static(path.join(__dirname, '../client/dist')));

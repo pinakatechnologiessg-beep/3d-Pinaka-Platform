@@ -118,11 +118,18 @@ header {
   color: var(--secondary);
 }
 
-/* Mobile Menu Button */
 .menu-btn {
   display: none;
   font-size: 1.5rem;
   cursor: pointer;
+}
+
+.mobile-menu-trigger {
+    display: none;
+}
+
+.desktop-only {
+    display: block;
 }
 
 /* Hero Section */
@@ -878,8 +885,36 @@ footer {
     width: 100%;
     position: relative;
   }
-  .nav-links { display: none; }
-  .menu-btn { display: block; }
+  .navbar {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 0 15px !important;
+  }
+  .logo {
+    position: absolute !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    margin: 0 !important;
+    font-size: 1.2rem !important;
+  }
+  .mobile-menu-trigger {
+    display: block !important;
+  }
+  .nav-links { display: none !important; }
+  .desktop-only { display: none !important; }
+  .menu-btn { 
+    display: block !important;
+    cursor: pointer;
+  }
+  .nav-icons {
+    gap: 15px !important;
+  }
+  .search-icon-mobile {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+  }
   .nav-icons > a[href="login.html"] { display: none !important; }
   .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 2rem; }
   .testi-grid { grid-template-columns: 1fr; }
@@ -1172,6 +1207,19 @@ footer {
     text-decoration: none;
     font-size: 0.65rem;
     font-weight: 500;
+  }
+  
+  .user-initial-circle {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: var(--dark-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
   }
   
   .mobile-nav-item.active {
@@ -2114,3 +2162,46 @@ footer {
     opacity: 0.8;
 }
 
+
+/* About Page Responsive Styles */
+.about-mission-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 4rem;
+    align-items: center;
+}
+
+.about-values-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+}
+
+@media (max-width: 991px) {
+    .about-mission-grid {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+    }
+    .about-values-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .about-values-grid {
+        grid-template-columns: 1fr;
+    }
+    .about-hero-content h1 {
+        font-size: 2.5rem !important;
+    }
+    .about-hero-content p {
+        font-size: 1rem !important;
+    }
+    .about-mission-grid h2 {
+        font-size: 1.8rem !important;
+    }
+    .about-mission-grid p {
+        font-size: 1rem !important;
+        line-height: 1.6 !important;
+    }
+}
