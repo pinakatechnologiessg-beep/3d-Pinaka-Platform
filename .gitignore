@@ -31,3 +31,10 @@ error.log
 # OS files
 .DS_Store
 Thumbs.db
+
+# User data & Debugging
+server/uploads/
+server/debug_counts.js
+server/refurb*.txt
+server/*.js.debug
+tmp/
