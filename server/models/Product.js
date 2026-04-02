@@ -1,16 +1,17 @@
 import mongoose from 'mongoose';
 
 const productSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  price: { type: String, required: true },
-  oldPrice: { type: String },
+  name: { type: String, required: true },
+  price: { type: Number, required: true },
+  mrp: { type: Number },
   category: { type: String, required: true },
   image: { type: String, required: true },
-  stars: { type: String, default: '★★★★★ (5.0)' },
-  badge: { type: String },
+  rating: { type: Number, default: 5.0 },
+  tags: { type: String },
   badgeStyle: { type: Object },
   inStock: { type: Boolean, default: true },
   brand: { type: String, required: true },
+  condition: { type: String, enum: ['New', 'Refurbished'], default: 'New' },
   specs: [{ label: String, value: String }],
   description: { type: String }
 }, { timestamps: true });

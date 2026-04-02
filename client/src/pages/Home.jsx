@@ -246,7 +246,7 @@ const Home = () => {
               <div
                 key={i}
                 className="brand-marquee-card"
-                onClick={() => navigate(`/brand/${brand.path}`)}
+                onClick={() => navigate(`/products?brand=${brand.name}`)}
                 style={{ '--brand-color': brand.color }}
               >
                 <span style={{ color: brand.color, fontStyle: brand.italic ? 'italic' : 'normal' }}>

@@ -27,20 +27,20 @@ const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu }) => {
                 <div className="mega-col">
                   <div className="col-header">
                     <h4>BRANDS</h4>
-                    <Link to="/products.html" className="view-all">VIEW ALL</Link>
+                    <Link to="/products" className="view-all">VIEW ALL</Link>
                   </div>
                   <ul className="mega-list">
-                    <li><Link to="/anycubic.html">Anycubic</Link></li>
-                    <li><Link to="/bambu.html">Bambu Lab</Link></li>
-                    <li><Link to="/creality.html">Creality</Link></li>
-                    <li><Link to="/snapmaker.html">Snapmaker</Link></li>
-                    <li><Link to="/rotrics.html">Rotrics</Link></li>
-                    <li><Link to="/flashforge.html">Flashforge</Link></li>
-                    <li><Link to="/skriware.html">Skriware</Link></li>
-                    <li><Link to="/magforms.html">Magforms</Link></li>
-                    <li><Link to="/zmorph.html">Zmorph</Link></li>
-                    <li><Link to="/sunlu.html">Sunlu</Link></li>
-                    <li><Link to="/elegoo.html">Elegoo</Link></li>
+                    <li><Link to="/products?brand=anycubic">Anycubic</Link></li>
+                    <li><Link to="/products?brand=bambu lab">Bambu Lab</Link></li>
+                    <li><Link to="/products?brand=creality">Creality</Link></li>
+                    <li><Link to="/products?brand=snapmaker">Snapmaker</Link></li>
+                    <li><Link to="/products?brand=rotrics">Rotrics</Link></li>
+                    <li><Link to="/products?brand=flashforge">Flashforge</Link></li>
+                    <li><Link to="/products?brand=skriware">Skriware</Link></li>
+                    <li><Link to="/products?brand=magforms">Magforms</Link></li>
+                    <li><Link to="/products?brand=zmorph">Zmorph</Link></li>
+                    <li><Link to="/products?brand=sunlu">Sunlu</Link></li>
+                    <li><Link to="/products?brand=elegoo">Elegoo</Link></li>
                   </ul>
                 </div>
                 <div className="mega-col">
@@ -48,17 +48,17 @@ const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu }) => {
                     <h4>CATEGORIES</h4>
                   </div>
                   <ul className="mega-list">
-                    <li><Link to="/products.html?category=3D Printer" onClick={() => {}}>3D Printer <span className="hot-badge">Hot</span></Link></li>
-                    <li><Link to="/products.html?category=Laser Engraver">Laser Engraver</Link></li>
-                    <li><Link to="/products.html?category=Food Printer">Food Printer</Link></li>
-                    <li><Link to="/products.html?category=3D Scanner">3D Scanner</Link></li>
-                    <li><Link to="/products.html?category=CNC Router">CNC Router</Link></li>
-                    <li><Link to="/products.html?category=Robotics">Robotics</Link></li>
-                    <li><Link to="/products.html?category=3D Pens">3D Pens</Link></li>
-                    <li><Link to="/products.html?category=Filaments">Filaments</Link></li>
-                    <li><Link to="/products.html?category=Resins">Resins</Link></li>
-                    <li><Link to="/products.html?category=Spare Parts">Spare Parts</Link></li>
-                    <li><Link to="/products.html?category=Accessories">Accessories</Link></li>
+                    <li><Link to="/products?category=3D Printer">3D Printer <span className="hot-badge">Hot</span></Link></li>
+                    <li><Link to="/products?category=Laser Engraver">Laser Engraver</Link></li>
+                    <li><Link to="/products?category=Food Printer">Food Printer</Link></li>
+                    <li><Link to="/products?category=3D Scanner">3D Scanner</Link></li>
+                    <li><Link to="/products?category=CNC Router">CNC Router</Link></li>
+                    <li><Link to="/products?category=Robotics">Robotics</Link></li>
+                    <li><Link to="/products?category=3D Pen">3D Pen</Link></li>
+                    <li><Link to="/products?category=Filament">Filament</Link></li>
+                    <li><Link to="/products?category=Resin">Resin</Link></li>
+                    <li><Link to="/products?category=Spare Parts">Spare Parts</Link></li>
+                    <li><Link to="/products?category=Accessory">Accessory</Link></li>
                   </ul>
                 </div>
                 <div className="mega-col" style={{ borderRight: 'none', paddingRight: 0 }}>
@@ -66,11 +66,11 @@ const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu }) => {
                     <h4>3IDEA EXCLUSIVE</h4>
                   </div>
                   <ul className="mega-list">
-                    <li><Link to="/anycubic.html">Anycubic Kobra 2 Neo 3D Printer</Link></li>
-                    <li><Link to="/anycubic.html">Anycubic Photon Mono 4 3D Printer</Link></li>
-                    <li><Link to="/anycubic.html">Anycubic Kobra 3 3D Printer</Link></li>
-                    <li><Link to="/snapmaker.html">Snapmaker Artisan 3-In-1 3D Printer</Link></li>
-                    <li><Link to="/rotrics.html">Rotrics DexArm Hyper Luxury Kit</Link></li>
+                    <li><Link to="/products?brand=Anycubic">Anycubic Kobra 2 Neo 3D Printer</Link></li>
+                    <li><Link to="/products?brand=Anycubic">Anycubic Photon Mono 4 3D Printer</Link></li>
+                    <li><Link to="/products?brand=Anycubic">Anycubic Kobra 3 3D Printer</Link></li>
+                    <li><Link to="/products?brand=Snapmaker">Snapmaker Artisan 3-In-1 3D Printer</Link></li>
+                    <li><Link to="/products?brand=Rotrics">Rotrics DexArm Hyper Luxury Kit</Link></li>
                   </ul>
                 </div>
                 <div className="mega-col mega-img-col">
@@ -91,7 +91,7 @@ const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu }) => {
           <Link to="/materials.html">Materials</Link>
           <Link to="/support.html">Bulk Enquiry</Link>
           <div className="dropdown">
-            <Link to="/products.html?q=Refurbished" className="dropbtn">
+            <Link to="/products?condition=Refurbished" className="dropbtn">
               Refurbished Store <CaretDown size={14} weight="bold" />
             </Link>
             <div className="dropdown-content mega-menu refurbished-mega">
@@ -101,16 +101,16 @@ const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu }) => {
                     <h4>Categories</h4>
                   </div>
                   <ul className="mega-list">
-                    <li><Link to="/products.html?q=Refurbished&category=3D Printer">3D Printer</Link></li>
-                    <li><Link to="/products.html?q=Refurbished&category=Laser Engraver">Laser Engraver</Link></li>
-                    <li><Link to="/products.html?q=Refurbished&category=Food Printer">Food Printer</Link></li>
-                    <li><Link to="/products.html?q=Refurbished&category=3D Scanner">3D Scanner</Link></li>
-                    <li><Link to="/products.html?q=Refurbished&category=CNC Router">CNC Router</Link></li>
-                    <li><Link to="/products.html?q=Refurbished&category=3D Pens">3D Pens</Link></li>
-                    <li><Link to="/products.html?q=Refurbished&category=Filaments">Filaments</Link></li>
-                    <li><Link to="/products.html?q=Refurbished&category=Resins">Resins</Link></li>
-                    <li><Link to="/products.html?q=Refurbished&category=Spare Parts">Spare Parts</Link></li>
-                    <li><Link to="/products.html?q=Refurbished&category=Accessories">Accessories</Link></li>
+                    <li><Link to="/products?condition=Refurbished&category=3D Printer">3D Printer</Link></li>
+                    <li><Link to="/products?condition=Refurbished&category=Laser Engraver">Laser Engraver</Link></li>
+                    <li><Link to="/products?condition=Refurbished&category=Food Printer">Food Printer</Link></li>
+                    <li><Link to="/products?condition=Refurbished&category=3D Scanner">3D Scanner</Link></li>
+                    <li><Link to="/products?condition=Refurbished&category=CNC Router">CNC Router</Link></li>
+                    <li><Link to="/products?condition=Refurbished&category=3D Pen">3D Pen</Link></li>
+                    <li><Link to="/products?condition=Refurbished&category=Filament">Filament</Link></li>
+                    <li><Link to="/products?condition=Refurbished&category=Resin">Resin</Link></li>
+                    <li><Link to="/products?condition=Refurbished&category=Spare Parts">Spare Parts</Link></li>
+                    <li><Link to="/products?condition=Refurbished&category=Accessory">Accessory</Link></li>
                   </ul>
                 </div>
                 <div className="mega-col products-col">
@@ -123,7 +123,7 @@ const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu }) => {
                           <img src="/images/Refurbished Anycubic Kobra 3 Combo 3D Printer.png" alt="Refurbished Anycubic Kobra 3 Combo 3D Printer" />
                         </div>
                         <div className="product-details">
-                          <Link to="/products.html?q=Refurbished" className="product-name">Refurbished Anycubic Kobra 3 Combo 3D Printer</Link>
+                          <Link to="/products?condition=Refurbished&brand=anycubic" className="product-name">Refurbished Anycubic Kobra 3 Combo 3D Printer</Link>
                           <span className="product-price">₹36,999.00</span>
                         </div>
                       </div>
@@ -132,7 +132,7 @@ const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu }) => {
                           <img src="/images/Refurbished Ender-3 S1 Pro 3D Printer.png" alt="Refurbished Ender-3 S1 Pro 3D Printer" />
                         </div>
                         <div className="product-details">
-                          <Link to="/products.html?q=Refurbished" className="product-name">Refurbished Ender-3 S1 Pro 3D Printer</Link>
+                          <Link to="/products?condition=Refurbished&brand=creality" className="product-name">Refurbished Ender-3 S1 Pro 3D Printer</Link>
                           <span className="product-price">₹34,999.00</span>
                         </div>
                       </div>
@@ -141,7 +141,7 @@ const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu }) => {
                           <img src="/images/Refurbished Anycubic Kobra 3 Combo 3D Printer with 4 Color 3Idea PLA Filaments (Green,Purple,Sky Blue,Skin).png" alt="Refurbished Anycubic Kobra 3 Combo 3D Printer with 4 Color 3Idea PLA Filaments" />
                         </div>
                         <div className="product-details">
-                          <Link to="/products.html?q=Refurbished" className="product-name">Refurbished Anycubic Kobra 3 Combo 3D Printer with 4 Color 3Idea PLA Filaments (Green,Purple,Sky Blue,Skin)</Link>
+                          <Link to="/products?condition=Refurbished&brand=anycubic" className="product-name">Refurbished Anycubic Kobra 3 Combo 3D Printer with 4 Color 3Idea PLA Filaments (Green,Purple,Sky Blue,Skin)</Link>
                           <span className="product-price">₹49,999.00</span>
                         </div>
                       </div>

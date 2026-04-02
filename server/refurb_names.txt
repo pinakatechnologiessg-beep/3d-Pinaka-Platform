@@ -1,0 +1,15 @@
+NAME: Anycubic Kobra X | BRAND: anycubic
+NAME: Anycubic Kobra S1 Combo | BRAND: anycubic
+NAME: Anycubic Photon P1 | BRAND: anycubic
+NAME: Anycubic Kobra S1 Max Combo | BRAND: anycubic
+NAME: Anycubic Kobra X Combo | BRAND: anycubic
+NAME: Anycubic Photon Mono M7 Max | BRAND: anycubic
+NAME: Anycubic Photon Mono M7 Pro | BRAND: anycubic
+NAME: Anycubic Kobra 3 Max Combo | BRAND: anycubic
+NAME: Anycubic Photon Mono 4 | BRAND: anycubic
+NAME: Anycubic Photon Mono 4 Ultra | BRAND: anycubic
+NAME: Anycubic Kobra S1 Max | BRAND: anycubic
+NAME: Anycubic Photon Mono M7 | BRAND: anycubic
+NAME: Anycubic Kobra 3 V2 Combo | BRAND: anycubic
+NAME: Anycubic Kobra 3 Max | BRAND: anycubic
+NAME: Anycubic Kobra S1 | BRAND: anycubic

@@ -55,9 +55,19 @@
   width: 80px;
 }
 
-.admin-sidebar.closed .sidebar-header h2 span,
+.admin-sidebar.closed .sidebar-header h2,
 .admin-sidebar.closed .adm-nav-text {
   display: none;
+}
+
+.admin-sidebar.closed .sidebar-header {
+  padding: 0;
+  justify-content: center;
+}
+
+.admin-sidebar.closed .sidebar-toggle-btn {
+  margin-left: 0;
+  margin: 0 auto;
 }
 
 .sidebar-header {

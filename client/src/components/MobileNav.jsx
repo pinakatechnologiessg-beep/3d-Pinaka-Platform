@@ -38,8 +38,8 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
         </div>
 
         <ul className="mobile-menu-list">
-          <li><Link to="/index.html" onClick={onClose}>Home</Link></li>
-          <li><Link to="/products.html" onClick={onClose}>Brands</Link></li>
+          <li><Link to="/" onClick={onClose}>Home</Link></li>
+          <li><Link to="/products" onClick={onClose}>Brands</Link></li>
           
           {[
             { key: 'categories', label: 'Categories' },
@@ -55,25 +55,25 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
               <ul className="menu-dropdown-items">
                 {item.key === 'categories' ? (
                   <>
-                    <li><Link to="/products.html?category=3D Printer" onClick={onClose}>3D Printer</Link></li>
-                    <li><Link to="/products.html?category=Laser Engraver" onClick={onClose}>Laser Engraver</Link></li>
-                    <li><Link to="/products.html?category=Food Printer" onClick={onClose}>Food Printer</Link></li>
-                    <li><Link to="/products.html?category=3D Scanner" onClick={onClose}>3D Scanner</Link></li>
-                    <li><Link to="/products.html?category=CNC Router" onClick={onClose}>CNC Router</Link></li>
-                    <li><Link to="/products.html?category=Robotics" onClick={onClose}>Robotics</Link></li>
-                    <li><Link to="/products.html?category=3D Pens" onClick={onClose}>3D Pens</Link></li>
-                    <li><Link to="/products.html?category=Filaments" onClick={onClose}>Filaments</Link></li>
-                    <li><Link to="/products.html?category=Resins" onClick={onClose}>Resins</Link></li>
-                    <li><Link to="/products.html?category=Spare Parts" onClick={onClose}>Spare Parts</Link></li>
-                    <li><Link to="/products.html?category=Accessories" onClick={onClose}>Accessories</Link></li>
+                    <li><Link to="/products?category=3D Printer" onClick={onClose}>3D Printer</Link></li>
+                    <li><Link to="/products?category=Laser Engraver" onClick={onClose}>Laser Engraver</Link></li>
+                    <li><Link to="/products?category=Food Printer" onClick={onClose}>Food Printer</Link></li>
+                    <li><Link to="/products?category=3D Scanner" onClick={onClose}>3D Scanner</Link></li>
+                    <li><Link to="/products?category=CNC Router" onClick={onClose}>CNC Router</Link></li>
+                    <li><Link to="/products?category=Robotics" onClick={onClose}>Robotics</Link></li>
+                    <li><Link to="/products?category=3D Pen" onClick={onClose}>3D Pen</Link></li>
+                    <li><Link to="/products?category=Filament" onClick={onClose}>Filament</Link></li>
+                    <li><Link to="/products?category=Resin" onClick={onClose}>Resin</Link></li>
+                    <li><Link to="/products?category=Spare Parts" onClick={onClose}>Spare Parts</Link></li>
+                    <li><Link to="/products?category=Accessory" onClick={onClose}>Accessory</Link></li>
                   </>
                 ) : item.key === 'exclusive' ? (
                   <>
-                    <li><Link to="/anycubic.html" onClick={onClose}>Anycubic Kobra 2 Neo 3D Printer</Link></li>
-                    <li><Link to="/anycubic.html" onClick={onClose}>Anycubic Photon Mono 4 3D Printer</Link></li>
-                    <li><Link to="/anycubic.html" onClick={onClose}>Anycubic Kobra 3 3D Printer</Link></li>
-                    <li><Link to="/snapmaker.html" onClick={onClose}>Snapmaker Artisan 3-In-1 3D Printer</Link></li>
-                    <li><Link to="/rotrics.html" onClick={onClose}>Rotrics DexArm Hyper Luxury Kit</Link></li>
+                    <li><Link to="/products?brand=Anycubic" onClick={onClose}>Anycubic Kobra 2 Neo 3D Printer</Link></li>
+                    <li><Link to="/products?brand=Anycubic" onClick={onClose}>Anycubic Photon Mono 4 3D Printer</Link></li>
+                    <li><Link to="/products?brand=Anycubic" onClick={onClose}>Anycubic Kobra 3 3D Printer</Link></li>
+                    <li><Link to="/products?brand=Snapmaker" onClick={onClose}>Snapmaker Artisan 3-In-1 3D Printer</Link></li>
+                    <li><Link to="/products?brand=Rotrics" onClick={onClose}>Rotrics DexArm Hyper Luxury Kit</Link></li>
                   </>
                 ) : item.key === 'material' ? (
                   <li><Link to="/materials.html" onClick={onClose}>All Materials</Link></li>
@@ -88,18 +88,18 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
                       {activeDropdowns.refurbishedCategories ? <Minus size={14} /> : <Plus size={14} />}
                     </div>
                     {activeDropdowns.refurbishedCategories && (
-                      <ul className="menu-dropdown-items nested-items" style={{ display: 'block', background: 'transparent' }}>
-                        <li><Link to="/products.html?q=Refurbished&category=3D Printer" onClick={onClose}><span className="bullet">•</span> 3D Printer</Link></li>
-                        <li><Link to="/products.html?q=Refurbished&category=Laser Engraver" onClick={onClose}><span className="bullet">•</span> Lasaer Engraver</Link></li>
-                        <li><Link to="/products.html?q=Refurbished&category=Food Printer" onClick={onClose}><span className="bullet">•</span> Food Printer</Link></li>
-                        <li><Link to="/products.html?q=Refurbished&category=3D Scanner" onClick={onClose}><span className="bullet">•</span> 3D Scanner</Link></li>
-                        <li><Link to="/products.html?q=Refurbished&category=CNC Router" onClick={onClose}><span className="bullet">•</span> CNC Router</Link></li>
-                        <li><Link to="/products.html?q=Refurbished&category=3D Pens" onClick={onClose}><span className="bullet">•</span> 3D Pens</Link></li>
-                        <li><Link to="/products.html?q=Refurbished&category=Filaments" onClick={onClose}><span className="bullet">•</span> Filaments</Link></li>
-                        <li><Link to="/products.html?q=Refurbished&category=Resins" onClick={onClose}><span className="bullet">•</span> Resins</Link></li>
-                        <li><Link to="/products.html?q=Refurbished&category=Spare Parts" onClick={onClose}><span className="bullet">•</span> Spare Parts</Link></li>
-                        <li><Link to="/products.html?q=Refurbished&category=Accessories" onClick={onClose}><span className="bullet">•</span> Accessories</Link></li>
-                      </ul>
+                    <ul className="menu-dropdown-items nested-items" style={{ display: 'block', background: 'transparent' }}>
+                        <li><Link to="/products?condition=Refurbished&category=3D Printer" onClick={onClose}><span className="bullet">•</span> 3D Printer</Link></li>
+                        <li><Link to="/products?condition=Refurbished&category=Laser Engraver" onClick={onClose}><span className="bullet">•</span> Laser Engraver</Link></li>
+                        <li><Link to="/products?condition=Refurbished&category=Food Printer" onClick={onClose}><span className="bullet">•</span> Food Printer</Link></li>
+                        <li><Link to="/products?condition=Refurbished&category=3D Scanner" onClick={onClose}><span className="bullet">•</span> 3D Scanner</Link></li>
+                        <li><Link to="/products?condition=Refurbished&category=CNC Router" onClick={onClose}><span className="bullet">•</span> CNC Router</Link></li>
+                        <li><Link to="/products?condition=Refurbished&category=3D Pen" onClick={onClose}><span className="bullet">•</span> 3D Pen</Link></li>
+                        <li><Link to="/products?condition=Refurbished&category=Filament" onClick={onClose}><span className="bullet">•</span> Filament</Link></li>
+                        <li><Link to="/products?condition=Refurbished&category=Resin" onClick={onClose}><span className="bullet">•</span> Resin</Link></li>
+                        <li><Link to="/products?condition=Refurbished&category=Spare Parts" onClick={onClose}><span className="bullet">•</span> Spare Parts</Link></li>
+                        <li><Link to="/products?condition=Refurbished&category=Accessory" onClick={onClose}><span className="bullet">•</span> Accessory</Link></li>
+                    </ul>
                     )}
                   </div>
                 ) : (
@@ -126,7 +126,7 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
 
       {/* Mobile Bottom Navigation Bar (Fixed) */}
       <nav className="mobile-bottom-nav">
-        <Link to="/index.html" className="mobile-nav-item active" onClick={onClose}>
+        <Link to="/" className="mobile-nav-item active" onClick={onClose}>
             <SquaresFour size={20} />
             <span>Home</span>
         </Link>
@@ -140,7 +140,7 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
             )}
             <span>Account</span>
         </Link>
-        <Link to="/products.html" className="mobile-nav-item" onClick={onClose}>
+        <Link to="/products" className="mobile-nav-item" onClick={onClose}>
             <Storefront size={20} />
             <span>Products</span>
         </Link>

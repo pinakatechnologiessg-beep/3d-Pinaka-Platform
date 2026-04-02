@@ -6,6 +6,11 @@ import {
 } from '@phosphor-icons/react';
 import './AdminDashboard.css';
 
+const parsePriceLocal = (p) => {
+    if (typeof p === 'number') return p;
+    return parseInt(String(p).replace(/[^0-9]/g, '')) || 0;
+};
+
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('Dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -38,8 +43,9 @@ const AdminDashboard = () => {
   const [imagePreview, setImagePreview] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [newProduct, setNewProduct] = useState({
-      title: '', category: 'FDM Printer', price: '', oldPrice: '', 
-      inStock: true, image: '', stars: '★★★★★ (5.0)', badge: '', badgeStyle: null, description: ''
+      name: '', category: 'FDM', price: '', mrp: '', 
+      inStock: true, image: '', rating: 5.0, tags: 'None', badgeStyle: null, description: '',
+      brand: 'Anycubic', otherCategory: '', condition: 'New'
   });
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -466,7 +472,12 @@ const AdminDashboard = () => {
                             </div>
                             {product.badge && <div className="badge" style={{ ...product.badgeStyle, top: '10px', left: '10px', position: 'absolute' }}>{product.badge}</div>}
                             <div className="product-img-wrapper" style={{ position: 'relative' }}>
-                                <img src={product.image?.startsWith('/uploads') ? `http://localhost:5000${product.image}` : product.image} alt={product.title} className="product-img" />
+                                <img 
+                                    src={product.image?.startsWith('/uploads') ? `http://localhost:5000${product.image}` : (product.image || 'https://via.placeholder.com/300x300?text=No+Image')} 
+                                    alt={product.name || product.title} 
+                                    className="product-img" 
+                                    onError={(e) => { e.target.src = 'https://via.placeholder.com/300x300?text=Image+Not+Found'; }}
+                                />
                                 {!product.inStock && (
                                     <div className="sold-out-overlay">
                                         <div className="sold-out-circle">Sold Out</div>
@@ -474,11 +485,17 @@ const AdminDashboard = () => {
                                 )}
                             </div>
                             <div className="product-info">
-                                <div className="product-cat">{product.category}</div>
-                                <div className="product-title" style={{ minHeight: '45px' }}>{product.title}</div>
-                                <div className="stars">{product.stars || '★★★★★ (5.0)'}</div>
+                                <div className="product-cat">{(product.category || 'Category')} {product.brand && `| ${product.brand}`}</div>
+                                <div className="product-title" style={{ minHeight: '45px' }}>{product.name || product.title || "Unnamed Product"}</div>
+                                <div className="stars">
+                                    {typeof product.rating === 'number' ? 
+                                        ('★'.repeat(Math.floor(product.rating)) + '☆'.repeat(5 - Math.floor(product.rating)) + ` (${product.rating.toFixed(1)})`) : 
+                                        (product.stars || '★★★★★ (5.0)')
+                                    }
+                                </div>
                                 <div className="product-price">
-                                    {product.price}
+                                    ₹{Number(parsePriceLocal(product.price || 0)).toLocaleString('en-IN')}
+                                    {product.mrp && <span className="old-price" style={{ textDecoration: 'line-through', fontSize: '0.8rem', color: '#94a3b8', marginLeft: '8px' }}>₹{Number(parsePriceLocal(product.mrp)).toLocaleString('en-IN')}</span>}
                                     {!product.inStock && <span className="out-of-stock-label">Out Of Stock</span>}
                                 </div>
                                 {/* Admin specific action area */}
@@ -832,18 +849,77 @@ const AdminDashboard = () => {
              <div style={{ display: 'grid', gap: '1rem' }}>
                 <div>
                   <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Product Name</label>
-                  <input type="text" value={newProduct.title} onChange={e => setNewProduct({...newProduct, title: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} placeholder="e.g. Anycubic Kobra 2" />
+                  <input type="text" value={newProduct.name} onChange={e => setNewProduct({...newProduct, name: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} placeholder="e.g. Anycubic Kobra 2" />
                 </div>
                 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                     <div>
+                      <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Brand</label>
+                      <select value={newProduct.brand} onChange={e => setNewProduct({...newProduct, brand: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }}>
+                          {['Anycubic', 'Bambu Lab', 'Creality', 'Snapmaker', 'Rotrics', 'Flashforge', 'Skriware', 'Magforms', 'Zmorph', 'Sunlu', 'Elegoo'].map(b => (
+                              <option key={b} value={b}>{b}</option>
+                          ))}
+                      </select>
+                    </div>
+                    <div>
                       <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Category</label>
                       <select value={newProduct.category} onChange={e => setNewProduct({...newProduct, category: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }}>
-                          <option value="FDM Printer">FDM Printer</option>
-                          <option value="Resin Printer">Resin Printer</option>
-                          <option value="Accessory">Accessory</option>
-                          <option value="Material">Material</option>
+                          {['FDM', 'Resin', 'Filament', 'Accessory', 'Spare Parts', '3D Pen', '3D Scanner', 'Laser Engraver', 'CNC Router', 'Food Printer', 'Robotics'].map(cat => (
+                              <option key={cat} value={cat}>{cat}</option>
+                          ))}
+                          <option value="Other">Other (Manually Input)</option>
                       </select>
+                      {newProduct.category === 'Other' && (
+                          <input 
+                              type="text" 
+                              placeholder="Enter Custom Category" 
+                              value={newProduct.otherCategory || ''} 
+                              onChange={e => setNewProduct({...newProduct, otherCategory: e.target.value})}
+                              style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none', marginTop: '0.5rem' }}
+                          />
+                      )}
+                    </div>
+                </div>
+                
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <div>
+                        <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Product Condition</label>
+                        <select value={newProduct.condition} onChange={e => setNewProduct({...newProduct, condition: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }}>
+                            <option value="New">New</option>
+                            <option value="Refurbished">Refurbished</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Selling Price (₹)</label>
+                      <input type="number" placeholder="e.g. 25000" value={newProduct.price} onChange={e => setNewProduct({...newProduct, price: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>MRP (₹)</label>
+                      <input type="number" placeholder="e.g. 35000" value={newProduct.mrp} onChange={e => setNewProduct({...newProduct, mrp: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} />
+                    </div>
+                </div>
+                
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Rating (0-5)</label>
+                      <input type="number" step="0.1" min="0" max="5" placeholder="e.g. 4.5" value={newProduct.rating} onChange={e => setNewProduct({...newProduct, rating: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Tags / Badge</label>
+                       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', height: '45px' }}>
+                           <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', color: '#334155' }}>
+                               <input type="radio" name="badge" checked={newProduct.tags === 'Sale'} onChange={() => setNewProduct({...newProduct, tags: 'Sale', badgeStyle: { background: '#ef4444', color: 'white' }})} /> Sale
+                           </label>
+                           <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', color: '#334155' }}>
+                               <input type="radio" name="badge" checked={newProduct.tags === 'Best Seller'} onChange={() => setNewProduct({...newProduct, tags: 'Best Seller', badgeStyle: { background: '#10b981', color: 'white' }})} /> Best
+                           </label>
+                           <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', color: '#334155' }}>
+                               <input type="radio" name="badge" checked={newProduct.tags === 'None'} onChange={() => setNewProduct({...newProduct, tags: 'None', badgeStyle: null})} /> None
+                           </label>
+                       </div>
                     </div>
                     <div>
                       <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Stock Status</label>
@@ -855,38 +931,6 @@ const AdminDashboard = () => {
                               <input type="radio" name="stock" checked={!newProduct.inStock} onChange={() => setNewProduct({...newProduct, inStock: false})} /> Out of Stock
                           </label>
                       </div>
-                    </div>
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                    <div>
-                      <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Selling Price (₹)</label>
-                      <input type="text" placeholder="e.g. ₹25,000" value={newProduct.price} onChange={e => setNewProduct({...newProduct, price: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} />
-                    </div>
-                    <div>
-                      <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>MRP (₹)</label>
-                      <input type="text" placeholder="e.g. ₹35,000" value={newProduct.oldPrice} onChange={e => setNewProduct({...newProduct, oldPrice: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} />
-                    </div>
-                </div>
-                
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                    <div>
-                      <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Rating Overview</label>
-                      <input type="text" placeholder="e.g. ★★★★★ (5.0)" value={newProduct.stars} onChange={e => setNewProduct({...newProduct, stars: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} />
-                    </div>
-                    <div>
-                      <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Tags / Badge</label>
-                       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', height: '45px' }}>
-                           <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', color: '#334155' }}>
-                               <input type="radio" name="badge" checked={newProduct.badge === 'Sale'} onChange={() => setNewProduct({...newProduct, badge: 'Sale', badgeStyle: { background: '#ef4444', color: 'white' }})} /> Sale
-                           </label>
-                           <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', color: '#334155' }}>
-                               <input type="radio" name="badge" checked={newProduct.badge === 'Best Seller'} onChange={() => setNewProduct({...newProduct, badge: 'Best Seller', badgeStyle: { background: '#10b981', color: 'white' }})} /> Best
-                           </label>
-                           <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', color: '#334155' }}>
-                               <input type="radio" name="badge" checked={newProduct.badge === ''} onChange={() => setNewProduct({...newProduct, badge: '', badgeStyle: null})} /> None
-                           </label>
-                       </div>
                     </div>
                 </div>
 
@@ -914,17 +958,19 @@ const AdminDashboard = () => {
                     </button>
                     <button 
                         onClick={async () => {
-                            if (!newProduct.title || !newProduct.price || !selectedFile) return alert('Please provide Title, Price, and Image!');
+                            if (!newProduct.name || !newProduct.price || !selectedFile) return alert('Please provide Name, Price, and Image!');
                             try {
                                 const formData = new FormData();
-                                formData.append('title', newProduct.title);
-                                formData.append('category', newProduct.category);
+                                formData.append('name', newProduct.name);
+                                formData.append('category', newProduct.category === 'Other' ? newProduct.otherCategory : newProduct.category);
+                                formData.append('brand', newProduct.brand);
                                 formData.append('price', newProduct.price);
-                                formData.append('oldPrice', newProduct.oldPrice);
+                                formData.append('mrp', newProduct.mrp);
                                 formData.append('inStock', newProduct.inStock);
-                                formData.append('stars', newProduct.stars);
-                                formData.append('badge', newProduct.badge);
+                                formData.append('rating', newProduct.rating);
+                                formData.append('tags', newProduct.tags);
                                 if (newProduct.badgeStyle) formData.append('badgeStyle', JSON.stringify(newProduct.badgeStyle));
+                                formData.append('condition', newProduct.condition);
                                 formData.append('image', selectedFile);
 
                                 const res = await fetch('http://localhost:5000/api/products', {
@@ -935,7 +981,7 @@ const AdminDashboard = () => {
                                     const createdProduct = await res.json();
                                     setAdminProducts([createdProduct, ...adminProducts]);
                                     setIsAddModalOpen(false);
-                                    setNewProduct({ title: '', category: 'FDM Printer', price: '', oldPrice: '', inStock: true, image: '', stars: '★★★★★ (5.0)', badge: '', badgeStyle: null, description: '' });
+                                    setNewProduct({ name: '', category: 'FDM', price: '', mrp: '', inStock: true, image: '', rating: 5.0, tags: 'None', badgeStyle: null, description: '', brand: 'Anycubic', otherCategory: '', condition: 'New' });
                                     setImagePreview(null);
                                     setSelectedFile(null);
                                     alert('Successfully added product!');
@@ -969,18 +1015,77 @@ const AdminDashboard = () => {
              <div style={{ display: 'grid', gap: '1rem' }}>
                 <div>
                   <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Product Name</label>
-                  <input type="text" value={editProductState.title} onChange={e => setEditProductState({...editProductState, title: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} placeholder="e.g. Anycubic Kobra 2" />
+                  <input type="text" value={editProductState.name} onChange={e => setEditProductState({...editProductState, name: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} placeholder="e.g. Anycubic Kobra 2" />
                 </div>
                 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                     <div>
+                      <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Brand</label>
+                      <select value={editProductState.brand} onChange={e => setEditProductState({...editProductState, brand: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }}>
+                          {['Anycubic', 'Bambu Lab', 'Creality', 'Snapmaker', 'Rotrics', 'Flashforge', 'Skriware', 'Magforms', 'Zmorph', 'Sunlu', 'Elegoo'].map(b => (
+                              <option key={b} value={b}>{b}</option>
+                          ))}
+                      </select>
+                    </div>
+                    <div>
                       <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Category</label>
                       <select value={editProductState.category} onChange={e => setEditProductState({...editProductState, category: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }}>
-                          <option value="FDM Printer">FDM Printer</option>
-                          <option value="Resin Printer">Resin Printer</option>
-                          <option value="Accessory">Accessory</option>
-                          <option value="Material">Material</option>
+                          {['FDM', 'Resin', 'Filament', 'Accessory', 'Spare Parts', '3D Pen', '3D Scanner', 'Laser Engraver', 'CNC Router', 'Food Printer', 'Robotics'].map(cat => (
+                              <option key={cat} value={cat}>{cat}</option>
+                          ))}
+                          <option value="Other">Other (Manually Input)</option>
                       </select>
+                      {editProductState.category === 'Other' && (
+                          <input 
+                              type="text" 
+                              placeholder="Enter Custom Category" 
+                              value={editProductState.otherCategory || ''} 
+                              onChange={e => setEditProductState({...editProductState, otherCategory: e.target.value})}
+                              style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none', marginTop: '0.5rem' }}
+                          />
+                      )}
+                    </div>
+                </div>
+                
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <div>
+                        <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Product Condition</label>
+                        <select value={editProductState.condition || 'New'} onChange={e => setEditProductState({...editProductState, condition: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }}>
+                            <option value="New">New</option>
+                            <option value="Refurbished">Refurbished</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Selling Price (₹)</label>
+                      <input type="number" placeholder="e.g. 25000" value={editProductState.price} onChange={e => setEditProductState({...editProductState, price: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>MRP (₹)</label>
+                      <input type="number" placeholder="e.g. 35000" value={editProductState.mrp || ''} onChange={e => setEditProductState({...editProductState, mrp: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} />
+                    </div>
+                </div>
+                
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Rating (0-5)</label>
+                      <input type="number" step="0.1" min="0" max="5" placeholder="e.g. 4.5" value={editProductState.rating || ''} onChange={e => setEditProductState({...editProductState, rating: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Tags / Badge</label>
+                       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', height: '45px' }}>
+                           <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', color: '#334155' }}>
+                               <input type="radio" name="editbadge" checked={editProductState.tags === 'Sale'} onChange={() => setEditProductState({...editProductState, tags: 'Sale', badgeStyle: { background: '#ef4444', color: 'white' }})} /> Sale
+                           </label>
+                           <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', color: '#334155' }}>
+                               <input type="radio" name="editbadge" checked={editProductState.tags === 'Best Seller'} onChange={() => setEditProductState({...editProductState, tags: 'Best Seller', badgeStyle: { background: '#10b981', color: 'white' }})} /> Best
+                           </label>
+                           <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', color: '#334155' }}>
+                               <input type="radio" name="editbadge" checked={editProductState.tags === 'None'} onChange={() => setEditProductState({...editProductState, tags: 'None', badgeStyle: null})} /> None
+                           </label>
+                       </div>
                     </div>
                     <div>
                       <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Stock Status</label>
@@ -992,38 +1097,6 @@ const AdminDashboard = () => {
                               <input type="radio" name="editstock" checked={!editProductState.inStock} onChange={() => setEditProductState({...editProductState, inStock: false})} /> Out of Stock
                           </label>
                       </div>
-                    </div>
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                    <div>
-                      <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Selling Price (₹)</label>
-                      <input type="text" placeholder="e.g. ₹25,000" value={editProductState.price} onChange={e => setEditProductState({...editProductState, price: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} />
-                    </div>
-                    <div>
-                      <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>MRP (₹)</label>
-                      <input type="text" placeholder="e.g. ₹35,000" value={editProductState.oldPrice || ''} onChange={e => setEditProductState({...editProductState, oldPrice: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} />
-                    </div>
-                </div>
-                
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                    <div>
-                      <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Rating Overview</label>
-                      <input type="text" placeholder="e.g. ★★★★★ (5.0)" value={editProductState.stars || ''} onChange={e => setEditProductState({...editProductState, stars: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} />
-                    </div>
-                    <div>
-                      <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Tags / Badge</label>
-                       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', height: '45px' }}>
-                           <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', color: '#334155' }}>
-                               <input type="radio" name="editbadge" checked={editProductState.badge === 'Sale'} onChange={() => setEditProductState({...editProductState, badge: 'Sale', badgeStyle: { background: '#ef4444', color: 'white' }})} /> Sale
-                           </label>
-                           <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', color: '#334155' }}>
-                               <input type="radio" name="editbadge" checked={editProductState.badge === 'Best Seller'} onChange={() => setEditProductState({...editProductState, badge: 'Best Seller', badgeStyle: { background: '#10b981', color: 'white' }})} /> Best
-                           </label>
-                           <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', color: '#334155' }}>
-                               <input type="radio" name="editbadge" checked={!editProductState.badge} onChange={() => setEditProductState({...editProductState, badge: '', badgeStyle: null})} /> None
-                           </label>
-                       </div>
                     </div>
                 </div>
 
@@ -1051,17 +1124,19 @@ const AdminDashboard = () => {
                     </button>
                     <button 
                         onClick={async () => {
-                            if (!editProductState.title || !editProductState.price) return alert('Please provide Title and Price!');
+                            if (!editProductState.name || !editProductState.price) return alert('Please provide Name and Price!');
                             try {
                                 const formData = new FormData();
-                                formData.append('title', editProductState.title);
-                                formData.append('category', editProductState.category);
+                                formData.append('name', editProductState.name);
+                                formData.append('category', editProductState.category === 'Other' ? editProductState.otherCategory : editProductState.category);
+                                formData.append('brand', editProductState.brand || 'Custom');
                                 formData.append('price', editProductState.price);
-                                if (editProductState.oldPrice) formData.append('oldPrice', editProductState.oldPrice);
+                                if (editProductState.mrp) formData.append('mrp', editProductState.mrp);
                                 formData.append('inStock', editProductState.inStock);
-                                if (editProductState.stars) formData.append('stars', editProductState.stars);
-                                formData.append('badge', editProductState.badge || '');
+                                if (editProductState.rating) formData.append('rating', editProductState.rating);
+                                formData.append('tags', editProductState.tags || 'None');
                                 if (editProductState.badgeStyle) formData.append('badgeStyle', JSON.stringify(editProductState.badgeStyle));
+                                formData.append('condition', editProductState.condition || 'New');
                                 if (editSelectedFile) formData.append('image', editSelectedFile);
 
                                 const res = await fetch(`http://localhost:5000/api/products/${editProductState._id}`, {

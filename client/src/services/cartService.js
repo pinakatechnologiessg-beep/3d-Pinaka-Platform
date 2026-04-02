@@ -19,17 +19,18 @@ export const cartService = {
   
   addToCart: (product) => {
     const cart = getFromStorage('cart');
+    const title = product.name || product.title;
     cart.push({
       id: Date.now() + Math.random(), // Unique ID for removals
-      productId: product.id,          // Original ID from data
-      title: product.title,
+      productId: product._id || product.id, // Original ID from data
+      title: title,
       price: product.price,
       image: product.image || product.img
     });
     saveToStorage('cart', cart);
     window.dispatchEvent(new Event(CART_UPDATED));
     window.dispatchEvent(new CustomEvent(SHOW_TOAST, { 
-      detail: { message: `${product.title} added to cart!`, type: 'success' } 
+      detail: { message: `${title} added to cart!`, type: 'success' } 
     }));
   },
   
@@ -54,21 +55,22 @@ export const cartService = {
   
   toggleWishlist: (product) => {
     const wishlist = getFromStorage('wishlist');
-    const index = wishlist.findIndex(item => item.title === product.title);
+    const title = product.name || product.title;
+    const index = wishlist.findIndex(item => item.title === title);
     
     if (index === -1) {
       // Add
       wishlist.push({
         id: Date.now() + Math.random(),
-        productId: product.id,
-        title: product.title,
+        productId: product._id || product.id,
+        title: title,
         price: product.price,
         image: product.image || product.img
       });
       saveToStorage('wishlist', wishlist);
       window.dispatchEvent(new Event(WISHLIST_UPDATED));
       window.dispatchEvent(new CustomEvent(SHOW_TOAST, { 
-        detail: { message: `${product.title} added to wishlist!`, type: 'success' } 
+        detail: { message: `${title} added to wishlist!`, type: 'success' } 
       }));
     } else {
       // Remove
@@ -76,7 +78,7 @@ export const cartService = {
       saveToStorage('wishlist', wishlist);
       window.dispatchEvent(new Event(WISHLIST_UPDATED));
       window.dispatchEvent(new CustomEvent(SHOW_TOAST, { 
-        detail: { message: `${product.title} removed from wishlist!`, type: 'info' } 
+        detail: { message: `${title} removed from wishlist!`, type: 'info' } 
       }));
     }
   },

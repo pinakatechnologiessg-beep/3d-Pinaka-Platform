@@ -1,42 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, WhatsappLogo, Heart, FunnelSimple, CaretDown, X } from '@phosphor-icons/react';
-import { PRODUCTS, BRANDS } from '../constants/data';
-import { ANYCUBIC_PRODUCTS } from '../constants/anycubic_data';
-import { BAMBU_PRODUCTS } from '../constants/bambu_data';
-import { CREALITY_PRODUCTS } from '../constants/creality_data';
-import { SNAPMAKER_PRODUCTS } from '../constants/snapmaker_data';
-import { ROTRICS_PRODUCTS } from '../constants/rotrics_data';
-import { FLASHFORGE_PRODUCTS } from '../constants/flashforge_data';
-import { MAGFORMS_PRODUCTS } from '../constants/magforms_data';
-import { ZMORPH_PRODUCTS } from '../constants/zmorph_data';
-import { ELEGOO_PRODUCTS } from '../constants/elegoo_data';
-import { REFURBISHED_PRODUCTS } from '../constants/refurbished_data';
+import { BRANDS } from '../constants/data';
 import { cartService } from '../services/cartService';
-import { useState, useMemo } from 'react';
-
-const toCard = (p) => ({
-    id: p.id, title: p.title, price: p.price, category: p.category,
-    image: p.image, stars: p.stars,
-    badge: p.badges?.[0] === 'sale' ? 'Sale' : p.badges?.[0] === 'new' ? 'New' : p.badges?.[0] === 'top' ? 'Top' : p.badges?.[0] === 'clearance' ? 'Clearance' : undefined,
-    badgeStyle: p.badges?.[0] === 'sale' ? { background: '#ef4444', color: 'white' } : p.badges?.[0] === 'new' ? { background: '#6366f1', color: 'white' } : p.badges?.[0] === 'top' ? { background: '#10b981', color: 'white' } : undefined,
-    inStock: p.inStock !== false,
-    oldPrice: p.oldPrice
-});
-
-const ALL_PRODUCTS = [
-    ...PRODUCTS,
-    ...ANYCUBIC_PRODUCTS.map(toCard),
-    ...BAMBU_PRODUCTS.map(toCard),
-    ...CREALITY_PRODUCTS.map(toCard),
-    ...SNAPMAKER_PRODUCTS.map(toCard),
-    ...ROTRICS_PRODUCTS.map(toCard),
-    ...FLASHFORGE_PRODUCTS.map(toCard),
-    ...MAGFORMS_PRODUCTS.map(toCard),
-    ...ZMORPH_PRODUCTS.map(toCard),
-    ...ELEGOO_PRODUCTS.map(toCard),
-    ...REFURBISHED_PRODUCTS.map(toCard),
-];
 
 const Products = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -45,91 +11,120 @@ const Products = () => {
     const [sortBy, setSortBy] = useState('best');
     const [sortOpen, setSortOpen] = useState(false);
     
+    const [dbProducts, setDbProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    
     // Filters - synced with URL
-    const selectedBrands = useMemo(() => searchParams.get('brand') ? searchParams.get('brand').split(',') : [], [searchParams]);
-    const selectedCats = useMemo(() => searchParams.get('category') ? searchParams.get('category').split(',') : [], [searchParams]);
+    const ALL_CATS = useMemo(() => ['3D Printer', 'Filament', 'Resin', 'Accessory', 'Spare Parts', '3D Pen', '3D Scanner', 'Laser Engraver', 'CNC Router', 'Food Printer', 'Robotics', 'Safety'], []);
+    const ALL_BRANDS = useMemo(() => BRANDS.map(b => b.name.toLowerCase()), []);
+
+    // Filters - synced with URL
+    const selectedBrands = useMemo(() => {
+        const b = searchParams.get('brand');
+        return b ? b.toLowerCase().split(',') : ALL_BRANDS;
+    }, [searchParams, ALL_BRANDS]);
+
+    const selectedCats = useMemo(() => {
+        const c = searchParams.get('category');
+        return c ? c.toLowerCase().split(',') : ALL_CATS.map(cat => cat.toLowerCase());
+    }, [searchParams, ALL_CATS]);
+
     const [availabilityFilter, setAvailabilityFilter] = useState([]);
     const [minPrice, setMinPrice] = useState(0);
     const [maxPriceVal, setMaxPriceVal] = useState(1000000);
+    useEffect(() => {
+        const fetchFilteredProducts = async () => {
+            setLoading(true);
+            try {
+                const b = searchParams.get('brand');
+                const c = searchParams.get('category');
+                const q = searchParams.get('q');
+                const cond = searchParams.get('condition');
+                
+                let queryStr = '';
+                if (b) queryStr += `brand=${b.toLowerCase()}&`;
+                if (c) queryStr += `category=${c}&`;
+                if (q) queryStr += `q=${q}&`;
+                if (cond) queryStr += `condition=${cond}&`;
+                
+                // If exactly 1 filter is selected, send it. If 0 or 2, send nothing (show all)
+                if (availabilityFilter.length === 1) {
+                    queryStr += `availability=${availabilityFilter[0]}&`;
+                }
+                
+                const res = await fetch(`http://localhost:5000/api/products?${queryStr.replace(/&$/, '')}`);
+                if (res.ok) {
+                    setDbProducts(await res.json());
+                }
+            } catch (err) {
+                console.error("Fetch error:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchFilteredProducts();
+    }, [searchParams, availabilityFilter]);
 
     const toggleBrand = (brand) => {
-        const next = selectedBrands.includes(brand) ? selectedBrands.filter(b => b !== brand) : [...selectedBrands, brand];
-        if (next.length > 0) searchParams.set('brand', next.join(','));
-        else searchParams.delete('brand');
-        setSearchParams(searchParams);
+        const bLow = brand.toLowerCase();
+        const newParams = new URLSearchParams(searchParams);
+        const current = searchParams.get('brand') ? selectedBrands : ALL_BRANDS;
+        const next = current.includes(bLow) ? current.filter(b => b !== bLow) : [...current, bLow];
+        
+        if (next.length === ALL_BRANDS.length || next.length === 0) newParams.delete('brand');
+        else newParams.set('brand', next.join(','));
+        setSearchParams(newParams);
     };
 
     const toggleCat = (cat) => {
-        const next = selectedCats.includes(cat) ? selectedCats.filter(c => c !== cat) : [...selectedCats, cat];
-        if (next.length > 0) searchParams.set('category', next.join(','));
-        else searchParams.delete('category');
-        setSearchParams(searchParams);
+        const cLow = cat.toLowerCase();
+        const newParams = new URLSearchParams(searchParams);
+        const current = searchParams.get('category') ? selectedCats : ALL_CATS.map(c => c.toLowerCase());
+        const next = current.includes(cLow) ? current.filter(c => c !== cLow) : [...current, cLow];
+        
+        if (next.length === ALL_CATS.length || next.length === 0) newParams.delete('category');
+        else newParams.set('category', next.join(','));
+        setSearchParams(newParams);
     };
 
-    const parsePriceLocal = (p) => parseInt(p.replace(/[^0-9]/g, '')) || 0;
-    const realMaxPrice = useMemo(() => Math.max(...ALL_PRODUCTS.map(p => parsePriceLocal(p.price)), 1000000), []);
-    const realMinPrice = useMemo(() => Math.min(...ALL_PRODUCTS.map(p => parsePriceLocal(p.price)), 0), []);
+    const parsePriceLocal = (p) => typeof p === 'number' ? p : (parseInt(String(p).replace(/[^0-9]/g, '')) || 0);
+    const realMaxPrice = useMemo(() => Math.max(...dbProducts.map(p => parsePriceLocal(p.price)), 1000000), [dbProducts]);
+    const realMinPrice = useMemo(() => Math.min(...dbProducts.map(p => parsePriceLocal(p.price)), 0), [dbProducts]);
 
     useEffect(() => {
-        setMaxPriceVal(realMaxPrice);
-        setMinPrice(realMinPrice);
-    }, [realMaxPrice, realMinPrice]);
+        if (dbProducts.length > 0) {
+            setMaxPriceVal(realMaxPrice);
+            setMinPrice(realMinPrice);
+        }
+    }, [realMaxPrice, realMinPrice, dbProducts]);
 
     const products = useMemo(() => {
-        let filtered = [...ALL_PRODUCTS];
+        let filtered = [...dbProducts];
 
-        if (availabilityFilter.length > 0) {
-            filtered = filtered.filter(p => {
-                if (availabilityFilter.includes('in') && availabilityFilter.includes('out')) return true;
-                if (availabilityFilter.includes('in')) return p.inStock;
-                if (availabilityFilter.includes('out')) return !p.inStock;
-                return true;
-            });
-        }
-
-        if (selectedBrands.length > 0) {
-            filtered = filtered.filter(p => selectedBrands.some(b => p.title.toLowerCase().includes(b.toLowerCase())));
-        }
-
-        if (selectedCats.length > 0) {
-            filtered = filtered.filter(p => {
-                const pCat = p.category.toLowerCase();
-                return selectedCats.some(cat => {
-                    const c = cat.toLowerCase();
-                    if (c === '3d printer') return ['fdm', 'resin', 'industrial', 'dental', 'fdm printer', 'resin printer', 'industrial-max'].some(t => pCat.includes(t));
-                    return pCat.includes(c.replace(/s$/, '')) || c.includes(pCat.replace(/s$/, ''));
-                });
-            });
-        }
-
-        const query = searchParams.get('q')?.toLowerCase();
-        if (query === 'refurbished') {
-            filtered = filtered.filter(p => p.title.toLowerCase().includes('refurbished'));
-        } else {
-            // Exclude refurbished from general browsing
-            filtered = filtered.filter(p => !p.title.toLowerCase().includes('refurbished'));
-            if (query) {
-                filtered = filtered.filter(p => p.title.toLowerCase().includes(query));
-            }
-        }
+        // Availability filtering is handled by the backend API.
+        // Frontend handles visibility and price/sort logic.
 
         filtered = filtered.filter(p => {
             const pr = parsePriceLocal(p.price);
+            // Safety: if maxPriceVal looks like it hasn't updated to match real data yet, don't filter.
+            if (maxPriceVal === 1000000 && pr > 1000000) return true;
             return pr >= minPrice && pr <= maxPriceVal;
         });
+        console.log(`Grid Refresh: ${filtered.length} products ready for reveal.`);
 
         switch (sortBy) {
-            case 'az': filtered.sort((a, b) => a.title.localeCompare(b.title)); break;
-            case 'za': filtered.sort((a, b) => b.title.localeCompare(a.title)); break;
+            case 'az': filtered.sort((a, b) => (a.name || a.title).localeCompare(b.name || b.title)); break;
+            case 'za': filtered.sort((a, b) => (b.name || b.title).localeCompare(a.name || a.title)); break;
             case 'price_asc': filtered.sort((a, b) => parsePriceLocal(a.price) - parsePriceLocal(b.price)); break;
             case 'price_desc': filtered.sort((a, b) => parsePriceLocal(b.price) - parsePriceLocal(a.price)); break;
             default: break;
         }
 
         return filtered;
-    }, [selectedBrands, selectedCats, minPrice, maxPriceVal, sortBy, availabilityFilter]);
+    }, [dbProducts, minPrice, maxPriceVal, sortBy, availabilityFilter]);
 
     useEffect(() => {
+        if (loading) return;
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -145,13 +140,13 @@ const Products = () => {
                     observer.observe(el);
                 }
             });
-        }, 50);
+        }, 200);
 
         return () => {
             clearTimeout(timer);
             observer.disconnect();
         };
-    }, [products]);
+    }, [products, searchParams, loading, minPrice, maxPriceVal, availabilityFilter]);
 
     const [wishlist, setWishlist] = useState([]);
     useEffect(() => {
@@ -168,32 +163,119 @@ const Products = () => {
     };
 
     const activeTags = [
-        ...selectedBrands.map(b => ({ type: 'brand', value: b, label: `Brand: ${b}` })),
-        ...selectedCats.map(c => ({ type: 'cat', value: c, label: `Category: ${c}` })),
-        ...availabilityFilter.map(a => ({ type: 'availability', value: a, label: `Availability: ${a === 'in' ? 'In stock' : 'Out of stock'}` }))
+        ...(availabilityFilter.length === 1 ? availabilityFilter.map(a => ({ 
+            type: 'availability', 
+            value: a, 
+            label: `Availability: ${a === 'inStock' ? 'In stock' : 'Out of stock'}` 
+        })) : []),
+        ...(searchParams.has('brand') && selectedBrands.length < ALL_BRANDS.length ? selectedBrands.map(b => ({ type: 'brand', value: b, label: `Brand: ${b}` })) : []),
+        ...(searchParams.has('category') && selectedCats.length < ALL_CATS.length ? selectedCats.map(c => ({ type: 'cat', value: c, label: `Category: ${c}` })) : []),
+        ...(searchParams.has('q') ? [{ type: 'search', value: searchParams.get('q'), label: `Search: ${searchParams.get('q')}` }] : []),
+        ...(searchParams.has('condition') ? [{ type: 'condition', value: searchParams.get('condition'), label: `Store: ${searchParams.get('condition')}` }] : [])
     ];
 
     const removeTag = (tag) => {
-        if (tag.type === 'brand') toggleBrand(tag.value);
-        if (tag.type === 'cat') toggleCat(tag.value);
+        const newParams = new URLSearchParams(searchParams);
+        if (tag.type === 'brand') {
+            const next = selectedBrands.filter(b => b !== tag.value.toLowerCase());
+            if (next.length === 0 || next.length === ALL_BRANDS.length) newParams.delete('brand');
+            else newParams.set('brand', next.join(','));
+        }
+        if (tag.type === 'cat') {
+            const next = selectedCats.filter(c => c !== tag.value.toLowerCase());
+            if (next.length === 0 || next.length === ALL_CATS.length) newParams.delete('category');
+            else newParams.set('category', next.join(','));
+        }
         if (tag.type === 'availability') setAvailabilityFilter(prev => prev.filter(v => v !== tag.value));
+        if (tag.type === 'search') newParams.delete('q');
+        if (tag.type === 'condition') newParams.delete('condition');
+        setSearchParams(newParams);
     };
 
     const clearAll = () => {
-        setSelectedBrands([]);
-        setSelectedCats([]);
+        const newParams = new URLSearchParams();
+        const cond = searchParams.get('condition');
+        if (cond) newParams.set('condition', cond);
+        setSearchParams(newParams);
         setAvailabilityFilter([]);
         setMinPrice(realMinPrice);
         setMaxPriceVal(realMaxPrice);
     };
 
-    revealRefs.current = [];
+    const renderGrid = () => {
+        revealRefs.current = [];
+        return (
+            <div className={`products-grid ${showFilter ? '' : 'full-width'}`} style={{ flex: 1 }}>
+                {products.length > 0 ? products.map((product) => (
+                    <div key={product._id || product.id} className={`product-card reveal ${!product.inStock ? 'sold-out' : ''}`} ref={addToRevealRefs}>
+                        <button 
+                            className={`wishlist-btn ${wishlist.some(item => (item.name || item.title || '').toLowerCase() === (product.name || product.title || '').toLowerCase()) ? 'active' : ''}`} 
+                            onClick={() => cartService.toggleWishlist(product)}
+                            title="Add to Wishlist"
+                        >
+                            <Heart size={20} weight={wishlist.some(item => (item.name || item.title || '').toLowerCase() === (product.name || product.title || '').toLowerCase()) ? "fill" : "bold"} />
+                        </button>
+                        {product.badge && (
+                            <div className="badge" style={product.badgeStyle}>{product.badge}</div>
+                        )}
+                        <div className="product-img-wrapper" style={{ position: 'relative' }}>
+                            <img 
+                                src={product.image?.startsWith('/uploads') ? `http://localhost:5000${product.image}` : (product.image || 'https://via.placeholder.com/300x300?text=No+Image')} 
+                                alt={product.name || product.title} 
+                                className="product-img" 
+                                onError={(e) => { e.target.src = 'https://via.placeholder.com/300x300?text=Image+Not+Found'; }}
+                            />
+                            {!product.inStock && (
+                                <div className="sold-out-overlay">
+                                    <div className="sold-out-circle">Sold Out</div>
+                                </div>
+                            )}
+                        </div>
+                        <div className="product-info">
+                            <div className="product-cat">{product.category} {product.brand && `| ${product.brand}`}</div>
+                            <div className="product-title">{product.name || product.title || "Unnamed Product"}</div>
+                            <div className="stars">
+                                {typeof product.rating === 'number' ? 
+                                    ('★'.repeat(Math.floor(product.rating)) + '☆'.repeat(5 - Math.floor(product.rating)) + ` (${product.rating.toFixed(1)})`) : 
+                                    (product.stars || '★★★★★ (5.0)')
+                                }
+                            </div>
+                            <div className="product-price">
+                                ₹{Number(parsePriceLocal(product.price || 0)).toLocaleString('en-IN')}
+                                {(product.mrp || product.oldPrice) && (
+                                    <>
+                                        <span className="mrp-label">MRP: ₹{parsePriceLocal(product.mrp || product.oldPrice).toLocaleString('en-IN')}</span>
+                                        {(() => {
+                                            const cur = parsePriceLocal(product.price);
+                                            const old = parsePriceLocal(product.mrp || product.oldPrice);
+                                            const off = Math.round(((old - cur) / old) * 100);
+                                            return off > 0 ? <span className="off-badge">{off}% Off</span> : null;
+                                        })()}
+                                    </>
+                                )}
+                                {!product.inStock && <span className="out-of-stock-label">Out Of Stock</span>}
+                            </div>
+                            {product.inStock ? (
+                                <button className="btn btn-block" onClick={() => cartService.addToCart(product)}>Add to Cart</button>
+                            ) : (
+                                <button className="btn btn-block" disabled style={{ background: '#94a3b8', color: 'white', cursor: 'not-allowed' }}>Out of Stock</button>
+                            )}
+                        </div>
+                    </div>
+                )) : (
+                    <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '4rem', color: '#64748b' }}>
+                        No products match your current filters.
+                    </div>
+                )}
+            </div>
+        );
+    };
 
     return (
         <main>
             <div style={{ background: 'var(--dark-bg)', padding: '4rem 0', textAlign: 'center', color: 'white' }}>
                 <Link to="/" className="back-home-btn"><ArrowLeft /> Back to Home</Link>
-                <h1>{activeTags.length === 2 && searchParams.get('q') === 'Refurbished' ? `Refurbished ${searchParams.get('category')}s` : activeTags.length === 1 ? activeTags[0].label : 'All 3D Printers'}</h1>
+                <h1>{searchParams.get('condition') === 'Refurbished' ? `Refurbished ${searchParams.get('category') || ''} Store` : activeTags.length === 1 ? activeTags[0].label : 'All 3D Printers'}</h1>
                 <p style={{ color: '#94a3b8', marginTop: '1rem' }}>Professional FDM, Resin & Industrial Graded Printers</p>
             </div>
 
@@ -245,13 +327,36 @@ const Products = () => {
                                     <h4>Availability</h4>
                                 </div>
                                 <label className="filter-checkbox">
-                                    <input type="checkbox" checked={availabilityFilter.includes('in')} onChange={() => setAvailabilityFilter(prev => prev.includes('in') ? prev.filter(v => v !== 'in') : [...prev, 'in'])} />
+                                    <input type="checkbox" checked={availabilityFilter.includes('inStock')} onChange={() => setAvailabilityFilter(prev => prev.includes('inStock') ? prev.filter(v => v !== 'inStock') : [...prev, 'inStock'])} />
                                     <span>In Stock</span>
                                 </label>
                                 <label className="filter-checkbox">
-                                    <input type="checkbox" checked={availabilityFilter.includes('out')} onChange={() => setAvailabilityFilter(prev => prev.includes('out') ? prev.filter(v => v !== 'out') : [...prev, 'out'])} />
+                                    <input type="checkbox" checked={availabilityFilter.includes('outOfStock')} onChange={() => setAvailabilityFilter(prev => prev.includes('outOfStock') ? prev.filter(v => v !== 'outOfStock') : [...prev, 'outOfStock'])} />
                                     <span>Out Of Stock</span>
                                 </label>
+                            </div>
+                            <div className="filter-section">
+                                <div className="filter-section-header"><h4>Category</h4></div>
+                                <div className="filter-scroll-area">
+                                    <label className="filter-checkbox all-option">
+                                        <input 
+                                            type="checkbox" 
+                                            checked={!searchParams.has('category') || selectedCats.length === ALL_CATS.length} 
+                                            onChange={() => {
+                                                const newParams = new URLSearchParams(searchParams);
+                                                newParams.delete('category');
+                                                setSearchParams(newParams);
+                                            }} 
+                                        />
+                                        <span style={{ fontWeight: 600 }}>All</span>
+                                    </label>
+                                    {ALL_CATS.map(cat => (
+                                        <label key={cat} className="filter-checkbox">
+                                            <input type="checkbox" checked={selectedCats.includes(cat.toLowerCase())} onChange={() => toggleCat(cat)} />
+                                            <span>{cat}</span>
+                                        </label>
+                                    ))}
+                                </div>
                             </div>
                             <div className="filter-section">
                                 <div className="filter-section-header"><h4>Brand</h4></div>
@@ -259,17 +364,18 @@ const Products = () => {
                                     <label className="filter-checkbox all-option">
                                         <input 
                                             type="checkbox" 
-                                            checked={selectedBrands.length === BRANDS.length} 
+                                            checked={!searchParams.has('brand') || selectedBrands.length === ALL_BRANDS.length} 
                                             onChange={() => {
-                                                if (selectedBrands.length === BRANDS.length) setSearchParams(prev => { prev.delete('brand'); return prev; });
-                                                else setSearchParams(prev => { prev.set('brand', BRANDS.map(b => b.name).join(',')); return prev; });
+                                                const newParams = new URLSearchParams(searchParams);
+                                                newParams.delete('brand');
+                                                setSearchParams(newParams);
                                             }} 
                                         />
                                         <span style={{ fontWeight: 600 }}>All</span>
                                     </label>
                                     {BRANDS.map(b => (
                                         <label key={b.path} className="filter-checkbox">
-                                            <input type="checkbox" checked={selectedBrands.includes(b.name)} onChange={() => toggleBrand(b.name)} />
+                                            <input type="checkbox" checked={selectedBrands.includes(b.name.toLowerCase())} onChange={() => toggleBrand(b.name)} />
                                             <span>{b.name}</span>
                                         </label>
                                     ))}
@@ -297,61 +403,13 @@ const Products = () => {
                         </aside>
                     )}
 
-                    <div className={`products-grid ${showFilter ? '' : 'full-width'}`} style={{ flex: 1 }}>
-                        {products.length > 0 ? products.map((product) => (
-                            <div key={product.id} className={`product-card reveal ${!product.inStock ? 'sold-out' : ''}`} ref={addToRevealRefs}>
-                                <button 
-                                    className={`wishlist-btn ${wishlist.some(item => item.title === product.title) ? 'active' : ''}`} 
-                                    onClick={() => cartService.toggleWishlist(product)}
-                                    title="Add to Wishlist"
-                                >
-                                    <Heart size={20} weight={wishlist.some(item => item.title === product.title) ? "fill" : "bold"} />
-                                </button>
-                                {product.badge && (
-                                    <div className="badge" style={product.badgeStyle}>{product.badge}</div>
-                                )}
-                                <div className="product-img-wrapper" style={{ position: 'relative' }}>
-                                    <img src={product.image} alt={product.title} className="product-img" />
-                                    {!product.inStock && (
-                                        <div className="sold-out-overlay">
-                                            <div className="sold-out-circle">Sold Out</div>
-                                        </div>
-                                    )}
-                                </div>
-                                <div className="product-info">
-                                    <div className="product-cat">{product.category}</div>
-                                    <div className="product-title">{product.title}</div>
-                                    <div className="stars">{product.stars}</div>
-                                    <div className="product-price">
-                                        {product.price}
-                                        {product.oldPrice && (
-                                            <>
-                                                <span className="mrp-label">MRP: {product.oldPrice}</span>
-                                                {(() => {
-                                                    const cur = parsePriceLocal(product.price);
-                                                    const old = parsePriceLocal(product.oldPrice);
-                                                    const off = Math.round(((old - cur) / old) * 100);
-                                                    return off > 0 ? <span className="off-badge">{off}% Off</span> : null;
-                                                })()}
-                                            </>
-                                        )}
-                                        {!product.inStock && <span className="out-of-stock-label">Out Of Stock</span>}
-                                    </div>
-                                    {product.inStock ? (
-                                        <button className="btn btn-block" onClick={() => cartService.addToCart(product)}>Add to Cart</button>
-                                    ) : (
-                                        <button className="btn btn-block" disabled style={{ background: '#94a3b8', color: 'white', cursor: 'not-allowed' }}>Out of Stock</button>
-                                    )}
-                                </div>
+                        {loading ? (
+                            <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', height: '400px' }}>
+                                <div className="loading-spinner"></div>
                             </div>
-                        )) : (
-                            <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '6rem 1rem', color: 'var(--text-dark)' }}>
-                                <h2 style={{ fontSize: '2.5rem', fontWeight: 600 }}>No more product available</h2>
-                            </div>
-                        )}
+                        ) : renderGrid()}
                     </div>
-                </div>
-            </section>
+                </section>
             
             <a href="https://wa.me/918299475268" className="whatsapp-float" target="_blank" rel="noreferrer"><WhatsappLogo size={32} /></a>
         </main>

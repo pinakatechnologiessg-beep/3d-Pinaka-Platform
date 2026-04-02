@@ -2,37 +2,31 @@ import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { Link, useParams, useLocation } from 'react-router-dom';
 import { ArrowLeft, WhatsappLogo, Heart, ShoppingCart, FunnelSimple, CaretDown, X } from '@phosphor-icons/react';
 import { BRANDS } from '../constants/data';
-import { ANYCUBIC_PRODUCTS } from '../constants/anycubic_data';
-import { BAMBU_PRODUCTS } from '../constants/bambu_data';
-import { CREALITY_PRODUCTS } from '../constants/creality_data';
-import { SNAPMAKER_PRODUCTS } from '../constants/snapmaker_data';
-import { ROTRICS_PRODUCTS } from '../constants/rotrics_data';
-import { FLASHFORGE_PRODUCTS } from '../constants/flashforge_data';
-import { MAGFORMS_PRODUCTS } from '../constants/magforms_data';
-import { ZMORPH_PRODUCTS } from '../constants/zmorph_data';
-import { ELEGOO_PRODUCTS } from '../constants/elegoo_data';
 import { cartService } from '../services/cartService';
 
 const BrandProductCard = ({ product, revealRef }) => {
-    const [isInWishlist, setIsInWishlist] = useState(cartService.isInWishlist(product.title));
+    const [isInWishlist, setIsInWishlist] = useState(cartService.isInWishlist(product.name || product.title));
+    const parsePrice = (p) => typeof p === 'number' ? p : (parseInt(String(p).replace(/[^0-9]/g, '')) || 0);
 
     useEffect(() => {
-        const checkWishlist = () => setIsInWishlist(cartService.isInWishlist(product.title));
+        const checkWishlist = () => setIsInWishlist(cartService.isInWishlist(product.name || product.title));
         window.addEventListener('wishlistUpdated', checkWishlist);
         return () => window.removeEventListener('wishlistUpdated', checkWishlist);
-    }, [product.title]);
+    }, [product.name, product.title]);
 
     return (
         <div className={`brand-product-card reveal ${!product.inStock ? 'sold-out' : ''}`} ref={revealRef}>
             <div className="badges-row">
-                {product.badges?.map((b, i) => (
-                    <span key={i} className={`mini-badge ${b}`}>
-                        {b === 'sale' ? 'Sale' : b === 'flash' ? 'Flash Sale' : b === 'top' ? 'Top' : b === 'pre' ? 'Pre Order' : b === 'new' ? 'New' : b === 'clearance' ? 'Clearance' : b}
-                    </span>
-                ))}
+                {product.tags && <span className="mini-badge sale">{product.tags}</span>}
+                {product.badge && <span className="mini-badge">{product.badge}</span>}
             </div>
             <div className="image-wrapper">
-                <img src={product.image} alt={product.title} className="product-img" />
+                <img 
+                    src={product.image?.startsWith('/uploads') ? `http://localhost:5000${product.image}` : (product.image || 'https://via.placeholder.com/300x300?text=No+Image')} 
+                    alt={product.name || product.title} 
+                    className="product-img" 
+                    onError={(e) => { e.target.src = 'https://via.placeholder.com/300x300?text=Image+Not+Found'; }}
+                />
                 {!product.inStock && (
                     <div className="sold-out-overlay">
                         <div className="sold-out-circle">Sold Out</div>
@@ -40,23 +34,36 @@ const BrandProductCard = ({ product, revealRef }) => {
                 )}
             </div>
             <div className="content">
-                <h3 className="title">{product.title}</h3>
+                <div className="product-cat">{product.category} {product.brand && `| ${product.brand}`}</div>
+                <h3 className="title">{product.name || product.title}</h3>
                 <div className="reviews">
-                    <span className="stars">{product.stars.split(' ')[0]}</span>
-                    <span className="review-count">{product.stars.split(' ')[1]}</span>
+                    <span className="stars">
+                        {typeof product.rating === 'number' ? 
+                            ('★'.repeat(Math.floor(product.rating)) + '☆'.repeat(5 - Math.floor(product.rating))) : 
+                            (product.stars?.split(' ')[0] || '★★★★★')
+                        }
+                    </span>
+                    <span className="review-count">
+                        {typeof product.rating === 'number' ? 
+                            `(${product.rating.toFixed(1)})` : 
+                            (product.stars?.split(' ')[1] || '(5.0)')
+                        }
+                    </span>
                 </div>
-                <div className="spec-grid">
-                    {product.specs.map((spec, i) => (
-                        <div key={i} className="spec-item">
-                            <span className="spec-label">{spec.label}</span>
-                            <span className="spec-value">{spec.value}</span>
-                        </div>
-                    ))}
-                </div>
+                {product.specs && product.specs.length > 0 && (
+                    <div className="spec-grid">
+                        {product.specs.slice(0, 4).map((spec, i) => (
+                            <div key={i} className="spec-item">
+                                <span className="spec-label">{spec.label}</span>
+                                <span className="spec-value">{spec.value}</span>
+                            </div>
+                        ))}
+                    </div>
+                )}
                 <div className="footer">
                     <div className="price-section">
-                        <span className="current-price">{product.price}</span>
-                        {product.oldPrice && <span className="old-price">{product.oldPrice}</span>}
+                        <span className="current-price">₹{parsePrice(product.price).toLocaleString('en-IN')}</span>
+                        {(product.mrp || product.oldPrice) && <span className="old-price">₹{parsePrice(product.mrp || product.oldPrice).toLocaleString('en-IN')}</span>}
                         {!product.inStock && <span className="out-of-stock-label">Out Of Stock</span>}
                     </div>
                     {product.inStock ? (
@@ -88,7 +95,7 @@ const SORT_OPTIONS = [
     { label: 'Price, high to low', value: 'price_desc' },
 ];
 
-const parsePrice = (p) => parseInt(p.replace(/[^0-9]/g, '')) || 0;
+const parsePrice = (p) => typeof p === 'number' ? p : (parseInt(String(p).replace(/[^0-9]/g, '')) || 0);
 
 const BrandPage = () => {
     const { brandName } = useParams();
@@ -97,44 +104,68 @@ const BrandPage = () => {
     const [showFilter, setShowFilter] = useState(true);
     const [sortBy, setSortBy] = useState('best');
     const [sortOpen, setSortOpen] = useState(false);
+    const ALL_CATS = useMemo(() => ['3D Printer', 'Filament', 'Resin', 'Accessory', 'Spare Parts', '3D Pen', '3D Scanner', 'Laser Engraver', 'CNC Router', 'Food Printer', 'Robotics', 'Safety'], []);
     const [availabilityFilter, setAvailabilityFilter] = useState([]);
+    const [selectedCats, setSelectedCats] = useState(ALL_CATS.map(c => c.toLowerCase()));
     const [minPrice, setMinPrice] = useState(0);
-    const [maxPriceVal, setMaxPriceVal] = useState(100000);
+    const [maxPriceVal, setMaxPriceVal] = useState(1000000);
+    const [dbProducts, setDbProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     const effectiveBrandName = brandName || location.pathname.split('/').pop().replace('.html', '');
     const brand = BRANDS.find(b => b.path === effectiveBrandName) || { name: effectiveBrandName.charAt(0).toUpperCase() + effectiveBrandName.slice(1) };
-    const isAnycubic = effectiveBrandName.toLowerCase() === 'anycubic';
-    const isBambu = effectiveBrandName.toLowerCase() === 'bambu';
-    const isCreality = effectiveBrandName.toLowerCase() === 'creality';
-    const isSnapmaker = effectiveBrandName.toLowerCase() === 'snapmaker';
-    const isRotrics = effectiveBrandName.toLowerCase() === 'rotrics';
-    const isFlashforge = effectiveBrandName.toLowerCase() === 'flashforge';
-    const isMagforms = effectiveBrandName.toLowerCase() === 'magforms';
-    const isZmorph = effectiveBrandName.toLowerCase() === 'zmorph';
-    const isElegoo = effectiveBrandName.toLowerCase() === 'elegoo';
-    const allProducts = isAnycubic ? ANYCUBIC_PRODUCTS : isBambu ? BAMBU_PRODUCTS : isCreality ? CREALITY_PRODUCTS : isSnapmaker ? SNAPMAKER_PRODUCTS : isRotrics ? ROTRICS_PRODUCTS : isFlashforge ? FLASHFORGE_PRODUCTS : isMagforms ? MAGFORMS_PRODUCTS : isZmorph ? ZMORPH_PRODUCTS : isElegoo ? ELEGOO_PRODUCTS : [];
+    
+    useEffect(() => {
+        const fetchBrandProducts = async () => {
+            setLoading(true);
+            try {
+                let queryStr = `brand=${brand.name.toLowerCase()}&`;
+                // If exactly 1 filter is selected, send it. If 0 or 2, send nothing (show all)
+                if (availabilityFilter.length === 1) {
+                    queryStr += `availability=${availabilityFilter[0]}&`;
+                }
+                const res = await fetch(`http://localhost:5000/api/products?${queryStr.replace(/&$/, '')}`);
+                if (res.ok) {
+                    setDbProducts(await res.json());
+                }
+            } catch (err) {
+                console.error("Brand fetch error:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchBrandProducts();
+    }, [brand.name, availabilityFilter]);
 
-    const realMaxPrice = useMemo(() => Math.max(...allProducts.map(p => parsePrice(p.price)), 100000), [allProducts]);
-    const realMinPrice = useMemo(() => Math.min(...allProducts.map(p => parsePrice(p.price)), 0), [allProducts]);
+    const realMaxPrice = useMemo(() => Math.max(...dbProducts.map(p => parsePrice(p.price)), 100000), [dbProducts]);
+    const realMinPrice = useMemo(() => Math.min(...dbProducts.map(p => parsePrice(p.price)), 0), [dbProducts]);
 
     useEffect(() => {
-        if (allProducts.length > 0) {
+        if (dbProducts.length > 0) {
             setMinPrice(realMinPrice);
             setMaxPriceVal(realMaxPrice);
-            setAvailabilityFilter([]); // Reset filters when brand changes
-            setSortBy('best');
         }
-    }, [allProducts, realMaxPrice, realMinPrice]);
+    }, [dbProducts, realMaxPrice, realMinPrice]);
 
     const products = useMemo(() => {
-        let filtered = [...allProducts];
+        // Find static products for this brand
+        let staticBrandProducts = [];
+        const bLabel = brand.name.toLowerCase();
+        // (Removing static products for brevity if they are not in use, but normally we'd keep them if they exist)
+        
+        let filtered = [...dbProducts];
 
-        if (availabilityFilter.length > 0) {
+        // Availability filtering is handled by the backend API.
+        // Frontend handles categories/price/sort.
+
+        if (selectedCats.length < ALL_CATS.length) {
             filtered = filtered.filter(p => {
-                if (availabilityFilter.includes('in') && availabilityFilter.includes('out')) return true;
-                if (availabilityFilter.includes('in')) return p.inStock;
-                if (availabilityFilter.includes('out')) return !p.inStock;
-                return true;
+                const pCat = (p.category || '').toLowerCase();
+                return selectedCats.some(cat => {
+                    const c = cat.toLowerCase();
+                    if (c === '3d printer') return ['fdm', 'resin', 'industrial', 'dental', 'fdm printer', 'resin printer', 'industrial-max'].some(t => pCat.includes(t));
+                    return pCat.includes(c.replace(/s$/, '')) || c.includes(pCat.replace(/s$/, ''));
+                });
             });
         }
 
@@ -144,19 +175,14 @@ const BrandPage = () => {
         });
 
         switch (sortBy) {
-            case 'az': filtered.sort((a, b) => a.title.localeCompare(b.title)); break;
-            case 'za': filtered.sort((a, b) => b.title.localeCompare(a.title)); break;
+            case 'az': filtered.sort((a, b) => (a.name || a.title).localeCompare(b.name || b.title)); break;
+            case 'za': filtered.sort((a, b) => (b.name || b.title).localeCompare(a.name || a.title)); break;
             case 'price_asc': filtered.sort((a, b) => parsePrice(a.price) - parsePrice(b.price)); break;
             case 'price_desc': filtered.sort((a, b) => parsePrice(b.price) - parsePrice(a.price)); break;
             default: break;
         }
         return filtered;
-    }, [allProducts, minPrice, maxPriceVal, sortBy, availabilityFilter]);
-
-    const activeTags = availabilityFilter.map(a => ({
-        type: 'availability', value: a,
-        label: `Availability: ${a === 'in' ? 'In stock' : 'Out of stock'}`
-    }));
+    }, [dbProducts, minPrice, maxPriceVal, sortBy, availabilityFilter, selectedCats, ALL_CATS]);
 
     useEffect(() => {
         const observer = new IntersectionObserver((entries) => {
@@ -187,10 +213,34 @@ const BrandPage = () => {
     revealRefs.current = [];
 
     const toggleAvailability = (val) => setAvailabilityFilter(prev => prev.includes(val) ? prev.filter(v => v !== val) : [...prev, val]);
-    const removeTag = (tag) => { if (tag.type === 'availability') setAvailabilityFilter(prev => prev.filter(v => v !== tag.value)); };
-    const clearAll = () => { setAvailabilityFilter([]); setMinPrice(realMinPrice); setMaxPriceVal(realMaxPrice); };
+    const toggleCat = (cat) => {
+        const cLow = cat.toLowerCase();
+        setSelectedCats(prev => prev.includes(cLow) ? prev.filter(c => c !== cLow) : [...prev, cLow]);
+    };
+    const removeTag = (tag) => { 
+        if (tag.type === 'availability') toggleAvailability(tag.value); 
+        if (tag.type === 'category') toggleCat(tag.value);
+    };
+    const clearAll = () => { 
+        setAvailabilityFilter([]); 
+        setSelectedCats(ALL_CATS.map(c => c.toLowerCase()));
+        setMinPrice(realMinPrice); 
+        setMaxPriceVal(realMaxPrice); 
+    };
+
+    const activeTags = [
+        ...(availabilityFilter.length === 1 ? availabilityFilter.map(a => ({
+            type: 'availability', value: a,
+            label: `Availability: ${a === 'inStock' ? 'In stock' : 'Out of stock'}`
+        })) : []),
+        ...(selectedCats.length < ALL_CATS.length ? selectedCats.map(c => ({
+            type: 'category', value: c,
+            label: `Category: ${c}`
+        })) : [])
+    ];
 
     const showOutOfStockMsg = availabilityFilter.length === 1 && availabilityFilter.includes('out') && !products.some(p => !p.inStock);
+    const SortOptionLabel = SORT_OPTIONS.find(opt => opt.value === sortBy)?.label || 'Best selling';
 
     return (
         <main>
@@ -200,7 +250,7 @@ const BrandPage = () => {
                 <p style={{ color: '#94a3b8', marginTop: '1rem' }}>Explore the latest collection from {brand.name}</p>
             </div>
 
-            {allProducts.length > 0 ? (
+            {dbProducts.length > 0 ? (
                 <section className="section container">
                     <div className="filter-topbar">
                         <button className="filter-toggle-btn" onClick={() => setShowFilter(!showFilter)}>
@@ -210,7 +260,7 @@ const BrandPage = () => {
                         <div className="sort-wrapper">
                             <span className="sort-label">Sort by:</span>
                             <div className="sort-dropdown" onClick={() => setSortOpen(!sortOpen)}>
-                                <span>{SORT_OPTIONS.find(o => o.value === sortBy)?.label}</span>
+                                <span>{SortOptionLabel}</span>
                                 <CaretDown size={16} />
                                 {sortOpen && (
                                     <div className="sort-menu">
@@ -239,25 +289,41 @@ const BrandPage = () => {
                         {showFilter && (
                             <aside className="filter-sidebar">
                                 <div className="filter-section">
-                                    <div className="filter-section-header">
-                                        <h4>Availability</h4>
-                                    </div>
+                                    <div className="filter-section-header"><h4>Availability</h4></div>
                                     <label className="filter-checkbox">
-                                        <input type="checkbox" checked={availabilityFilter.includes('in')} onChange={() => toggleAvailability('in')} />
+                                        <input type="checkbox" checked={availabilityFilter.includes('inStock')} onChange={() => setAvailabilityFilter(prev => prev.includes('inStock') ? prev.filter(v => v !== 'inStock') : [...prev, 'inStock'])} />
                                         <span>In Stock</span>
                                     </label>
                                     <label className="filter-checkbox">
-                                        <input type="checkbox" checked={availabilityFilter.includes('out')} onChange={() => toggleAvailability('out')} />
+                                        <input type="checkbox" checked={availabilityFilter.includes('outOfStock')} onChange={() => setAvailabilityFilter(prev => prev.includes('outOfStock') ? prev.filter(v => v !== 'outOfStock') : [...prev, 'outOfStock'])} />
                                         <span>Out Of Stock</span>
                                     </label>
                                 </div>
-
+                                <div className="filter-section">
+                                    <div className="filter-section-header"><h4>Category</h4></div>
+                                    <div className="filter-scroll-area">
+                                        <label className="filter-checkbox all-option">
+                                            <input 
+                                                type="checkbox" 
+                                                checked={selectedCats.length === ALL_CATS.length} 
+                                                onChange={() => setSelectedCats(ALL_CATS.map(c => c.toLowerCase()))} 
+                                            />
+                                            <span style={{ fontWeight: 600 }}>All</span>
+                                        </label>
+                                        {ALL_CATS.map(cat => (
+                                            <label key={cat} className="filter-checkbox">
+                                                <input type="checkbox" checked={selectedCats.includes(cat.toLowerCase())} onChange={() => toggleCat(cat)} />
+                                                <span>{cat}</span>
+                                            </label>
+                                        ))}
+                                    </div>
+                                </div>
                                 <div className="filter-section">
                                     <div className="filter-section-header"><h4>Price</h4></div>
                                     <div className="dual-range-container">
                                         <div className="range-marks">
-                                            <span>₹{realMinPrice}</span>
-                                            <span>₹{realMaxPrice}</span>
+                                            <span>₹{realMinPrice.toLocaleString()}</span>
+                                            <span>₹{realMaxPrice.toLocaleString()}</span>
                                         </div>
                                         <div className="dual-range-track">
                                             <div className="dual-range-fill" style={{
@@ -273,9 +339,9 @@ const BrandPage = () => {
                             </aside>
                         )}
 
-                        <div className={`brand-product-grid ${showFilter ? '' : 'full-width'}`}>
+                        <div className={`brand-product-grid ${showFilter ? '' : 'full-width'}`} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '2rem', flex: 1 }}>
                             {products.length > 0 ? products.map((product) => (
-                                <BrandProductCard key={`${product.id}-${sortBy}`} product={product} revealRef={addToRevealRefs} />
+                                <BrandProductCard key={product._id || product.id} product={product} revealRef={addToRevealRefs} />
                             )) : (
                                 <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '4rem', color: 'var(--text-muted)' }}>
                                     <p>No products match your filters.</p>
@@ -291,9 +357,8 @@ const BrandPage = () => {
                         <div className="reveal" style={{ gridColumn: '1 / -1', padding: '4rem', textAlign: 'center', background: 'var(--light-bg)', borderRadius: '12px' }} ref={addToRevealRefs}>
                             <h2 style={{ fontSize: '2rem', color: 'var(--text-dark)', marginBottom: '1rem' }}>{brand.name} Collection</h2>
                             <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>
-                                {['Skriware', 'Sunlu'].includes(brand.name) ? 'No products available' : 'Products and images for this brand will be added here later.'}
+                                Loading products for {brand.name}...
                             </p>
-                            <Link to="/products" className="btn btn-primary" style={{ marginTop: '2rem', display: 'inline-block' }}>View All General Products</Link>
                         </div>
                     </div>
                 </section>
