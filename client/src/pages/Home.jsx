@@ -5,12 +5,14 @@ import { PRODUCTS, BRANDS } from '../constants/data';
 import { cartService } from '../services/cartService';
 import { getImageUrl } from '../utils/imageUtils';
 
+import { API_BASE_URL } from '../api/config';
+
 const Home = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const navigate = useNavigate();
-  const revealRefs = useRef([]);
-  
-  const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    const [currentSlide, setCurrentSlide] = useState(0);
+    const navigate = useNavigate();
+    const revealRefs = useRef([]);
+    
+    const BASE_URL = API_BASE_URL;
   
   const parsePriceLocal = (price) => {
     if (!price) return 0;

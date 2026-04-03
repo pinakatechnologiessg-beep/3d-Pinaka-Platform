@@ -4,9 +4,10 @@ import { Star, ShoppingCart, Heart, WhatsappLogo, ArrowLeft, Plus, Minus, CheckC
 import ProductImageZoom from '../components/ProductImageZoom';
 import { cartService } from '../services/cartService';
 import { getImageUrl } from '../utils/imageUtils';
+import { API_BASE_URL } from '../api/config';
 import './ProductDetail.css';
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const BASE_URL = API_BASE_URL;
 
 const ProductDetail = () => {
     const { id } = useParams();
@@ -351,6 +352,7 @@ const ProductDetail = () => {
                                         <img 
                                             src={getImageUrl(p.image)} 
                                             alt={p.name} 
+                                            onError={(e) => { e.target.onerror = null; e.target.src = 'https://res.cloudinary.com/dbv5unrxu/image/upload/v1712160000/placeholder_3d_m0h6uv.png'; }}
                                         />
                                     </div>
                                     <div className="product-info">

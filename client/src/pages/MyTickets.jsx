@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../api/config';
 import { Calendar, ChatCircleDots, PaperPlaneTilt, CaretRight, Info, CheckCircle, WarningCircle, ArrowLeft, User, ShieldCheck } from '@phosphor-icons/react';
 
 const MyTickets = () => {
@@ -15,7 +16,7 @@ const MyTickets = () => {
         if (!token) return navigate('/login');
 
         try {
-            const response = await fetch('http://localhost:5000/api/support/my-tickets', {
+            const response = await fetch(`${API_BASE_URL}/api/support/my-tickets`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await response.json();
@@ -45,7 +46,7 @@ const MyTickets = () => {
 
         const token = localStorage.getItem('token');
         try {
-            const response = await fetch(`http://localhost:5000/api/support/${selectedTicket._id}/reply`, {
+            const response = await fetch(`${API_BASE_URL}/api/support/${selectedTicket._id}/reply`, {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',

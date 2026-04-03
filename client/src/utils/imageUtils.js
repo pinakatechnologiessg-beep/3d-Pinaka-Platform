@@ -1,23 +1,25 @@
-export const getImageUrl = (imagePath) => {
-    if (!imagePath) return '/fallback.png';
-    
-    // 1. Return immediately if it's already an absolute URL
-    if (imagePath.startsWith('http')) return imagePath;
-    
-    const BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/$/, "");
-    
-    // 2. Handle /uploads/ and /images/ paths (standard formats)
-    if (imagePath.startsWith('/uploads') || imagePath.startsWith('/images')) {
-        return `${BASE_URL}${imagePath}`;
-    }
-    
-    // 3. Handle 'uploads/...' and 'images/...' (without leading slash)
-    if (imagePath.startsWith('uploads/') || imagePath.startsWith('images/')) {
-        return `${BASE_URL}/${imagePath}`;
-    }
-    
-    // 4. Legacy/Filename-only: fallback to /uploads/
-    const cleanPath = imagePath.startsWith('/') ? imagePath.slice(1) : imagePath;
-    return `${BASE_URL}/uploads/${cleanPath}`;
-};
+import { API_BASE_URL } from '../api/config';
 
+/**
+ * Universal Image URL Helper
+ * Handles: 
+ * 1. Full Cloudinary URLs (starting with http)
+ * 2. Local backend paths (/images/ or /uploads/)
+ * 3. Fallback to a high-quality placeholder for invalid paths
+ */
+export const getImageUrl = (imagePath) => {
+    // 1. Placeholder for missing paths
+    if (!imagePath) return 'https://res.cloudinary.com/dbv5unrxu/image/upload/v1712160000/placeholder_3d_m0h6uv.png';
+    
+    // 2. If it's already an absolute URL (Cloudinary/External), return it
+    if (imagePath.startsWith('http')) return imagePath;
+
+    // 3. Centralized API Base (Render URL)
+    const base = API_BASE_URL.replace(/\/$/, "");
+    
+    // 4. Ensure path starts with leading slash
+    const cleanPath = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
+    
+    // 5. Build full production URL
+    return `${base}${cleanPath}`;
+};

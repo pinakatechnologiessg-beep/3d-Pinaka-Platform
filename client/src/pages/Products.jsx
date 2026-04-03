@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, WhatsappLogo, FunnelSimple, CaretDown, X } from '@phosphor-icons/react';
 import { cartService } from '../services/cartService';
 import { getImageUrl } from '../utils/imageUtils';
+import { API_BASE_URL } from '../api/config';
 
 const parsePriceLocal = (price) => {
   if (!price) return 0;
@@ -58,7 +59,7 @@ const Products = () => {
         categories: []
     });
 
-    const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    const BASE_URL = API_BASE_URL;
 
     // 3. LOAD META OPTIONS
     useEffect(() => {
@@ -299,11 +300,8 @@ const Products = () => {
                                                             alt={product.name}
                                                             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                                             onError={(e) => { 
-                                                                if(product.name === "Refurbished Bambu Lab A1 Mini 3D Printer") {
-                                                                    console.error("Image failed for specific product:", product.image);
-                                                                }
                                                                 e.target.onerror = null; 
-                                                                e.target.src = '/fallback.png'; 
+                                                                e.target.src = 'https://res.cloudinary.com/dbv5unrxu/image/upload/v1712160000/placeholder_3d_m0h6uv.png'; 
                                                             }}
                                                         />
                                                         {!product.inStock && (

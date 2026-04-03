@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../api/config';
 import { Calendar, ChatCircleDots, PaperPlaneTilt, CaretRight, Info, CheckCircle, WarningCircle, ArrowLeft, User, ShieldCheck, FunnelSimple, ArrowsClockwise } from '@phosphor-icons/react';
 
 const AdminSupport = () => {
@@ -16,7 +17,7 @@ const AdminSupport = () => {
         if (!token) return navigate('/login');
 
         try {
-            const response = await fetch('http://localhost:5000/api/support', {
+            const response = await fetch(`${API_BASE_URL}/api/support`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await response.json();
@@ -41,7 +42,7 @@ const AdminSupport = () => {
     const updateTicketStatus = async (id, newStatus) => {
         const token = localStorage.getItem('token');
         try {
-            const response = await fetch(`http://localhost:5000/api/support/${id}/status`, {
+            const response = await fetch(`${API_BASE_URL}/api/support/${id}/status`, {
                 method: 'PUT',
                 headers: { 
                     'Content-Type': 'application/json',
@@ -62,7 +63,7 @@ const AdminSupport = () => {
 
         const token = localStorage.getItem('token');
         try {
-            const response = await fetch(`http://localhost:5000/api/support/${selectedTicket._id}/reply`, {
+            const response = await fetch(`${API_BASE_URL}/api/support/${selectedTicket._id}/reply`, {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',

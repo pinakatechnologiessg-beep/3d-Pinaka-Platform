@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../api/config';
 import { ArrowLeft, User, Lock, WhatsappLogo } from '@phosphor-icons/react';
 import { cartService, WISHLIST_UPDATED } from '../services/cartService';
 
@@ -21,7 +22,7 @@ const Login = () => {
                 navigate('/account'); // Automatically go to account if already login
             } catch(e) { setCurrentUser(null); }
         }
-        fetch('http://localhost:5000/api/auth/users')
+        fetch(`${API_BASE_URL}/api/auth/users`)
             .then(res => res.json())
             .then(data => setUsers(Array.isArray(data) ? data : []))
             .catch(err => console.error(err));
@@ -43,7 +44,7 @@ const Login = () => {
         e.preventDefault();
         setError(''); setSuccess('');
         try {
-            const res = await fetch('http://localhost:5000/api/auth/login', {
+            const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: formData.email, password: formData.password })
@@ -77,7 +78,7 @@ const Login = () => {
             return;
         }
         try {
-            const res = await fetch('http://localhost:5000/api/auth/register', {
+            const res = await fetch(`${API_BASE_URL}/api/auth/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
@@ -87,7 +88,7 @@ const Login = () => {
                 setSuccess('Account created! You can now sign in.');
                 setActiveTab('signin');
                 // Refresh users
-                const updatedUsers = await fetch('http://localhost:5000/api/auth/users').then(r => r.json());
+                const updatedUsers = await fetch(`${API_BASE_URL}/api/auth/users`).then(r => r.json());
                 setUsers(Array.isArray(updatedUsers) ? updatedUsers : []);
             } else {
                 setError(data.message || 'Registration failed');
