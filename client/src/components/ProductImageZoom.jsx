@@ -47,10 +47,7 @@ const ProductImageZoom = ({ image, alt }) => {
       <img
         src={image}
         alt={alt || "product"}
-        onError={(e) => { 
-          e.target.onerror = null; 
-          e.target.src = 'https://res.cloudinary.com/dbv5unrxu/image/upload/v1712160000/placeholder_3d_m0h6uv.png'; 
-        }}
+        onError={(e) => (e.target.src = "/placeholder.png")}
         style={{
           width: "100%",
           height: "100%",

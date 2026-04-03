@@ -584,7 +584,7 @@ const AdminDashboard = () => {
                                     src={getImageUrl(product.image)} 
                                     alt={product.name || product.title} 
                                     className="product-img" 
-                                    onError={(e) => { e.target.src = '/fallback.png'; }}
+                                    onError={(e) => (e.target.src = "/placeholder.png")}
                                 />
                             </div>
                             <div className="product-info">

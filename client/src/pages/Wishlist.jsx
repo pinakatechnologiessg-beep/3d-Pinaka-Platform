@@ -64,7 +64,7 @@ const Wishlist = () => {
                                         alt={item.title} 
                                         className="product-img" 
                                         style={{ height: '100%', width: '100%', objectFit: 'contain' }} 
-                                        onError={(e) => { e.target.onerror = null; e.target.src = '/fallback.png'; }}
+                                        onError={(e) => (e.target.src = "/placeholder.png")}
                                     />
                                 </div>
                                 <div className="product-info" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>

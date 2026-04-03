@@ -263,7 +263,7 @@ const Home = () => {
                             src={getImageUrl(product.image)} 
                             alt={product.name || product.title} 
                             className="product-img" 
-                            onError={(e) => { e.target.onerror = null; e.target.src = '/fallback.png'; }}
+                            onError={(e) => (e.target.src = "/placeholder.png")}
                         />
                     </Link>
                     <div className="product-info">

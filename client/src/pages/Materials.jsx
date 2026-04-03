@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, WhatsappLogo, Heart } from '@phosphor-icons/react';
 import { MATERIALS } from '../constants/data';
 import { cartService } from '../services/cartService';
+import { getImageUrl } from '../utils/imageUtils';
 
 const Materials = () => {
     const revealRefs = useRef([]);
@@ -83,7 +84,12 @@ const Materials = () => {
                             >
                                 <Heart size={20} weight={wishlist.some(w => w.title === (item.name || item.title)) ? "fill" : "bold"} />
                             </button>
-                            <img src={item.image?.startsWith('/uploads') ? `http://localhost:5000${item.image}` : item.image} alt={item.name || item.title} className="product-img" />
+                            <img 
+                                src={getImageUrl(item.image)} 
+                                alt={item.name || item.title} 
+                                className="product-img" 
+                                onError={(e) => (e.target.src = "/placeholder.png")}
+                            />
                             <div className="product-info">
                                 <div className="product-cat">{item.category} {item.brand && `| ${item.brand}`}</div>
                                 <div className="product-title">{item.name || item.title}</div>

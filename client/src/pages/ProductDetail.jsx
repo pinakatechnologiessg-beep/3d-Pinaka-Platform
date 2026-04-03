@@ -352,7 +352,7 @@ const ProductDetail = () => {
                                         <img 
                                             src={getImageUrl(p.image)} 
                                             alt={p.name} 
-                                            onError={(e) => { e.target.onerror = null; e.target.src = 'https://res.cloudinary.com/dbv5unrxu/image/upload/v1712160000/placeholder_3d_m0h6uv.png'; }}
+                                            onError={(e) => (e.target.src = "/placeholder.png")}
                                         />
                                     </div>
                                     <div className="product-info">

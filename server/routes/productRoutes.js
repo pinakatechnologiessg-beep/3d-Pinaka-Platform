@@ -146,6 +146,10 @@ router.post('/', upload.single('image'), async (req, res) => {
       return res.status(400).json({ message: "Product image is required." });
     }
     
+    if (!productData.image.startsWith("http")) {
+      throw new Error("Only Cloudinary URLs allowed");
+    }
+    
     console.log("Saving product to MongoDB...");
     const product = new Product(productData);
     await product.save();
@@ -201,6 +205,10 @@ router.put('/:id', upload.single('image'), async (req, res) => {
     if (req.file) {
       // With CloudinaryStorage, req.file.path contains the direct URL
       updateData.image = req.file.path;
+    }
+    
+    if (updateData.image && !updateData.image.startsWith("http")) {
+      throw new Error("Only Cloudinary URLs allowed");
     }
     
     const product = await Product.findByIdAndUpdate(req.params.id, updateData, { new: true });

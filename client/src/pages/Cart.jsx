@@ -113,7 +113,7 @@ const Cart = () => {
                                 <img 
                                     src={getImageUrl(item.image)} 
                                     alt={item.title} 
-                                    onError={(e) => { e.target.onerror = null; e.target.src = '/fallback.png'; }}
+                                    onError={(e) => (e.target.src = "/placeholder.png")}
                                     style={{ width: '100px', height: '100px', objectFit: 'contain', borderRadius: '8px', background: 'var(--light-bg)' }} 
                                 />
                                 <div className="cart-item-info" style={{ flex: 1 }}>
