@@ -4,6 +4,11 @@ import upload from '../middleware/upload.js';
 
 const router = express.Router();
 
+// GET /api/products/status -> status check
+router.get('/status', (req, res) => {
+  res.json({ status: "OK", service: "Product Service" });
+});
+
 // Get all products
 router.get('/meta', async (req, res) => {
   try {

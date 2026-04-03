@@ -6,6 +6,15 @@ import bcrypt from 'bcryptjs';
 
 const router = express.Router();
 
+// GET /api/auth -> Base status
+router.get('/', (req, res) => {
+  res.json({ status: "OK", message: "Auth API working 🔐" });
+});
+
+router.get('/status', (req, res) => {
+  res.json({ status: "OK", service: "Authentication Service" });
+});
+
 // Register
 router.post('/register', async (req, res) => {
   try {
