@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { CaretDown, MagnifyingGlass, User, Heart, ShoppingCart, List, Shield } from '@phosphor-icons/react';
+import { ShoppingCart, Heart, User, List, X, CaretDown, MagnifyingGlass, Package, Shield } from '@phosphor-icons/react';
+import { cartService } from '../services/cartService';
+import { getImageUrl } from '../utils/imageUtils';
 import Logo from './Logo';
 
 const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu }) => {
@@ -76,13 +78,13 @@ const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu }) => {
                 </div>
                 <div className="mega-col mega-img-col">
                   <Link to="/products.html?category=3D Printer" className="mega-img-card">
-                    <img src="/images/product_fdm_1_1774868367269.png" alt="3D Printer" />
+                    <img src={getImageUrl("/images/product-fdm-1-1774868367269.png")} alt="3D Printer" loading="lazy" onError={(e) => (e.target.src = "/placeholder.png")}/>
                     <span className="label" style={{ boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }}>3D Printer</span>
                   </Link>
                 </div>
                 <div className="mega-col mega-img-col">
                   <Link to="/products.html?category=Laser Engraver" className="mega-img-card laser-img" style={{ background: '#e2e8f0' }}>
-                    <img src="/images/product_resin_2_1774868383507.png" alt="Laser Engraver" />
+                    <img src={getImageUrl("/images/product-resin-2-1774868383507.png")} alt="Laser Engraver" loading="lazy" onError={(e) => (e.target.src = "/placeholder.png")}/>
                     <span className="label" style={{ boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }}>Laser Engraver</span>
                   </Link>
                 </div>
@@ -121,7 +123,7 @@ const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu }) => {
                     <div className="refurbished-products-list">
                       <div className="refurbished-product-item">
                         <div className="product-thumb">
-                          <img src="/images/Refurbished Anycubic Kobra 3 Combo 3D Printer.png" alt="Refurbished Anycubic Kobra 3 Combo 3D Printer" />
+                          <img src={getImageUrl("/images/refurbished-anycubic-kobra-3-combo-3d-printer.png")} alt="Refurbished Anycubic Kobra 3 Combo 3D Printer" loading="lazy" onError={(e) => (e.target.src = "/placeholder.png")}/>
                         </div>
                         <div className="product-details">
                           <Link to="/products?condition=Refurbished&brand=anycubic" className="product-name">Refurbished Anycubic Kobra 3 Combo 3D Printer</Link>
@@ -130,7 +132,7 @@ const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu }) => {
                       </div>
                       <div className="refurbished-product-item">
                         <div className="product-thumb">
-                          <img src="/images/Refurbished Ender-3 S1 Pro 3D Printer.png" alt="Refurbished Ender-3 S1 Pro 3D Printer" />
+                          <img src={getImageUrl("/images/refurbished-ender-3-s1-pro-3d-printer.png")} alt="Refurbished Ender-3 S1 Pro 3D Printer" loading="lazy" onError={(e) => (e.target.src = "/placeholder.png")}/>
                         </div>
                         <div className="product-details">
                           <Link to="/products?condition=Refurbished&brand=creality" className="product-name">Refurbished Ender-3 S1 Pro 3D Printer</Link>
@@ -139,7 +141,7 @@ const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu }) => {
                       </div>
                       <div className="refurbished-product-item">
                         <div className="product-thumb">
-                          <img src="/images/Refurbished Anycubic Kobra 3 Combo 3D Printer with 4 Color 3Idea PLA Filaments (Green,Purple,Sky Blue,Skin).png" alt="Refurbished Anycubic Kobra 3 Combo 3D Printer with 4 Color 3Idea PLA Filaments" />
+                          <img src={getImageUrl("/images/refurbished-anycubic-kobra-3-combo-3d-printer-with-4-color-3idea-pla-filaments-green-purple-sky-blue-skin-.png")} alt="Refurbished Anycubic Kobra 3 Combo 3D Printer with 4 Color 3Idea PLA Filaments" loading="lazy" onError={(e) => (e.target.src = "/placeholder.png")}/>
                         </div>
                         <div className="product-details">
                           <Link to="/products?condition=Refurbished&brand=anycubic" className="product-name">Refurbished Anycubic Kobra 3 Combo 3D Printer with 4 Color 3Idea PLA Filaments (Green,Purple,Sky Blue,Skin)</Link>
