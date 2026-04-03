@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { getImageUrl } from '../utils/imageUtils';
 import { ArrowLeft, RocketLaunch, Cpu, Users, Globe, WhatsappLogo } from '@phosphor-icons/react';
 
 const About = () => {
@@ -28,7 +29,7 @@ const About = () => {
         <main>
             {/* Hero Section */}
             <div style={{ position: 'relative', height: '400px', overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'white', textAlign: 'center', backgroundColor: '#000' }}>
-                <img src="/images/about-hero.png" alt="About Us Hero" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0, filter: 'brightness(0.35)' }} />
+                <img src={getImageUrl("/images/about-hero.png")} alt="About Us Hero" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0, filter: 'brightness(0.35)' }} onError={(e) => (e.target.src = "/placeholder.png")} />
                 
                 <div className="container" style={{ position: 'relative', zIndex: 1, width: '100%' }}>
                     <div style={{ position: 'absolute', top: '-110px', left: '15px' }}>

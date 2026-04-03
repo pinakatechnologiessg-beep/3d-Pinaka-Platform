@@ -22,7 +22,7 @@ const Home = () => {
 
   const slides = [
     {
-      img: "/images/hero_printer_1_1774867967898.png",
+      img: getImageUrl("/images/hero-printer-1-1774867967898.png"),
       brand: "Bambu Lab",
       title: "P2S COMBO",
       subtitle: "The Icon, Redefined",
@@ -30,7 +30,7 @@ const Home = () => {
       features: ["4-SYSTEM FILAMENT MIXING", "ACOLD-AIR ADAPTIVE COOLING", "1080P HIGH-RATE CAMERA", "BLAZING SPEED AT 600 MM/S"]
     },
     {
-      img: "/images/hero_printer_2_1774868029567.png",
+      img: getImageUrl("/images/hero-printer-2-1774868029567.png"),
       brand: "Anycubic",
       brandColor: "#f97316",
       title: "PHOTON M3 PRO",
@@ -39,7 +39,7 @@ const Home = () => {
       features: ["8K RESOLUTION SCREEN", "SMART RESIN FILL", "WIFI CONNECTIVITY", "LIGHMAKER UV MATRIX"]
     },
     {
-      img: "/images/hero_printer_3_1774868059995.png",
+      img: getImageUrl("/images/hero-printer-3-1774868059995.png"),
       brand: "Creality",
       brandColor: "#3b82f6",
       title: "ENDER-3 V3",
@@ -48,7 +48,7 @@ const Home = () => {
       features: ["COREXZ MOTION", "AUTO CALIBRATION", "QUICK-SWAP NOZZLE"]
     },
     {
-      img: "/images/hero_printer_4_1774868325785.png",
+      img: getImageUrl("/images/hero-printer-4-1774868325785.png"),
       brand: "Snapmaker",
       brandColor: "#10b981",
       title: "J1 PRO IDEX",
@@ -403,9 +403,9 @@ const Home = () => {
             </div>
             
             <div className="tech-images">
-                <img src="/images/Creality K1 Max 3D Printer.png" alt="High Speed Printing" className="tech-img" />
-                <img src="/images/Snapmaker 2.0 A350T 3-in-1 3D Printer.png" alt="Cutting Edge Tech" className="tech-img" />
-                <img src="/images/3D Printing Kit.png" alt="Precision Components" className="tech-img" />
+                <img src={getImageUrl("/images/creality-k1-max-3d-printer.png")} alt="High Speed Printing" className="tech-img" onError={(e) => { e.target.onerror = null; e.target.src = "/placeholder.png"; }} />
+                <img src={getImageUrl("/images/snapmaker-2.0-a350t-3-in-1-3d-printer.png")} alt="Cutting Edge Tech" className="tech-img" onError={(e) => { e.target.onerror = null; e.target.src = "/placeholder.png"; }} />
+                <img src={getImageUrl("/images/3d-printing-kit.png")} alt="Precision Components" className="tech-img" onError={(e) => { e.target.onerror = null; e.target.src = "/placeholder.png"; }} />
             </div>
         </div>
       </section>
