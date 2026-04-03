@@ -606,6 +606,32 @@ const AdminDashboard = () => {
                                     <button 
                                       className="btn btn-block" 
                                       style={{ 
+                                          background: product.featured ? '#f59e0b' : '#3b82f6', 
+                                          color: 'white',
+                                          fontSize: '0.9rem', padding: '8px',
+                                          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'
+                                      }}
+                                      onClick={async () => {
+                                          const newFeatured = !product.featured;
+                                          // Optimistic update
+                                          setAdminProducts(prev => prev.map(p => p._id === product._id ? { ...p, featured: newFeatured } : p));
+                                          try {
+                                              await fetch(`${BASE_URL}/api/products/${product._id}`, {
+                                                  method: 'PUT',
+                                                  headers: { 'Content-Type': 'application/json' },
+                                                  body: JSON.stringify({ featured: newFeatured })
+                                              });
+                                              showToast(newFeatured ? 'Added to Featured' : 'Removed from Featured');
+                                          } catch(e) {
+                                              showToast('Failed to update featured status', 'error');
+                                          }
+                                      }}
+                                    >
+                                      {product.featured ? '★ Featured product' : '☆ Add to Featured'}
+                                    </button>
+                                    <button 
+                                      className="btn btn-block" 
+                                      style={{ 
                                           background: product.inStock ? '#cbd5e1' : '#f43f5e', 
                                           color: product.inStock ? '#334155' : 'white',
                                           fontSize: '0.9rem', padding: '8px',
