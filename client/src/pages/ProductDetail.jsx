@@ -28,6 +28,7 @@ const ProductDetail = () => {
                 const res = await fetch(`${BASE_URL}/api/products/${id}`);
                 if (!res.ok) throw new Error('Product not found');
                 const data = await res.json();
+                console.log("Product Detail Data:", data); // Debug Step: Console log API response
                 setProduct(data);
                 
                 // Fetch related products
@@ -67,9 +68,28 @@ const ProductDetail = () => {
         }
     };
 
+    const getRatingStats = (reviews = []) => {
+        const total = reviews.length;
+        const counts = [0, 0, 0, 0, 0]; // 1-5
+        reviews.forEach(r => {
+            const star = Math.round(r.rating);
+            if (star >= 1 && star <= 5) counts[star - 1]++;
+        });
+        return counts.map((count, i) => ({
+            star: i + 1,
+            count,
+            percent: total ? (count / total) * 100 : 0
+        })).reverse();
+    };
+
     if (loading) return <div className="loading-container"><div className="loading-spinner"></div></div>;
     if (error) return <div className="error-container"><h2>{error}</h2><Link to="/products" className="btn">Back to Products</Link></div>;
     if (!product) return null;
+
+    const stats = getRatingStats(product.reviews);
+    const avgRating = product.reviews?.length > 0 
+        ? product.reviews.reduce((acc, r) => acc + r.rating, 0) / product.reviews.length 
+        : 5.0;
 
     const discount = product.mrp ? Math.round(((product.mrp - product.price) / product.mrp) * 100) : 0;
     
@@ -217,6 +237,38 @@ const ProductDetail = () => {
                         )}
                         {activeTab === 'reviews' && (
                             <div className="reviews-content">
+                                <div className="reviews-stats-overview">
+                                    <div className="overall-rating">
+                                        <div className="big-avg">{avgRating.toFixed(1)}</div>
+                                        <div className="avg-stars">
+                                            {[...Array(5)].map((_, i) => (
+                                                <Star 
+                                                    key={i} 
+                                                    size={22} 
+                                                    weight={i < Math.floor(avgRating) ? "fill" : "regular"} 
+                                                    color="#f59e0b"
+                                                />
+                                            ))}
+                                        </div>
+                                        <div className="total-revs">{product.reviews?.length || 0} Reviews</div>
+                                    </div>
+                                    
+                                    <div className="rating-breakdown">
+                                        {stats.map((item) => (
+                                            <div key={item.star} className="rating-row">
+                                                <span className="star-label">{item.star} Star</span>
+                                                <div className="bar">
+                                                    <div 
+                                                        className="fill"
+                                                        style={{ width: `${item.percent}%` }}
+                                                    ></div>
+                                                </div>
+                                                <span className="percent-label">{Math.round(item.percent)}%</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
                                 <div className="reviews-list">
                                     {product.reviews && product.reviews.length > 0 ? (
                                         product.reviews.map((review, i) => (
@@ -303,7 +355,12 @@ const ProductDetail = () => {
                                     </div>
                                     <div className="product-info">
                                         <div className="product-title">{p.name}</div>
-                                        <div className="product-price">₹{p.price?.toLocaleString('en-IN')}</div>
+                                        <div className="product-price" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            <span style={{ fontWeight: 700, color: '#2563eb' }}>₹{p.price?.toLocaleString('en-IN')}</span>
+                                            {p.mrp && p.mrp > p.price && (
+                                                <span style={{ fontSize: '0.85rem', color: '#94a3b8', textDecoration: 'line-through' }}>₹{p.mrp?.toLocaleString('en-IN')}</span>
+                                            )}
+                                        </div>
                                     </div>
                                 </Link>
                             ))}

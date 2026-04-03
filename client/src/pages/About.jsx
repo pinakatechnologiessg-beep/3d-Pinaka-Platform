@@ -45,12 +45,12 @@ const About = () => {
             <section className="section container reveal" ref={addToRevealRefs}>
                 <div className="about-mission-grid">
                     <div style={{ padding: '0 5px' }}>
-                        <h2 style={{ fontSize: '2.5rem', marginBottom: '1.5rem', color: 'var(--text-dark)', lineHeight: '1.3' }}>Empowering Innovation Since 2021</h2>
+                        <h2 style={{ fontSize: '2.5rem', marginBottom: '1.5rem', color: 'var(--text-dark)', lineHeight: '1.3' }}>Empowering Innovation Through Precision 3D Printing</h2>
                         <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', lineHeight: '1.8', marginBottom: '2rem' }}>
-                            At 3D Print Hub, we believe that the only limit to creation should be your imagination. Founded with a vision to make professional-grade 3D printing accessible to everyone, we have grown into a leading destination for creators, engineers, and hobbyists alike.
+                            Welcome to <strong>3D Pinaka</strong>, India's premier destination for cutting-edge additive manufacturing solutions. Based in the industrial heart of <strong>Kanpur, Uttar Pradesh</strong>, we are more than just an e-commerce store—we are your partners in turning digital concepts into physical reality.
                         </p>
                         <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', lineHeight: '1.8' }}>
-                            We don't just sell machines; we provide the tools for the next industrial revolution. From desktop FDM printers to industrial-grade resin systems, every product in our catalog is hand-picked for quality, reliability, and performance.
+                            At 3D Pinaka, we specialize in providing high-performance <strong>3D printers, premium filaments, laser engravers, and resin systems</strong> from world-renowned brands like <strong>Bambu Lab, Creality, Anycubic, and Flashforge</strong>.
                         </p>
                     </div>
                     <div style={{ background: 'var(--light-bg)', padding: '2rem', borderRadius: '20px', border: '1px solid var(--border-color)' }}>
@@ -111,7 +111,7 @@ const About = () => {
 
             {/* Our Values Section */}
             <section className="section container reveal" ref={addToRevealRefs} style={{ textAlign: 'center' }}>
-                <h2 style={{ fontSize: '2.5rem', marginBottom: '3rem', padding: '0 15px' }}>Why Choose 3D Print Hub?</h2>
+                <h2 style={{ fontSize: '2.5rem', marginBottom: '3rem', padding: '0 15px' }}>Why Choose 3D Pinaka?</h2>
                 <div className="about-values-grid" style={{ padding: '0 15px' }}>
                     <div className="feature-box" style={{ background: 'white', boxShadow: '0 10px 30px rgba(0,0,0,0.05)', border: '1px solid #e2e8f0', margin: 0 }}>
                         <div style={{ color: 'var(--primary)', marginBottom: '1rem' }}><Globe size={40} /></div>

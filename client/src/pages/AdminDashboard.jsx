@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   House, Package, ShoppingCart, Users, Gear, 
-  Bell, MagnifyingGlass, List, CurrencyDollar, TrendUp, Clock, ArrowLeft, Heart, X, UploadSimple, Trash, PencilSimple
+  Bell, MagnifyingGlass, List, CurrencyDollar, TrendUp, Clock, ArrowLeft, Heart, X, UploadSimple, Trash, PencilSimple, Plus
 } from '@phosphor-icons/react';
 import { getImageUrl } from '../utils/imageUtils';
 import './AdminDashboard.css';
@@ -28,6 +28,7 @@ const AdminDashboard = () => {
     { name: 'Products', icon: <Package size={24} /> },
     { name: 'Orders', icon: <ShoppingCart size={24} /> },
     { name: 'Users', icon: <Users size={24} /> },
+    { name: 'Support', icon: <Bell size={24} /> },
     { name: 'Settings', icon: <Gear size={24} /> }
   ];
 
@@ -72,6 +73,11 @@ const AdminDashboard = () => {
 
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // --- Support State ---
+  const [supportQueries, setSupportQueries] = useState([]);
+  const [supportFilter, setSupportFilter] = useState('All');
+  const [selectedSupportQuery, setSelectedSupportQuery] = useState(null);
 
   const showToast = (message, type = 'success') => {
       setToast({ show: true, message, type });
@@ -253,6 +259,8 @@ const AdminDashboard = () => {
         if (adminRes.ok) {
             setAdminProfile(await adminRes.json());
         }
+        const supportRes = await fetch(`${BASE_URL}/api/support`);
+        if (supportRes.ok) setSupportQueries(await supportRes.json());
       } catch (error) {
         console.error("Failed to fetch dashboard data", error);
       } finally {
@@ -261,6 +269,39 @@ const AdminDashboard = () => {
     };
     fetchDashData();
   }, []);
+
+  const handleUpdateSupportStatus = async (queryId, newStatus) => {
+    try {
+        const res = await fetch(`${BASE_URL}/api/support/${queryId}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: newStatus })
+        });
+        if (res.ok) {
+            setSupportQueries(prev => prev.map(q => q._id === queryId ? { ...q, status: newStatus } : q));
+            if (selectedSupportQuery && selectedSupportQuery._id === queryId) {
+                setSelectedSupportQuery(prev => ({ ...prev, status: newStatus }));
+            }
+            showToast('Support status updated', 'success');
+        }
+    } catch (err) {
+        showToast('Failed to update status', 'error');
+    }
+  };
+
+  const handleDeleteSupport = async (queryId) => {
+    if (!window.confirm('Are you sure you want to delete this query?')) return;
+    try {
+        const res = await fetch(`${BASE_URL}/api/support/${queryId}`, { method: 'DELETE' });
+        if (res.ok) {
+            setSupportQueries(prev => prev.filter(q => q._id !== queryId));
+            setSelectedSupportQuery(null);
+            showToast('Support query deleted', 'success');
+        }
+    } catch (err) {
+        showToast('Failed to delete query', 'error');
+    }
+  };
 
   const getStatusClass = (status) => {
     switch (status) {
@@ -289,7 +330,11 @@ const AdminDashboard = () => {
               key={item.name}
               className={`adm-nav-item ${activeTab === item.name ? 'active' : ''}`}
               onClick={() => {
-                  setActiveTab(item.name);
+                  if (item.name === 'Support') {
+                      navigate('/admin/support');
+                  } else {
+                      setActiveTab(item.name);
+                  }
                   if(window.innerWidth <= 1024) toggleSidebar();
               }}
             >
@@ -471,14 +516,14 @@ const AdminDashboard = () => {
 
         {activeTab === 'Products' && (
           <div className="dashboard-content" style={{ padding: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', gap: '20px' }}>
-              <h2 style={{ fontSize: '1.5rem', color: 'var(--admin-text-dark)', margin: 0 }}>Products Management ({adminProducts.length} items)</h2>
+            <div className="products-mgmt-header">
+              <h2 className="products-mgmt-title">Products Management ({adminProducts.length} items)</h2>
               
-              <div className="search-bar" style={{ flex: 1, maxWidth: '400px', display: 'flex', alignItems: 'center', background: 'white', border: '1px solid var(--admin-border-color)', borderRadius: '8px', padding: '0 12px', height: '45px', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
+              <div className="search-bar-wrapper">
                 <MagnifyingGlass size={20} style={{ color: 'var(--admin-text-muted)', marginRight: '10px' }} />
                 <input 
                   type="text" 
-                  placeholder="Search by name, brand, or category..." 
+                  placeholder="Search by product name..." 
                   value={productSearchQuery}
                   onChange={(e) => setProductSearchQuery(e.target.value)}
                   style={{ border: 'none', outline: 'none', width: '100%', fontSize: '0.95rem', background: 'transparent' }} 
@@ -488,11 +533,9 @@ const AdminDashboard = () => {
 
               <button 
                 onClick={() => setIsAddModalOpen(true)}
-                style={{ background: '#3b82f6', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '8px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)', transition: 'all 0.2s', whiteSpace: 'nowrap', height: '45px' }}
-                onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'}
-                onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}
+                className="add-product-btn-admin"
               >
-                + Add New Product
+                <Plus size={20} weight="bold" /> Add New Product
               </button>
             </div>
             {adminProducts.length === 0 ? (
@@ -594,18 +637,14 @@ const AdminDashboard = () => {
 
         {activeTab === 'Orders' && (
           <div className="dashboard-content" style={{ padding: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h2 style={{ fontSize: '1.5rem', color: 'var(--admin-text-dark)' }}>Orders Management</h2>
-              <div style={{ display: 'flex', gap: '8px', background: 'white', padding: '4px', borderRadius: '8px', border: '1px solid var(--admin-border-color)' }}>
+            <div className="orders-mgmt-header">
+              <h2 className="orders-mgmt-title">Orders Management</h2>
+              <div className="status-filter-scroll">
                 {['All Orders', 'Pending', 'Confirmed', 'Printing', 'Delivered'].map(status => (
                   <button 
                     key={status}
                     onClick={() => setOrderFilter(status)}
-                    style={{ 
-                      padding: '8px 16px', borderRadius: '6px', border: 'none', cursor: 'pointer', fontWeight: 500, transition: 'all 0.2s',
-                      background: orderFilter === status ? '#3b82f6' : 'transparent',
-                      color: orderFilter === status ? 'white' : 'var(--admin-text-main)'
-                    }}
+                    className={`status-filter-btn ${orderFilter === status ? 'active' : ''}`}
                   >
                     {status}
                   </button>
@@ -800,6 +839,78 @@ const AdminDashboard = () => {
           </div>
         )}
 
+        {activeTab === 'Support' && (
+          <div className="dashboard-content" style={{ padding: '24px' }}>
+            <div className="orders-mgmt-header">
+                <h2 className="orders-mgmt-title">Support Queries</h2>
+                <div className="status-filter-scroll">
+                    {['All', 'new', 'pending', 'resolved'].map(status => (
+                        <button 
+                            key={status}
+                            className={`status-filter-btn ${supportFilter === status ? 'active' : ''}`}
+                            onClick={() => setSupportFilter(status)}
+                        >
+                            {status.charAt(0).toUpperCase() + status.slice(1)}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            <div className="table-container">
+                <table className="orders-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Customer</th>
+                            <th>Subject</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {(supportFilter === 'All' ? supportQueries : supportQueries.filter(q => q.status === supportFilter)).map((query) => (
+                            <tr key={query._id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                                <td style={{ padding: '16px', color: '#64748b' }}>{new Date(query.createdAt).toLocaleDateString('en-GB')}</td>
+                                <td style={{ padding: '16px' }}>
+                                    <div style={{ fontWeight: 600, color: '#1e293b' }}>{query.name}</div>
+                                    <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{query.email}</div>
+                                </td>
+                                <td style={{ padding: '16px', color: '#334155' }}><strong>{query.subject}</strong></td>
+                                <td style={{ padding: '16px' }}>
+                                    <select 
+                                        value={query.status}
+                                        onChange={(e) => handleUpdateSupportStatus(query._id, e.target.value)}
+                                        style={{ 
+                                            padding: '4px 12px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 700,
+                                            border: 'none', cursor: 'pointer', outline: 'none',
+                                            background: query.status === 'new' ? '#fee2e2' : query.status === 'pending' ? '#fef3c7' : '#dcfce7',
+                                            color: query.status === 'new' ? '#ef4444' : query.status === 'pending' ? '#d97706' : '#16a34a'
+                                        }}
+                                    >
+                                        <option value="new">New</option>
+                                        <option value="pending">Pending</option>
+                                        <option value="resolved">Resolved</option>
+                                    </select>
+                                </td>
+                                <td style={{ padding: '16px' }}>
+                                    <button 
+                                        onClick={() => setSelectedSupportQuery(query)}
+                                        style={{ background: '#eff6ff', color: '#3b82f6', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', fontWeight: 600, marginRight: '8px' }}
+                                    >
+                                        View
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                        {supportQueries.length === 0 && (
+                            <tr><td colSpan="5" style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>No support tickets found</td></tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
+          </div>
+        )}
+
         {activeTab === 'Settings' && (
           <div className="dashboard-content" style={{ padding: '24px' }}>
             <h2 style={{ fontSize: '1.5rem', marginBottom: '20px', color: 'var(--admin-text-dark)' }}>Settings</h2>
@@ -912,7 +1023,7 @@ const AdminDashboard = () => {
                   <input type="text" value={newProduct.name} onChange={e => setNewProduct({...newProduct, name: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} placeholder="e.g. Anycubic Kobra 2" />
                 </div>
                 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div className="modal-grid-row">
                     <div>
                       <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Brand</label>
                       <select value={newProduct.brand} onChange={e => setNewProduct({...newProduct, brand: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }}>
@@ -941,7 +1052,7 @@ const AdminDashboard = () => {
                     </div>
                 </div>
                 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div className="modal-grid-row">
                     <div>
                         <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Product Condition</label>
                         <select value={newProduct.condition} onChange={e => setNewProduct({...newProduct, condition: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }}>
@@ -951,7 +1062,7 @@ const AdminDashboard = () => {
                     </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div className="modal-grid-row">
                     <div>
                       <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Selling Price (₹)</label>
                       <input type="number" placeholder="e.g. 25000" value={newProduct.price} onChange={e => setNewProduct({...newProduct, price: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} />
@@ -962,7 +1073,7 @@ const AdminDashboard = () => {
                     </div>
                 </div>
                 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div className="modal-grid-row">
                     <div>
                       <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Rating (0-5)</label>
                       <input type="number" step="0.1" min="0" max="5" placeholder="e.g. 4.5" value={newProduct.rating} onChange={e => setNewProduct({...newProduct, rating: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} />
@@ -981,13 +1092,16 @@ const AdminDashboard = () => {
                            </label>
                        </div>
                     </div>
+                </div>
+
+                <div className="modal-grid-row">
                     <div>
                       <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Stock Status</label>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', height: '45px' }}>
-                          <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', color: '#334155' }}>
+                          <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', color: '#334155', whiteSpace: 'nowrap' }}>
                               <input type="radio" name="stock" checked={newProduct.inStock} onChange={() => setNewProduct({...newProduct, inStock: true})} /> In Stock
                           </label>
-                          <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', color: '#334155' }}>
+                          <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', color: '#334155', whiteSpace: 'nowrap' }}>
                               <input type="radio" name="stock" checked={!newProduct.inStock} onChange={() => setNewProduct({...newProduct, inStock: false})} /> Out of Stock
                           </label>
                       </div>
@@ -1011,7 +1125,7 @@ const AdminDashboard = () => {
                    </label>
                    <div style={{ display: 'grid', gap: '8px' }}>
                       {newProduct.specifications.map((spec, idx) => (
-                        <div key={idx} style={{ display: 'flex', gap: '8px' }}>
+                        <div key={idx} className="spec-row" style={{ display: 'flex', gap: '8px' }}>
                           <input type="text" placeholder="Key (e.g. Speed)" value={spec.key} onChange={e => handleUpdateSpec(idx, 'key', e.target.value, false)} style={{ flex: 1, padding: '0.6rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
                           <input type="text" placeholder="Value (e.g. 500mm/s)" value={spec.value} onChange={e => handleUpdateSpec(idx, 'value', e.target.value, false)} style={{ flex: 1, padding: '0.6rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
                           <button type="button" onClick={() => handleRemoveSpec(idx, false)} style={{ background: '#fef2f2', color: '#ef4444', border: '1px solid #fee2e2', borderRadius: '4px', padding: '0 8px', cursor: 'pointer' }}>×</button>
@@ -1134,7 +1248,7 @@ const AdminDashboard = () => {
                   <input type="text" value={editProductState.name} onChange={e => setEditProductState({...editProductState, name: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} placeholder="e.g. Anycubic Kobra 2" />
                 </div>
                 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div className="modal-grid-row">
                     <div>
                       <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Brand</label>
                       <select value={editProductState.brand} onChange={e => setEditProductState({...editProductState, brand: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }}>
@@ -1163,7 +1277,7 @@ const AdminDashboard = () => {
                     </div>
                 </div>
                 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div className="modal-grid-row">
                     <div>
                         <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Product Condition</label>
                         <select value={editProductState.condition || 'New'} onChange={e => setEditProductState({...editProductState, condition: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }}>
@@ -1173,7 +1287,7 @@ const AdminDashboard = () => {
                     </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div className="modal-grid-row">
                     <div>
                       <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Selling Price (₹)</label>
                       <input type="number" placeholder="e.g. 25000" value={editProductState.price} onChange={e => setEditProductState({...editProductState, price: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} />
@@ -1184,7 +1298,7 @@ const AdminDashboard = () => {
                     </div>
                 </div>
                 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div className="modal-grid-row">
                     <div>
                       <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Rating (0-5)</label>
                       <input type="number" step="0.1" min="0" max="5" placeholder="e.g. 4.5" value={editProductState.rating || ''} onChange={e => setEditProductState({...editProductState, rating: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} />
@@ -1233,7 +1347,7 @@ const AdminDashboard = () => {
                    </label>
                    <div style={{ display: 'grid', gap: '8px' }}>
                       {(editProductState.specifications || []).map((spec, idx) => (
-                        <div key={idx} style={{ display: 'flex', gap: '8px' }}>
+                        <div key={idx} className="spec-row" style={{ display: 'flex', gap: '8px' }}>
                           <input type="text" placeholder="Key (e.g. Speed)" value={spec.key} onChange={e => handleUpdateSpec(idx, 'key', e.target.value, true)} style={{ flex: 1, padding: '0.6rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
                           <input type="text" placeholder="Value (e.g. 500mm/s)" value={spec.value} onChange={e => handleUpdateSpec(idx, 'value', e.target.value, true)} style={{ flex: 1, padding: '0.6rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
                           <button type="button" onClick={() => handleRemoveSpec(idx, true)} style={{ background: '#fef2f2', color: '#ef4444', border: '1px solid #fee2e2', borderRadius: '4px', padding: '0 8px', cursor: 'pointer' }}>×</button>
@@ -1558,6 +1672,69 @@ const AdminDashboard = () => {
         </div>
       )}
 
+      {/* Support Query Detail Modal */}
+      {selectedSupportQuery && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'fadeIn 0.2s ease', backdropFilter: 'blur(3px)' }}>
+            <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', boxShadow: '0 25px 50px rgba(0,0,0,0.25)', maxWidth: '500px', width: '90%', position: 'relative' }}>
+                <button onClick={() => setSelectedSupportQuery(null)} style={{ position: 'absolute', top: '15px', right: '15px', background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}><X size={24} /></button>
+                
+                <div style={{ marginBottom: '1.5rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '1rem' }}>
+                    <h2 style={{ color: '#0f172a', marginBottom: '0.5rem' }}>Support Ticket Detail</h2>
+                    <span style={{ 
+                        padding: '4px 12px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 700,
+                        background: selectedSupportQuery.status === 'new' ? '#fee2e2' : selectedSupportQuery.status === 'pending' ? '#fef3c7' : '#dcfce7',
+                        color: selectedSupportQuery.status === 'new' ? '#ef4444' : selectedSupportQuery.status === 'pending' ? '#d97706' : '#16a34a'
+                    }}>
+                        {selectedSupportQuery.status.toUpperCase()}
+                    </span>
+                </div>
+
+                <div style={{ display: 'grid', gap: '1.2rem', marginBottom: '1.5rem' }}>
+                    <div>
+                        <span style={{ display: 'block', fontSize: '0.8rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>From</span>
+                        <div style={{ color: '#1e293b', fontWeight: 600 }}>{selectedSupportQuery.name}</div>
+                        <div style={{ color: '#3b82f6', fontSize: '0.9rem' }}>{selectedSupportQuery.email}</div>
+                    </div>
+                    <div>
+                        <span style={{ display: 'block', fontSize: '0.8rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>Subject</span>
+                        <div style={{ color: '#1e293b', fontWeight: 700 }}>{selectedSupportQuery.subject}</div>
+                    </div>
+                    <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                        <span style={{ display: 'block', fontSize: '0.8rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase', marginBottom: '0.5rem' }}>Message</span>
+                        <div style={{ color: '#334155', lineHeight: '1.6', whiteSpace: 'pre-wrap' }}>{selectedSupportQuery.message}</div>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Submitted on: {new Date(selectedSupportQuery.createdAt).toLocaleString()}</span>
+                    </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+                    <button 
+                        onClick={() => handleDeleteSupport(selectedSupportQuery._id)}
+                        style={{ padding: '0.8rem 1.2rem', borderRadius: '6px', border: 'none', background: '#fee2e2', color: '#ef4444', fontWeight: 600, cursor: 'pointer' }}
+                    >
+                        Delete
+                    </button>
+                    <select 
+                        value={selectedSupportQuery.status}
+                        onChange={(e) => handleUpdateSupportStatus(selectedSupportQuery._id, e.target.value)}
+                        style={{ padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', fontWeight: 600, cursor: 'pointer' }}
+                    >
+                        <option value="new">Mark as New</option>
+                        <option value="pending">Mark as Pending</option>
+                        <option value="resolved">Mark as Resolved</option>
+                    </select>
+                    <button 
+                        onClick={() => setSelectedSupportQuery(null)}
+                        style={{ padding: '0.8rem 1.5rem', borderRadius: '6px', border: 'none', background: '#3b82f6', color: 'white', fontWeight: 600, cursor: 'pointer' }}
+                    >
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+      )}
+
       {/* Toast Notification */}
       {toast.show && (
         <div style={{ position: 'fixed', bottom: '30px', right: '30px', background: toast.type === 'success' ? '#10b981' : '#ef4444', color: 'white', padding: '12px 24px', borderRadius: '8px', boxShadow: '0 10px 25px rgba(0,0,0,0.2)', zIndex: 9999, animation: 'slideIn 0.3s ease', display: 'flex', alignItems: 'center', gap: '10px', minWidth: '250px' }}>
@@ -1579,6 +1756,166 @@ const AdminDashboard = () => {
         @keyframes spin {
           from { transform: rotate(0deg); }
           to { transform: rotate(360deg); }
+        }
+        .modal-grid-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        @media (max-width: 640px) {
+            .modal-grid-row {
+                grid-template-columns: 1fr !important;
+            }
+            .modal-grid-row > div {
+                margin-bottom: 0.5rem;
+            }
+            .spec-row {
+                flex-direction: column !important;
+                gap: 5px !important;
+            }
+            .spec-row input {
+                width: 100% !important;
+            }
+        }
+        .orders-mgmt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            gap: 20px;
+        }
+        .orders-mgmt-title {
+            font-size: 1.5rem;
+            color: var(--admin-text-dark);
+            margin: 0;
+            flex-shrink: 0;
+        }
+        .status-filter-scroll {
+            display: flex;
+            gap: 8px;
+            background: white;
+            padding: 4px;
+            border-radius: 8px;
+            border: 1px solid var(--admin-border-color);
+            overflow-x: auto;
+            max-width: 100%;
+            -webkit-overflow-scrolling: touch;
+        }
+        .status-filter-scroll::-webkit-scrollbar {
+            display: none;
+        }
+        .status-filter-btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            background: transparent;
+            color: var(--admin-text-main);
+            white-space: nowrap;
+        }
+        .status-filter-btn.active {
+            background: #3b82f6;
+            color: white;
+        }
+        @media (max-width: 768px) {
+            .orders-mgmt-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 15px;
+            }
+            .orders-mgmt-title {
+                font-size: 1.25rem;
+                text-align: center;
+            }
+            .status-filter-scroll {
+                padding: 4px;
+                justify-content: flex-start;
+            }
+        }
+        .products-mgmt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            gap: 20px;
+        }
+        .products-mgmt-title {
+            font-size: 1.5rem;
+            color: var(--admin-text-dark);
+            margin: 0;
+            flex-shrink: 0;
+        }
+        .search-bar-wrapper {
+            flex: 1;
+            max-width: 400px;
+            display: flex;
+            align-items: center;
+            background: white;
+            border: 1px solid var(--admin-border-color);
+            borderRadius: 8px;
+            padding: 0 12px;
+            height: 45px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .add-product-btn-admin {
+            background: #3b82f6; 
+            color: white; 
+            border: none; 
+            padding: 0 20px; 
+            border-radius: 8px; 
+            font-weight: 600; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            gap: 8px; 
+            cursor: pointer; 
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); 
+            transition: all 0.2s; 
+            white-space: nowrap; 
+            height: 45px;
+        }
+        .add-product-btn-admin:hover {
+            transform: translateY(-2px);
+            background: #2563eb;
+        }
+        @media (max-width: 768px) {
+            .products-mgmt-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 15px;
+            }
+            .products-mgmt-title {
+                font-size: 1.25rem;
+                text-align: center;
+            }
+            .search-bar-wrapper {
+                max-width: 100%;
+            }
+            .add-product-btn-admin {
+                width: 100%;
+            }
+        }
+        .modal-grid-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        @media (max-width: 640px) {
+            .modal-grid-row {
+                grid-template-columns: 1fr !important;
+            }
+            .modal-grid-row > div {
+                margin-bottom: 0.5rem;
+            }
+            .spec-row {
+                flex-direction: column !important;
+                gap: 5px !important;
+            }
+            .spec-row input {
+                width: 100% !important;
+            }
         }
       `}</style>
     </div>

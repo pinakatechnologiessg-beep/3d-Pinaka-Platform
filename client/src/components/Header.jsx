@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { CaretDown, MagnifyingGlass, User, Heart, ShoppingCart, List, Shield } from '@phosphor-icons/react';
+import Logo from './Logo';
 
 const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu }) => {
   const [showAdminAlert, setShowAdminAlert] = useState(false);
@@ -13,7 +14,7 @@ const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu }) => {
         </div>
 
         <Link to="/" className="logo">
-          <span className="logo-box">3D</span> Print Hub
+          <Logo height={window.innerWidth < 768 ? 60 : 75} />
         </Link>
         
         <nav className="nav-links">
@@ -156,29 +157,19 @@ const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu }) => {
         </nav>
 
         <div className="nav-icons">
-          <div className="desktop-only" style={{ marginRight: '8px' }}>
-              <Link 
-                to={user && user.role === 'admin' ? '/admin' : '#'} 
-                style={{ color: 'var(--primary)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 'bold' }} 
-                title="Admin Dashboard"
-                onClick={(e) => {
-                    if (!user || user.role !== 'admin') {
-                        e.preventDefault();
-                        setShowAdminAlert(true);
-                    }
-                }}
-              >
-                  <Shield size={22} weight="fill" />
-                  <span style={{ fontSize: '0.85rem' }}>Admin</span>
-              </Link>
-          </div>
-
           <div className="desktop-only">
             {user ? (
-                <Link to="/login" style={{ color: 'var(--text-dark)', textDecoration: 'none', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <User size={20} />
-                <span style={{ fontSize: '0.85rem' }}>{user.firstName || user.name?.split(' ')[0] || 'User'}</span>
+               <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                {user.role === 'admin' && (
+                  <Link to="/admin/support" style={{ background: '#fef3c7', color: '#d97706', padding: '6px 12px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 800, textDecoration: 'none', border: '1px solid #fde68a', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    <Shield size={16} /> SUPPORT DASHBOARD
+                  </Link>
+                )}
+                <Link to="/account" style={{ color: 'var(--text-dark)', textDecoration: 'none', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <User size={20} />
+                  <span style={{ fontSize: '0.85rem' }}>{user.firstName || user.name?.split(' ')[0] || 'User'}</span>
                 </Link>
+               </div>
             ) : (
                 <Link to="/login" style={{ color: 'var(--text-dark)', textDecoration: 'none' }}><User size={20} /></Link>
             )}
@@ -200,29 +191,6 @@ const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu }) => {
         </div>
       </div>
 
-      {/* Admin Access Denied Modal */}
-      {showAdminAlert && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'fadeIn 0.2s ease', backdropFilter: 'blur(2px)' }}>
-          <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', boxShadow: '0 20px 40px rgba(0,0,0,0.2)', maxWidth: '400px', width: '90%', textAlign: 'center', position: 'relative' }}>
-            <button onClick={() => setShowAdminAlert(false)} style={{ position: 'absolute', top: '15px', right: '15px', background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}><Shield size={24} color="#f43f5e" /></button>
-            <div style={{ background: '#ffe4e6', width: '64px', height: '64px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem auto' }}>
-                <Shield size={32} color="#e11d48" weight="fill" />
-            </div>
-            <h3 style={{ margin: '0 0 1rem 0', color: '#0f172a', fontSize: '1.2rem' }}>Access Denied</h3>
-            <p style={{ margin: '0 0 1.5rem 0', color: '#475569', fontSize: '15px', lineHeight: '1.5' }}>
-              You don't have permission to view this page. Please log in as an administrator to access the admin panel.
-            </p>
-            <button 
-              onClick={() => setShowAdminAlert(false)} 
-              style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: 'none', background: '#3b82f6', color: 'white', cursor: 'pointer', fontWeight: 600, fontSize: '1rem', transition: 'background 0.2s' }}
-              onMouseOver={e => e.currentTarget.style.background = '#2563eb'}
-              onMouseOut={e => e.currentTarget.style.background = '#3b82f6'}
-            >
-              Okay, I understand
-            </button>
-          </div>
-        </div>
-      )}
     </header>
   );
 };

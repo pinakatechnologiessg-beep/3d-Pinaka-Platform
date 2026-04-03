@@ -1,144 +1,208 @@
-import React, { useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowLeft, MapPin, Phone, Envelope, WhatsappLogo } from '@phosphor-icons/react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Envelope, User, ChatCircleText, PaperPlaneTilt, CheckCircle, Info } from '@phosphor-icons/react';
 
 const Support = () => {
-    const revealRefs = React.useRef([]);
-    const [submitted, setSubmitted] = React.useState(false);
-    const [loading, setLoading] = React.useState(false);
-    const [formData, setFormData] = React.useState({
+    const navigate = useNavigate();
+    const [formData, setFormData] = useState({
         name: '',
         email: '',
-        type: 'General Support',
+        subject: '',
         message: ''
     });
+    const [loading, setLoading] = useState(false);
+    const [message, setMessage] = useState({ type: '', text: '' });
+    const [user, setUser] = useState(null);
 
-    React.useEffect(() => {
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
-                }
-            });
-        }, { threshold: 0.1 });
-
-        revealRefs.current.forEach(el => el && observer.observe(el));
-        return () => observer.disconnect();
+    useEffect(() => {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            const parsedUser = JSON.parse(storedUser);
+            setUser(parsedUser);
+            setFormData(prev => ({
+                ...prev,
+                name: `${parsedUser.firstName} ${parsedUser.lastName || ''}`.trim(),
+                email: parsedUser.email
+            }));
+        }
     }, []);
-
-    const addToRevealRefs = (el) => {
-        if (el && !revealRefs.current.includes(el)) {
-            revealRefs.current.push(el);
-        }
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        try {
-            await fetch('http://localhost:5000/api/support', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
-            });
-            setSubmitted(true);
-        } catch (err) {
-            console.error(err);
-            alert('Something went wrong. Please try again.');
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setMessage({ type: '', text: '' });
+
+        try {
+            const response = await fetch('http://localhost:5000/api/support', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    ...formData,
+                    userId: user?.id || user?._id
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                setMessage({ type: 'success', text: data.message });
+                setFormData({
+                    ...formData,
+                    subject: '',
+                    message: ''
+                });
+            } else {
+                setMessage({ type: 'error', text: data.message || 'Something went wrong' });
+            }
+        } catch (error) {
+            setMessage({ type: 'error', text: 'Network error. Please try again later.' });
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
-        <main>
-            <div style={{ background: 'var(--gradient)', padding: '4rem 0', textAlign: 'center', color: 'white' }}>
-                <Link to="/" className="back-home-btn"><ArrowLeft /> Back to Home</Link>
-                <h1>How can we help you?</h1>
-                <p style={{ color: '#f8fafc', marginTop: '1rem', opacity: 0.9 }}>Our experts are 24/7 ready to assist you</p>
+        <main className="support-page" style={{ background: 'var(--light-bg)', padding: '5rem 0', minHeight: 'calc(100vh - 400px)' }}>
+            <div className="container" style={{ maxWidth: '800px' }}>
+                <div className="support-header" style={{ textAlign: 'center', marginBottom: '3rem' }}>
+                    <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem', color: 'var(--text-dark)' }}>Support Center</h1>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>Have a question or need assistance? Our team is here to help you.</p>
+                </div>
+
+                <div className="support-card" style={{ background: 'var(--white)', padding: '3rem', borderRadius: '16px', border: '1px solid var(--border-color)', boxShadow: '0 20px 40px rgba(0,0,0,0.05)' }}>
+                    {user && (
+                        <div style={{ marginBottom: '2rem', textAlign: 'center', padding: '1rem', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                            <p style={{ fontSize: '0.9rem', color: '#64748b', marginBottom: '10px' }}>Already have an active request? Check your conversation status here.</p>
+                            <button onClick={() => navigate('/my-tickets')} className="btn btn-outline" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '10px 20px' }}>
+                                <ChatCircleText size={20} /> View My Support Tickets
+                            </button>
+                        </div>
+                    )}
+                    {message.text && (
+                        <div style={{ 
+                            padding: '1rem', 
+                            borderRadius: '8px', 
+                            marginBottom: '2rem', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            gap: '12px',
+                            background: message.type === 'success' ? '#f0fdf4' : '#fef2f2',
+                            color: message.type === 'success' ? '#166534' : '#991b1b',
+                            border: `1px solid ${message.type === 'success' ? '#bbf7d0' : '#fecaca'}`
+                        }}>
+                            {message.type === 'success' ? <CheckCircle size={24} /> : <Info size={24} />}
+                            <span style={{ fontWeight: 500 }}>{message.text}</span>
+                        </div>
+                    )}
+
+                    <form onSubmit={handleSubmit}>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
+                            <div className="form-group">
+                                <label style={{ display: 'block', marginBottom: '8px', fontWeight: 500, fontSize: '0.9rem' }}>Full Name</label>
+                                <div style={{ position: 'relative' }}>
+                                    <User size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                                    <input 
+                                        type="text" 
+                                        name="name"
+                                        value={formData.name}
+                                        onChange={handleChange}
+                                        required
+                                        placeholder="John Doe"
+                                        style={{ width: '100%', padding: '12px 12px 12px 40px', borderRadius: '8px', border: '1px solid var(--border-color)', outline: 'none' }}
+                                    />
+                                </div>
+                            </div>
+                            <div className="form-group">
+                                <label style={{ display: 'block', marginBottom: '8px', fontWeight: 500, fontSize: '0.9rem' }}>Email Address</label>
+                                <div style={{ position: 'relative' }}>
+                                    <Envelope size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                                    <input 
+                                        type="email" 
+                                        name="email"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        required
+                                        placeholder="john@example.com"
+                                        style={{ width: '100%', padding: '12px 12px 12px 40px', borderRadius: '8px', border: '1px solid var(--border-color)', outline: 'none' }}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="form-group" style={{ marginBottom: '1.5rem' }}>
+                            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 500, fontSize: '0.9rem' }}>Subject</label>
+                            <div style={{ position: 'relative' }}>
+                                <ChatCircleText size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                                <input 
+                                    type="text" 
+                                    name="subject"
+                                    value={formData.subject}
+                                    onChange={handleChange}
+                                    required
+                                    placeholder="Brief summary of your query"
+                                    style={{ width: '100%', padding: '12px 12px 12px 40px', borderRadius: '8px', border: '1px solid var(--border-color)', outline: 'none' }}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="form-group" style={{ marginBottom: '2rem' }}>
+                            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 500, fontSize: '0.9rem' }}>Message</label>
+                            <textarea 
+                                name="message"
+                                value={formData.message}
+                                onChange={handleChange}
+                                required
+                                rows="5"
+                                placeholder="Describe your issue in detail..."
+                                style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-color)', outline: 'none', resize: 'vertical' }}
+                            ></textarea>
+                        </div>
+
+                        <button 
+                            type="submit" 
+                            disabled={loading}
+                            className="btn btn-primary" 
+                            style={{ 
+                                width: '100%', 
+                                padding: '14px', 
+                                fontSize: '1.1rem', 
+                                borderRadius: '10px', 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                justifyContent: 'center', 
+                                gap: '10px',
+                                background: loading ? '#91a7ff' : 'var(--primary)',
+                                cursor: loading ? 'not-allowed' : 'pointer'
+                            }}
+                        >
+                            {loading ? 'Sending...' : (
+                                <>
+                                    <PaperPlaneTilt size={20} weight="fill" />
+                                    Send Message
+                                </>
+                            )}
+                        </button>
+                    </form>
+                </div>
             </div>
 
-            <section className="section container support-section reveal" ref={addToRevealRefs}>
-                <div>
-                    <h2>Get in touch</h2>
-                    <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>Fill out the form below and we will contact you within 24 hours.</p>
-                    
-                    {submitted ? (
-                        <div style={{ padding: '2rem', background: '#ecfdf5', border: '1px solid #10b981', borderRadius: '12px', textAlign: 'center' }}>
-                            <div style={{ fontSize: '3rem', color: '#10b981', marginBottom: '1rem' }}>✓</div>
-                            <h3 style={{ color: '#065f46', marginBottom: '0.5rem' }}>Query Received!</h3>
-                            <p style={{ color: '#065f46' }}>Thank you for reaching out. Our team will get back to you shortly.</p>
-                            <button onClick={() => setSubmitted(false)} className="btn btn-primary" style={{ marginTop: '1.5rem' }}>Send Another</button>
-                        </div>
-                    ) : (
-                        <form style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }} onSubmit={handleSubmit}>
-                            <div>
-                                <label style={{ fontWeight: 600, fontSize: '0.9rem' }}>Full Name</label>
-                                <input type="text" name="name" value={formData.name} onChange={handleChange} style={{ width: '100%', padding: '10px', border: '1px solid #94a3b8', backgroundColor: '#f1f5f9', borderRadius: '6px', marginTop: '5px' }} required />
-                            </div>
-                            <div>
-                                <label style={{ fontWeight: 600, fontSize: '0.9rem' }}>Email Address</label>
-                                <input type="email" name="email" value={formData.email} onChange={handleChange} style={{ width: '100%', padding: '10px', border: '1px solid #94a3b8', backgroundColor: '#f1f5f9', borderRadius: '6px', marginTop: '5px' }} required />
-                            </div>
-                            <div>
-                                <label style={{ fontWeight: 600, fontSize: '0.9rem' }}>Enquiry Type</label>
-                                <select name="type" value={formData.type} onChange={handleChange} style={{ width: '100%', padding: '10px', border: '1px solid #94a3b8', backgroundColor: '#f1f5f9', borderRadius: '6px', marginTop: '5px' }}>
-                                    <option value="General Support">General Support</option>
-                                    <option value="Bulk Enquiry">Bulk Enquiry</option>
-                                    <option value="Printing Services">Printing Services</option>
-                                    <option value="Refurbished Item Info">Refurbished Item Info</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label style={{ fontWeight: 600, fontSize: '0.9rem' }}>Message</label>
-                                <textarea name="message" rows="5" value={formData.message} onChange={handleChange} style={{ width: '100%', padding: '10px', border: '1px solid #94a3b8', backgroundColor: '#f1f5f9', borderRadius: '6px', marginTop: '5px' }} required></textarea>
-                            </div>
-                            <button type="submit" className="btn btn-primary" style={{ alignSelf: 'flex-start' }} disabled={loading}>
-                                {loading ? 'Sending...' : 'Submit Message'}
-                            </button>
-                        </form>
-                    )}
-                </div>
-                
-                <div>
-                    <h2>Contact Information</h2>
-                    <div style={{ marginTop: '2rem', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-                        <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-                            <div style={{ background: 'var(--light-bg)', padding: '1rem', borderRadius: '12px', color: 'var(--primary)', fontSize: '1.5rem' }}>
-                                <MapPin size={24} />
-                            </div>
-                            <div>
-                                <h4 style={{ marginBottom: '0.3rem' }}>Office Address</h4>
-                                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>123 Innovation Street, Tech Park,<br />Bangalore - 560001</p>
-                            </div>
-                        </div>
-                        <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-                            <div style={{ background: 'var(--light-bg)', padding: '1rem', borderRadius: '12px', color: 'var(--primary)', fontSize: '1.5rem' }}>
-                                <Phone size={24} />
-                            </div>
-                            <div>
-                                <h4 style={{ marginBottom: '0.3rem' }}>Phone Number</h4>
-                                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Support: +91 8299475268<br />Email: support@printhub.com</p>
-                            </div>
-                        </div>
-                        <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-                            <div style={{ background: 'var(--light-bg)', padding: '1rem', borderRadius: '12px', color: 'var(--primary)', fontSize: '1.5rem' }}>
-                                <Envelope size={24} />
-                            </div>
-                            <div>
-                                <h4 style={{ marginBottom: '0.3rem' }}>Email Addresses</h4>
-                                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>support@printhub.com<br />sales@printhub.com</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <a href="https://wa.me/918299475268" className="whatsapp-float" target="_blank" rel="noreferrer"><WhatsappLogo size={32} /></a>
+            <style>{`
+                input:focus, textarea:focus {
+                    border-color: var(--primary) !important;
+                    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+                }
+                @media (max-width: 600px) {
+                    .support-card { padding: 1.5rem !important; }
+                    grid-template-columns: 1fr !important;
+                    .form-group:nth-child(1), .form-group:nth-child(2) {
+                        grid-column: span 2;
+                    }
+                }
+            `}</style>
         </main>
     );
 };

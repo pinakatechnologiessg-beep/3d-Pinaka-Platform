@@ -75,6 +75,7 @@ router.get('/', async (req, res) => {
         category: p.category || "Category",
         price: typeof p.price === 'number' ? p.price : (parseInt(String(p.price || p.sellingPrice || 0).replace(/[^0-9]/g, '')) || 0),
         mrp: typeof p.mrp === 'number' ? p.mrp : (parseInt(String(p.mrp || p.oldPrice || 0).replace(/[^0-9]/g, '')) || 0),
+        originalPrice: typeof p.mrp === 'number' ? p.mrp : (parseInt(String(p.mrp || p.oldPrice || 0).replace(/[^0-9]/g, '')) || 0),
         rating: p.rating || 5.0,
         inStock: p.inStock,
         condition: p.condition || "New",
@@ -201,6 +202,37 @@ router.put('/:id', upload.single('image'), async (req, res) => {
     if (!product) return res.status(404).json({ message: 'Product not found' });
     res.json(product);
   } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Get featured products
+router.get('/featured', async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 8;
+    const products = await Product.find({ featured: true }).limit(limit);
+    
+    const mappedProducts = products.map(p => ({
+        _id: p._id,
+        name: p.name || p.title || "Unnamed Product",
+        brand: p.brand || "Custom",
+        category: p.category || "Category",
+        price: typeof p.price === 'number' ? p.price : (parseInt(String(p.price || p.sellingPrice || 0).replace(/[^0-9]/g, '')) || 0),
+        mrp: typeof p.mrp === 'number' ? p.mrp : (parseInt(String(p.mrp || p.oldPrice || 0).replace(/[^0-9]/g, '')) || 0),
+        originalPrice: typeof p.mrp === 'number' ? p.mrp : (parseInt(String(p.mrp || p.oldPrice || 0).replace(/[^0-9]/g, '')) || 0),
+        rating: p.rating || 5.0,
+        inStock: p.inStock,
+        condition: p.condition || "New",
+        image: p.image,
+        tags: p.tags || "None",
+        badgeStyle: p.badgeStyle,
+        badge: p.badge || (p.tags === 'Sale' ? 'sale' : p.tags === 'Best Seller' ? 'best-seller' : null)
+    }));
+    
+    console.log("Fetching featured products...");
+    res.json(mappedProducts);
+  } catch (err) {
+    console.error("GET Featured error:", err);
     res.status(500).json({ message: err.message });
   }
 });

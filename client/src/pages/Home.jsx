@@ -11,6 +11,12 @@ const Home = () => {
   const revealRefs = useRef([]);
   
   const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  
+  const parsePriceLocal = (price) => {
+    if (!price) return 0;
+    if (typeof price === 'number') return price;
+    return Number(price.toString().replace(/[^0-9.-]+/g, ""));
+  };
 
   const slides = [
     {
@@ -91,11 +97,12 @@ const Home = () => {
   useEffect(() => {
     const fetchFeatured = async () => {
         try {
-            const res = await fetch(`${BASE_URL}/api/products?featured=true&limit=4`);
+            const res = await fetch(`${BASE_URL}/api/products/featured?limit=4`);
             if (res.ok) {
                 const data = await res.json();
                 // Safe state setting: only update if data exists to prevent intermittent disappearance
                 if (data && data.length > 0) {
+                    console.log("Featured Products Data:", data); // Debug Step: Console log API response
                     setDbFeaturedProducts(data.slice(0, 4));
                 }
             }
@@ -231,7 +238,15 @@ const Home = () => {
         </div>
 
         <div className="products-grid">
-            {(dbFeaturedProducts.length > 0 ? dbFeaturedProducts : PRODUCTS.slice(0, 10)).map((product, index) => (
+            {(dbFeaturedProducts.length > 0 ? dbFeaturedProducts : PRODUCTS.slice(0, 10)).map((product, index) => {
+                console.log("Featured Product Item:", product); // Debug Step: Console log individual product
+                
+                const price = Number(parsePriceLocal(product.price));
+                const originalPrice = Number(parsePriceLocal(product.mrp || product.originalPrice));
+                const hasDiscount = originalPrice > 0 && originalPrice > price;
+                const discountPercent = hasDiscount ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0;
+
+                return (
                 <div key={product._id || product.id} className="product-card reveal" ref={addToRevealRefs}>
                     <button 
                         className={`wishlist-btn ${wishlist.some(item => (item.name || item.title || '').toLowerCase() === (product.name || product.title || '').toLowerCase()) ? 'active' : ''}`} 
@@ -260,8 +275,21 @@ const Home = () => {
                                 (product.stars || '★★★★★ (5.0)')
                             }
                         </div>
-                        <div className="product-price">
-                            ₹{typeof product.price === 'number' ? product.price.toLocaleString('en-IN') : product.price}
+                        <div className="product-price" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginTop: '5px' }}>
+                            {/* Temporarily less strict to check field visibility as per user request */}
+                            {(product.mrp || product.originalPrice) && (Number(parsePriceLocal(product.mrp || product.originalPrice)) > Number(parsePriceLocal(product.price))) ? (
+                                <span style={{ color: '#94a3b8', textDecoration: 'line-through', fontSize: '0.9rem' }}>
+                                    ₹{Number(parsePriceLocal(product.mrp || product.originalPrice)).toLocaleString('en-IN')}
+                                </span>
+                            ) : null}
+                            <span style={{ fontSize: '1.25rem', fontWeight: 800, color: '#2563eb' }}>
+                                ₹{price.toLocaleString('en-IN')}
+                            </span>
+                            {hasDiscount && (
+                                <span style={{ fontSize: '0.75rem', color: '#10b981', fontWeight: 700, background: '#f0fdf4', padding: '2px 6px', borderRadius: '4px' }}>
+                                    {discountPercent}% OFF
+                                </span>
+                            )}
                         </div>
                         <button 
                             className="btn btn-block" 
@@ -271,7 +299,8 @@ const Home = () => {
                         </button>
                     </div>
                 </div>
-            ))}
+                );
+            })}
         </div>
       </section>
 

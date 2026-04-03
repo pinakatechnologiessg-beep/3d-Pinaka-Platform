@@ -106,6 +106,7 @@ const Products = () => {
                 const res = await fetch(url);
                 if (res.ok) {
                     const data = await res.json();
+                    console.log("Fetched Products Data:", data); // Debug Step: Console log API response
                     setProducts(data);
                 }
             } catch (err) {
@@ -315,8 +316,20 @@ const Products = () => {
                                                         {product.category} | {product.brand}
                                                     </div>
                                                     <h3 style={{ fontSize: '1.1rem', color: '#1e293b', marginBottom: '10px', height: '2.8rem', overflow: 'hidden' }}>{product.name}</h3>
-                                                    <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#2563eb' }}>
-                                                        ₹{parsePriceLocal(product.price).toLocaleString('en-IN')}
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '5px' }}>
+                                                        <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#2563eb' }}>
+                                                            ₹{parsePriceLocal(product.price).toLocaleString('en-IN')}
+                                                        </div>
+                                                        {product.mrp && product.mrp > product.price && (
+                                                            <div style={{ fontSize: '0.95rem', color: '#94a3b8', textDecoration: 'line-through' }}>
+                                                                ₹{parsePriceLocal(product.mrp).toLocaleString('en-IN')}
+                                                            </div>
+                                                        )}
+                                                        {product.mrp && product.mrp > product.price && (
+                                                            <div style={{ fontSize: '0.8rem', color: '#10b981', fontWeight: 700, background: '#f0fdf4', padding: '2px 6px', borderRadius: '4px' }}>
+                                                                {Math.round(((product.mrp - product.price) / product.mrp) * 100)}% OFF
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 </Link>
                                                 <button 

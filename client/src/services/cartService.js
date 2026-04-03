@@ -15,25 +15,46 @@ export const cartService = {
   // --- Cart Operations ---
   getCartItems: () => getFromStorage('cart'),
   
-  getCartCount: () => getFromStorage('cart').length,
+  getCartCount: () => {
+    const cart = getFromStorage('cart');
+    return cart.reduce((acc, item) => acc + (item.quantity || 1), 0);
+  },
   
   addToCart: (product, quantity = 1) => {
     const cart = getFromStorage('cart');
+    const pid = product._id || product.id;
     const title = product.name || product.title;
-    for (let i = 0; i < quantity; i++) {
+    
+    const existingIndex = cart.findIndex(item => item.productId === pid);
+    
+    if (existingIndex !== -1) {
+        cart[existingIndex].quantity = (cart[existingIndex].quantity || 1) + quantity;
+    } else {
         cart.push({
-          id: Date.now() + Math.random(), // Unique ID for removals
-          productId: product._id || product.id, // Original ID from data
+          id: Date.now() + Math.random(),
+          productId: pid,
           title: title,
           price: product.price,
-          image: product.image || product.img
+          image: product.image || product.img,
+          quantity: quantity
         });
     }
+    
     saveToStorage('cart', cart);
     window.dispatchEvent(new Event(CART_UPDATED));
     window.dispatchEvent(new CustomEvent(SHOW_TOAST, { 
       detail: { message: `${title} added to cart!`, type: 'success' } 
     }));
+  },
+
+  updateQuantity: (id, amount) => {
+    const cart = getFromStorage('cart');
+    const item = cart.find(i => i.id === id);
+    if (item) {
+        item.quantity = Math.max(1, (item.quantity || 1) + amount);
+        saveToStorage('cart', cart);
+        window.dispatchEvent(new Event(CART_UPDATED));
+    }
   },
   
   removeFromCartById: (id) => {

@@ -9,7 +9,7 @@ const supportQuerySchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  type: {
+  subject: {
     type: String,
     required: true
   },
@@ -17,10 +17,11 @@ const supportQuerySchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  createdAt: {
-    type: Date,
-    default: Date.now
+  status: {
+    type: String,
+    default: "new",
+    enum: ["new", "pending", "resolved"]
   }
-});
+}, { timestamps: true });
 
 export default mongoose.model('SupportQuery', supportQuerySchema);

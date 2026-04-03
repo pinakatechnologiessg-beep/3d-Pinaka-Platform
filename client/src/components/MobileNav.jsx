@@ -18,7 +18,7 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
 
         <div className="mobile-menu-actions">
           {user ? (
-            <div className="menu-user-info" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '0 1rem 1.5rem', borderBottom: '1px solid var(--border-color)', width: '100%' }}>
+            <Link to="/account" onClick={onClose} className="menu-user-info" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '0 1rem 1.5rem', borderBottom: '1px solid var(--border-color)', width: '100%', textDecoration: 'none' }}>
                 <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', fontWeight: 'bold' }}>
                     {(user.firstName ? user.firstName.charAt(0) : user.name?.charAt(0))?.toUpperCase() || 'U'}
                 </div>
@@ -26,7 +26,7 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
                     <div style={{ fontWeight: 'bold', color: 'var(--text-dark)' }}>{user.firstName ? `${user.firstName} ${user.lastName || ''}` : user.name || 'User'}</div>
                     <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{user.email}</div>
                 </div>
-            </div>
+            </Link>
           ) : (
             <Link to="/login" className="menu-action-btn" onClick={onClose}>
                 <User size={18} /> Sign In / Create Account
@@ -117,9 +117,9 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
         <div className="mobile-menu-footer">
           <h5>Need Help?</h5>
           <p className="address-text">
-            10th Floor, Times Tower, Kamala City,<br />
-            Senapati Bapat Marg, Lower Parel West,<br />
-            Mumbai, Maharashtra 400013
+            86, Sanjay Gandhi Nagar, Naubasta,<br />
+            Kanpur, Uttar Pradesh-208021,<br />
+            India
           </p>
         </div>
       </div>
@@ -130,7 +130,7 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
             <SquaresFour size={20} />
             <span>Home</span>
         </Link>
-        <Link to="/login" className="mobile-nav-item" onClick={onClose}>
+        <Link to="/account" className="mobile-nav-item" onClick={onClose}>
             {user ? (
                 <div className="user-initial-circle">
                     {(user.firstName ? user.firstName.charAt(0) : user.name?.charAt(0))?.toUpperCase() || 'U'}
@@ -150,23 +150,6 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
                 <span className="mobile-nav-badge">{wishlistCount}</span>
             </div>
             <span>Wishlist</span>
-        </Link>
-        <Link 
-            to={user && user.role === 'admin' ? '/admin' : '#'} 
-            className="mobile-nav-item" 
-            onClick={(e) => {
-                if (!user || user.role !== 'admin') {
-                    e.preventDefault();
-                    alert('Access Denied: You must be logged in as an Admin to access this panel.');
-                } else {
-                    onClose();
-                }
-            }}
-        >
-            <div className="mobile-nav-icon-wrap">
-                <Gear size={20} />
-            </div>
-            <span>Admin</span>
         </Link>
       </nav>
     </>

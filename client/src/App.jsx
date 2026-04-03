@@ -16,6 +16,10 @@ import Testimonials from './pages/Testimonials';
 import PrintingServices from './pages/PrintingServices';
 import ProductDetail from './pages/ProductDetail';
 import AdminDashboard from './pages/AdminDashboard';
+import Account from './pages/Account';
+import MyTickets from './pages/MyTickets';
+import AdminSupport from './pages/AdminSupport';
+import { Navigate } from 'react-router-dom';
 import { cartService, CART_UPDATED, WISHLIST_UPDATED, SHOW_TOAST } from './services/cartService';
 import './index.css';
 
@@ -26,6 +30,13 @@ const ScrollToTop = () => {
     window.scrollTo(0, 0);
   }, [pathname, search]);
   return null;
+};
+
+// Admin route protection
+const AdminRoute = ({ user, children }) => {
+  if (!user) return <Navigate to="/login" />;
+  if (user.role !== 'admin') return <Navigate to="/account" />;
+  return children;
 };
 
 function App() {
@@ -140,7 +151,6 @@ function App() {
         />
 
         <Routes>
-          <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/" element={<Home />} />
           <Route path="/index.html" element={<Home />} />
           <Route path="/support" element={<Support />} />
@@ -156,6 +166,24 @@ function App() {
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/wishlist.html" element={<Wishlist />} />
           <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/account" element={<Account />} />
+          <Route 
+            path="/admin" 
+            element={
+              <AdminRoute user={user}>
+                <AdminDashboard />
+              </AdminRoute>
+            } 
+          />
+          <Route 
+            path="/admin/support" 
+            element={
+              <AdminRoute user={user}>
+                <AdminSupport />
+              </AdminRoute>
+            } 
+          />
+          <Route path="/my-tickets" element={<MyTickets />} />
           
           {/* Brand Routes */}
           <Route path="/brand/:brandName" element={<BrandPage />} />

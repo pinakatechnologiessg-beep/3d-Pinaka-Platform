@@ -1,13 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FacebookLogo, TwitterLogo, InstagramLogo, YoutubeLogo, MapPin, Phone, Envelope } from '@phosphor-icons/react';
+import Logo from './Logo';
 
 const Footer = () => {
   return (
     <footer>
       <div className="container footer-grid">
-        <div className="footer-col">
-          <div className="logo-box footer-logo">3D</div> <span style={{ color: 'white', fontSize: '1.5rem', fontWeight: 700 }}>Print Hub</span>
+        <div className="footer-col" style={{ textAlign: 'left' }}>
+          <Link to="/" style={{ display: 'inline-block', marginBottom: '1.5rem' }}>
+            <Logo height={85} variant="dark" />
+          </Link>
           <p style={{ marginTop: '1rem', maxWidth: '300px' }}>Your one-stop destination for premium 3D printers, materials, and accessories. Bringing innovation to life.</p>
           <div className="social-icons">
             <a href="#"><FacebookLogo /></a>
@@ -40,14 +43,14 @@ const Footer = () => {
         <div className="footer-col">
           <h4>Contact Us</h4>
           <ul style={{ gap: '1rem' }}>
-            <li style={{ display: 'flex', gap: '10px' }}><MapPin size={20} style={{ color: 'var(--primary)' }} /> 123 Innovation Street, Tech Park, Bangalore - 560001</li>
-            <li style={{ display: 'flex', gap: '10px' }}><Phone size={20} style={{ color: 'var(--primary)' }} /> +91 8299475268</li>
-            <li style={{ display: 'flex', gap: '10px' }}><Envelope size={20} style={{ color: 'var(--primary)' }} /> support@printhub.com</li>
+            <li style={{ display: 'flex', gap: '10px' }}><MapPin size={20} style={{ color: 'var(--primary)' }} /> 86, Sanjay Gandhi Nagar, Naubasta, Kanpur, Uttar Pradesh-208021, India</li>
+            <li style={{ display: 'flex', gap: '10px' }}><Phone size={20} style={{ color: 'var(--primary)' }} /> (+91)-8299475268 (Whatsapp), +91-9935404850</li>
+            <li style={{ display: 'flex', gap: '10px' }}><Envelope size={20} style={{ color: 'var(--primary)' }} /> sales@3dpinaka.in</li>
           </ul>
         </div>
       </div>
       <div className="container footer-bottom">
-        <p>&copy; 2026 3D Print Hub. All rights reserved.</p>
+        <p>&copy; 2026 3D Pinaka. All rights reserved.</p>
       </div>
     </footer>
   );
