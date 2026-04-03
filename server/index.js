@@ -45,15 +45,6 @@ app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-app.use('/images', express.static(path.join(__dirname, '../client/public/images')));
-
-// Serve static files from the React frontend app
-app.use(express.static(path.join(__dirname, '../client/dist')));
-
-// Handle client routing, return all requests to React app
-app.use((req, res) => {
-  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
-});
 
 // Global Error Handler to avoid returning HTML for 500 errors
 app.use((err, req, res, next) => {
