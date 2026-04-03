@@ -79,13 +79,14 @@ export const cartService = {
   toggleWishlist: (product) => {
     const wishlist = getFromStorage('wishlist');
     const title = product.name || product.title;
-    const index = wishlist.findIndex(item => item.title === title);
+    const pid = product._id || product.id || product.productId;
+    const index = wishlist.findIndex(item => item.productId === pid);
     
     if (index === -1) {
       // Add
       wishlist.push({
         id: Date.now() + Math.random(),
-        productId: product._id || product.id,
+        productId: pid,
         title: title,
         price: product.price,
         image: product.image || product.img
@@ -123,9 +124,10 @@ export const cartService = {
     }));
   },
 
-  isInWishlist: (productTitle) => {
+  isInWishlist: (pid) => {
+    if (!pid) return false;
     const items = getFromStorage('wishlist');
-    return items.some(item => item.title === productTitle);
+    return items.some(item => item.productId === pid);
   },
 
   // --- Initial Sync ---

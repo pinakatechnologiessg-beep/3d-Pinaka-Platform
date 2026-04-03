@@ -162,11 +162,6 @@ const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu }) => {
           <div className="desktop-only">
             {user ? (
                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                {user.role === 'admin' && (
-                  <Link to="/admin/support" style={{ background: '#fef3c7', color: '#d97706', padding: '6px 12px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 800, textDecoration: 'none', border: '1px solid #fde68a', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                    <Shield size={16} /> SUPPORT DASHBOARD
-                  </Link>
-                )}
                 <Link to="/account" style={{ color: 'var(--text-dark)', textDecoration: 'none', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px' }}>
                   <User size={20} />
                   <span style={{ fontSize: '0.85rem' }}>{user.firstName || user.name?.split(' ')[0] || 'User'}</span>

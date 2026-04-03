@@ -254,11 +254,11 @@ const Home = () => {
                 return (
                 <div key={product._id || product.id} className="product-card reveal" ref={addToRevealRefs}>
                     <button 
-                        className={`wishlist-btn ${wishlist.some(item => (item.name || item.title || '').toLowerCase() === (product.name || product.title || '').toLowerCase()) ? 'active' : ''}`} 
+                        className={`wishlist-btn ${wishlist.some(item => (item.productId || '').toString() === (product._id || product.id || '').toString()) ? 'active' : ''}`} 
                         onClick={() => handleAddToWishlist(product)}
                         title="Add to Wishlist"
                     >
-                        <Heart size={20} weight={wishlist.some(item => (item.name || item.title || '').toLowerCase() === (product.name || product.title || '').toLowerCase()) ? "fill" : "bold"} />
+                        <Heart size={20} weight={wishlist.some(item => (item.productId || '').toString() === (product._id || product.id || '').toString()) ? "fill" : "bold"} />
                     </button>
                     {product.badge && <div className="badge" style={product.badgeStyle}>{product.badge}</div>}
                     <Link to={product._id ? `/product/${product._id}` : '/products'} className="product-img-wrapper" style={{ display: 'block' }}>
