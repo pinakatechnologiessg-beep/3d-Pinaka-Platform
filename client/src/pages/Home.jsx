@@ -243,7 +243,7 @@ const Home = () => {
         </div>
 
         <div className="products-grid">
-            {(dbFeaturedProducts.length > 0 ? dbFeaturedProducts : PRODUCTS.filter(p => !p.id || p.featured).slice(0, 4)).map((product, index) => {
+            {(dbFeaturedProducts.length > 0 ? dbFeaturedProducts : PRODUCTS.filter(p => p.featured)).map((product, index) => {
                 console.log("Featured Product Item:", product); // Debug Step: Console log individual product
                 
                 const price = Number(parsePriceLocal(product.price));

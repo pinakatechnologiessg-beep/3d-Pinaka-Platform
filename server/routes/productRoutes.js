@@ -224,7 +224,7 @@ router.put('/:id', upload.single('image'), async (req, res) => {
 // Get featured products
 router.get('/featured', async (req, res) => {
   try {
-    const limit = parseInt(req.query.limit) || 8;
+    const limit = parseInt(req.query.limit) || 50;
     const products = await Product.find({ featured: true }).limit(limit);
     
     const mappedProducts = products.map(p => ({
