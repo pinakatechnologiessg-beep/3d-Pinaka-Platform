@@ -87,7 +87,8 @@ router.get('/', async (req, res) => {
         image: p.image,
         tags: p.tags || "None",
         badgeStyle: p.badgeStyle,
-        badge: p.badge || (p.tags === 'Sale' ? 'sale' : p.tags === 'Best Seller' ? 'best-seller' : null)
+        badge: p.badge || (p.tags === 'Sale' ? 'sale' : p.tags === 'Best Seller' ? 'best-seller' : null),
+        featured: p.featured || false
     }));
     
     console.log("Fetching all products...");
@@ -199,7 +200,8 @@ router.put('/:id', upload.single('image'), async (req, res) => {
       condition,
       description,
       badgeStyle: badgeStyle ? JSON.parse(badgeStyle) : undefined,
-      specifications: specifications ? JSON.parse(specifications) : undefined
+      specifications: specifications ? JSON.parse(specifications) : undefined,
+      featured: req.body.featured !== undefined ? (String(req.body.featured) === 'true' || req.body.featured === true) : undefined,
     };
 
     if (req.file) {
@@ -239,7 +241,8 @@ router.get('/featured', async (req, res) => {
         image: p.image,
         tags: p.tags || "None",
         badgeStyle: p.badgeStyle,
-        badge: p.badge || (p.tags === 'Sale' ? 'sale' : p.tags === 'Best Seller' ? 'best-seller' : null)
+        badge: p.badge || (p.tags === 'Sale' ? 'sale' : p.tags === 'Best Seller' ? 'best-seller' : null),
+        featured: p.featured || false
     }));
     
     console.log("Fetching featured products...");
