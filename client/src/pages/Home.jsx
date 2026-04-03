@@ -99,13 +99,16 @@ const Home = () => {
   useEffect(() => {
     const fetchFeatured = async () => {
         try {
-            const res = await fetch(`${BASE_URL}/api/products/featured?limit=4`);
+            const res = await fetch(`${BASE_URL}/api/products/featured`);
             if (res.ok) {
                 const data = await res.json();
-                // Safe state setting: only update if data exists to prevent intermittent disappearance
+                console.log("Featured Products Data:", data); 
                 if (data && data.length > 0) {
-                    console.log("Featured Products Data:", data); // Debug Step: Console log API response
-                    setDbFeaturedProducts(data.slice(0, 4));
+                    setDbFeaturedProducts(data);
+                } else {
+                    // Force static fallback if DB is empty
+                    console.log("DB featured empty, using static fallback");
+                    setDbFeaturedProducts([]);
                 }
             }
         } catch (err) {
@@ -240,7 +243,7 @@ const Home = () => {
         </div>
 
         <div className="products-grid">
-            {(dbFeaturedProducts.length > 0 ? dbFeaturedProducts : PRODUCTS.slice(0, 10)).map((product, index) => {
+            {(dbFeaturedProducts.length > 0 ? dbFeaturedProducts : PRODUCTS.filter(p => !p.id || p.featured).slice(0, 4)).map((product, index) => {
                 console.log("Featured Product Item:", product); // Debug Step: Console log individual product
                 
                 const price = Number(parsePriceLocal(product.price));
