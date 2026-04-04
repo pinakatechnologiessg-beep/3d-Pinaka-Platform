@@ -1642,6 +1642,10 @@ footer {
   font-size: 0.95rem;
   color: #475569;
   border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 12px;
 }
 .menu-dropdown-items li:last-child a {
   border-bottom: none;
