@@ -2688,21 +2688,33 @@ footer {
 }
 
 @media (max-width: 768px) {
+    .tech-section {
+        padding: 0 !important;
+    }
+    .tech-images {
+        margin-left: -15px;
+        margin-right: -15px;
+        width: calc(100% + 30px);
+        height: 500px !important;
+        border-radius: 0 !important;
+    }
     .tech-main-card {
-        min-height: 420px; /* Make it large and impressive on mobile */
-        border-radius: 20px;
+        min-height: 500px;
+        border-radius: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
     }
     
     .tech-card-overlay {
-        padding: 1.5rem !important;
+        padding: 2rem 1.5rem !important;
     }
     
     .tech-card-overlay h4 {
-        font-size: 1.25rem !important;
+        font-size: 1.5rem !important;
     }
     
     .tech-card-overlay p {
-        font-size: 0.85rem !important;
+        font-size: 0.95rem !important;
     }
 }
 
