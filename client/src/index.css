@@ -2954,3 +2954,28 @@ footer {
     line-height: 1.6;
 }
 
+/* Admin Special List in Mobile Menu */
+.admin-special-list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.admin-nav-item {
+  display: flex !important;
+  align-items: center !important;
+  gap: 15px !important;
+  padding: 1.1rem 1.25rem !important;
+  text-decoration: none !important;
+  color: #475569 !important;
+  font-weight: 600 !important;
+  font-size: 0.95rem !important;
+  transition: all 0.2s !important;
+  border-bottom: 1px solid #f1f5f9;
+}
+.active-admin {
+  background: #6366f1 !important;
+  color: white !important;
+}
+.active-admin span, .active-admin svg {
+  color: white !important;
+}

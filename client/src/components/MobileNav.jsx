@@ -33,13 +33,14 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
 
         <div className="mobile-menu-actions">
           {user ? (
-            <div style={{ padding: '0 1rem 1.5rem', width: '100%', borderBottom: '1px solid var(--border-color)' }}>
+            <div style={{ padding: '0 1rem 1rem', width: '100%', borderBottom: '1px solid var(--border-color)' }}>
                 <Link to="/account" onClick={onClose} style={{ display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none' }}>
                     <div style={{ width: '45px', height: '45px', borderRadius: '50%', background: 'var(--primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', fontWeight: 'bold' }}>
                         {(user.firstName ? user.firstName.charAt(0) : user.name?.charAt(0))?.toUpperCase() || 'U'}
                     </div>
                     <div>
                         <div style={{ fontWeight: '700', color: 'var(--text-dark)', fontSize: '1rem' }}>{user.firstName ? `${user.firstName} ${user.lastName || ''}` : user.name || 'User'}</div>
+                        <div style={{ fontSize: '0.81rem', color: 'var(--text-muted)' }}>{user.email}</div>
                     </div>
                 </Link>
             </div>
