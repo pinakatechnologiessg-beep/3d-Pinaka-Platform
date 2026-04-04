@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { API_BASE_URL } from '../api/config';
-import { Envelope, User, ChatCircleText, PaperPlaneTilt, CheckCircle, Info } from '@phosphor-icons/react';
+import { Envelope, User, ChatCircleText, PaperPlaneTilt, CheckCircle, Info, ArrowLeft } from '@phosphor-icons/react';
 
 const Support = () => {
     const navigate = useNavigate();
@@ -69,7 +69,10 @@ const Support = () => {
     return (
         <main className="support-page" style={{ background: 'var(--light-bg)', padding: '5rem 0', minHeight: 'calc(100vh - 400px)' }}>
             <div className="container" style={{ maxWidth: '800px' }}>
-                <div className="support-header" style={{ textAlign: 'center', marginBottom: '3rem' }}>
+                <div className="support-header" style={{ textAlign: 'center', marginBottom: '3rem', position: 'relative' }}>
+                    <Link to="/" className="back-home-btn" style={{ position: 'absolute', top: '-40px', left: '0' }}>
+                        <ArrowLeft /> Back to Home
+                    </Link>
                     <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem', color: 'var(--text-dark)' }}>Support Center</h1>
                     <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>Have a question or need assistance? Our team is here to help you.</p>
                 </div>

@@ -27,17 +27,16 @@ const Footer = () => {
             <li><Link to="/products.html?sort=popularity">Best Sellers</Link></li>
             <li><Link to="/products.html?sort=newest">New Arrivals</Link></li>
             <li><Link to="/printing-services">Printing Services</Link></li>
-            <li><Link to="/support.html">Contact Us</Link></li>
+            <li><Link to="/materials">Materials</Link></li>
+            <li><Link to="/testimonials">Testimonials</Link></li>
           </ul>
         </div>
         <div className="footer-col">
           <h4>Customer Service</h4>
           <ul>
-            <li><Link to="/support.html">Help Center</Link></li>
-            <li><Link to="/support.html">Track Order</Link></li>
-            <li><Link to="/support.html">Shipping Info</Link></li>
-            <li><Link to="/support.html">Returns</Link></li>
-            <li><Link to="/support.html">Warranty</Link></li>
+            <li><Link to="/support.html">Customer Support</Link></li>
+            <li><Link to="/terms-and-conditions">Terms and Conditions</Link></li>
+            <li><Link to="/privacy-policy">Privacy Policy</Link></li>
           </ul>
         </div>
         <div className="footer-col">
@@ -50,7 +49,7 @@ const Footer = () => {
         </div>
       </div>
       <div className="container footer-bottom">
-        <p>&copy; 2026 3D Pinaka. All rights reserved.</p>
+        <p>@2023 3DPinaka.com. All rights reserved.</p>
       </div>
     </footer>
   );

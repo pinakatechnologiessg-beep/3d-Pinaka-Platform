@@ -19,6 +19,8 @@ import AdminDashboard from './pages/AdminDashboard';
 import Account from './pages/Account';
 import MyTickets from './pages/MyTickets';
 import AdminSupport from './pages/AdminSupport';
+import TermsAndConditions from './pages/TermsAndConditions';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 import { Navigate } from 'react-router-dom';
 import { cartService, CART_UPDATED, WISHLIST_UPDATED, SHOW_TOAST } from './services/cartService';
 import './index.css';
@@ -208,6 +210,10 @@ function App() {
           <Route path="/about-us.html" element={<About />} />
           <Route path="/testimonials" element={<Testimonials />} />
           <Route path="/printing-services" element={<PrintingServices />} />
+          <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+          <Route path="/terms-and-conditions.html" element={<TermsAndConditions />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/privacy-policy.html" element={<PrivacyPolicy />} />
         </Routes>
 
         <Footer />
