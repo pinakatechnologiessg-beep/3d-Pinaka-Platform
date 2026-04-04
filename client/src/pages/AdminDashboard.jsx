@@ -358,16 +358,14 @@ const AdminDashboard = () => {
               <input type="text" placeholder="Search..." disabled />
             </div>
           </div>
-          <div className="header-right">
+          <div className="header-right" style={{ flexWrap: 'wrap', gap: '10px' }}>
             <button 
               className="back-home-btn-admin" 
               onClick={() => navigate('/')} 
-              style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'none', border: '1px solid var(--admin-border-color)', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', color: 'var(--admin-text-main)', fontWeight: 500, transition: 'all 0.2s', marginRight: '8px' }}
-              onMouseOver={(e) => { e.currentTarget.style.borderColor = 'var(--admin-primary)'; e.currentTarget.style.color = 'var(--admin-primary)'; }}
-              onMouseOut={(e) => { e.currentTarget.style.borderColor = 'var(--admin-border-color)'; e.currentTarget.style.color = 'var(--admin-text-main)'; }}
+              style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'none', border: '1px solid var(--admin-border-color)', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', color: 'var(--admin-text-main)', fontWeight: 500, transition: 'all 0.2s' }}
             >
               <ArrowLeft size={18} />
-              <span>Back to Home</span>
+              <span className="hide-mobile">Back to Home</span>
             </button>
             <button className="notification-btn">
               <Bell size={24} />
@@ -375,7 +373,7 @@ const AdminDashboard = () => {
             </button>
             <div className="admin-profile">
               <img src="https://ui-avatars.com/api/?name=Admin+User&background=6366f1&color=fff" alt="Admin" />
-              <div className="profile-info">
+              <div className="profile-info hide-mobile">
                 <span className="profile-name">Admin User</span>
                 <span className="profile-role">Superadmin</span>
               </div>
@@ -756,28 +754,28 @@ const AdminDashboard = () => {
 
         {activeTab === 'Users' && (
           <div className="dashboard-content" style={{ padding: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h2 style={{ fontSize: '1.5rem', color: 'var(--admin-text-dark)' }}>Users Management</h2>
+            <div className="admin-section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '15px' }}>
+              <h2 style={{ fontSize: '1.5rem', color: 'var(--admin-text-dark)', margin: 0 }}>Users Management</h2>
               
-              <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-                <div style={{ display: 'flex', alignItems: 'center', background: 'white', border: '1px solid var(--admin-border-color)', borderRadius: '8px', padding: '6px 12px' }}>
+              <div style={{ display: 'flex', gap: '15px', alignItems: 'center', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', alignItems: 'center', background: 'white', border: '1px solid var(--admin-border-color)', borderRadius: '8px', padding: '6px 12px', minWidth: '220px' }}>
                    <MagnifyingGlass size={18} color="#64748b" style={{ marginRight: '8px' }} />
                    <input 
                      type="text" 
                      placeholder="Search by name or email..." 
                      value={userSearchQuery}
                      onChange={(e) => setUserSearchQuery(e.target.value)}
-                     style={{ border: 'none', outline: 'none', background: 'transparent', fontSize: '0.9rem', width: '200px' }}
+                     style={{ border: 'none', outline: 'none', background: 'transparent', fontSize: '0.9rem', width: '100%' }}
                    />
                 </div>
                 
-                <div style={{ display: 'flex', gap: '8px', background: 'white', padding: '4px', borderRadius: '8px', border: '1px solid var(--admin-border-color)' }}>
+                <div style={{ display: 'flex', gap: '4px', background: 'white', padding: '4px', borderRadius: '8px', border: '1px solid var(--admin-border-color)', overflowX: 'auto' }}>
                   {['All Users', 'Active', 'Blocked'].map(status => (
                     <button 
                       key={status}
                       onClick={() => setUserFilter(status)}
                       style={{ 
-                        padding: '8px 16px', borderRadius: '6px', border: 'none', cursor: 'pointer', fontWeight: 500, transition: 'all 0.2s',
+                        padding: '6px 12px', borderRadius: '6px', border: 'none', cursor: 'pointer', fontWeight: 500, transition: 'all 0.2s', fontSize: '0.85rem', whiteSpace: 'nowrap',
                         background: userFilter === status ? '#3b82f6' : 'transparent',
                         color: userFilter === status ? 'white' : 'var(--admin-text-main)'
                       }}

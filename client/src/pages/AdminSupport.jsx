@@ -197,7 +197,7 @@ const AdminSupport = () => {
                                             <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>{selectedTicket.subject}</h2>
                                             <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>#{selectedTicket._id}</span>
                                         </div>
-                                        <div style={{ display: 'flex', gap: '1.5rem', color: '#64748b', fontSize: '0.9rem' }}>
+                                        <div className="ticket-header-meta" style={{ display: 'flex', gap: '1.5rem', color: '#64748b', fontSize: '0.9rem', flexWrap: 'wrap' }}>
                                             <span><strong>User:</strong> {selectedTicket.name} ({selectedTicket.email})</span>
                                             <span><strong>Date:</strong> {new Date(selectedTicket.createdAt).toLocaleString()}</span>
                                         </div>
@@ -328,6 +328,12 @@ const AdminSupport = () => {
                 @media (max-width: 1024px) {
                     .admin-support-grid { grid-template-columns: 1fr !important; }
                     .ticket-list-sidebar { height: 300px !important; }
+                    .ticket-header-meta { flex-direction: column !important; gap: 0.5rem !important; }
+                }
+                @media (max-width: 640px) {
+                    .admin-support-page .container-fluid { padding: 0 1rem !important; }
+                    .admin-support-page h1 { font-size: 1.5rem !important; }
+                    .ticket-detail-content .header-actions { flex-direction: column !important; gap: 5px !important; }
                 }
             `}</style>
         </main>
