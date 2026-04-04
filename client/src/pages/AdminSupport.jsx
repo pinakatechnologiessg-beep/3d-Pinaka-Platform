@@ -57,7 +57,7 @@ const AdminSupport = () => {
     };
 
     const handleSendReply = async (e) => {
-        e.preventDefault();
+        if (e) e.preventDefault();
         if (!reply.trim()) return;
         setSendingReply(true);
 
@@ -85,9 +85,9 @@ const AdminSupport = () => {
 
     const getStatusColor = (status) => {
         switch (status) {
-            case 'New': return { bg: '#eff6ff', text: '#1d4ed8', border: '#bfdbfe' }; // blue
-            case 'Pending': return { bg: '#fffbeb', text: '#b45309', border: '#fde68a' }; // yellow
-            case 'Resolved': return { bg: '#f0fdf4', text: '#15803d', border: '#bbf7d0' }; // green
+            case 'New': return { bg: '#eff6ff', text: '#1d4ed8', border: '#bfdbfe' };
+            case 'Pending': return { bg: '#fffbeb', text: '#b45309', border: '#fde68a' };
+            case 'Resolved': return { bg: '#f0fdf4', text: '#15803d', border: '#bbf7d0' };
             default: return { bg: '#f9fafb', text: '#4b5563', border: '#e5e7eb' };
         }
     };
@@ -129,7 +129,6 @@ const AdminSupport = () => {
                 </div>
 
                 <div className="admin-support-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(400px, 1fr) 2fr', gap: '2rem' }}>
-                    {/* Sidebar: Ticket List */}
                     <div className="ticket-list-sidebar" style={{ background: 'white', borderRadius: '12px', border: '1px solid #e2e8f0', height: 'calc(100vh - 180px)', overflowY: 'auto' }}>
                         {filteredTickets.length === 0 ? (
                             <div style={{ padding: '4rem 2rem', textAlign: 'center', color: '#94a3b8' }}>
@@ -150,7 +149,7 @@ const AdminSupport = () => {
                                             cursor: 'pointer', 
                                             transition: 'all 0.2s',
                                             background: isSelected ? '#eff6ff' : 'white',
-                                            borderLeft: `4px solid ${isSelected ? 'var(--primary)' : 'transparent'}`
+                                            borderLeft: `4px solid ${isSelected ? '#6366f1' : 'transparent'}`
                                         }}
                                         className="admin-ticket-item"
                                     >
@@ -173,7 +172,6 @@ const AdminSupport = () => {
                         )}
                     </div>
 
-                    {/* Content: Ticket Detail & Chat */}
                     <div className="ticket-detail-content">
                         {!selectedTicket ? (
                             <div style={{ background: 'white', borderRadius: '12px', border: '1px dashed #e2e8f0', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#94a3b8' }}>
@@ -182,7 +180,6 @@ const AdminSupport = () => {
                             </div>
                         ) : (
                             <div style={{ background: 'white', borderRadius: '12px', border: '1px solid #e2e8f0', height: 'calc(100vh - 180px)', display: 'flex', flexDirection: 'column', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
-                                {/* Header */}
                                 <div style={{ padding: '1.5rem', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                                     <div>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '0.5rem' }}>
@@ -199,16 +196,7 @@ const AdminSupport = () => {
                                             <button 
                                                 key={s}
                                                 onClick={() => updateTicketStatus(selectedTicket._id, s)}
-                                                style={{ 
-                                                    padding: '8px 16px', 
-                                                    borderRadius: '6px', 
-                                                    fontSize: '0.85rem', 
-                                                    fontWeight: 600,
-                                                    cursor: 'pointer',
-                                                    background: selectedTicket.status === s ? getStatusColor(s).bg : '#f8fafc',
-                                                    color: selectedTicket.status === s ? getStatusColor(s).text : '#64748b',
-                                                    border: `1px solid ${selectedTicket.status === s ? getStatusColor(s).border : '#e2e8f0'}`
-                                                }}
+                                                style={{ padding: '8px 16px', borderRadius: '6px', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer', background: selectedTicket.status === s ? getStatusColor(s).bg : '#f8fafc', color: selectedTicket.status === s ? getStatusColor(s).text : '#64748b', border: `1px solid ${selectedTicket.status === s ? getStatusColor(s).border : '#e2e8f0'}` }}
                                             >
                                                 {s}
                                             </button>
@@ -216,9 +204,7 @@ const AdminSupport = () => {
                                     </div>
                                 </div>
 
-                                {/* Chat Area */}
                                 <div style={{ flex: 1, padding: '2rem', overflowY: 'auto' }}>
-                                    {/* Original Message */}
                                     <div style={{ marginBottom: '2rem' }}>
                                         <div style={{ display: 'flex', gap: '12px', marginBottom: '8px' }}>
                                             <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#64748b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem' }}>
@@ -231,94 +217,49 @@ const AdminSupport = () => {
                                         </div>
                                     </div>
 
-                                    {/* Thread replies */}
                                     {selectedTicket.replies.map((reply, index) => (
-                                        <div 
-                                            key={index} 
-                                            style={{ 
-                                                display: 'flex', 
-                                                gap: '12px', 
-                                                justifyContent: reply.sender === 'admin' ? 'flex-end' : 'flex-start',
-                                                flexDirection: reply.sender === 'admin' ? 'row-reverse' : 'row',
-                                                marginBottom: '2rem',
-                                                alignItems: 'flex-end'
-                                            }}
-                                        >
-                                            <div style={{ 
-                                                width: '36px', 
-                                                height: '36px', 
-                                                borderRadius: '50%', 
-                                                background: reply.sender === 'admin' ? '#3b82f6' : '#e2e8f0', 
-                                                color: reply.sender === 'admin' ? 'white' : '#64748b',
-                                                display: 'flex', 
-                                                alignItems: 'center', 
-                                                justifyContent: 'center',
-                                                fontSize: '0.9rem',
-                                                fontWeight: 600,
-                                                flexShrink: 0,
-                                                marginBottom: '4px'
-                                            }}>
+                                        <div key={index} style={{ display: 'flex', gap: '12px', justifyContent: reply.sender === 'admin' ? 'flex-end' : 'flex-start', flexDirection: reply.sender === 'admin' ? 'row-reverse' : 'row', marginBottom: '2rem', alignItems: 'flex-end' }}>
+                                            <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: reply.sender === 'admin' ? '#3b82f6' : '#e2e8f0', color: reply.sender === 'admin' ? 'white' : '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: 600, flexShrink: 0, marginBottom: '4px' }}>
                                                 {reply.sender === 'admin' ? <ShieldCheck size={20} /> : selectedTicket.name.charAt(0).toUpperCase()}
                                             </div>
-                                            <div className="chat-bubble" style={{ 
-                                                background: reply.sender === 'admin' ? '#2563eb' : 'white', 
-                                                padding: '1rem 1.25rem', 
-                                                borderRadius: reply.sender === 'admin' ? '20px 20px 4px 20px' : '20px 20px 20px 4px', 
-                                                maxWidth: '80%',
-                                                border: reply.sender === 'admin' ? 'none' : '1px solid #e2e8f0',
-                                                textAlign: 'left',
-                                                boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-                                                overflowWrap: 'break-word',
-                                                wordBreak: 'break-word',
-                                                color: reply.sender === 'admin' ? 'white' : '#1e293b'
-                                            }}>
-                                                <div style={{ fontWeight: 700, marginBottom: '6px', fontSize: '0.8rem', opacity: 0.9 }}>
-                                                    {reply.sender === 'admin' ? 'Support Team' : selectedTicket.name}
-                                                </div>
+                                            <div className="chat-bubble" style={{ background: reply.sender === 'admin' ? '#2563eb' : 'white', padding: '1rem 1.25rem', borderRadius: reply.sender === 'admin' ? '20px 20px 4px 20px' : '20px 20px 20px 4px', maxWidth: '80%', border: reply.sender === 'admin' ? 'none' : '1px solid #e2e8f0', textAlign: 'left', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', color: reply.sender === 'admin' ? 'white' : '#1e293b' }}>
+                                                <div style={{ fontWeight: 700, marginBottom: '6px', fontSize: '0.8rem', opacity: 0.9 }}>{reply.sender === 'admin' ? 'Support Team' : selectedTicket.name}</div>
                                                 <div style={{ lineHeight: 1.5, fontSize: '0.95rem' }}>{reply.message}</div>
-                                                <div style={{ fontSize: '0.7rem', opacity: 0.7, marginTop: '8px', textAlign: reply.sender === 'admin' ? 'right' : 'left' }}>
-                                                    {new Date(reply.date).toLocaleString([], { hour: '2-digit', minute: '2-digit', month: 'short', day: 'numeric' })}
-                                                </div>
+                                                <div style={{ fontSize: '0.7rem', opacity: 0.7, marginTop: '8px', textAlign: reply.sender === 'admin' ? 'right' : 'left' }}>{new Date(reply.date).toLocaleString([], { hour: '2-digit', minute: '2-digit', month: 'short', day: 'numeric' })}</div>
                                             </div>
                                         </div>
                                     ))}
                                 </div>
 
-                                {/* Reply Area */}
-                                    <div className="modern-chat-footer">
-                                        <form onSubmit={handleSendReply} className="chat-input-row">
+                                <div className="modern-chat-footer">
+                                    <form onSubmit={handleSendReply} className="chat-input-row">
+                                        <button type="button" className="chat-icon-btn">
+                                            <Plus size={24} weight="bold" />
+                                        </button>
+                                        <div className="chat-input-wrapper">
                                             <button type="button" className="chat-icon-btn">
-                                                <Plus size={24} weight="bold" />
+                                                <Smiley size={24} weight="bold" />
                                             </button>
-                                            <div className="chat-input-wrapper">
-                                                <button type="button" className="chat-icon-btn">
-                                                    <Smiley size={24} weight="bold" />
-                                                </button>
-                                                <textarea 
-                                                    value={reply}
-                                                    onChange={(e) => setReply(e.target.value)}
-                                                    onKeyDown={(e) => {
-                                                        if (e.key === 'Enter' && !e.shiftKey && window.innerWidth > 768) {
-                                                            e.preventDefault();
-                                                            handleSendReply(e);
-                                                        }
-                                                    }}
-                                                    placeholder="Type a message..."
-                                                    rows="1"
-                                                ></textarea>
-                                            </div>
-                                            <button 
-                                                type="submit" 
-                                                className="chat-send-btn"
-                                                disabled={sendingReply || !reply.trim()}
-                                            >
-                                                <PaperPlaneTilt size={22} weight="fill" />
-                                            </button>
-                                        </form>
-                                        <p className="hide-mobile" style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '8px', textAlign: 'center' }}>
-                                            Press Enter to send • Shift + Enter for new line
-                                        </p>
-                                    </div>
+                                            <textarea 
+                                                value={reply}
+                                                onChange={(e) => setReply(e.target.value)}
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Enter' && !e.shiftKey && window.innerWidth > 768) {
+                                                        e.preventDefault();
+                                                        handleSendReply(e);
+                                                    }
+                                                }}
+                                                placeholder="Type a message..."
+                                                rows="1"
+                                            ></textarea>
+                                        </div>
+                                        <button type="submit" className="chat-send-btn" disabled={sendingReply || !reply.trim()}>
+                                            <PaperPlaneTilt size={22} weight="fill" />
+                                        </button>
+                                    </form>
+                                    <p className="hide-mobile" style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '8px', textAlign: 'center' }}>
+                                        Press Enter to send | Shift + Enter for new line
+                                    </p>
                                 </div>
                             </div>
                         )}
@@ -334,14 +275,12 @@ const AdminSupport = () => {
                     .ticket-list-sidebar { height: 250px !important; }
                     .ticket-header-meta { flex-direction: column !important; gap: 0.5rem !important; }
                     .ticket-detail-content { height: auto !important; }
-                    .ticket-detail-content > div { height: auto !important; min-height: 400px; }
                 }
                 @media (max-width: 768px) {
                     .admin-support-page .container-fluid { padding: 0 1rem !important; }
                     .admin-support-page h1 { font-size: 1.5rem !important; }
                     .ticket-detail-content .header-actions { flex-direction: column !important; gap: 5px !important; }
                     .chat-bubble { max-width: 90% !important; padding: 1rem !important; }
-                    textarea { rows: 2 !important; height: 80px !important; }
                     .hide-mobile { display: none !important; }
                 }
             `}</style>

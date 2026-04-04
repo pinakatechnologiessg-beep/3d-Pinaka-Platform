@@ -280,7 +280,7 @@ const MyTickets = () => {
                                             </button>
                                         </form>
                                         <p className="hide-mobile" style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '8px', textAlign: 'center' }}>
-                                            Press Enter to send • Shift + Enter for new line
+                                            Press Enter to send | Shift + Enter for new line
                                         </p>
                                     </div>
                         </div>
