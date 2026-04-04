@@ -26,7 +26,7 @@ export const PRODUCTS = [
     price: "₹52,999",
     mrp: 65000,
     category: "FDM Printer",
-    image: "/images/Creality K1C 3D Printer.png",
+    image: "/images/creality-k1c.png",
     stars: "★★★★★ (4.9)",
     badge: "Popular",
     badgeStyle: { background: "#10b981", color: "white" }
@@ -36,7 +36,7 @@ export const PRODUCTS = [
     title: "Snapmaker 2.0 A350T",
     price: "₹1,99,000",
     category: "3-in-1 Printer",
-    image: "/images/Snapmaker 2.0 A350T 3-in-1 3D Printer.png",
+    image: "/images/snapmaker-2.0-a350t-3-in-1.png",
     stars: "★★★★★ (5.0)",
     badge: "Premium",
     badgeStyle: { background: "#f97316", color: "white" }
@@ -46,7 +46,7 @@ export const PRODUCTS = [
     title: "Bambu Lab P1S Combo",
     price: "₹61,199",
     category: "FDM Printer",
-    image: "/images/Bambu Lab P1S Combo 3D Printer.png",
+    image: "/images/bambu-lab-p1s-combo.png",
     stars: "★★★★★ (4.8)",
     badge: "Top Seller",
     badgeStyle: { background: "#10b981", color: "white" }
@@ -56,7 +56,7 @@ export const PRODUCTS = [
     title: "Bambu Lab P2S-Combo",
     price: "₹89,999",
     category: "FDM Printer",
-    image: "/images/Bambu Lab P2S-Combo 3D Printer.png",
+    image: "/images/bambu-lab-p2s-combo.png",
     stars: "★★★★★ (4.9)",
     badge: "New",
     badgeStyle: { background: "#6366f1", color: "white" }
@@ -66,7 +66,7 @@ export const PRODUCTS = [
     title: "Bambu Lab A1 Combo",
     price: "₹42,299",
     category: "FDM Printer",
-    image: "/images/Bambu Lab A1 Combo 3D Printer.png",
+    image: "/images/bambu-lab-a1-combo.png",
     stars: "★★★★★ (4.7)",
     badge: "Sale",
     badgeStyle: { background: "#ef4444", color: "white" }
@@ -76,7 +76,7 @@ export const PRODUCTS = [
     title: "Bambu Lab H2D Combo",
     price: "₹2,15,999",
     category: "FDM Printer",
-    image: "/images/Bambu Lab H2D Combo 3D Printer.png",
+    image: "/images/bambu-lab-h2d-combo.png",
     stars: "★★★★★ (5.0)",
     badge: "New",
     badgeStyle: { background: "#6366f1", color: "white" }
@@ -86,7 +86,7 @@ export const PRODUCTS = [
     title: "Creality K1 Max",
     price: "₹79,999",
     category: "FDM Printer",
-    image: "/images/Creality K1 Max 3D Printer.png",
+    image: "/images/creality-k1-max.png",
     stars: "★★★★★ (4.8)",
     badge: "New",
     badgeStyle: { background: "#6366f1", color: "white" }
@@ -96,7 +96,7 @@ export const PRODUCTS = [
     title: "Creality K2 Plus Combo",
     price: "₹1,59,999",
     category: "FDM Printer",
-    image: "/images/Creality K2 Plus Combo 3D Printer.png",
+    image: "/images/creality-k2-plus-combo.png",
     stars: "★★★★★ (4.7)",
     badge: "Top Seller",
     badgeStyle: { background: "#10b981", color: "white" }

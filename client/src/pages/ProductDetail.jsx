@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { Star, ShoppingCart, Heart, WhatsappLogo, ArrowLeft, Plus, Minus, CheckCircle, Truck, ShieldCheck, ArrowsCounterClockwise } from '@phosphor-icons/react';
 import ProductImageZoom from '../components/ProductImageZoom';
 import { cartService } from '../services/cartService';
-import { getImageUrl } from '../utils/imageUtils';
+import { getImageUrl, PLACEHOLDER_SVG } from '../utils/imageUtils';
 import { API_BASE_URL } from '../api/config';
 import './ProductDetail.css';
 
@@ -352,7 +352,7 @@ const ProductDetail = () => {
                                         <img 
                                             src={getImageUrl(p.image)} 
                                             alt={p.name} 
-                                            onError={(e) => (e.target.src = "/placeholder.png")}
+                                            onError={(e) => (e.target.src = PLACEHOLDER_SVG)}
                                         />
                                     </div>
                                     <div className="product-info">
