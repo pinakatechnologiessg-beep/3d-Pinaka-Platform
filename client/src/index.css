@@ -54,6 +54,16 @@ body {
   overflow-x: hidden;
 }
 
+.hide-mobile {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .hide-mobile {
+    display: none !important;
+  }
+}
+
 a {
   text-decoration: none;
   color: inherit;

@@ -38,88 +38,110 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
         </div>
 
         <ul className="mobile-menu-list">
-          {user?.role === 'admin' && (
-            <li style={{ borderBottom: '2px solid var(--primary)', marginBottom: '1rem', paddingBottom: '0.5rem' }}>
-              <div style={{ padding: '0.5rem 1rem', fontSize: '0.75rem', fontWeight: 800, color: 'var(--primary)', textTransform: 'uppercase' }}>Admin Control</div>
-              <Link to="/admin" onClick={onClose} style={{ color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '8px' }}><Gear size={18} /> Admin Dashboard</Link>
-              <Link to="/admin/support" onClick={onClose} style={{ color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '8px' }}><ChatTeardropText size={18} /> Support Dashboard</Link>
-            </li>
-          )}
-          <li><Link to="/" onClick={onClose}>Home</Link></li>
-          <li><Link to="/products" onClick={onClose}>Brands</Link></li>
-          
-          {[
-            { key: 'categories', label: 'Categories' },
-            { key: 'exclusive', label: '3 Idea Exclusive' },
-            { key: 'material', label: 'Material' },
-            { key: 'bulk', label: 'Bulk Enquiry' },
-            { key: 'refurbished', label: 'Refurbished Store' }
-          ].map((item) => (
-            <li key={item.key} className={`has-dropdown ${activeDropdowns[item.key] ? 'active' : ''}`}>
-              <div className="menu-dropdown-toggle" onClick={() => toggleDropdown(item.key)}>
-                {item.label} {activeDropdowns[item.key] ? <Minus size={14} /> : <Plus size={14} />}
-              </div>
-              <ul className="menu-dropdown-items">
-                {item.key === 'categories' ? (
-                  <>
-                    <li><Link to="/products?category=3D Printer" onClick={onClose}>3D Printer</Link></li>
-                    <li><Link to="/products?category=Laser Engraver" onClick={onClose}>Laser Engraver</Link></li>
-                    <li><Link to="/products?category=Food Printer" onClick={onClose}>Food Printer</Link></li>
-                    <li><Link to="/products?category=3D Scanner" onClick={onClose}>3D Scanner</Link></li>
-                    <li><Link to="/products?category=CNC Router" onClick={onClose}>CNC Router</Link></li>
-                    <li><Link to="/products?category=Robotics" onClick={onClose}>Robotics</Link></li>
-                    <li><Link to="/products?category=3D Pen" onClick={onClose}>3D Pen</Link></li>
-                    <li><Link to="/products?category=Filament" onClick={onClose}>Filament</Link></li>
-                    <li><Link to="/products?category=Resin" onClick={onClose}>Resin</Link></li>
-                    <li><Link to="/products?category=Spare Parts" onClick={onClose}>Spare Parts</Link></li>
-                    <li><Link to="/products?category=Accessory" onClick={onClose}>Accessory</Link></li>
-                  </>
-                ) : item.key === 'exclusive' ? (
-                  <>
-                    <li><Link to="/products?brand=Anycubic" onClick={onClose}>Anycubic Kobra 2 Neo 3D Printer</Link></li>
-                    <li><Link to="/products?brand=Anycubic" onClick={onClose}>Anycubic Photon Mono 4 3D Printer</Link></li>
-                    <li><Link to="/products?brand=Anycubic" onClick={onClose}>Anycubic Kobra 3 3D Printer</Link></li>
-                    <li><Link to="/products?brand=Snapmaker" onClick={onClose}>Snapmaker Artisan 3-In-1 3D Printer</Link></li>
-                    <li><Link to="/products?brand=Rotrics" onClick={onClose}>Rotrics DexArm Hyper Luxury Kit</Link></li>
-                  </>
-                ) : item.key === 'material' ? (
-                  <>
-                    <li><Link to="/products?category=Filament" onClick={onClose}><span className="bullet">•</span> Filaments</Link></li>
-                    <li><Link to="/products?category=Resin" onClick={onClose}><span className="bullet">•</span> Resins</Link></li>
-                    <li><Link to="/products?category=Accessory" onClick={onClose}><span className="bullet">•</span> Accessories</Link></li>
-                    <li><Link to="/products?category=Spare Parts" onClick={onClose}><span className="bullet">•</span> Spare Parts</Link></li>
-                  </>
-                ) : item.key === 'bulk' ? (
-                  <li><Link to="/support.html" onClick={onClose}>Contact Form</Link></li>
-                ) : item.key === 'refurbished' ? (
-                  <div className="nested-dropdown">
-                    <div className="menu-dropdown-toggle nested" onClick={() => toggleDropdown('refurbishedCategories')}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <span className="bullet">•</span> Categories
-                      </div>
-                      {activeDropdowns.refurbishedCategories ? <Minus size={14} /> : <Plus size={14} />}
-                    </div>
-                    {activeDropdowns.refurbishedCategories && (
-                    <ul className="menu-dropdown-items nested-items" style={{ display: 'block', background: 'transparent' }}>
-                        <li><Link to="/products?condition=Refurbished&category=3D Printer" onClick={onClose}><span className="bullet">•</span> 3D Printer</Link></li>
-                        <li><Link to="/products?condition=Refurbished&category=Laser Engraver" onClick={onClose}><span className="bullet">•</span> Laser Engraver</Link></li>
-                        <li><Link to="/products?condition=Refurbished&category=Food Printer" onClick={onClose}><span className="bullet">•</span> Food Printer</Link></li>
-                        <li><Link to="/products?condition=Refurbished&category=3D Scanner" onClick={onClose}><span className="bullet">•</span> 3D Scanner</Link></li>
-                        <li><Link to="/products?condition=Refurbished&category=CNC Router" onClick={onClose}><span className="bullet">•</span> CNC Router</Link></li>
-                        <li><Link to="/products?condition=Refurbished&category=3D Pen" onClick={onClose}><span className="bullet">•</span> 3D Pen</Link></li>
-                        <li><Link to="/products?condition=Refurbished&category=Filament" onClick={onClose}><span className="bullet">•</span> Filament</Link></li>
-                        <li><Link to="/products?condition=Refurbished&category=Resin" onClick={onClose}><span className="bullet">•</span> Resin</Link></li>
-                        <li><Link to="/products?condition=Refurbished&category=Spare Parts" onClick={onClose}><span className="bullet">•</span> Spare Parts</Link></li>
-                        <li><Link to="/products?condition=Refurbished&category=Accessory" onClick={onClose}><span className="bullet">•</span> Accessory</Link></li>
-                    </ul>
-                    )}
+          {user?.role === 'admin' ? (
+            /* EXCLUSIVE ADMIN MENU */
+            <>
+              <li style={{ borderBottom: '2px solid var(--primary)', marginBottom: '1.5rem', paddingBottom: '0.8rem' }}>
+                <div style={{ padding: '0.5rem 1rem', fontSize: '0.85rem', fontWeight: 800, color: 'var(--primary)', textTransform: 'uppercase' }}>Admin Console</div>
+                <Link to="/admin" onClick={onClose} style={{ color: 'var(--primary)', padding: '1rem', display: 'flex', alignItems: 'center', gap: '12px', fontSize: '1.1rem', fontWeight: 600 }}>
+                  <House size={22} weight="fill" /> Dashboard
+                </Link>
+                <Link to="/admin/support" onClick={onClose} style={{ color: 'var(--primary)', padding: '1rem', display: 'flex', alignItems: 'center', gap: '12px', fontSize: '1.1rem', fontWeight: 600 }}>
+                  <ChatTeardropText size={22} weight="fill" /> Support Panel
+                </Link>
+                <Link to="/admin" onClick={onClose} style={{ color: 'var(--primary)', padding: '1rem', display: 'flex', alignItems: 'center', gap: '12px', fontSize: '1.1rem', fontWeight: 600 }}>
+                  <Package size={22} weight="fill" /> Products
+                </Link>
+                <Link to="/admin" onClick={onClose} style={{ color: 'var(--primary)', padding: '1rem', display: 'flex', alignItems: 'center', gap: '12px', fontSize: '1.1rem', fontWeight: 600 }}>
+                  <Users size={22} weight="fill" /> Users
+                </Link>
+                <Link to="/admin" onClick={onClose} style={{ color: 'var(--primary)', padding: '1rem', display: 'flex', alignItems: 'center', gap: '12px', fontSize: '1.1rem', fontWeight: 600 }}>
+                  <Gear size={22} weight="fill" /> Settings
+                </Link>
+              </li>
+              <li><Link to="/" onClick={onClose} style={{ opacity: 0.7 }}>View Public Shop</Link></li>
+              <li><Link to="/products" onClick={onClose} style={{ opacity: 0.7 }}>View All Products</Link></li>
+            </>
+          ) : (
+            /* REGULAR USER MENU */
+            <>
+              <li><Link to="/" onClick={onClose}>Home</Link></li>
+              <li><Link to="/products" onClick={onClose}>Brands</Link></li>
+              
+              {[
+                { key: 'categories', label: 'Categories' },
+                { key: 'exclusive', label: '3 Idea Exclusive' },
+                { key: 'material', label: 'Material' },
+                { key: 'bulk', label: 'Bulk Enquiry' },
+                { key: 'refurbished', label: 'Refurbished Store' }
+              ].map((item) => (
+                <li key={item.key} className={`has-dropdown ${activeDropdowns[item.key] ? 'active' : ''}`}>
+                  <div className="menu-dropdown-toggle" onClick={() => toggleDropdown(item.key)}>
+                    {item.label} {activeDropdowns[item.key] ? <Minus size={14} /> : <Plus size={14} />}
                   </div>
-                ) : (
-                  <li><Link to="/products.html" onClick={onClose}>View All {item.label}</Link></li>
-                )}
-              </ul>
-            </li>
-          ))}
+                  <ul className="menu-dropdown-items">
+                    {item.key === 'categories' ? (
+                      <>
+                        <li><Link to="/products?category=3D Printer" onClick={onClose}>3D Printer</Link></li>
+                        <li><Link to="/products?category=Laser Engraver" onClick={onClose}>Laser Engraver</Link></li>
+                        <li><Link to="/products?category=Food Printer" onClick={onClose}>Food Printer</Link></li>
+                        <li><Link to="/products?category=3D Scanner" onClick={onClose}>3D Scanner</Link></li>
+                        <li><Link to="/products?category=CNC Router" onClick={onClose}>CNC Router</Link></li>
+                        <li><Link to="/products?category=Robotics" onClick={onClose}>Robotics</Link></li>
+                        <li><Link to="/products?category=3D Pen" onClick={onClose}>3D Pen</Link></li>
+                        <li><Link to="/products?category=Filament" onClick={onClose}>Filament</Link></li>
+                        <li><Link to="/products?category=Resin" onClick={onClose}>Resin</Link></li>
+                        <li><Link to="/products?category=Spare Parts" onClick={onClose}>Spare Parts</Link></li>
+                        <li><Link to="/products?category=Accessory" onClick={onClose}>Accessory</Link></li>
+                      </>
+                    ) : item.key === 'exclusive' ? (
+                      <>
+                        <li><Link to="/products?brand=Anycubic" onClick={onClose}>Anycubic Kobra 2 Neo 3D Printer</Link></li>
+                        <li><Link to="/products?brand=Anycubic" onClick={onClose}>Anycubic Photon Mono 4 3D Printer</Link></li>
+                        <li><Link to="/products?brand=Anycubic" onClick={onClose}>Anycubic Kobra 3 3D Printer</Link></li>
+                        <li><Link to="/products?brand=Snapmaker" onClick={onClose}>Snapmaker Artisan 3-In-1 3D Printer</Link></li>
+                        <li><Link to="/products?brand=Rotrics" onClick={onClose}>Rotrics DexArm Hyper Luxury Kit</Link></li>
+                      </>
+                    ) : item.key === 'material' ? (
+                      <>
+                        <li><Link to="/products?category=Filament" onClick={onClose}><span className="bullet">•</span> Filaments</Link></li>
+                        <li><Link to="/products?category=Resin" onClick={onClose}><span className="bullet">•</span> Resins</Link></li>
+                        <li><Link to="/products?category=Accessory" onClick={onClose}><span className="bullet">•</span> Accessories</Link></li>
+                        <li><Link to="/products?category=Spare Parts" onClick={onClose}><span className="bullet">•</span> Spare Parts</Link></li>
+                      </>
+                    ) : item.key === 'bulk' ? (
+                      <li><Link to="/support.html" onClick={onClose}>Contact Form</Link></li>
+                    ) : item.key === 'refurbished' ? (
+                      <div className="nested-dropdown">
+                        <div className="menu-dropdown-toggle nested" onClick={() => toggleDropdown('refurbishedCategories')}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <span className="bullet">•</span> Categories
+                          </div>
+                          {activeDropdowns.refurbishedCategories ? <Minus size={14} /> : <Plus size={14} />}
+                        </div>
+                        {activeDropdowns.refurbishedCategories && (
+                        <ul className="menu-dropdown-items nested-items" style={{ display: 'block', background: 'transparent' }}>
+                            <li><Link to="/products?condition=Refurbished&category=3D Printer" onClick={onClose}><span className="bullet">•</span> 3D Printer</Link></li>
+                            <li><Link to="/products?condition=Refurbished&category=Laser Engraver" onClick={onClose}><span className="bullet">•</span> Laser Engraver</Link></li>
+                            <li><Link to="/products?condition=Refurbished&category=Food Printer" onClick={onClose}><span className="bullet">•</span> Food Printer</Link></li>
+                            <li><Link to="/products?condition=Refurbished&category=3D Scanner" onClick={onClose}><span className="bullet">•</span> 3D Scanner</Link></li>
+                            <li><Link to="/products?condition=Refurbished&category=CNC Router" onClick={onClose}><span className="bullet">•</span> CNC Router</Link></li>
+                            <li><Link to="/products?condition=Refurbished&category=3D Pen" onClick={onClose}><span className="bullet">•</span> 3D Pen</Link></li>
+                            <li><Link to="/products?condition=Refurbished&category=Filament" onClick={onClose}><span className="bullet">•</span> Filament</Link></li>
+                            <li><Link to="/products?condition=Refurbished&category=Resin" onClick={onClose}><span className="bullet">•</span> Resin</Link></li>
+                            <li><Link to="/products?condition=Refurbished&category=Spare Parts" onClick={onClose}><span className="bullet">•</span> Spare Parts</Link></li>
+                            <li><Link to="/products?condition=Refurbished&category=Accessory" onClick={onClose}><span className="bullet">•</span> Accessory</Link></li>
+                        </ul>
+                        )}
+                      </div>
+                    ) : (
+                      <li><Link to="/products.html" onClick={onClose}>View All {item.label}</Link></li>
+                    )}
+                  </ul>
+                </li>
+              ))}
+            </>
+          )}
           
           <li><Link to="/printing-services" onClick={onClose}>Printing Services</Link></li>
           <li><Link to={user?.role === 'admin' ? "/admin/support" : "/support.html"} onClick={onClose}>Support</Link></li>

@@ -425,15 +425,34 @@ const Home = () => {
         </div>
         
         <div className="testi-grid">
-            {[1, 2, 3].map((i) => (
+            {[
+                { 
+                    name: "Rajesh S. Khanna", 
+                    role: "Industrial Designer, Bangalore", 
+                    text: "Pinaka Technologies has been our go-to partner for all our prototyping needs. Their Anycubic Kobra 3 setup is a beast—unbeatable precision and speed!", 
+                    img: "https://i.pravatar.cc/150?img=12" 
+                },
+                { 
+                    name: "Dr. Sunita Rao", 
+                    role: "Professor, IIT Kanpur", 
+                    text: "The team at Pinaka helped us set up our entire research lab. Their expert consultation and technical support were invaluable to our project's success.", 
+                    img: "https://i.pravatar.cc/150?img=5" 
+                },
+                { 
+                    name: "Vikram Malhotra", 
+                    role: "Founder, MechDesigns", 
+                    text: "Incredible speed and accuracy. The Snapmaker Artisan I bought from them has been running 24/7 with zero issues. Highly recommend their services!", 
+                    img: "https://i.pravatar.cc/150?img=11" 
+                }
+            ].map((testi, i) => (
                 <div key={i} className="testi-card reveal" ref={addToRevealRefs}>
-                    <div className="stars">★★★★★</div>
-                    <p>"The Bambu Lab P2S has transformed our prototyping workflow. The print quality is exceptional!"</p>
-                    <div className="user-info">
-                        <img src={`https://i.pravatar.cc/150?img=${i+10}`} alt="User" className="user-avatar" />
+                    <div className="stars" style={{ color: '#f59e0b', marginBottom: '1rem' }}>★★★★★</div>
+                    <p style={{ fontSize: '1.05rem', lineHeight: 1.6, color: '#334155' }}>"{testi.text}"</p>
+                    <div className="user-info" style={{ marginTop: '1.5rem' }}>
+                        <img src={testi.img} alt={testi.name} className="user-avatar" style={{ border: '2px solid var(--primary)' }} />
                         <div className="user-details">
-                            <h5>{i === 1 ? 'Rajesh Kumar' : i === 2 ? 'Priya Sharma' : 'Amit Patel'}</h5>
-                            <span>{i === 1 ? 'Product Designer' : i === 2 ? 'Architect' : 'Manager'}</span>
+                            <h5 style={{ fontSize: '1rem', fontWeight: 700 }}>{testi.name}</h5>
+                            <span style={{ fontSize: '0.85rem' }}>{testi.role}</span>
                         </div>
                     </div>
                 </div>
