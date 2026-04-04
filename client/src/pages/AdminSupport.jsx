@@ -233,9 +233,10 @@ const AdminSupport = () => {
 
                                 <div className="modern-chat-footer">
                                     <form onSubmit={handleSendReply} className="chat-input-row">
-                                        <button type="button" className="chat-icon-btn">
-                                            <Plus size={24} weight="bold" />
-                                        </button>
+                                        <div className="chat-checkbox-group">
+                                            <input type="checkbox" id="markResolved" />
+                                            <label htmlFor="markResolved" className="hide-mobile">Resolve</label>
+                                        </div>
                                         <div className="chat-input-wrapper">
                                             <button type="button" className="chat-icon-btn">
                                                 <Smiley size={24} weight="bold" />
