@@ -596,6 +596,12 @@
     display: none;
   }
   
+  .admin-products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.5rem;
+  }
+
   .stats-grid {
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 15px;
@@ -633,5 +639,17 @@
   .admin-section-header {
       flex-direction: column;
       align-items: flex-start !important;
+  }
+
+  .admin-products-grid {
+      grid-template-columns: 1fr !important;
+  }
+
+  .admin-product-actions {
+      flex-direction: column !important;
+  }
+
+  .admin-product-actions button {
+      width: 100% !important;
   }
 }

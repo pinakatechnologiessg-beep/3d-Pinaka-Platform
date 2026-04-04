@@ -539,7 +539,7 @@ const AdminDashboard = () => {
             {adminProducts.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '40px', color: 'var(--admin-text-muted)' }}>Loading products...</div>
             ) : (
-                <div className="products-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1.5rem' }}>
+                <div className="products-grid admin-products-grid">
                     {adminProducts.filter(p => 
                         (p.name || p.title || "").toLowerCase().includes(productSearchQuery.toLowerCase()) ||
                         (p.brand || "").toLowerCase().includes(productSearchQuery.toLowerCase()) ||
@@ -600,18 +600,19 @@ const AdminDashboard = () => {
                                     {!product.inStock && <span className="out-of-stock-label">Out Of Stock</span>}
                                 </div>
                                 {/* Admin specific action area */}
-                                <div style={{ marginTop: '15px', paddingTop: '15px', borderTop: '1px solid var(--border-color)', display: 'flex', gap: '8px' }}>
+                                <div className="admin-product-actions" style={{ marginTop: '15px', paddingTop: '15px', borderTop: '1px solid var(--admin-border-color)', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                                     <button 
-                                      className="btn btn-block" 
+                                      className="btn btn-sm" 
                                       style={{ 
                                           background: product.featured ? '#f59e0b' : '#3b82f6', 
                                           color: 'white',
-                                          fontSize: '0.9rem', padding: '8px',
-                                          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'
+                                          fontSize: '0.8rem', padding: '8px 12px',
+                                          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                                          flex: 1, minWidth: '120px'
                                       }}
-                                      onClick={async () => {
+                                      onClick={async (e) => {
+                                          e.stopPropagation();
                                           const newFeatured = !product.featured;
-                                          // Optimistic update
                                           setAdminProducts(prev => prev.map(p => p._id === product._id ? { ...p, featured: newFeatured } : p));
                                           try {
                                               await fetch(`${BASE_URL}/api/products/${product._id}`, {
@@ -621,23 +622,24 @@ const AdminDashboard = () => {
                                               });
                                               showToast(newFeatured ? 'Added to Featured' : 'Removed from Featured');
                                           } catch(e) {
-                                              showToast('Failed to update featured status', 'error');
+                                              showToast('Failed to update featured', 'error');
                                           }
                                       }}
                                     >
-                                      {product.featured ? '★ Featured product' : '☆ Add to Featured'}
+                                      {product.featured ? '★ Featured' : '☆ Feature'}
                                     </button>
                                     <button 
-                                      className="btn btn-block" 
+                                      className="btn btn-sm" 
                                       style={{ 
                                           background: product.inStock ? '#cbd5e1' : '#f43f5e', 
                                           color: product.inStock ? '#334155' : 'white',
-                                          fontSize: '0.9rem', padding: '8px',
-                                          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'
+                                          fontSize: '0.8rem', padding: '8px 12px',
+                                          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                                          flex: 1, minWidth: '120px'
                                       }}
-                                      onClick={async () => {
+                                      onClick={async (e) => {
+                                          e.stopPropagation();
                                           const newStatus = !product.inStock;
-                                          // Optimistic update
                                           setAdminProducts(prev => prev.map(p => p._id === product._id ? { ...p, inStock: newStatus } : p));
                                           try {
                                               await fetch(`${BASE_URL}/api/products/${product._id}`, {
@@ -648,7 +650,7 @@ const AdminDashboard = () => {
                                           } catch(e) {}
                                       }}
                                     >
-                                      {product.inStock ? 'Mark as Out of Stock' : 'Restock Item'}
+                                      {product.inStock ? 'Out of Stock' : 'Restock'}
                                     </button>
                                 </div>
                             </div>

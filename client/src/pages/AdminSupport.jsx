@@ -249,18 +249,20 @@ const AdminSupport = () => {
                                             }}>
                                                 {reply.sender === 'admin' ? <ShieldCheck size={20} /> : selectedTicket.name.charAt(0).toUpperCase()}
                                             </div>
-                                            <div style={{ 
+                                            <div className="chat-bubble" style={{ 
                                                 background: reply.sender === 'admin' ? '#f0f9ff' : '#f8fafc', 
                                                 padding: '1.25rem', 
-                                                borderRadius: reply.sender === 'admin' ? '12px 0 12px 12px' : '0 12px 12px 12px', 
-                                                maxWidth: '80%',
+                                                borderRadius: reply.sender === 'admin' ? '12px 12px 0 12px' : '0 12px 12px 12px', 
+                                                maxWidth: '85%',
                                                 border: `1px solid ${reply.sender === 'admin' ? '#e0f2fe' : '#f1f5f9'}`,
-                                                textAlign: reply.sender === 'admin' ? 'right' : 'left'
+                                                textAlign: 'left',
+                                                overflowWrap: 'break-word',
+                                                wordBreak: 'break-word'
                                             }}>
                                                 <div style={{ fontWeight: 600, marginBottom: '6px', fontSize: '0.9rem', color: '#1e293b' }}>
                                                     {reply.sender === 'admin' ? 'Support Team (Admin)' : selectedTicket.name}
                                                 </div>
-                                                <div style={{ lineHeight: 1.6, color: '#334155' }}>{reply.message}</div>
+                                                <div style={{ lineHeight: 1.6, color: '#334155', fontSize: '0.9rem' }}>{reply.message}</div>
                                                 <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginTop: '8px' }}>
                                                     {new Date(reply.date).toLocaleString()}
                                                 </div>
@@ -327,13 +329,17 @@ const AdminSupport = () => {
                 textarea:focus { border-color: #3b82f6 !important; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
                 @media (max-width: 1024px) {
                     .admin-support-grid { grid-template-columns: 1fr !important; }
-                    .ticket-list-sidebar { height: 300px !important; }
+                    .ticket-list-sidebar { height: 250px !important; }
                     .ticket-header-meta { flex-direction: column !important; gap: 0.5rem !important; }
+                    .ticket-detail-content { height: auto !important; }
+                    .ticket-detail-content > div { height: auto !important; min-height: 400px; }
                 }
-                @media (max-width: 640px) {
+                @media (max-width: 768px) {
                     .admin-support-page .container-fluid { padding: 0 1rem !important; }
                     .admin-support-page h1 { font-size: 1.5rem !important; }
                     .ticket-detail-content .header-actions { flex-direction: column !important; gap: 5px !important; }
+                    .chat-bubble { max-width: 90% !important; padding: 1rem !important; }
+                    textarea { rows: 2 !important; height: 80px !important; }
                 }
             `}</style>
         </main>
