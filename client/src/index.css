@@ -209,37 +209,50 @@ body {
     cursor: not-allowed !important;
 }
 
+html, body {
+  font-family: var(--font-main);
+  background-color: var(--white);
+  color: var(--text-dark);
+  line-height: 1.5;
+  overflow-x: hidden !important;
+  width: 100%;
+}
+
 @media (max-width: 768px) {
     .modern-chat-footer {
-        padding: 8px 10px !important;
+        padding: 6px 8px !important;
     }
     .chat-input-row {
-        gap: 6px !important;
-    }
-    .chat-checkbox-group span, .chat-checkbox-group label {
-        display: none !important;
+        gap: 5px !important;
+        width: 100% !important;
+        justify-content: space-between !important;
     }
     .chat-checkbox-group {
-        margin-right: 0 !important;
+        width: 24px !important;
+        flex-shrink: 0 !important;
     }
     .chat-checkbox-group input[type="checkbox"] {
-        width: 20px !important;
-        height: 20px !important;
+        width: 18px !important;
+        height: 18px !important;
     }
     .chat-icon-btn {
-        padding: 5px !important;
+        display: none !important; /* Hide smiley on small mobile to save space */
     }
     .chat-input-wrapper {
-        padding: 0 8px !important;
-        min-height: 40px !important;
+        padding: 0 6px !important;
+        min-height: 36px !important;
+        flex-grow: 1 !important;
+        margin: 0 4px !important;
+        max-width: calc(100% - 85px) !important; /* Forces room for checkbox (24) + button (40) + gaps */
     }
     .chat-input-wrapper textarea {
-        font-size: 0.9rem !important;
-        padding: 8px 4px !important;
+        font-size: 0.85rem !important;
+        padding: 6px 2px !important;
     }
     .chat-send-btn {
-        width: 42px !important;
-        height: 42px !important;
+        width: 40px !important;
+        height: 40px !important;
+        padding: 0 !important;
     }
 }
 

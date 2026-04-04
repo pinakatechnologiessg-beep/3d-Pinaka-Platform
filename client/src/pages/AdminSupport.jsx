@@ -278,19 +278,19 @@ const AdminSupport = () => {
                     .ticket-detail-content { height: auto !important; }
                 }
                 @media (max-width: 768px) {
-                    .admin-support-page .container-fluid { padding: 0 8px !important; }
-                    .admin-support-page h1 { font-size: 1.5rem !important; }
-                    .ticket-detail-content { padding: 0 !important; }
-                    .ticket-detail-content > div { border-radius: 0 !important; border: none !important; height: calc(100vh - 120px) !important; }
-                    .ticket-detail-content .header-actions { flex-direction: column !important; gap: 5px !important; }
-                    .chat-bubble { max-width: 92% !important; padding: 0.85rem !important; }
+                    .admin-support-page .container-fluid { padding: 0 !important; width: 100vw !important; overflow-x: hidden !important; }
+                    .admin-support-page h1 { font-size: 1.4rem !important; margin: 10px !important; }
+                    .ticket-detail-content { padding: 0 !important; width: 100% !important; max-width: 100vw !important; overflow-x: hidden !important; }
+                    .ticket-detail-content > div { border-radius: 0 !important; border: none !important; height: calc(100vh - 110px) !important; width: 100% !important; }
+                    .ticket-detail-content .header-actions { flex-direction: column !important; gap: 4px !important; }
+                    .chat-bubble { max-width: 95% !important; padding: 0.75rem !important; font-size: 0.9rem !important; }
                     .hide-mobile { display: none !important; }
                     
-                    /* Force chat footer visibility */
+                    /* Extreme force for chat footer */
                     .modern-chat-footer {
-                        position: sticky !important;
-                        bottom: 0 !important;
-                        z-index: 100 !important;
+                        position: relative !important;
+                        width: 100% !important;
+                        box-sizing: border-box !important;
                     }
                 }
             `}</style>
