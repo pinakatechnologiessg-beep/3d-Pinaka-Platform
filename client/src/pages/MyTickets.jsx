@@ -197,46 +197,56 @@ const MyTickets = () => {
                                 </div>
 
                                 {/* Thread */}
-                                {selectedTicket.replies.map((reply, index) => (
-                                    <div 
-                                        key={index} 
-                                        style={{ 
-                                            display: 'flex', 
-                                            flexDirection: reply.sender === 'user' ? 'row' : 'row-reverse',
-                                            gap: '15px', 
-                                            marginBottom: '2rem' 
-                                        }}
-                                    >
-                                        <div style={{ 
-                                            flexShrink: 0, 
-                                            width: '40px', 
-                                            height: '40px', 
-                                            borderRadius: '50%', 
-                                            background: reply.sender === 'user' ? 'var(--primary)' : '#0ea5e9', 
-                                            color: 'white', 
-                                            display: 'flex', 
-                                            alignItems: 'center', 
-                                            justifyContent: 'center' 
-                                        }}>
-                                            {reply.sender === 'user' ? <User size={20} weight="fill" /> : <ShieldCheck size={20} weight="fill" />}
-                                        </div>
-                                        <div style={{ 
-                                            background: reply.sender === 'user' ? '#f1f5f9' : '#e0f2fe', 
-                                            padding: '1.25rem', 
-                                            borderRadius: reply.sender === 'user' ? '0 12px 12px 12px' : '12px 0 12px 12px', 
-                                            maxWidth: '80%',
-                                            textAlign: reply.sender === 'user' ? 'left' : 'right'
-                                        }}>
-                                            <div style={{ fontWeight: 600, marginBottom: '4px', fontSize: '0.9rem' }}>
-                                                {reply.sender === 'admin' ? 'Support Team' : 'You'}
+                                        {selectedTicket.replies.map((reply, index) => (
+                                            <div 
+                                                key={index} 
+                                                style={{ 
+                                                    display: 'flex', 
+                                                    flexDirection: reply.sender === 'user' ? 'row' : 'row-reverse',
+                                                    gap: '12px', 
+                                                    marginBottom: '2rem',
+                                                    alignItems: 'flex-end',
+                                                    justifyContent: reply.sender === 'user' ? 'flex-start' : 'flex-end'
+                                                }}
+                                            >
+                                                <div style={{ 
+                                                    flexShrink: 0, 
+                                                    width: '36px', 
+                                                    height: '36px', 
+                                                    borderRadius: '50%', 
+                                                    background: reply.sender === 'user' ? 'var(--primary)' : '#3b82f6', 
+                                                    color: 'white', 
+                                                    display: 'flex', 
+                                                    alignItems: 'center', 
+                                                    justifyContent: 'center',
+                                                    fontSize: '0.9rem',
+                                                    fontWeight: 600,
+                                                    marginBottom: '4px'
+                                                }}>
+                                                    {reply.sender === 'user' ? <User size={20} weight="fill" /> : <ShieldCheck size={20} weight="fill" />}
+                                                </div>
+                                                <div className="chat-bubble" style={{ 
+                                                    background: reply.sender === 'user' ? 'white' : '#2563eb', 
+                                                    padding: '1rem 1.25rem', 
+                                                    borderRadius: reply.sender === 'user' ? '20px 20px 20px 4px' : '20px 20px 4px 20px', 
+                                                    maxWidth: '80%',
+                                                    border: reply.sender === 'user' ? '1px solid #e2e8f0' : 'none',
+                                                    textAlign: 'left',
+                                                    boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                                                    overflowWrap: 'break-word',
+                                                    wordBreak: 'break-word',
+                                                    color: reply.sender === 'user' ? '#1e293b' : 'white'
+                                                }}>
+                                                    <div style={{ fontWeight: 700, marginBottom: '6px', fontSize: '0.8rem', opacity: 0.9 }}>
+                                                        {reply.sender === 'admin' ? 'Support Team' : 'You'}
+                                                    </div>
+                                                    <div style={{ lineHeight: 1.5, fontSize: '0.95rem' }}>{reply.message}</div>
+                                                    <div style={{ fontSize: '0.7rem', opacity: 0.7, marginTop: '8px', textAlign: reply.sender === 'user' ? 'left' : 'right' }}>
+                                                        {new Date(reply.date).toLocaleString([], { hour: '2-digit', minute: '2-digit', month: 'short', day: 'numeric' })}
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div style={{ lineHeight: 1.6, color: 'var(--text-dark)' }}>{reply.message}</div>
-                                            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '8px' }}>
-                                                {new Date(reply.date).toLocaleString()}
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
+                                        ))}
                             </div>
 
                             <div style={{ padding: '2rem', borderTop: '1px solid var(--border-color)', background: '#fff' }}>

@@ -240,31 +240,52 @@ const AdminSupport = () => {
                                     </div>
 
                                     {/* Thread replies */}
-                                    {selectedTicket.replies.map((reply, idx) => (
-                                        <div key={idx} style={{ marginBottom: '2rem', display: 'flex', flexDirection: reply.sender === 'admin' ? 'row-reverse' : 'row', gap: '12px' }}>
+                                    {selectedTicket.replies.map((reply, index) => (
+                                        <div 
+                                            key={index} 
+                                            style={{ 
+                                                display: 'flex', 
+                                                gap: '12px', 
+                                                justifyContent: reply.sender === 'admin' ? 'flex-end' : 'flex-start',
+                                                flexDirection: reply.sender === 'admin' ? 'row-reverse' : 'row',
+                                                marginBottom: '2rem',
+                                                alignItems: 'flex-end'
+                                            }}
+                                        >
                                             <div style={{ 
-                                                width: '32px', height: '32px', borderRadius: '50%', 
-                                                background: reply.sender === 'admin' ? '#0ea5e9' : '#64748b', 
-                                                color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem' 
+                                                width: '36px', 
+                                                height: '36px', 
+                                                borderRadius: '50%', 
+                                                background: reply.sender === 'admin' ? '#3b82f6' : '#e2e8f0', 
+                                                color: reply.sender === 'admin' ? 'white' : '#64748b',
+                                                display: 'flex', 
+                                                alignItems: 'center', 
+                                                justifyContent: 'center',
+                                                fontSize: '0.9rem',
+                                                fontWeight: 600,
+                                                flexShrink: 0,
+                                                marginBottom: '4px'
                                             }}>
                                                 {reply.sender === 'admin' ? <ShieldCheck size={20} /> : selectedTicket.name.charAt(0).toUpperCase()}
                                             </div>
                                             <div className="chat-bubble" style={{ 
-                                                background: reply.sender === 'admin' ? '#f0f9ff' : '#f8fafc', 
-                                                padding: '1.25rem', 
-                                                borderRadius: reply.sender === 'admin' ? '12px 12px 0 12px' : '0 12px 12px 12px', 
-                                                maxWidth: '85%',
-                                                border: `1px solid ${reply.sender === 'admin' ? '#e0f2fe' : '#f1f5f9'}`,
+                                                background: reply.sender === 'admin' ? '#2563eb' : 'white', 
+                                                padding: '1rem 1.25rem', 
+                                                borderRadius: reply.sender === 'admin' ? '20px 20px 4px 20px' : '20px 20px 20px 4px', 
+                                                maxWidth: '80%',
+                                                border: reply.sender === 'admin' ? 'none' : '1px solid #e2e8f0',
                                                 textAlign: 'left',
+                                                boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
                                                 overflowWrap: 'break-word',
-                                                wordBreak: 'break-word'
+                                                wordBreak: 'break-word',
+                                                color: reply.sender === 'admin' ? 'white' : '#1e293b'
                                             }}>
-                                                <div style={{ fontWeight: 600, marginBottom: '6px', fontSize: '0.9rem', color: '#1e293b' }}>
-                                                    {reply.sender === 'admin' ? 'Support Team (Admin)' : selectedTicket.name}
+                                                <div style={{ fontWeight: 700, marginBottom: '6px', fontSize: '0.8rem', opacity: 0.9 }}>
+                                                    {reply.sender === 'admin' ? 'Support Team' : selectedTicket.name}
                                                 </div>
-                                                <div style={{ lineHeight: 1.6, color: '#334155', fontSize: '0.9rem' }}>{reply.message}</div>
-                                                <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginTop: '8px' }}>
-                                                    {new Date(reply.date).toLocaleString()}
+                                                <div style={{ lineHeight: 1.5, fontSize: '0.95rem' }}>{reply.message}</div>
+                                                <div style={{ fontSize: '0.7rem', opacity: 0.7, marginTop: '8px', textAlign: reply.sender === 'admin' ? 'right' : 'left' }}>
+                                                    {new Date(reply.date).toLocaleString([], { hour: '2-digit', minute: '2-digit', month: 'short', day: 'numeric' })}
                                                 </div>
                                             </div>
                                         </div>
