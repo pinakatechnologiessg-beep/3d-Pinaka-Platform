@@ -115,8 +115,16 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
           ))}
           
           <li><Link to="/printing-services" onClick={onClose}>Printing Services</Link></li>
-          <li><Link to="/support.html" onClick={onClose}>Support</Link></li>
+          <li><Link to={user?.role === 'admin' ? "/admin/support" : "/support.html"} onClick={onClose}>Support</Link></li>
           <li><Link to="/about-us.html" onClick={onClose}>About Us</Link></li>
+
+          {user?.role === 'admin' && (
+            <li style={{ marginTop: '1rem', borderTop: '2px solid var(--primary)', paddingTop: '1rem' }}>
+              <div style={{ padding: '0.5rem 1rem', fontSize: '0.75rem', fontWeight: 800, color: 'var(--primary)', textTransform: 'uppercase' }}>Admin Panel</div>
+              <Link to="/admin" onClick={onClose} style={{ color: 'var(--primary)' }}>Admin Dashboard</Link>
+              <Link to="/admin/support" onClick={onClose} style={{ color: 'var(--primary)' }}>Support Dashboard</Link>
+            </li>
+          )}
         </ul>
 
         <div className="mobile-menu-footer">

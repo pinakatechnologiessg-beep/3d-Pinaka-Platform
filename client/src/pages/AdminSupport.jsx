@@ -99,18 +99,10 @@ const AdminSupport = () => {
     return (
         <main className="admin-support-page" style={{ background: '#f4f7fa', padding: '2rem 0', minHeight: '100vh' }}>
             <div className="container-fluid" style={{ padding: '0 2rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                        <button 
-                            onClick={() => navigate('/admin')}
-                            style={{ background: 'white', border: '1px solid #e2e8f0', padding: '10px', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontWeight: 600 }}
-                        >
-                            <ArrowLeft size={20} /> Dashboard
-                        </button>
-                        <div>
-                            <h1 style={{ fontSize: '2rem', color: '#1e293b', fontWeight: 'bold' }}>Support Dashboard</h1>
-                            <p style={{ color: '#64748b' }}>Manage all customer support queries from one place.</p>
-                        </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2.5rem', flexWrap: 'wrap', gap: '20px' }}>
+                    <div>
+                        <h1 style={{ fontSize: '2rem', color: '#1e293b', fontWeight: 800, marginBottom: '0.25rem' }}>Support Dashboard</h1>
+                        <p style={{ color: '#64748b', fontSize: '0.95rem' }}>Manage all customer support queries from one place.</p>
                     </div>
                     <div style={{ display: 'flex', gap: '1rem' }}>
                         <select 
