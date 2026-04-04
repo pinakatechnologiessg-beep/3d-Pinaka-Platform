@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { ShoppingCart, Heart, User, List, X, CaretDown, MagnifyingGlass, Package, Shield } from '@phosphor-icons/react';
-import { cartService } from '../services/cartService';
-import { getImageUrl, PLACEHOLDER_SVG } from '../utils/imageUtils';
-import Logo from './Logo';
-import MaterialsMenu from './MaterialsMenu';
 
 const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu }) => {
   const [showAdminAlert, setShowAdminAlert] = useState(false);
+  const location = useLocation();
+
+  const isAdminRoute = location.pathname.startsWith('/admin');
+
+  if (isAdminRoute) return null;
 
   return (
     <header>

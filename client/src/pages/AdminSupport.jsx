@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../api/config';
 import { Calendar, ChatCircleDots, PaperPlaneTilt, CaretRight, Info, CheckCircle, WarningCircle, ArrowLeft, User, ShieldCheck, FunnelSimple, ArrowsClockwise, Smiley, Plus } from '@phosphor-icons/react';
 
-const AdminSupport = () => {
+const AdminSupport = ({ toggleMobileMenu }) => {
     const [tickets, setTickets] = useState([]);
     const [selectedTicket, setSelectedTicket] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -97,8 +97,30 @@ const AdminSupport = () => {
     if (loading) return <div style={{ textAlign: 'center', padding: '100px' }}>Loading admin support panel...</div>;
 
     return (
-        <main className="admin-support-page" style={{ background: '#f4f7fa', padding: '2rem 0', minHeight: '100vh' }}>
-            <div className="container-fluid" style={{ padding: '0 2rem' }}>
+        <main className="admin-support-page" style={{ background: '#f4f7fa', padding: '0 0 2rem 0', minHeight: '100vh' }}>
+            <div className="mobile-admin-header" style={{ 
+                display: 'none', 
+                background: 'white', 
+                padding: '12px 20px', 
+                alignItems: 'center', 
+                justifyContent: 'space-between',
+                borderBottom: '1px solid #e2e8f0',
+                position: 'sticky',
+                top: 0,
+                zIndex: 50
+            }}>
+                <h2 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0 }}>Admin<span style={{ color: '#6366f1' }}>Pro</span></h2>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                    <button 
+                        onClick={toggleMobileMenu}
+                        style={{ background: 'none', border: 'none', padding: '5px', cursor: 'pointer' }}
+                    >
+                        <List size={28} color="#1e293b" />
+                    </button>
+                </div>
+            </div>
+
+            <div className="container-fluid" style={{ padding: '1.5rem 2rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2.5rem', flexWrap: 'wrap', gap: '20px' }}>
                     <div>
                         <h1 style={{ fontSize: '2rem', color: '#1e293b', fontWeight: 800, marginBottom: '0.25rem' }}>Support Dashboard</h1>
@@ -278,8 +300,9 @@ const AdminSupport = () => {
                     .ticket-detail-content { height: auto !important; }
                 }
                 @media (max-width: 768px) {
+                    .mobile-admin-header { display: flex !important; }
                     .admin-support-page .container-fluid { padding: 0 !important; width: 100vw !important; overflow-x: hidden !important; }
-                    .admin-support-page h1 { font-size: 1.4rem !important; margin: 10px !important; }
+                    .admin-support-page h1 { font-size: 1.4rem !important; margin: 15px 10px !important; }
                     .ticket-detail-content { padding: 0 !important; width: 100% !important; max-width: 100vw !important; overflow-x: hidden !important; }
                     .ticket-detail-content > div { border-radius: 0 !important; border: none !important; height: calc(100vh - 110px) !important; width: 100% !important; }
                     .ticket-detail-content .header-actions { flex-direction: column !important; gap: 4px !important; }

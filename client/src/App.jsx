@@ -181,7 +181,7 @@ function App() {
             path="/admin/support" 
             element={
               <AdminRoute user={user}>
-                <AdminSupport />
+                <AdminSupport toggleMobileMenu={toggleMobileMenu} />
               </AdminRoute>
             } 
           />
