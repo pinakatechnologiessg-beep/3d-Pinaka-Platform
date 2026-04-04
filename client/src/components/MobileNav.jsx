@@ -40,7 +40,6 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
                     </div>
                     <div>
                         <div style={{ fontWeight: '700', color: 'var(--text-dark)', fontSize: '1rem' }}>{user.firstName ? `${user.firstName} ${user.lastName || ''}` : user.name || 'User'}</div>
-                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{user.email}</div>
                     </div>
                 </Link>
             </div>

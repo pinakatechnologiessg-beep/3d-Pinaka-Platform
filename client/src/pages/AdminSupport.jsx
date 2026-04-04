@@ -109,15 +109,14 @@ const AdminSupport = ({ toggleMobileMenu }) => {
                 top: 0,
                 zIndex: 50
             }}>
+                <button 
+                    onClick={toggleMobileMenu}
+                    style={{ background: 'none', border: 'none', padding: '5px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                >
+                    <List size={28} color="#1e293b" />
+                </button>
                 <h2 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0 }}>Admin<span style={{ color: '#6366f1' }}>Pro</span></h2>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                    <button 
-                        onClick={toggleMobileMenu}
-                        style={{ background: 'none', border: 'none', padding: '5px', cursor: 'pointer' }}
-                    >
-                        <List size={28} color="#1e293b" />
-                    </button>
-                </div>
+                <div style={{ width: '38px' }}></div> {/* Balanced invisible spacer */}
             </div>
 
             <div className="container-fluid" style={{ padding: '1.5rem 2rem' }}>
