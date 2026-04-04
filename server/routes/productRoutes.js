@@ -163,7 +163,8 @@ router.post('/', upload.single('image'), async (req, res) => {
       condition: condition || 'New',
       description: description || '',
       badgeStyle: parsedBadge,
-      specifications: parsedSpecs
+      specifications: parsedSpecs,
+      featured: String(req.body.featured) === 'true' || req.body.featured === true
     };
 
     if (req.file) {

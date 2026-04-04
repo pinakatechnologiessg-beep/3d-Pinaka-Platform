@@ -4,6 +4,7 @@ import { ShoppingCart, Heart, User, List, X, CaretDown, MagnifyingGlass, Package
 import { cartService } from '../services/cartService';
 import { getImageUrl } from '../utils/imageUtils';
 import Logo from './Logo';
+import MaterialsMenu from './MaterialsMenu';
 
 const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu }) => {
   const [showAdminAlert, setShowAdminAlert] = useState(false);
@@ -91,7 +92,7 @@ const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu }) => {
               </div>
             </div>
           </div>
-          <Link to="/materials.html">Materials</Link>
+          <MaterialsMenu />
           <Link to="/support.html">Bulk Enquiry</Link>
           <div className="dropdown">
             <Link to="/products?condition=Refurbished" className="dropbtn">

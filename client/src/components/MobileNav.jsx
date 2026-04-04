@@ -76,7 +76,12 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
                     <li><Link to="/products?brand=Rotrics" onClick={onClose}>Rotrics DexArm Hyper Luxury Kit</Link></li>
                   </>
                 ) : item.key === 'material' ? (
-                  <li><Link to="/materials.html" onClick={onClose}>All Materials</Link></li>
+                  <>
+                    <li><Link to="/products?category=Filament" onClick={onClose}><span className="bullet">•</span> Filaments</Link></li>
+                    <li><Link to="/products?category=Resin" onClick={onClose}><span className="bullet">•</span> Resins</Link></li>
+                    <li><Link to="/products?category=Accessory" onClick={onClose}><span className="bullet">•</span> Accessories</Link></li>
+                    <li><Link to="/products?category=Spare Parts" onClick={onClose}><span className="bullet">•</span> Spare Parts</Link></li>
+                  </>
                 ) : item.key === 'bulk' ? (
                   <li><Link to="/support.html" onClick={onClose}>Contact Form</Link></li>
                 ) : item.key === 'refurbished' ? (

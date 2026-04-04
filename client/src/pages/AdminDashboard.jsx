@@ -1105,16 +1105,10 @@ const AdminDashboard = () => {
                       <input type="number" step="0.1" min="0" max="5" placeholder="e.g. 4.5" value={newProduct.rating} onChange={e => setNewProduct({...newProduct, rating: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} />
                     </div>
                     <div>
-                      <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Tags / Badge</label>
+                      <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Featured Product</label>
                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', height: '45px' }}>
                            <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', color: '#334155' }}>
-                               <input type="radio" name="badge" checked={newProduct.tags === 'Sale'} onChange={() => setNewProduct({...newProduct, tags: 'Sale', badgeStyle: { background: '#ef4444', color: 'white' }})} /> Sale
-                           </label>
-                           <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', color: '#334155' }}>
-                               <input type="radio" name="badge" checked={newProduct.tags === 'Best Seller'} onChange={() => setNewProduct({...newProduct, tags: 'Best Seller', badgeStyle: { background: '#10b981', color: 'white' }})} /> Best
-                           </label>
-                           <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', color: '#334155' }}>
-                               <input type="radio" name="badge" checked={newProduct.tags === 'None'} onChange={() => setNewProduct({...newProduct, tags: 'None', badgeStyle: null})} /> None
+                               <input type="checkbox" checked={newProduct.featured} onChange={e => setNewProduct({...newProduct, featured: e.target.checked})} style={{ width: '18px', height: '18px' }} /> Show on Home Page
                            </label>
                        </div>
                     </div>
@@ -1195,6 +1189,7 @@ const AdminDashboard = () => {
                                 const formData = new FormData();
                                 formData.append('name', newProduct.name);
                                 formData.append('category', newProduct.category === 'Other' ? newProduct.otherCategory : newProduct.category);
+                                formData.append('featured', newProduct.featured || false);
                                 formData.append('brand', newProduct.brand);
                                 formData.append('price', newProduct.price);
                                 formData.append('mrp', newProduct.mrp);
@@ -1222,7 +1217,7 @@ const AdminDashboard = () => {
                                     fetch(`${BASE_URL}/api/stats`).then(s => s.json()).then(newData => setStats(newData)).catch(() => {});
                                     
                                     setIsAddModalOpen(false);
-                                    setNewProduct({ name: '', category: 'FDM', price: '', mrp: '', inStock: true, image: '', rating: 5.0, tags: 'None', badgeStyle: null, description: '', brand: 'Anycubic', otherCategory: '', condition: 'New', specifications: [{ key: '', value: '' }] });
+                                    setNewProduct({ name: '', category: 'FDM', price: '', mrp: '', inStock: true, image: '', rating: 5.0, featured: false, tags: 'None', badgeStyle: null, description: '', brand: 'Anycubic', otherCategory: '', condition: 'New', specifications: [{ key: '', value: '' }] });
                                     setImagePreview(null);
                                     setSelectedFile(null);
                                     showToast('Success: Product added to catalog!', 'success');
@@ -1417,6 +1412,7 @@ const AdminDashboard = () => {
                                 formData.append('inStock', editProductState.inStock);
                                 if (editProductState.rating) formData.append('rating', editProductState.rating);
                                 formData.append('tags', editProductState.tags || 'None');
+                                formData.append('featured', editProductState.featured || false);
                                 if (editProductState.badgeStyle) formData.append('badgeStyle', JSON.stringify(editProductState.badgeStyle));
                                 formData.append('condition', editProductState.condition || 'New');
                                 formData.append('description', editProductState.description || '');

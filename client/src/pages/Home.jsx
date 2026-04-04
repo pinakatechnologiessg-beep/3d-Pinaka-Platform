@@ -4,6 +4,7 @@ import { Cube, Stack, Wrench, Sparkle, ShieldCheck, Truck, Headphones, Medal, Cl
 import { PRODUCTS, BRANDS } from '../constants/data';
 import { cartService } from '../services/cartService';
 import { getImageUrl } from '../utils/imageUtils';
+import { Sparkle, Wrench } from '@phosphor-icons/react';
 
 import { API_BASE_URL } from '../api/config';
 
@@ -233,7 +234,7 @@ const Home = () => {
       </section>
 
       {/* Featured Products */}
-      <section className="section container">
+      <section className="section container" style={{ marginTop: '-2rem' }}>
         <div className="products-header reveal" ref={addToRevealRefs}>
             <div>
                 <h2>Featured Products</h2>
