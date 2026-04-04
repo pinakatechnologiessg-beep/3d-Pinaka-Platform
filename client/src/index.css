@@ -2690,7 +2690,9 @@ footer {
 
 @media (max-width: 768px) {
     .tech-images {
+        grid-template-columns: 1fr !important;
         height: 520px !important;
+        width: 100% !important;
         margin-top: 1rem;
     }
     .tech-main-card {
