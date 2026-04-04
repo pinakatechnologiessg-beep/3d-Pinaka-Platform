@@ -9,14 +9,31 @@ router.get('/status', (req, res) => {
   res.json({ status: "OK", service: "Product Service" });
 });
 
-// Get all products
+// Get all products metadata
 router.get('/meta', async (req, res) => {
   try {
     const brands = await Product.distinct("brand");
     const categories = await Product.distinct("category");
+    
+    // Normalize casing for display (ensuring "3D Printer" is capitalized properly)
+    const normalize = (str) => {
+        if (!str) return "";
+        const s = str.trim();
+        // Specific fix for 3D products
+        if (s.toLowerCase() === "3d printer") return "3D Printer";
+        if (s.toLowerCase() === "3d scanner") return "3D Scanner";
+        if (s.toLowerCase() === "3d pen" || s.toLowerCase() === "3d pens") return "3D Pens";
+        
+        // General capitalization: handle strings starting with numbers correctly
+        return s.split(' ').map(word => {
+            if (/^[0-9]/.test(word)) return word.toUpperCase(); // e.g. "3d" -> "3D"
+            return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+        }).join(' ');
+    };
+
     res.json({ 
-        brands: brands.filter(Boolean).map(b => b.charAt(0).toUpperCase() + b.slice(1)), 
-        categories: categories.filter(Boolean).map(c => c.charAt(0).toUpperCase() + c.slice(1)) 
+        brands: [...new Set(brands.filter(Boolean).map(normalize))].sort(), 
+        categories: [...new Set(categories.filter(Boolean).map(normalize))].sort() 
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -127,8 +144,8 @@ router.post('/', upload.single('image'), async (req, res) => {
 
     const productData = {
       name: name || "New Product",
-      brand: (brand || "Custom").toLowerCase(),
-      category: (category || "Other").toLowerCase(),
+      brand: (brand || "Custom").trim(),
+      category: (category || "Other").trim(),
       price: Number(price) || 0,
       mrp: Number(mrp) || Number(price) || 0,
       inStock: String(inStock) === 'true',
@@ -190,8 +207,8 @@ router.put('/:id', upload.single('image'), async (req, res) => {
     const { name, brand, category, price, mrp, inStock, rating, tags, description, specifications, badgeStyle, condition } = req.body;
     const updateData = {
       name,
-      brand: brand ? brand.toLowerCase() : undefined,
-      category: category ? category.toLowerCase() : undefined,
+      brand: brand ? brand.trim() : undefined,
+      category: category ? category.trim() : undefined,
       price: price ? Number(price) : undefined,
       mrp: mrp ? Number(mrp) : undefined,
       inStock: inStock !== undefined ? (inStock === 'true' || inStock === true) : undefined,
