@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../api/config';
-import { Calendar, ChatCircleDots, PaperPlaneTilt, CaretRight, Info, CheckCircle, WarningCircle, ArrowLeft, User, ShieldCheck, FunnelSimple, ArrowsClockwise, Smiley } from '@phosphor-icons/react';
+import { Calendar, ChatCircleDots, PaperPlaneTilt, CaretRight, Info, CheckCircle, WarningCircle, ArrowLeft, User, ShieldCheck, FunnelSimple, ArrowsClockwise, Smiley, Plus } from '@phosphor-icons/react';
 
 const AdminSupport = () => {
     const [tickets, setTickets] = useState([]);
