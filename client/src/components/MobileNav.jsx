@@ -1,8 +1,9 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { X, CaretDown, House, Storefront, Flask, ChatTeardropText, User, Users, ShoppingCart, Heart, MagnifyingGlass, Plus, Minus, SquaresFour, ShoppingBag, Gear, Package } from '@phosphor-icons/react';
+import { Link, useLocation } from 'react-router-dom';
+import { X, CaretDown, House, Storefront, Flask, ChatTeardropText, User, Users, ShoppingCart, Heart, MagnifyingGlass, Plus, Minus, SquaresFour, ShoppingBag, Gear, Package, Bell } from '@phosphor-icons/react';
 
 const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, cartCount, wishlistCount }) => {
+  const location = useLocation();
   return (
     <>
       {/* Overlay */}
@@ -10,10 +11,19 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
 
       {/* Offcanvas Menu */}
       <div className={`mobile-offcanvas ${isOpen ? 'open' : ''}`}>
-        <div className="mobile-menu-header">
-          <div className="close-menu-btn" onClick={onClose}>
-            <X size={24} weight="bold" />
-          </div>
+        <div className={`mobile-menu-header ${user?.role === 'admin' ? 'admin-header' : ''}`}>
+          {user?.role === 'admin' ? (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+              <div style={{ fontSize: '24px', fontWeight: 700, color: '#111827', fontFamily: "'Inter', sans-serif" }}>Admin<span style={{ color: '#6366f1' }}>Pro</span></div>
+              <div className="close-menu-btn" onClick={onClose} style={{ cursor: 'pointer' }}>
+                <X size={24} weight="bold" />
+              </div>
+            </div>
+          ) : (
+            <div className="close-menu-btn" onClick={onClose}>
+              <X size={24} weight="bold" />
+            </div>
+          )}
         </div>
 
         <div className="mobile-menu-actions">
@@ -37,31 +47,33 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
           </Link>
         </div>
 
-        <ul className="mobile-menu-list">
+        <ul className="mobile-menu-list admin-special-list">
           {user?.role === 'admin' ? (
-            /* EXCLUSIVE ADMIN MENU */
-            <>
-              <li style={{ borderBottom: '2px solid var(--primary)', marginBottom: '1.5rem', paddingBottom: '0.8rem' }}>
-                <div style={{ padding: '0.5rem 1rem', fontSize: '0.85rem', fontWeight: 800, color: 'var(--primary)', textTransform: 'uppercase' }}>Admin Console</div>
-                <Link to="/admin" onClick={onClose} style={{ color: 'var(--primary)', padding: '1rem', display: 'flex', alignItems: 'center', gap: '12px', fontSize: '1.1rem', fontWeight: 600 }}>
-                  <House size={22} weight="fill" /> Dashboard
-                </Link>
-                <Link to="/admin/support" onClick={onClose} style={{ color: 'var(--primary)', padding: '1rem', display: 'flex', alignItems: 'center', gap: '12px', fontSize: '1.1rem', fontWeight: 600 }}>
-                  <ChatTeardropText size={22} weight="fill" /> Support Panel
-                </Link>
-                <Link to="/admin" onClick={onClose} style={{ color: 'var(--primary)', padding: '1rem', display: 'flex', alignItems: 'center', gap: '12px', fontSize: '1.1rem', fontWeight: 600 }}>
-                  <Package size={22} weight="fill" /> Products
-                </Link>
-                <Link to="/admin" onClick={onClose} style={{ color: 'var(--primary)', padding: '1rem', display: 'flex', alignItems: 'center', gap: '12px', fontSize: '1.1rem', fontWeight: 600 }}>
-                  <Users size={22} weight="fill" /> Users
-                </Link>
-                <Link to="/admin" onClick={onClose} style={{ color: 'var(--primary)', padding: '1rem', display: 'flex', alignItems: 'center', gap: '12px', fontSize: '1.1rem', fontWeight: 600 }}>
-                  <Gear size={22} weight="fill" /> Settings
-                </Link>
-              </li>
-              <li><Link to="/" onClick={onClose} style={{ opacity: 0.7 }}>View Public Shop</Link></li>
-              <li><Link to="/products" onClick={onClose} style={{ opacity: 0.7 }}>View All Products</Link></li>
-            </>
+            <div style={{ padding: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <Link to="/admin" onClick={onClose} className={`admin-nav-item ${location.pathname === '/admin' ? 'active-admin' : ''}`}>
+                <House size={22} weight={location.pathname === '/admin' ? "fill" : "bold"} /> Dashboard
+              </Link>
+              <Link to="/admin" onClick={onClose} className="admin-nav-item">
+                <Package size={22} weight="bold" /> Products
+              </Link>
+              <Link to="/admin" onClick={onClose} className="admin-nav-item">
+                <ShoppingCart size={22} weight="bold" /> Orders
+              </Link>
+              <Link to="/admin" onClick={onClose} className="admin-nav-item">
+                <Users size={22} weight="bold" /> Users
+              </Link>
+              <Link to="/admin/support" onClick={onClose} className={`admin-nav-item ${location.pathname === '/admin/support' ? 'active-admin' : ''}`}>
+                <Bell size={22} weight={location.pathname === '/admin/support' ? "fill" : "bold"} /> Support
+              </Link>
+              <Link to="/admin" onClick={onClose} className="admin-nav-item">
+                <Gear size={22} weight="bold" /> Settings
+              </Link>
+              
+              <div style={{ margin: '20px 0 10px', height: '1px', background: '#e5e7eb' }}></div>
+              <Link to="/" onClick={onClose} className="admin-nav-item" style={{ fontSize: '0.9rem', opacity: 0.8 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Storefront size={20} /> View Public Shop</div>
+              </Link>
+            </div>
           ) : (
             /* REGULAR USER MENU */
             <>
