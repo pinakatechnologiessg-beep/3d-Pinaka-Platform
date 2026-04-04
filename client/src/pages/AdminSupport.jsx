@@ -278,11 +278,20 @@ const AdminSupport = () => {
                     .ticket-detail-content { height: auto !important; }
                 }
                 @media (max-width: 768px) {
-                    .admin-support-page .container-fluid { padding: 0 1rem !important; }
+                    .admin-support-page .container-fluid { padding: 0 8px !important; }
                     .admin-support-page h1 { font-size: 1.5rem !important; }
+                    .ticket-detail-content { padding: 0 !important; }
+                    .ticket-detail-content > div { border-radius: 0 !important; border: none !important; height: calc(100vh - 120px) !important; }
                     .ticket-detail-content .header-actions { flex-direction: column !important; gap: 5px !important; }
-                    .chat-bubble { max-width: 90% !important; padding: 1rem !important; }
+                    .chat-bubble { max-width: 92% !important; padding: 0.85rem !important; }
                     .hide-mobile { display: none !important; }
+                    
+                    /* Force chat footer visibility */
+                    .modern-chat-footer {
+                        position: sticky !important;
+                        bottom: 0 !important;
+                        z-index: 100 !important;
+                    }
                 }
             `}</style>
         </main>
