@@ -92,17 +92,8 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
                   <div style={{ width: '14px' }}></div> {/* Spacer for parity with +/- icons */}
                 </Link>
               </li>
-              <li>
-                <Link to="/products" onClick={onClose} className="menu-dropdown-toggle">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <Storefront size={20} weight="bold" />
-                    <span>Brands</span>
-                  </div>
-                  <div style={{ width: '14px' }}></div>
-                </Link>
-              </li>
-              
               {[
+                { key: 'brands', label: 'Brands', icon: <Storefront size={20} weight="bold" /> },
                 { key: 'categories', label: 'Categories', icon: <SquaresFour size={20} weight="bold" /> },
                 { key: 'exclusive', label: '3 Idea Exclusive', icon: <Flask size={20} weight="bold" /> },
                 { key: 'material', label: 'Material', icon: <Package size={20} weight="bold" /> },
@@ -119,7 +110,15 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
                   </div>
                   <ul className="menu-dropdown-items">
                     {/* ... nested items ... */}
-                    {item.key === 'categories' ? (
+                    {item.key === 'brands' ? (
+                      <>
+                        <li><Link to="/products?brand=Anycubic" onClick={onClose}>Anycubic</Link></li>
+                        <li><Link to="/products?brand=Creality" onClick={onClose}>Creality</Link></li>
+                        <li><Link to="/products?brand=Snapmaker" onClick={onClose}>Snapmaker</Link></li>
+                        <li><Link to="/products?brand=Rotrics" onClick={onClose}>Rotrics</Link></li>
+                        <li><Link to="/products?brand=Elegoo" onClick={onClose}>Elegoo</Link></li>
+                      </>
+                    ) : item.key === 'categories' ? (
                       <>
                         <li><Link to="/products?category=3D Printer" onClick={onClose}>3D Printer</Link></li>
                         <li><Link to="/products?category=Laser Engraver" onClick={onClose}>Laser Engraver</Link></li>
