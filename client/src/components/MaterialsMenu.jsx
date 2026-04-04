@@ -26,7 +26,7 @@ const MaterialsMenu = () => {
         const res = await fetch(`${API_BASE_URL}/api/products?category=${activeTab}&featured=true`);
         if (res.ok) {
           const data = await res.json();
-          setProducts(data.slice(0, 4)); // Only show top 4 in menu
+          setProducts(data.slice(0, 6)); // Show 6 products (2 rows of 3)
         }
       } catch (err) {
         console.error("Fetch menu materials error:", err);
@@ -39,11 +39,11 @@ const MaterialsMenu = () => {
 
   return (
     <div 
-      className="nav-materials-dropdown"
+      className="dropdown nav-materials-dropdown-refined"
       onMouseEnter={() => setIsOpen(true)}
       onMouseLeave={() => setIsOpen(false)}
     >
-      <span className="dropbtn materials-label">
+      <span className="dropbtn" style={{ cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600' }}>
         Materials <CaretDown size={14} weight="bold" />
       </span>
       
@@ -57,12 +57,15 @@ const MaterialsMenu = () => {
                     key={cat.id} 
                     className={`mega-tab-item ${activeTab === cat.id ? 'active' : ''}`}
                     onMouseEnter={() => setActiveTab(cat.id)}
-                    onClick={() => setIsOpen(false)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setActiveTab(cat.id);
+                    }}
                   >
-                    <Link to={`/products?category=${cat.id}`} className="mega-tab-link">
+                    <div className="mega-tab-link">
                       <span>{cat.label}</span>
                       <CaretRight size={14} weight="bold" />
-                    </Link>
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -79,7 +82,7 @@ const MaterialsMenu = () => {
               <div className="mega-grid-container">
                 {loading ? (
                   <div className="mega-grid">
-                    {[1, 2, 3, 4].map(i => (
+                    {[1, 2, 3].map(i => (
                       <div key={i} className="mega-shimmer">
                         <div className="mega-shimmer-img"></div>
                         <div className="mega-shimmer-line"></div>
@@ -118,75 +121,72 @@ const MaterialsMenu = () => {
       )}
 
       <style>{`
-        .nav-materials-dropdown {
-          position: relative;
-          display: inline-block;
-        }
-
-        .materials-label {
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          gap: 4px;
-          color: var(--text-dark);
-          font-size: 0.85rem;
-          font-weight: 600;
-          padding: 20px 0;
+        .nav-materials-dropdown-refined {
+          /* Inherits .dropdown styles from global CSS */
         }
         
         .materials-mega-dropdown {
           position: absolute;
           top: 100%;
-          left: -150px;
+          left: 50%;
+          transform: translateX(-50%);
           background: white;
-          width: 850px;
-          box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+          width: 1000px; /* Increased width to accommodate larger cards */
+          box-shadow: 0 25px 70px rgba(0,0,0,0.18);
           z-index: 9999;
-          border-radius: 12px;
+          border-radius: 16px;
           overflow: hidden;
-          border: 1px solid #f1f5f9;
-          animation: megaFadeIn 0.2s ease-out;
+          border: 1px solid #e2e8f0;
+          animation: megaFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+          margin-top: 5px;
         }
 
         @keyframes megaFadeIn {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
+          from { opacity: 0; transform: translateX(-50%) translateY(15px); }
+          to { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
 
         .mega-menu-content {
           display: flex;
+          min-height: 480px;
         }
 
         .mega-sidebar {
-          width: 200px;
+          width: 220px;
           background: #f8fafc;
-          border-right: 1px solid #f1f5f9;
+          border-right: 1px solid #e2e8f0;
           flex-shrink: 0;
+          padding: 1rem 0;
         }
 
         .mega-tabs {
           list-style: none;
-          padding: 0.5rem 0;
+          padding: 0;
           margin: 0;
         }
 
         .mega-tab-item {
-          transition: all 0.2s;
+          transition: all 0.2s ease;
+          cursor: pointer;
         }
 
         .mega-tab-link {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding: 0.8rem 1.2rem;
+          padding: 1rem 1.5rem;
           text-decoration: none;
-          color: #475569;
+          color: #334155;
           font-weight: 600;
-          font-size: 0.9rem;
+          font-size: 0.95rem;
+          transition: all 0.2s;
         }
 
-        .mega-tab-item:hover .mega-tab-link {
+        .mega-tab-item:hover {
           background: #f1f5f9;
+        }
+        
+        .mega-tab-item:hover .mega-tab-link {
           color: #2563eb;
         }
 
@@ -195,29 +195,32 @@ const MaterialsMenu = () => {
         }
 
         .mega-tab-item.active .mega-tab-link {
-          color: white;
+          color: white !important;
         }
 
         .mega-main {
           flex: 1;
-          padding: 1.5rem;
+          padding: 1.8rem;
+          background: #fff;
+          overflow: hidden; /* Prevent horizontal overflow from content */
         }
 
         .mega-header {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 1rem;
-          padding-bottom: 0.5rem;
-          border-bottom: 1px solid #f1f5f9;
+          margin-bottom: 1.5rem;
+          padding-bottom: 0.8rem;
+          border-bottom: 1.5px solid #f1f5f9;
         }
 
         .mega-header h3 {
-          font-size: 0.75rem;
+          font-size: 0.8rem;
           font-weight: 800;
           color: #94a3b8;
-          letter-spacing: 0.1em;
+          letter-spacing: 0.12em;
           margin: 0;
+          text-transform: uppercase;
         }
 
         .mega-browse-all {
@@ -225,76 +228,101 @@ const MaterialsMenu = () => {
           font-weight: 700;
           color: #2563eb;
           text-decoration: none;
+          padding: 4px 12px;
+          border-radius: 6px;
+          transition: background 0.2s;
+        }
+        
+        .mega-browse-all:hover {
+          background: #eff6ff;
         }
 
         .mega-grid {
           display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 1rem;
+          grid-template-columns: repeat(3, 1fr); /* Changed to 3 columns as requested */
+          gap: 1.5rem;
+          width: 100%;
         }
 
         .mega-product-card {
           text-decoration: none;
           color: inherit;
-          transition: transform 0.2s;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          padding: 10px;
+          border-radius: 12px;
+          border: 1px solid transparent;
+          background: #fff;
+          display: block;
         }
 
         .mega-product-card:hover {
-          transform: translateY(-3px);
+          transform: translateY(-5px);
+          box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+          border-color: #f1f5f9;
         }
 
         .mega-img-wrap {
           background: #f8fafc;
-          border-radius: 6px;
-          height: 120px;
+          border-radius: 10px;
+          height: 180px; /* Slightly increased for better focus */
           display: flex;
           align-items: center;
           justify-content: center;
-          margin-bottom: 0.5rem;
-          padding: 0.5rem;
+          margin-bottom: 1rem;
+          padding: 1rem;
+          overflow: hidden;
         }
 
         .mega-img-wrap img {
           max-height: 100%;
           max-width: 100%;
           object-fit: contain;
+          transition: transform 0.3s ease;
+        }
+        
+        .mega-product-card:hover .mega-img-wrap img {
+          transform: scale(1.05);
         }
 
         .mega-brand {
-          font-size: 0.65rem;
+          font-size: 0.7rem;
           font-weight: 700;
           color: #64748b;
           text-transform: uppercase;
+          margin-bottom: 4px;
         }
 
         .mega-name {
-          font-size: 0.8rem;
+          font-size: 0.9rem;
           font-weight: 600;
-          color: #0f172a;
+          color: #1e293b;
           display: -webkit-box;
-          -webkit-line-clamp: 1;
+          -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
           overflow: hidden;
-          margin: 0.1rem 0;
+          margin: 0.3rem 0;
+          line-height: 1.4;
+          height: 2.8em;
         }
 
         .mega-price {
-          font-size: 0.85rem;
+          font-size: 1rem;
           font-weight: 700;
           color: #2563eb;
+          margin-top: 6px;
         }
 
         .mega-shimmer {
-          padding: 5px;
+          padding: 10px;
         }
-        .mega-shimmer-img { height: 100px; background: #f1f5f9; border-radius: 6px; margin-bottom: 5px; }
-        .mega-shimmer-line { height: 8px; background: #f1f5f9; width: 80%; border-radius: 4px; }
+        .mega-shimmer-img { height: 180px; background: #f1f5f9; border-radius: 10px; margin-bottom: 10px; }
+        .mega-shimmer-line { height: 12px; background: #f1f5f9; width: 80%; border-radius: 4px; margin-bottom: 6px; }
 
         .mega-empty {
           text-align: center;
-          padding: 2rem 0;
+          padding: 4rem 0;
           color: #94a3b8;
-          font-size: 0.9rem;
+          font-size: 1rem;
         }
       `}</style>
     </div>
