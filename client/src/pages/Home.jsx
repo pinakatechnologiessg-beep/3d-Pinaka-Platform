@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Cube, Stack, Wrench, Sparkle, ShieldCheck, Truck, Headphones, Medal, ClockCounterClockwise, CreditCard, Lightning, Cpu, Eye, Thermometer, WhatsappLogo, Heart } from '@phosphor-icons/react';
 import { PRODUCTS, BRANDS } from '../constants/data';
 import { cartService } from '../services/cartService';
-import { getImageUrl } from '../utils/imageUtils';
+import { getImageUrl, parsePriceLocal, PLACEHOLDER_SVG } from '../utils/imageUtils';
 
 import { API_BASE_URL } from '../api/config';
 
@@ -266,7 +266,7 @@ const Home = () => {
                             src={getImageUrl(product.image)} 
                             alt={product.name || product.title} 
                             className="product-img" 
-                            onError={(e) => (e.target.src = "/fallback.png")}
+                            onError={(e) => (e.target.src = PLACEHOLDER_SVG)}
                         />
                     </Link>
                     <div className="product-info">
@@ -406,9 +406,9 @@ const Home = () => {
             </div>
             
             <div className="tech-images">
-                <img src={getImageUrl("/images/creality-k1-max-3d-printer.png")} alt="High Speed Printing" className="tech-img" onError={(e) => { e.target.onerror = null; e.target.src = "/fallback.png"; }} />
-                <img src={getImageUrl("/images/snapmaker-2.0-a350t-3-in-1-3d-printer.png")} alt="Cutting Edge Tech" className="tech-img" onError={(e) => { e.target.onerror = null; e.target.src = "/fallback.png"; }} />
-                <img src={getImageUrl("/images/3d-printing-kit.png")} alt="Precision Components" className="tech-img" onError={(e) => { e.target.onerror = null; e.target.src = "/fallback.png"; }} />
+                <img src={getImageUrl("/images/creality-k1-max-3d-printer.png")} alt="High Speed Printing" className="tech-img" onError={(e) => { e.target.onerror = null; e.target.src = PLACEHOLDER_SVG; }} />
+                <img src={getImageUrl("/images/snapmaker-2.0-a350t-3-in-1-3d-printer.png")} alt="Cutting Edge Tech" className="tech-img" onError={(e) => { e.target.onerror = null; e.target.src = PLACEHOLDER_SVG; }} />
+                <img src={getImageUrl("/images/3d-printing-kit.png")} alt="Precision Components" className="tech-img" onError={(e) => { e.target.onerror = null; e.target.src = PLACEHOLDER_SVG; }} />
             </div>
         </div>
       </section>
