@@ -285,41 +285,40 @@ const AdminSupport = () => {
                                 </div>
 
                                 {/* Reply Area */}
-                                <div className="modern-chat-footer" style={{ padding: '1.5rem', borderTop: '1px solid #f1f5f9', background: 'white' }}>
-                                    <form onSubmit={handleSendReply} className="chat-input-row" style={{ display: 'flex', gap: '10px', alignItems: 'flex-end' }}>
-                                        <div className="chat-input-wrapper" style={{ flex: 1, display: 'flex', alignItems: 'center', background: '#f1f5f9', borderRadius: '25px', padding: '5px 15px' }}>
-                                            <button type="button" className="chat-icon-btn hide-mobile" style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer' }}>
-                                                <Plus size={22} weight="bold" />
+                                    <div className="modern-chat-footer">
+                                        <form onSubmit={handleSendReply} className="chat-input-row">
+                                            <button type="button" className="chat-icon-btn">
+                                                <Plus size={24} weight="bold" />
                                             </button>
-                                            <textarea 
-                                                value={reply}
-                                                onChange={(e) => setReply(e.target.value)}
-                                                onKeyDown={(e) => {
-                                                    if (e.key === 'Enter' && !e.shiftKey && window.innerWidth > 768) {
-                                                        e.preventDefault();
-                                                        handleSendReply(e);
-                                                    }
-                                                }}
-                                                placeholder="Type a message..."
-                                                rows="1"
-                                                style={{ flex: 1, background: 'transparent', border: 'none', padding: '10px', outline: 'none', resize: 'none', fontSize: '0.95rem' }}
-                                            ></textarea>
-                                            <button type="button" className="chat-icon-btn" style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer' }}>
-                                                <Smiley size={22} weight="bold" />
+                                            <div className="chat-input-wrapper">
+                                                <button type="button" className="chat-icon-btn">
+                                                    <Smiley size={24} weight="bold" />
+                                                </button>
+                                                <textarea 
+                                                    value={reply}
+                                                    onChange={(e) => setReply(e.target.value)}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === 'Enter' && !e.shiftKey && window.innerWidth > 768) {
+                                                            e.preventDefault();
+                                                            handleSendReply(e);
+                                                        }
+                                                    }}
+                                                    placeholder="Type a message..."
+                                                    rows="1"
+                                                ></textarea>
+                                            </div>
+                                            <button 
+                                                type="submit" 
+                                                className="chat-send-btn"
+                                                disabled={sendingReply || !reply.trim()}
+                                            >
+                                                <PaperPlaneTilt size={22} weight="fill" />
                                             </button>
-                                        </div>
-                                        <button 
-                                            type="submit" 
-                                            className="chat-send-btn"
-                                            disabled={sendingReply || !reply.trim()}
-                                            style={{ width: '45px', height: '45px', borderRadius: '50%', background: '#22c55e', color: 'white', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
-                                        >
-                                            <PaperPlaneTilt size={22} weight="fill" />
-                                        </button>
-                                    </form>
-                                    <p className="hide-mobile" style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '8px', textAlign: 'center' }}>
-                                        Press Enter to send • Shift + Enter for new line
-                                    </p>
+                                        </form>
+                                        <p className="hide-mobile" style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '8px', textAlign: 'center' }}>
+                                            Press Enter to send • Shift + Enter for new line
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         )}
