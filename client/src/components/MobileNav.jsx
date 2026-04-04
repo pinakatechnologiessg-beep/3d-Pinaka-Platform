@@ -84,19 +84,21 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
             /* REGULAR USER MENU - SHOWN ON PUBLIC ROUTES EVEN FOR ADMINS */
             <>
               <li>
-                <Link to="/" onClick={onClose}>
+                <Link to="/" onClick={onClose} className="menu-dropdown-toggle">
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <House size={20} weight="bold" />
                     <span>Home</span>
                   </div>
+                  <div style={{ width: '14px' }}></div> {/* Spacer for parity with +/- icons */}
                 </Link>
               </li>
               <li>
-                <Link to="/products" onClick={onClose}>
+                <Link to="/products" onClick={onClose} className="menu-dropdown-toggle">
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <Storefront size={20} weight="bold" />
                     <span>Brands</span>
                   </div>
+                  <div style={{ width: '14px' }}></div>
                 </Link>
               </li>
               
@@ -179,27 +181,30 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
               ))}
               
               <li>
-                <Link to="/printing-services" onClick={onClose}>
+                <Link to="/printing-services" onClick={onClose} className="menu-dropdown-toggle">
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <Plus size={20} weight="bold" />
                     <span>Printing Services</span>
                   </div>
+                  <div style={{ width: '14px' }}></div>
                 </Link>
               </li>
               <li>
-                <Link to="/support" onClick={onClose}>
+                <Link to="/support" onClick={onClose} className="menu-dropdown-toggle">
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <ChatTeardropText size={20} weight="bold" />
                     <span>Support</span>
                   </div>
+                  <div style={{ width: '14px' }}></div>
                 </Link>
               </li>
               <li>
-                <Link to="/about" onClick={onClose}>
+                <Link to="/about" onClick={onClose} className="menu-dropdown-toggle">
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <Bell size={20} weight="bold" />
                     <span>About Us</span>
                   </div>
+                  <div style={{ width: '14px' }}></div>
                 </Link>
               </li>
             </>
