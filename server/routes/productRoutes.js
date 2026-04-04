@@ -15,18 +15,27 @@ router.get('/meta', async (req, res) => {
     const brands = await Product.distinct("brand");
     const categories = await Product.distinct("category");
     
-    // Normalize casing for display (ensuring "3D Printer" is capitalized properly)
+    // Normalize casing for display (ensuring "3D Printer", "FDM", "CNC" etc. are capitalized properly)
     const normalize = (str) => {
         if (!str) return "";
         const s = str.trim();
+        
         // Specific fix for 3D products
         if (s.toLowerCase() === "3d printer") return "3D Printer";
         if (s.toLowerCase() === "3d scanner") return "3D Scanner";
         if (s.toLowerCase() === "3d pen" || s.toLowerCase() === "3d pens") return "3D Pens";
         
-        // General capitalization: handle strings starting with numbers correctly
+        // Common Acronyms that should be ALL CAPS
+        const acronyms = ["fdm", "cnc", "ai", "sla", "dlp", "lcd", "diy"];
+        
+        // General capitalization logic
         return s.split(' ').map(word => {
-            if (/^[0-9]/.test(word)) return word.toUpperCase(); // e.g. "3d" -> "3D"
+            const lowerWord = word.toLowerCase();
+            // If it's a known acronym, return it in all caps
+            if (acronyms.includes(lowerWord)) return word.toUpperCase();
+            // If it starts with a number, return it in all caps (e.g. "3d" -> "3D")
+            if (/^[0-9]/.test(word)) return word.toUpperCase(); 
+            // Default: Sentence case
             return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
         }).join(' ');
     };
