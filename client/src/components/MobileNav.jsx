@@ -47,33 +47,41 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
           </Link>
         </div>
 
-        <ul className="mobile-menu-list admin-special-list">
+        <ul className="admin-special-list">
           {user?.role === 'admin' ? (
-            <div style={{ padding: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            /* EXCLUSIVE ADMIN MENU (Refined for 1:1 SS 34) */
+            <>
               <Link to="/admin" onClick={onClose} className={`admin-nav-item ${location.pathname === '/admin' ? 'active-admin' : ''}`}>
-                <House size={22} weight={location.pathname === '/admin' ? "fill" : "bold"} /> Dashboard
+                <House size={22} weight={location.pathname === '/admin' ? "fill" : "bold"} />
+                <span>Dashboard</span>
               </Link>
               <Link to="/admin" onClick={onClose} className="admin-nav-item">
-                <Package size={22} weight="bold" /> Products
+                <Package size={22} weight="bold" />
+                <span>Products</span>
               </Link>
               <Link to="/admin" onClick={onClose} className="admin-nav-item">
-                <ShoppingCart size={22} weight="bold" /> Orders
+                <ShoppingCart size={22} weight="bold" />
+                <span>Orders</span>
               </Link>
               <Link to="/admin" onClick={onClose} className="admin-nav-item">
-                <Users size={22} weight="bold" /> Users
+                <Users size={22} weight="bold" />
+                <span>Users</span>
               </Link>
               <Link to="/admin/support" onClick={onClose} className={`admin-nav-item ${location.pathname === '/admin/support' ? 'active-admin' : ''}`}>
-                <Bell size={22} weight={location.pathname === '/admin/support' ? "fill" : "bold"} /> Support
+                <Bell size={22} weight={location.pathname === '/admin/support' ? "fill" : "bold"} />
+                <span>Support</span>
               </Link>
               <Link to="/admin" onClick={onClose} className="admin-nav-item">
-                <Gear size={22} weight="bold" /> Settings
+                <Gear size={22} weight="bold" />
+                <span>Settings</span>
               </Link>
               
-              <div style={{ margin: '20px 0 10px', height: '1px', background: '#e5e7eb' }}></div>
-              <Link to="/" onClick={onClose} className="admin-nav-item" style={{ fontSize: '0.9rem', opacity: 0.8 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Storefront size={20} /> View Public Shop</div>
+              <div style={{ margin: '20px 24px 10px', height: '1px', background: '#f3f4f6' }}></div>
+              <Link to="/" onClick={onClose} className="admin-nav-item" style={{ opacity: 0.7 }}>
+                <Storefront size={20} />
+                <span>View Public Shop</span>
               </Link>
-            </div>
+            </>
           ) : (
             /* REGULAR USER MENU */
             <>

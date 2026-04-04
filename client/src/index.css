@@ -64,29 +64,114 @@ body {
   }
 }
 
-/* AdminPro Mobile Link Styles */
+/* ADMINPRO 1:1 REPLICATION */
+.admin-special-list {
+  padding: 20px 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+}
+
 .admin-nav-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  border-radius: 8px;
-  font-family: 'Inter', sans-serif;
-  font-size: 1rem;
-  font-weight: 500;
-  color: #6b7280;
-  transition: all 0.2s ease;
+  display: flex !important;
+  align-items: center !important;
+  gap: 16px !important;
+  padding: 12px 24px !important;
+  border-radius: 8px !important;
+  margin: 0 12px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 1rem !important;
+  font-weight: 500 !important;
+  color: #6b7280 !important;
+  transition: all 0.2s ease !important;
+  text-decoration: none !important;
 }
 
 .admin-nav-item:hover {
-  background-color: #f9fafb;
-  color: #111827;
+  background-color: #f3f4f6 !important;
 }
 
 .admin-nav-item.active-admin {
   background-color: #6366f1 !important;
   color: #ffffff !important;
-  box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+}
+
+.admin-nav-item svg {
+  flex-shrink: 0 !important;
+}
+
+.admin-header {
+  padding: 20px 24px !important;
+  border-bottom: 1px solid #f3f4f6 !important;
+}
+
+/* WhatsApp Style Chat Input */
+.modern-chat-footer {
+  padding: 1rem 1.5rem !important;
+  background: #fff !important;
+  border-top: 1px solid #f0f2f5 !important;
+}
+
+.chat-input-row {
+  display: flex !important;
+  align-items: flex-end !important;
+  gap: 8px !important;
+}
+
+.chat-input-wrapper {
+  background: #f0f2f5 !important;
+  border-radius: 24px !important;
+  padding: 4px 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  flex: 1 !important;
+}
+
+.chat-input-wrapper textarea {
+  flex: 1 !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 8px !important;
+  outline: none !important;
+  resize: none !important;
+  font-size: 1rem !important;
+  max-height: 120px !important;
+  color: #1f2c33 !important;
+}
+
+.chat-icon-btn {
+  background: none !important;
+  border: none !important;
+  color: #64748b !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 8px !important;
+  cursor: pointer !important;
+}
+
+.chat-send-btn {
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 50% !important;
+  background: #00a884 !important; /* WhatsApp Green */
+  color: white !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: none !important;
+  cursor: pointer !important;
+  flex-shrink: 0 !important;
+  transition: transform 0.2s ease !important;
+}
+
+.chat-send-btn:active {
+  transform: scale(0.9);
+}
+
+.chat-send-btn:disabled {
+  background: #9ca3af !important;
+  cursor: not-allowed !important;
 }
 
 a {
