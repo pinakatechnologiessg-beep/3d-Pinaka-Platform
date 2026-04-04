@@ -11,8 +11,8 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
 
       {/* Offcanvas Menu */}
       <div className={`mobile-offcanvas ${isOpen ? 'open' : ''}`}>
-        <div className={`mobile-menu-header ${user?.role === 'admin' ? 'admin-header' : ''}`}>
-          {user?.role === 'admin' ? (
+        <div className={`mobile-menu-header ${(user?.role === 'admin' && location.pathname.startsWith('/admin')) ? 'admin-header' : ''}`}>
+          {user?.role === 'admin' && location.pathname.startsWith('/admin') ? (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
               <div style={{ fontSize: '24px', fontWeight: 700, color: '#111827', fontFamily: "'Inter', sans-serif" }}>Admin<span style={{ color: '#6366f1' }}>Pro</span></div>
               <div className="close-menu-btn" onClick={onClose} style={{ cursor: 'pointer' }}>
@@ -20,31 +20,35 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
               </div>
             </div>
           ) : (
-            <div className="close-menu-btn" onClick={onClose}>
-              <X size={24} weight="bold" />
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingBottom: '10px' }}>
+                <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-dark)', letterSpacing: '-0.5px' }}>
+                    PINAKA<span style={{ color: 'var(--primary)', fontSize: '0.9rem', verticalAlign: 'middle', marginLeft: '4px' }}>SHOP</span>
+                </div>
+                <div className="close-menu-btn" onClick={onClose}>
+                    <X size={24} weight="bold" />
+                </div>
             </div>
           )}
         </div>
 
         <div className="mobile-menu-actions">
           {user ? (
-            <Link to="/account" onClick={onClose} className="menu-user-info" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '0 1rem 1.5rem', borderBottom: '1px solid var(--border-color)', width: '100%', textDecoration: 'none' }}>
-                <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', fontWeight: 'bold' }}>
-                    {(user.firstName ? user.firstName.charAt(0) : user.name?.charAt(0))?.toUpperCase() || 'U'}
-                </div>
-                <div>
-                    <div style={{ fontWeight: 'bold', color: 'var(--text-dark)' }}>{user.firstName ? `${user.firstName} ${user.lastName || ''}` : user.name || 'User'}</div>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{user.email}</div>
-                </div>
-            </Link>
+            <div style={{ padding: '0 1rem 1.5rem', width: '100%', borderBottom: '1px solid var(--border-color)' }}>
+                <Link to="/account" onClick={onClose} style={{ display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none' }}>
+                    <div style={{ width: '45px', height: '45px', borderRadius: '50%', background: 'var(--primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', fontWeight: 'bold' }}>
+                        {(user.firstName ? user.firstName.charAt(0) : user.name?.charAt(0))?.toUpperCase() || 'U'}
+                    </div>
+                    <div>
+                        <div style={{ fontWeight: '700', color: 'var(--text-dark)', fontSize: '1rem' }}>{user.firstName ? `${user.firstName} ${user.lastName || ''}` : user.name || 'User'}</div>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{user.email}</div>
+                    </div>
+                </Link>
+            </div>
           ) : (
             <Link to="/login" className="menu-action-btn" onClick={onClose}>
                 <User size={18} /> Sign In / Create Account
             </Link>
           )}
-          <Link to="/wishlist.html" className="menu-action-btn" style={{ border: user ? '1px solid #e2e8f0' : undefined, flex: user ? 'none' : '1' }} onClick={onClose}>
-            <Heart size={18} /> Wishlist
-          </Link>
         </div>
 
         <ul className="admin-special-list">
@@ -79,21 +83,40 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
           ) : (
             /* REGULAR USER MENU - SHOWN ON PUBLIC ROUTES EVEN FOR ADMINS */
             <>
-              <li><Link to="/" onClick={onClose}>Home</Link></li>
-              <li><Link to="/products" onClick={onClose}>Brands</Link></li>
+              <li>
+                <Link to="/" onClick={onClose}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <House size={20} weight="bold" />
+                    <span>Home</span>
+                  </div>
+                </Link>
+              </li>
+              <li>
+                <Link to="/products" onClick={onClose}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <Storefront size={20} weight="bold" />
+                    <span>Brands</span>
+                  </div>
+                </Link>
+              </li>
               
               {[
-                { key: 'categories', label: 'Categories' },
-                { key: 'exclusive', label: '3 Idea Exclusive' },
-                { key: 'material', label: 'Material' },
-                { key: 'bulk', label: 'Bulk Enquiry' },
-                { key: 'refurbished', label: 'Refurbished Store' }
+                { key: 'categories', label: 'Categories', icon: <SquaresFour size={20} weight="bold" /> },
+                { key: 'exclusive', label: '3 Idea Exclusive', icon: <Flask size={20} weight="bold" /> },
+                { key: 'material', label: 'Material', icon: <Package size={20} weight="bold" /> },
+                { key: 'bulk', label: 'Bulk Enquiry', icon: <ShoppingCart size={20} weight="bold" /> },
+                { key: 'refurbished', label: 'Refurbished Store', icon: <Gear size={20} weight="bold" /> }
               ].map((item) => (
                 <li key={item.key} className={`has-dropdown ${activeDropdowns[item.key] ? 'active' : ''}`}>
                   <div className="menu-dropdown-toggle" onClick={() => toggleDropdown(item.key)}>
-                    {item.label} {activeDropdowns[item.key] ? <Minus size={14} /> : <Plus size={14} />}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        {item.icon}
+                        <span>{item.label}</span>
+                    </div>
+                    {activeDropdowns[item.key] ? <Minus size={14} /> : <Plus size={14} />}
                   </div>
                   <ul className="menu-dropdown-items">
+                    {/* ... nested items ... */}
                     {item.key === 'categories' ? (
                       <>
                         <li><Link to="/products?category=3D Printer" onClick={onClose}>3D Printer</Link></li>
@@ -124,7 +147,7 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
                         <li><Link to="/products?category=Spare Parts" onClick={onClose}><span className="bullet">•</span> Spare Parts</Link></li>
                       </>
                     ) : item.key === 'bulk' ? (
-                      <li><Link to="/support.html" onClick={onClose}>Contact Form</Link></li>
+                      <li><Link to="/support" onClick={onClose}>Contact Form</Link></li>
                     ) : item.key === 'refurbished' ? (
                       <div className="nested-dropdown">
                         <div className="menu-dropdown-toggle nested" onClick={() => toggleDropdown('refurbishedCategories')}>
@@ -149,15 +172,36 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
                         )}
                       </div>
                     ) : (
-                      <li><Link to="/products.html" onClick={onClose}>View All {item.label}</Link></li>
+                      <li><Link to="/products" onClick={onClose}>View All {item.label}</Link></li>
                     )}
                   </ul>
                 </li>
               ))}
               
-              <li><Link to="/printing-services" onClick={onClose}>Printing Services</Link></li>
-              <li><Link to="/support" onClick={onClose}>Support</Link></li>
-              <li><Link to="/about" onClick={onClose}>About Us</Link></li>
+              <li>
+                <Link to="/printing-services" onClick={onClose}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <Plus size={20} weight="bold" />
+                    <span>Printing Services</span>
+                  </div>
+                </Link>
+              </li>
+              <li>
+                <Link to="/support" onClick={onClose}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <ChatTeardropText size={20} weight="bold" />
+                    <span>Support</span>
+                  </div>
+                </Link>
+              </li>
+              <li>
+                <Link to="/about" onClick={onClose}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <Bell size={20} weight="bold" />
+                    <span>About Us</span>
+                  </div>
+                </Link>
+              </li>
             </>
           )}
         </ul>
