@@ -327,7 +327,7 @@ const AdminSupport = () => {
                                             <PaperPlaneTilt size={24} weight="fill" />
                                         </button>
                                     </form>
-                                    <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end' }}>
+                                    <div className="hide-mobile" style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end', paddingRight: '10px' }}>
                                         <p style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Press Enter to send (Shift + Enter for new line)</p>
                                     </div>
                                 </div>
@@ -353,6 +353,7 @@ const AdminSupport = () => {
                     .ticket-detail-content .header-actions { flex-direction: column !important; gap: 5px !important; }
                     .chat-bubble { max-width: 90% !important; padding: 1rem !important; }
                     textarea { rows: 2 !important; height: 80px !important; }
+                    .hide-mobile { display: none !important; }
                 }
             `}</style>
         </main>

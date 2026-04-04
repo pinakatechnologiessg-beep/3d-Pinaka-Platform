@@ -290,6 +290,9 @@ const MyTickets = () => {
                                         <PaperPlaneTilt size={20} weight="fill" />
                                     </button>
                                 </form>
+                                <p className="hide-mobile" style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.8rem', textAlign: 'right' }}>
+                                    Press Enter to send (Shift + Enter for new line)
+                                </p>
                             </div>
                         </div>
                     )}
@@ -299,6 +302,9 @@ const MyTickets = () => {
             <style>{`
                 .ticket-card:hover { border-color: var(--primary) !important; transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.1); }
                 textarea:focus { border-color: var(--primary) !important; }
+                @media (max-width: 768px) {
+                    .hide-mobile { display: none !important; }
+                }
             `}</style>
         </main>
     );

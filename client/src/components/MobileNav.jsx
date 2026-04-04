@@ -38,6 +38,13 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
         </div>
 
         <ul className="mobile-menu-list">
+          {user?.role === 'admin' && (
+            <li style={{ borderBottom: '2px solid var(--primary)', marginBottom: '1rem', paddingBottom: '0.5rem' }}>
+              <div style={{ padding: '0.5rem 1rem', fontSize: '0.75rem', fontWeight: 800, color: 'var(--primary)', textTransform: 'uppercase' }}>Admin Control</div>
+              <Link to="/admin" onClick={onClose} style={{ color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '8px' }}><Gear size={18} /> Admin Dashboard</Link>
+              <Link to="/admin/support" onClick={onClose} style={{ color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '8px' }}><ChatTeardropText size={18} /> Support Dashboard</Link>
+            </li>
+          )}
           <li><Link to="/" onClick={onClose}>Home</Link></li>
           <li><Link to="/products" onClick={onClose}>Brands</Link></li>
           
@@ -117,14 +124,6 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
           <li><Link to="/printing-services" onClick={onClose}>Printing Services</Link></li>
           <li><Link to={user?.role === 'admin' ? "/admin/support" : "/support.html"} onClick={onClose}>Support</Link></li>
           <li><Link to="/about-us.html" onClick={onClose}>About Us</Link></li>
-
-          {user?.role === 'admin' && (
-            <li style={{ marginTop: '1rem', borderTop: '2px solid var(--primary)', paddingTop: '1rem' }}>
-              <div style={{ padding: '0.5rem 1rem', fontSize: '0.75rem', fontWeight: 800, color: 'var(--primary)', textTransform: 'uppercase' }}>Admin Panel</div>
-              <Link to="/admin" onClick={onClose} style={{ color: 'var(--primary)' }}>Admin Dashboard</Link>
-              <Link to="/admin/support" onClick={onClose} style={{ color: 'var(--primary)' }}>Support Dashboard</Link>
-            </li>
-          )}
         </ul>
 
         <div className="mobile-menu-footer">
