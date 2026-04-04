@@ -48,8 +48,8 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
         </div>
 
         <ul className="admin-special-list">
-          {user?.role === 'admin' ? (
-            /* EXCLUSIVE ADMIN MENU (Refined for 1:1 SS 34) */
+          {user?.role === 'admin' && location.pathname.startsWith('/admin') ? (
+            /* EXCLUSIVE ADMIN MENU - ONLY ON ADMIN ROUTES */
             <>
               <Link to="/admin" onClick={onClose} className={`admin-nav-item ${location.pathname === '/admin' ? 'active-admin' : ''}`}>
                 <House size={22} weight={location.pathname === '/admin' ? "fill" : "bold"} />
@@ -75,15 +75,9 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
                 <Gear size={22} weight="bold" />
                 <span>Settings</span>
               </Link>
-              
-              <div style={{ margin: '20px 24px 10px', height: '1px', background: '#f3f4f6' }}></div>
-              <Link to="/" onClick={onClose} className="admin-nav-item" style={{ opacity: 0.7 }}>
-                <Storefront size={20} />
-                <span>View Public Shop</span>
-              </Link>
             </>
           ) : (
-            /* REGULAR USER MENU */
+            /* REGULAR USER MENU - SHOWN ON PUBLIC ROUTES EVEN FOR ADMINS */
             <>
               <li><Link to="/" onClick={onClose}>Home</Link></li>
               <li><Link to="/products" onClick={onClose}>Brands</Link></li>
@@ -160,22 +154,10 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
                   </ul>
                 </li>
               ))}
-            </>
-          )}
-          
-          {user?.role !== 'admin' && (
-            <>
-              <li><Link to="/printing-services" onClick={onClose}>Printing Services</Link></li>
-              <li><Link to="/support.html" onClick={onClose}>Support</Link></li>
-              <li><Link to="/about" onClick={onClose}>About Us</Link></li>
               
-              <div className="mobile-menu-contact">
-                <h3>Need Help?</h3>
-                <p>86, Sanjay Gandhi Nagar, Naubasta, Kanpur, Uttar Pradesh-208021, India</p>
-                <div className="mobile-socials">
-                  {/* social icons ... */}
-                </div>
-              </div>
+              <li><Link to="/printing-services" onClick={onClose}>Printing Services</Link></li>
+              <li><Link to="/support" onClick={onClose}>Support</Link></li>
+              <li><Link to="/about" onClick={onClose}>About Us</Link></li>
             </>
           )}
         </ul>
