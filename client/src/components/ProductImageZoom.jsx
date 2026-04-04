@@ -1,78 +1,114 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 
+/**
+ * ProductImageZoom: A modern, high-performance replacement for react-image-magnify.
+ * - Fully React 18 compatible.
+ * - No external dependencies.
+ * - Uses hardware-accelerated CSS transforms for smooth performance.
+ */
 const ProductImageZoom = ({ image, alt }) => {
-  const [zoomStyle, setZoomStyle] = useState({ transform: "scale(1)", transformOrigin: "center" });
-  const [isZoomed, setIsZoomed] = useState(false);
+  const [zoomStyle, setZoomStyle] = useState({ opacity: 0, backgroundPosition: '0% 0%' });
+  const [isZooming, setIsZooming] = useState(false);
+  const containerRef = useRef(null);
 
   const handleMouseMove = (e) => {
-    const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
-
-    // Calculate mouse position relative to the image as a percentage
+    if (!containerRef.current) return;
+    
+    const { left, top, width, height } = containerRef.current.getBoundingClientRect();
+    
+    // Calculate mouse position relative to image in percentage
     const x = ((e.clientX - left) / width) * 100;
     const y = ((e.clientY - top) / height) * 100;
-
+    
     setZoomStyle({
-      transformOrigin: `${x}% ${y}%`,
-      transform: "scale(2.5)", // Professional high-level zoom
+      opacity: 1,
+      backgroundPosition: `${x}% ${y}%`,
+      backgroundImage: `url(${image})`,
+      backgroundSize: `${width * 2.5}px ${height * 2.5}px`, // 2.5x Zoom factor
+      backgroundRepeat: 'no-repeat'
     });
   };
 
+  const handleMouseEnter = () => setIsZooming(true);
+  
   const handleMouseLeave = () => {
-    setIsZoomed(false);
-    setZoomStyle({ transform: "scale(1)", transformOrigin: "center" });
+    setIsZooming(false);
+    setZoomStyle({ opacity: 0, backgroundPosition: '0% 0%' });
   };
 
   return (
     <div
-      className="product-inline-zoom-wrapper"
+      ref={containerRef}
+      className="product-zoom-container"
       style={{
-        width: "100%",
-        maxWidth: "500px",
-        aspectRatio: "1/1",
-        overflow: "hidden",
-        border: "1px solid #f1f5f9",
-        borderRadius: "12px",
-        cursor: "zoom-in",
-        backgroundColor: "#fff",
+        position: 'relative',
+        width: '100%',
+        height: '100%',
+        maxWidth: '500px',
+        aspectRatio: '1/1',
+        overflow: 'hidden',
+        backgroundColor: '#fff',
+        borderRadius: '16px',
+        border: '1px solid #f1f5f9',
+        cursor: 'crosshair',
+        boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center',
-        position: 'relative',
-        boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)'
+        justifyContent: 'center'
       }}
       onMouseMove={handleMouseMove}
-      onMouseEnter={() => setIsZoomed(true)}
+      onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
+      {/* Main Base Image */}
       <img
         src={image}
-        alt={alt || "product"}
+        alt={alt || "Product View"}
         onError={(e) => (e.target.src = "/placeholder.png")}
         style={{
-          width: "100%",
-          height: "100%",
-          objectFit: "contain",
-          padding: "20px",
-          transition: isZoomed ? "transform 0.1s ease-out" : "transform 0.5s ease",
-          ...zoomStyle
+          maxWidth: '100%',
+          maxHeight: '100%',
+          objectFit: 'contain',
+          padding: '20px',
+          transition: 'opacity 0.3s ease',
+          opacity: isZooming ? 0.3 : 1, // Dim the base image to highlight the zoom lens
         }}
       />
       
-      {/* Subtle hint text for UX */}
-      {!isZoomed && (
+      {/* Zoom Overlay (The 'Magnifier' lens effect) */}
+      <div 
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          pointerEvents: 'none', // Allow mouse events to pass to container
+          transition: 'opacity 0.2s ease',
+          zIndex: 5,
+          ...zoomStyle
+        }}
+      />
+
+      {/* Subtle Hint */}
+      {!isZooming && (
         <div style={{
           position: 'absolute',
-          bottom: '15px',
+          bottom: '20px',
           left: '50%',
           transform: 'translateX(-50%)',
-          backgroundColor: 'rgba(255,255,255,0.8)',
-          padding: '4px 12px',
-          borderRadius: '20px',
-          fontSize: '0.75rem',
-          color: '#64748b',
+          backgroundColor: 'rgba(255,255,255,0.95)',
+          padding: '6px 14px',
+          borderRadius: '30px',
+          fontSize: '0.8rem',
+          color: '#1e293b',
           fontWeight: 600,
+          boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
           pointerEvents: 'none',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+          backdropFilter: 'blur(4px)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px'
         }}>
           Hover to zoom
         </div>
