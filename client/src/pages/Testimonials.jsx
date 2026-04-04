@@ -27,16 +27,16 @@ const Testimonials = () => {
     const allTestimonials = [
         { name: "Rajesh Kumar", role: "Product Designer", text: "The Bambu Lab P2S has transformed our prototyping workflow. The print quality is exceptional!", img: 11 },
         { name: "Priya Sharma", role: "Architect", text: "Creality K1 Max is a beast! The speed and stability are unmatched for our large scale models.", img: 12 },
-        { name: "Amit Patel", role: "R&D Manager", text: "3D Print Hub provided us with end-to-end support for our industrial setup. Highly recommended!", img: 13 },
+        { name: "Amit Patel", role: "R&D Manager", text: "3D Pinaka provided us with end-to-end support for our industrial setup. Highly recommended!", img: 13 },
         { name: "Sneha Reddy", role: "Hobbyist", text: "Buying my first printer was easy with their expert guidance. Best after-sales support in India.", img: 14 },
-        { name: "Vikram Singh", role: "Mechanical Engineer", text: "The J1 Pro IDEX is perfect for dual-material printing. 3D Print Hub's delivery was lightning fast.", img: 15 },
+        { name: "Vikram Singh", role: "Mechanical Engineer", text: "The J1 Pro IDEX is perfect for dual-material printing. 3D Pinaka's delivery was lightning fast.", img: 15 },
         { name: "Anjali Gupta", role: "Jewellery Designer", text: "Resin printing results from the Phrozen series are incredibly detailed. My designs look stunning.", img: 16 },
         { name: "Karthik Raja", role: "Tech Lead", text: "Seamless integration and top-tier products. Their filament quality is very consistent.", img: 17 },
         { name: "Meera Das", role: "Medical Researcher", text: "Precision is key in our field, and the printers supplied here meet every rigorous standard.", img: 18 },
-        { name: "Suresh Menon", role: "Manufacturer", text: "Upgrading our facility with 3D Print Hub was the best decision for our production line.", img: 19 },
+        { name: "Suresh Menon", role: "Manufacturer", text: "Upgrading our facility with 3D Pinaka was the best decision for our production line.", img: 19 },
         { name: "Deepika Padukone", role: "Interior Designer", text: "Unique decor pieces are now possible thanks to the wide range of filaments available here.", img: 20 },
         { name: "Rohan Malhotra", role: "Automotive Engineer", text: "Prototyping car parts has never been faster. The technical support team is very knowledgeable.", img: 21 },
-        { name: "Tanya Sharma", role: "Fashion Designer", text: "3D printed accessories are the future, and 3D Print Hub makes it accessible today.", img: 22 }
+        { name: "Tanya Sharma", role: "Fashion Designer", text: "3D printed accessories are the future, and 3D Pinaka makes it accessible today.", img: 22 }
     ];
 
     return (
