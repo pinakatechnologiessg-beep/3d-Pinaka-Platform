@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../api/config';
-import { Calendar, ChatCircleDots, PaperPlaneTilt, CaretRight, Info, CheckCircle, WarningCircle, ArrowLeft, User, ShieldCheck, FunnelSimple, ArrowsClockwise } from '@phosphor-icons/react';
+import { Calendar, ChatCircleDots, PaperPlaneTilt, CaretRight, Info, CheckCircle, WarningCircle, ArrowLeft, User, ShieldCheck, FunnelSimple, ArrowsClockwise, Smiley } from '@phosphor-icons/react';
 
 const AdminSupport = () => {
     const [tickets, setTickets] = useState([]);
@@ -285,51 +285,41 @@ const AdminSupport = () => {
                                 </div>
 
                                 {/* Reply Area */}
-                                <div style={{ padding: '1.5rem', borderTop: '1px solid #f1f5f9', background: 'white' }}>
-                                    <form onSubmit={handleSendReply} style={{ position: 'relative' }}>
-                                        <textarea 
-                                            value={reply}
-                                            onChange={(e) => setReply(e.target.value)}
-                                            placeholder="Write your response to the customer..."
-                                            rows="4"
-                                            style={{ 
-                                                width: '100%', 
-                                                padding: '1rem', 
-                                                paddingRight: '60px',
-                                                borderRadius: '12px', 
-                                                border: '1px solid #e2e8f0', 
-                                                outline: 'none', 
-                                                resize: 'none',
-                                                fontSize: '0.95rem'
-                                            }}
-                                        ></textarea>
+                                <div className="modern-chat-footer" style={{ padding: '1.5rem', borderTop: '1px solid #f1f5f9', background: 'white' }}>
+                                    <form onSubmit={handleSendReply} className="chat-input-row" style={{ display: 'flex', gap: '10px', alignItems: 'flex-end' }}>
+                                        <div className="chat-input-wrapper" style={{ flex: 1, display: 'flex', alignItems: 'center', background: '#f1f5f9', borderRadius: '25px', padding: '5px 15px' }}>
+                                            <button type="button" className="chat-icon-btn hide-mobile" style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer' }}>
+                                                <Plus size={22} weight="bold" />
+                                            </button>
+                                            <textarea 
+                                                value={reply}
+                                                onChange={(e) => setReply(e.target.value)}
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Enter' && !e.shiftKey && window.innerWidth > 768) {
+                                                        e.preventDefault();
+                                                        handleSendReply(e);
+                                                    }
+                                                }}
+                                                placeholder="Type a message..."
+                                                rows="1"
+                                                style={{ flex: 1, background: 'transparent', border: 'none', padding: '10px', outline: 'none', resize: 'none', fontSize: '0.95rem' }}
+                                            ></textarea>
+                                            <button type="button" className="chat-icon-btn" style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer' }}>
+                                                <Smiley size={22} weight="bold" />
+                                            </button>
+                                        </div>
                                         <button 
                                             type="submit" 
+                                            className="chat-send-btn"
                                             disabled={sendingReply || !reply.trim()}
-                                            style={{ 
-                                                position: 'absolute', 
-                                                right: '15px', 
-                                                bottom: '15px', 
-                                                width: '45px', 
-                                                height: '45px', 
-                                                borderRadius: '50%', 
-                                                background: '#0ea5e9', 
-                                                color: 'white', 
-                                                border: 'none', 
-                                                cursor: 'pointer',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                boxShadow: '0 4px 10px rgba(14, 165, 233, 0.3)',
-                                                opacity: sendingReply || !reply.trim() ? 0.5 : 1
-                                            }}
+                                            style={{ width: '45px', height: '45px', borderRadius: '50%', background: '#22c55e', color: 'white', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
                                         >
-                                            <PaperPlaneTilt size={24} weight="fill" />
+                                            <PaperPlaneTilt size={22} weight="fill" />
                                         </button>
                                     </form>
-                                    <div className="hide-mobile" style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end', paddingRight: '10px' }}>
-                                        <p style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Press Enter to send (Shift + Enter for new line)</p>
-                                    </div>
+                                    <p className="hide-mobile" style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '8px', textAlign: 'center' }}>
+                                        Press Enter to send • Shift + Enter for new line
+                                    </p>
                                 </div>
                             </div>
                         )}
