@@ -163,19 +163,22 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
             </>
           )}
           
-          <li><Link to="/printing-services" onClick={onClose}>Printing Services</Link></li>
-          <li><Link to={user?.role === 'admin' ? "/admin/support" : "/support.html"} onClick={onClose}>Support</Link></li>
-          <li><Link to="/about-us.html" onClick={onClose}>About Us</Link></li>
+          {user?.role !== 'admin' && (
+            <>
+              <li><Link to="/printing-services" onClick={onClose}>Printing Services</Link></li>
+              <li><Link to="/support.html" onClick={onClose}>Support</Link></li>
+              <li><Link to="/about" onClick={onClose}>About Us</Link></li>
+              
+              <div className="mobile-menu-contact">
+                <h3>Need Help?</h3>
+                <p>86, Sanjay Gandhi Nagar, Naubasta, Kanpur, Uttar Pradesh-208021, India</p>
+                <div className="mobile-socials">
+                  {/* social icons ... */}
+                </div>
+              </div>
+            </>
+          )}
         </ul>
-
-        <div className="mobile-menu-footer">
-          <h5>Need Help?</h5>
-          <p className="address-text">
-            86, Sanjay Gandhi Nagar, Naubasta,<br />
-            Kanpur, Uttar Pradesh-208021,<br />
-            India
-          </p>
-        </div>
       </div>
 
       {/* Mobile Bottom Navigation Bar (Fixed) */}
