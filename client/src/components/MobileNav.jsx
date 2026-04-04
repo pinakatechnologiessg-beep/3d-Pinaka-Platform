@@ -73,10 +73,12 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
                 <Users size={22} weight="bold" />
                 <span>Users</span>
               </Link>
-              <Link to="/admin/support" onClick={onClose} className={`admin-nav-item ${location.pathname === '/admin/support' ? 'active-admin' : ''}`}>
-                <Bell size={22} weight={location.pathname === '/admin/support' ? "fill" : "bold"} />
-                <span>Support</span>
-              </Link>
+              {location.pathname !== '/admin/support' && (
+                <Link to="/admin/support" onClick={onClose} className={`admin-nav-item ${location.pathname === '/admin/support' ? 'active-admin' : ''}`}>
+                  <Bell size={22} weight={location.pathname === '/admin/support' ? "fill" : "bold"} />
+                  <span>Support</span>
+                </Link>
+              )}
               <Link to="/admin" onClick={onClose} className="admin-nav-item">
                 <Gear size={22} weight="bold" />
                 <span>Settings</span>
