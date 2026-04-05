@@ -1,40 +1,21 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, WhatsappLogo } from '@phosphor-icons/react';
 
 const PrivacyPolicy = () => {
-    const revealRefs = useRef([]);
 
-    useEffect(() => {
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
-                }
-            });
-        }, { threshold: 0.1 });
-
-        revealRefs.current.forEach(el => el && observer.observe(el));
-        return () => observer.disconnect();
-    }, []);
-
-    const addToRevealRefs = (el) => {
-        if (el && !revealRefs.current.includes(el)) {
-            revealRefs.current.push(el);
-        }
-    };
 
     return (
         <main>
             {/* Header Section */}
-            <div style={{ background: 'var(--dark-bg)', padding: '5rem 0', color: 'white', textAlign: 'center' }}>
+            <div className="policy-header" style={{ background: 'var(--dark-bg)', padding: '5rem 0', color: 'white', textAlign: 'center' }}>
                 <div className="container">
                     <div style={{ position: 'relative', display: 'inline-block' }}>
                         <Link to="/" className="back-home-btn" style={{ position: 'absolute', top: '-60px', left: '0' }}>
                             <ArrowLeft /> Back to Home
                         </Link>
-                        <h1 style={{ fontSize: '3rem', fontWeight: 800 }}>Privacy Policy</h1>
-                        <p style={{ opacity: 0.8, fontSize: '1.2rem', maxWidth: '600px', margin: '0 auto' }}>
+                        <h1 className="policy-title" style={{ fontSize: '3rem', fontWeight: 800 }}>Privacy Policy</h1>
+                        <p className="policy-subtitle" style={{ opacity: 0.8, fontSize: '1.2rem', maxWidth: '600px', margin: '0 auto' }}>
                             Your privacy is important to us. Learn how we collect and use your data.
                         </p>
                     </div>
@@ -42,7 +23,7 @@ const PrivacyPolicy = () => {
             </div>
 
             {/* Content Section */}
-            <section className="section container reveal" ref={addToRevealRefs} style={{ background: 'white', padding: '3rem', borderRadius: '15px', border: '1px solid var(--border-color)', margin: '2rem auto', maxWidth: '1000px', boxShadow: '0 10px 30px rgba(0,0,0,0.05)' }}>
+            <section className="section container policy-content" style={{ background: 'white', padding: '3rem', borderRadius: '15px', border: '1px solid var(--border-color)', margin: '2rem auto', maxWidth: '1000px', boxShadow: '0 10px 30px rgba(0,0,0,0.05)' }}>
                 <div style={{ color: 'var(--text-dark)', lineHeight: '1.8' }}>
                     <h2 style={{ fontSize: '1.8rem', color: 'var(--primary)', marginBottom: '1.5rem' }}>Privacy Policy for Pinaka Ttechnologies</h2>
 

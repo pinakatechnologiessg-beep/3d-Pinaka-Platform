@@ -2979,3 +2979,30 @@ footer {
 .active-admin span, .active-admin svg {
   color: white !important;
 }
+
+/* Policy Pages Responsive Styles */
+@media (max-width: 768px) {
+    .policy-header {
+        padding: 3rem 0 !important;
+    }
+    .policy-title {
+        font-size: 2rem !important;
+        line-height: 1.2 !important;
+    }
+    .policy-subtitle {
+        font-size: 1rem !important;
+        padding: 0 15px !important;
+    }
+    .policy-content {
+        padding: 1.5rem !important;
+        margin: 1rem 15px !important;
+        width: auto !important;
+        border-radius: 10px !important;
+    }
+    .policy-content h2 {
+        font-size: 1.5rem !important;
+    }
+    .policy-content h3 {
+        font-size: 1.3rem !important;
+    }
+}
