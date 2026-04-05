@@ -600,7 +600,7 @@ const AdminDashboard = () => {
                                     {!product.inStock && <span className="out-of-stock-label">Out Of Stock</span>}
                                 </div>
                                 {/* Admin specific action area */}
-                                <div className="admin-product-actions" style={{ marginTop: '15px', paddingTop: '15px', borderTop: '1px solid var(--admin-border-color)', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                                <div className="admin-product-actions" style={{ marginTop: '15px', paddingTop: '15px', borderTop: '1px solid var(--admin-border-color)', display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center' }}>
                                     <button 
                                       className="btn btn-sm" 
                                       style={{ 
