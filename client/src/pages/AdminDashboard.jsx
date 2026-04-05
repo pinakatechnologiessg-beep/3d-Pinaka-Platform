@@ -600,7 +600,7 @@ const AdminDashboard = () => {
                                     {!product.inStock && <span className="out-of-stock-label">Out Of Stock</span>}
                                 </div>
                                 {/* Admin specific action area */}
-                                <div className="admin-product-actions" style={{ marginTop: '15px', paddingTop: '15px', borderTop: '1px solid var(--admin-border-color)', display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center' }}>
+                                <div className="admin-product-actions" style={{ marginTop: '15px', paddingTop: '15px', borderTop: '1px solid var(--admin-border-color)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                     <button 
                                       className="btn btn-sm" 
                                       style={{ 
@@ -608,7 +608,7 @@ const AdminDashboard = () => {
                                           color: 'white',
                                           fontSize: '0.8rem', padding: '8px 12px',
                                           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
-                                          flex: 1, minWidth: '120px'
+                                          width: '100%', borderRadius: '6px', border: 'none', cursor: 'pointer'
                                       }}
                                       onClick={async (e) => {
                                           e.stopPropagation();
@@ -635,7 +635,7 @@ const AdminDashboard = () => {
                                           color: product.inStock ? '#334155' : 'white',
                                           fontSize: '0.8rem', padding: '8px 12px',
                                           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
-                                          flex: 1, minWidth: '120px'
+                                          width: '100%', borderRadius: '6px', border: 'none', cursor: 'pointer'
                                       }}
                                       onClick={async (e) => {
                                           e.stopPropagation();
