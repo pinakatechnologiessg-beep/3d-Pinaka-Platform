@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ShoppingCart, Heart, User, List, X, CaretDown, MagnifyingGlass, Package, Shield } from '@phosphor-icons/react';
 import { cartService } from '../services/cartService';
 import { getImageUrl, PLACEHOLDER_SVG } from '../utils/imageUtils';
@@ -8,14 +8,44 @@ import MaterialsMenu from './MaterialsMenu';
 
 const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu }) => {
   const [showAdminAlert, setShowAdminAlert] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const location = useLocation();
+  const navigate = useNavigate();
 
   const isAdminRoute = location.pathname.startsWith('/admin');
 
   if (isAdminRoute) return null;
 
+  const handleSearch = (e) => {
+    if (e) e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/products?q=${encodeURIComponent(searchQuery.trim())}`);
+      setIsSearchOpen(false);
+      setSearchQuery('');
+    }
+  };
+
   return (
     <header>
+      {isSearchOpen && (
+        <div className="search-overlay">
+          <div className="container search-container">
+            <form onSubmit={handleSearch} className="search-form">
+              <MagnifyingGlass size={22} />
+              <input 
+                autoFocus
+                type="text" 
+                placeholder="Search products, brands..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="search-input-global"
+              />
+            </form>
+            <X size={24} onClick={() => setIsSearchOpen(false)} style={{ cursor: 'pointer' }} />
+          </div>
+        </div>
+      )}
       <div className="container navbar">
         <div className="mobile-menu-trigger">
           <List size={22} className="menu-btn" onClick={toggleMobileMenu} />
@@ -183,9 +213,13 @@ const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu }) => {
             {wishlistCount > 0 && <span className="heart-badge">{wishlistCount}</span>}
           </Link>
           
-          <Link to="/products.html" className="search-icon-mobile" style={{ color: 'var(--text-dark)', textDecoration: 'none' }}>
+          <div 
+            onClick={() => setIsSearchOpen(true)}
+            className="search-icon-mobile" 
+            style={{ color: 'var(--text-dark)', textDecoration: 'none', cursor: 'pointer' }}
+          >
             <MagnifyingGlass size={22} />
-          </Link>
+          </div>
 
           <Link to="/cart.html" className="cart-icon-wrap" style={{ color: 'var(--text-dark)', textDecoration: 'none' }}>
             <ShoppingCart size={22} />
