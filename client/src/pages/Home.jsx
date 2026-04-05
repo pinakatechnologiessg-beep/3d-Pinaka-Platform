@@ -24,37 +24,37 @@ const Home = () => {
     {
       img: getImageUrl("/images/hero-printer-1-1774867967898.png"),
       brand: "Bambu Lab",
-      title: "P2S COMBO",
-      subtitle: "The Icon, Redefined",
-      price: "₹99,999/-",
-      features: ["4-SYSTEM FILAMENT MIXING", "ACOLD-AIR ADAPTIVE COOLING", "1080P HIGH-RATE CAMERA", "BLAZING SPEED AT 600 MM/S"]
+      title: "X1 CARBON",
+      subtitle: "Global Flagship Performance",
+      price: "₹1,49,999/-",
+      features: ["LIDAR ERROR DETECTION", "600MM/S MAX SPEED", "DUAL AUTO BED LEVELING", "AMS MULTI-MATERIAL CAPABLE"]
     },
     {
       img: getImageUrl("/images/hero-printer-2-1774868029567.png"),
       brand: "Anycubic",
       brandColor: "#f97316",
-      title: "PHOTON M3 PRO",
+      title: "PHOTON M3",
       subtitle: "Ultra-Precision MSLA",
       price: "₹45,999/-",
-      features: ["8K RESOLUTION SCREEN", "SMART RESIN FILL", "WIFI CONNECTIVITY", "LIGHMAKER UV MATRIX"]
+      features: ["8K RESOLUTION SCREEN", "SMART RESIN FILL", "LIGHMAKER UV MATRIX", "WIFI & APP CONNECTIVITY"]
     },
     {
       img: getImageUrl("/images/hero-printer-3-1774868059995.png"),
       brand: "Creality",
       brandColor: "#3b82f6",
-      title: "ENDER-3 V3",
-      subtitle: "Next-Gen Fundamentals",
-      price: "₹28,999/-",
-      features: ["COREXZ MOTION", "AUTO CALIBRATION", "QUICK-SWAP NOZZLE"]
+      title: "K1C 3D PRINTER",
+      subtitle: "Professional CoreXY Speed",
+      price: "₹52,999/-",
+      features: ["CARBON-READY NOZZLE", "AI-CAMERA BUILT-IN", "AMS COMPATIBLE", "QUICK-SWAP NOZZLE"]
     },
     {
       img: getImageUrl("/images/hero-printer-4-1774868325785.png"),
       brand: "Snapmaker",
       brandColor: "#10b981",
-      title: "J1 PRO IDEX",
-      subtitle: "Industrial Grade Multi-Tool",
-      price: "₹2,49,999/-",
-      features: ["INDEPENDENT DUAL EXTRUDERS", "LINEAR RAILS", "CNC & LASER MODULES"]
+      title: "A350T 3-IN-1",
+      subtitle: "Industrial 3-in-1 Powerhouse",
+      price: "₹1,99,000/-",
+      features: ["CNC & LASER INCLUDED", "ALL-METAL DESIGN", "LINEAR RAILS & MODULES", "POWER-LOSS RECOVERY"]
     }
   ];
 
