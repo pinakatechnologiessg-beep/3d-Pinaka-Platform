@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FacebookLogo, TwitterLogo, InstagramLogo, YoutubeLogo, MapPin, Phone, Envelope } from '@phosphor-icons/react';
-import Logo from './Logo';
 
 const Footer = () => {
   return (
@@ -9,7 +8,7 @@ const Footer = () => {
       <div className="container footer-grid">
         <div className="footer-col" style={{ textAlign: 'left' }}>
           <Link to="/" style={{ display: 'inline-block', marginBottom: '1.5rem' }}>
-            <Logo height={85} variant="dark" />
+            <img src="/footer-logo.png" alt="Pinaka Technologies" style={{ height: '85px', width: 'auto' }} />
           </Link>
           <p style={{ marginTop: '1rem', maxWidth: '300px' }}>Your one-stop destination for premium 3D printers, materials, and accessories. Bringing innovation to life.</p>
           <div className="social-icons">
