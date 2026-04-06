@@ -161,28 +161,30 @@ const Cart = () => {
                                     onError={(e) => (e.target.src = "/placeholder.png")}
                                     style={{ width: '100px', height: '100px', objectFit: 'contain', borderRadius: '8px', background: 'var(--light-bg)' }} 
                                 />
-                                <div className="cart-item-info" style={{ flex: 1 }}>
+                                <div className="cart-item-info" style={{ flex: 1, minWidth: 0 }}>
                                     <h3 style={{ marginBottom: '5px' }}>{item.title}</h3>
                                     <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--primary)', marginBottom: '10px' }}>{item.price}</div>
                                     
-                                    <div className="qty-selector" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                        <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>Quantity:</span>
-                                        <div style={{ display: 'flex', alignItems: 'center', background: '#f1f5f9', borderRadius: '8px', overflow: 'hidden' }}>
-                                            <button 
-                                                onClick={() => handleQuantity(item.id, -1)}
-                                                style={{ border: 'none', background: 'none', padding: '6px 12px', cursor: 'pointer', fontWeight: 'bold', fontSize: '1.1rem' }}
-                                            >-</button>
-                                            <span style={{ padding: '0 8px', minWidth: '30px', textAlign: 'center', fontWeight: 'bold' }}>{item.quantity || 1}</span>
-                                            <button 
-                                                onClick={() => handleQuantity(item.id, 1)}
-                                                style={{ border: 'none', background: 'none', padding: '6px 12px', cursor: 'pointer', fontWeight: 'bold', fontSize: '1.1rem' }}
-                                            >+</button>
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '15px', flexWrap: 'wrap' }}>
+                                        <div className="qty-selector" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                            <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>Quantity:</span>
+                                            <div style={{ display: 'flex', alignItems: 'center', background: '#f1f5f9', borderRadius: '8px', overflow: 'hidden' }}>
+                                                <button 
+                                                    onClick={() => handleQuantity(item.id, -1)}
+                                                    style={{ border: 'none', background: 'none', padding: '6px 12px', cursor: 'pointer', fontWeight: 'bold', fontSize: '1.1rem' }}
+                                                >-</button>
+                                                <span style={{ padding: '0 8px', minWidth: '30px', textAlign: 'center', fontWeight: 'bold' }}>{item.quantity || 1}</span>
+                                                <button 
+                                                    onClick={() => handleQuantity(item.id, 1)}
+                                                    style={{ border: 'none', background: 'none', padding: '6px 12px', cursor: 'pointer', fontWeight: 'bold', fontSize: '1.1rem' }}
+                                                >+</button>
+                                            </div>
                                         </div>
+                                        <button className="btn" style={{ background: 'transparent', color: '#ef4444', border: '1px solid #ef4444', padding: '6px 12px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '5px' }} onClick={() => removeItem(item.id)}>
+                                            <Trash size={16} /> Remove
+                                        </button>
                                     </div>
                                 </div>
-                                <button className="btn" style={{ background: 'transparent', color: '#ef4444', border: '1px solid #ef4444', padding: '6px 12px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '5px' }} onClick={() => removeItem(item.id)}>
-                                    <Trash size={16} /> Remove
-                                </button>
                             </div>
                         ))
                     )}
