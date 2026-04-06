@@ -134,20 +134,30 @@ const AdminDashboard = () => {
   const toggleUserStatus = async (userId, currentStatus) => {
     try {
         const newStatus = currentStatus === 'Active' ? 'Blocked' : 'Active';
+        console.log('Sending update for user', userId, 'to', newStatus);
+        
         const res = await fetch(`${BASE_URL}/api/users/${userId}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Type-Content': 'application/json', 'Content-Type': 'application/json' },
             body: JSON.stringify({ status: newStatus })
         });
-        if (res.ok) {
-            setUsers(prev => prev.map(u => u.id === userId ? { ...u, status: newStatus } : u));
+        
+        const data = await res.json();
+        
+        if (res.ok && data.success) {
+            const updatedStatus = data.status;
+            setUsers(prev => prev.map(u => u.id === userId ? { ...u, status: updatedStatus } : u));
             if(selectedUserDetails && selectedUserDetails.id === userId) {
-                setSelectedUserDetails(prev => ({ ...prev, status: newStatus }));
+                setSelectedUserDetails(prev => ({ ...prev, status: updatedStatus }));
             }
-            showToast(`User ${newStatus === 'Blocked' ? 'blocked' : 'unblocked'} successfully`, 'success');
+            showToast(`User ${updatedStatus === 'Blocked' ? 'blocked' : 'unblocked'} successfully`, 'success');
+        } else {
+            console.error('Failed to block user', data);
+            showToast(data.message || 'Block action failed', 'error');
         }
     } catch(err) {
         console.error('Failed to change user status', err);
+        showToast('Network error while blocking', 'error');
     }
   };
 

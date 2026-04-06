@@ -88,31 +88,33 @@ router.put('/:id', async (req, res) => {
         const { status } = req.body;
         const queryId = req.params.id;
         
-        // Find user by userId or MongoDB _id
-        let user;
-        if (mongoose.isValidObjectId(queryId)) {
-            user = await User.findOne({ 
-                $or: [{ userId: queryId }, { _id: queryId }] 
-            });
-        } else {
-            user = await User.findOne({ userId: queryId });
-        }
+        console.log(`Trying to update user status for ID: ${queryId} to ${status}`);
+        
+        // Build query based on whether it is a MongoDB ObjectId or a custom USR-id
+        const query = mongoose.isValidObjectId(queryId) 
+            ? { $or: [{ userId: queryId }, { _id: queryId }] }
+            : { userId: queryId };
+            
+        const user = await User.findOneAndUpdate(
+            query,
+            { $set: { status: status } },
+            { new: true, runValidators: true }
+        );
         
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            console.warn(`User not found with ID: ${queryId}`);
+            return res.status(404).json({ message: 'User not found in system' });
         }
         
-        user.status = status;
-        await user.save();
-        
+        console.log(`User status updated successfully for ${user.email}`);
         res.status(200).json({ 
             success: true, 
-            message: `User status updated to ${status}`,
+            id: user.userId || user._id.toString(),
             status: user.status 
         });
     } catch (err) {
-        console.error('Error updating user status:', err);
-        res.status(500).json({ message: 'Failed to update user status', error: err.message });
+        console.error('Error in PUT /api/users/:id:', err);
+        res.status(500).json({ message: 'Internal Server Error while blocking user', error: err.message });
     }
 });
 
