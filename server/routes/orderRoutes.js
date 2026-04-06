@@ -23,6 +23,16 @@ router.get('/', async (req, res) => {
   }
 });
 
+// GET /api/orders/user/:email
+router.get('/user/:email', async (req, res) => {
+  try {
+    const orders = await Order.find({ customerEmail: req.params.email }).sort({ createdAt: -1 });
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // POST /api/orders
 router.post('/', async (req, res) => {
   try {

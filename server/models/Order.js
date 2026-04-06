@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 const orderSchema = new mongoose.Schema({
   orderId: { type: String, unique: true },
   customerName: { type: String },
+  customerEmail: { type: String }, // Added for linking with user account
   phone: { type: String },
   address: { type: String },
   productName: { type: String },

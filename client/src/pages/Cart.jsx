@@ -15,9 +15,25 @@ const Cart = () => {
     const [form, setForm] = useState({
         customerName: '',
         phone: '',
-        address: ''
+        address: '',
+        customerEmail: ''
     });
     const [paymentMethod, setPaymentMethod] = useState('COD');
+
+    useEffect(() => {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            try {
+                const user = JSON.parse(storedUser);
+                setForm(prev => ({
+                    ...prev,
+                    customerName: user.firstName ? `${user.firstName} ${user.lastName || ''}` : user.name || '',
+                    phone: user.mobile || '',
+                    customerEmail: user.email || ''
+                }));
+            } catch (e) { /* ignore */ }
+        }
+    }, []);
 
     const updateCart = () => {
         const items = cartService.getCartItems();
@@ -63,6 +79,7 @@ const Cart = () => {
         
         const orderData = {
             customerName: form.customerName,
+            customerEmail: form.customerEmail,
             phone: form.phone,
             address: form.address,
             productName: cartItems.map(i => i.title).join(', '),
@@ -115,7 +132,8 @@ const Cart = () => {
                         },
                         prefill: {
                             name: form.customerName,
-                            contact: form.phone
+                            contact: form.phone,
+                            email: form.customerEmail
                         },
                         theme: {
                             color: "#1e293b"
