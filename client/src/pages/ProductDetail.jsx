@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Star, ShoppingCart, Heart, WhatsappLogo, ArrowLeft, Plus, Minus, CheckCircle, Truck, ShieldCheck, ArrowsCounterClockwise } from '@phosphor-icons/react';
 import ProductImageZoom from '../components/ProductImageZoom';
 import { cartService } from '../services/cartService';
@@ -11,6 +11,7 @@ const BASE_URL = API_BASE_URL;
 
 const ProductDetail = () => {
     const { id } = useParams();
+    const navigate = useNavigate();
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -81,6 +82,11 @@ const ProductDetail = () => {
             count,
             percent: total ? (count / total) * 100 : 0
         })).reverse();
+    };
+
+    const handleBuyNow = () => {
+        cartService.addToCart(product, quantity);
+        navigate('/cart');
     };
 
     if (loading) return <div className="loading-container"><div className="loading-spinner"></div></div>;
@@ -194,10 +200,33 @@ const ProductDetail = () => {
                             </div>
                         </div>
 
-                        <div className="whatsapp-inquiry">
-                            <a href={`https://wa.me/918299475268?text=I'm interested in ${product.name}`} target="_blank" rel="noreferrer">
-                                <WhatsappLogo size={20} weight="fill" /> Inquiry on WhatsApp
-                            </a>
+                        <div className="buy-now-section" style={{ marginTop: '2rem' }}>
+                            <button 
+                                onClick={handleBuyNow}
+                                style={{ 
+                                    width: '100%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '0.75rem',
+                                    backgroundColor: '#10b981',
+                                    color: 'white',
+                                    padding: '1.1rem',
+                                    borderRadius: '12px',
+                                    border: 'none',
+                                    outline: 'none',
+                                    cursor: 'pointer',
+                                    fontWeight: 800,
+                                    fontSize: '1.2rem',
+                                    transition: 'all 0.3s ease',
+                                    boxShadow: '0 10px 20px -5px rgba(16, 185, 129, 0.3)',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.05em'
+                                }}
+                                disabled={!product.inStock}
+                            >
+                                <CheckCircle size={24} weight="bold" /> Buy Now
+                            </button>
                         </div>
                     </div>
                 </div>
