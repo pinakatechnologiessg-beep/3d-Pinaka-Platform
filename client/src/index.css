@@ -2857,7 +2857,8 @@ footer {
     font-weight: 600;
     margin-left: auto;
 }
-/* Home Page Features Responsive */
+
+/* Home Page Features Responsive */
 @media (max-width: 768px) {
     .features-grid {
         grid-template-columns: 1fr !important;

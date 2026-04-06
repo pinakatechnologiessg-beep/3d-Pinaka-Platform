@@ -48,7 +48,7 @@ const Logo = ({ height = 55, className = "", variant = "light", style = {} }) =>
         <path d="M0 20 L35 0 L70 20 L70 60 L35 80 L0 60 Z" fill="#1e293b" />
         <path d="M0 20 L35 40 L70 20" stroke="rgba(255,255,255,0.3)" fill="none" strokeWidth="2" />
         <path d="M35 40 L35 80" stroke="rgba(255,255,255,0.3)" fill="none" strokeWidth="2" />
-        <text x="12" y="55" fill="#00e5ff" fontSize="32" fontWeight="900" style={{ fontFamily: 'Arial Black, sans-serif' }}>3D</text>
+        <text x="12" y="55" fill="#ffffff" fontSize="32" fontWeight="900" style={{ fontFamily: 'Arial Black, sans-serif' }}>3D</text>
       </g>
 
       {/* Hand at the bottom */}
@@ -59,8 +59,8 @@ const Logo = ({ height = 55, className = "", variant = "light", style = {} }) =>
       <path d="M175 168 L195 158" stroke="#f59e0b" strokeWidth="4" strokeLinecap="round" />
       <path d="M185 178 L205 168" stroke="#f59e0b" strokeWidth="4" strokeLinecap="round" />
 
-      {/* Brand Name Text */}
-      <text x="280" y="115" fill="#00e5ff" fontSize="82" fontWeight="900" style={{ fontFamily: 'Inter, sans-serif', letterSpacing: '-2px' }}>
+      {/* Brand Name Text - Updated to Teal */}
+      <text x="280" y="115" fill="#00A99D" fontSize="82" fontWeight="900" style={{ fontFamily: 'Inter, sans-serif', letterSpacing: '-2px' }}>
         PINAKA
       </text>
 
