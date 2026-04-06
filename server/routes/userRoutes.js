@@ -86,14 +86,32 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
     try {
         const { status } = req.body;
-        const user = await User.findOne({ $or: [{ userId: req.params.id }, { _id: mongoose.isValidObjectId(req.params.id) ? req.params.id : null }]});
+        const queryId = req.params.id;
         
-        if (!user) return res.status(404).json({ message: 'User not found' });
+        // Find user by userId or MongoDB _id
+        let user;
+        if (mongoose.isValidObjectId(queryId)) {
+            user = await User.findOne({ 
+                $or: [{ userId: queryId }, { _id: queryId }] 
+            });
+        } else {
+            user = await User.findOne({ userId: queryId });
+        }
+        
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
         
         user.status = status;
         await user.save();
-        res.status(200).json(user);
+        
+        res.status(200).json({ 
+            success: true, 
+            message: `User status updated to ${status}`,
+            status: user.status 
+        });
     } catch (err) {
+        console.error('Error updating user status:', err);
         res.status(500).json({ message: 'Failed to update user status', error: err.message });
     }
 });
