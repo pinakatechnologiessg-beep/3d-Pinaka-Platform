@@ -17,6 +17,7 @@ const Cart = () => {
         phone: '',
         address: ''
     });
+    const [paymentMethod, setPaymentMethod] = useState('COD');
 
     const updateCart = () => {
         const items = cartService.getCartItems();
@@ -68,8 +69,8 @@ const Cart = () => {
             quantity: cartItems.length,
             totalPrice: total,
             status: 'Pending',
-            paymentStatus: 'Unpaid',
-            paymentMethod: 'Cash on Delivery'
+            paymentStatus: paymentMethod === 'COD' ? 'Pending' : 'Unpaid',
+            paymentMethod: paymentMethod === 'COD' ? 'Cash on Delivery' : 'Razorpay'
         };
 
         try {
@@ -79,11 +80,55 @@ const Cart = () => {
                 body: JSON.stringify(orderData)
             });
             const data = await res.json();
+            
             if(res.ok) {
-                setOrderId(data.orderId);
-                setIsOrderSuccess(true);
-                cartService.clearCart();
-                updateCart();
+                if (paymentMethod === 'Online') {
+                    // Initialize Razorpay
+                    const options = {
+                        key: data.razorpayKeyId,
+                        amount: data.totalPrice * 100,
+                        currency: "INR",
+                        name: "3D Pinaka",
+                        description: "Purchase from 3D Pinaka",
+                        order_id: data.razorpayOrderId,
+                        handler: async function (response) {
+                            // Verify Payment
+                            const verifyRes = await fetch(`${API_BASE_URL}/api/orders/verify`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    razorpay_order_id: response.razorpay_order_id,
+                                    razorpay_payment_id: response.razorpay_payment_id,
+                                    razorpay_signature: response.razorpay_signature,
+                                    orderId: data.orderId
+                                })
+                            });
+                            const verifyData = await verifyRes.json();
+                            if (verifyData.success) {
+                                setOrderId(data.orderId);
+                                setIsOrderSuccess(true);
+                                cartService.clearCart();
+                                updateCart();
+                            } else {
+                                alert("Payment verification failed: " + verifyData.message);
+                            }
+                        },
+                        prefill: {
+                            name: form.customerName,
+                            contact: form.phone
+                        },
+                        theme: {
+                            color: "#1e293b"
+                        }
+                    };
+                    const rzp = new window.Razorpay(options);
+                    rzp.open();
+                } else {
+                    setOrderId(data.orderId);
+                    setIsOrderSuccess(true);
+                    cartService.clearCart();
+                    updateCart();
+                }
             } else {
                 alert('Order failed: ' + data.message);
             }
@@ -193,6 +238,47 @@ const Cart = () => {
                                     <div style={{ position: 'relative' }}>
                                         <MapPin size={18} style={{ position: 'absolute', left: '12px', top: '15px', color: '#94a3b8' }} />
                                         <textarea required value={form.address} onChange={e => setForm({...form, address: e.target.value})} style={{ width: '100%', padding: '12px 12px 12px 40px', borderRadius: '8px', border: '1.5px solid #e2e8f0', outline: 'none', minHeight: '80px' }} placeholder="Building, Street, City..."></textarea>
+                                    </div>
+                                </div>
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '10px', fontWeight: 600 }}>Payment Method</label>
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                                        <div 
+                                            onClick={() => setPaymentMethod('COD')}
+                                            style={{ 
+                                                padding: '12px', 
+                                                borderRadius: '10px', 
+                                                border: `2px solid ${paymentMethod === 'COD' ? 'var(--primary)' : '#e2e8f0'}`,
+                                                background: paymentMethod === 'COD' ? '#f0f9ff' : 'white',
+                                                cursor: 'pointer',
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                alignItems: 'center',
+                                                gap: '5px',
+                                                transition: 'all 0.2s'
+                                            }}
+                                        >
+                                            <Package size={20} weight={paymentMethod === 'COD' ? 'fill' : 'regular'} color={paymentMethod === 'COD' ? 'var(--primary)' : '#64748b'} />
+                                            <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>COD</span>
+                                        </div>
+                                        <div 
+                                            onClick={() => setPaymentMethod('Online')}
+                                            style={{ 
+                                                padding: '12px', 
+                                                borderRadius: '10px', 
+                                                border: `2px solid ${paymentMethod === 'Online' ? 'var(--primary)' : '#e2e8f0'}`,
+                                                background: paymentMethod === 'Online' ? '#f0f9ff' : 'white',
+                                                cursor: 'pointer',
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                alignItems: 'center',
+                                                gap: '5px',
+                                                transition: 'all 0.2s'
+                                            }}
+                                        >
+                                            <CheckCircle size={20} weight={paymentMethod === 'Online' ? 'fill' : 'regular'} color={paymentMethod === 'Online' ? 'var(--primary)' : '#64748b'} />
+                                            <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>Pay Online</span>
+                                        </div>
                                     </div>
                                 </div>
                                 <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '12px', marginBottom: '1.5rem', border: '1px dashed #cbd5e1' }}>
