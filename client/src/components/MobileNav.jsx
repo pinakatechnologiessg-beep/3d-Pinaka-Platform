@@ -119,9 +119,15 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
                     {item.key === 'brands' ? (
                       <>
                         <li><Link to="/products?brand=Anycubic" onClick={onClose}>Anycubic</Link></li>
+                        <li><Link to="/products?brand=Bambu Lab" onClick={onClose}>Bambu Lab</Link></li>
                         <li><Link to="/products?brand=Creality" onClick={onClose}>Creality</Link></li>
                         <li><Link to="/products?brand=Snapmaker" onClick={onClose}>Snapmaker</Link></li>
                         <li><Link to="/products?brand=Rotrics" onClick={onClose}>Rotrics</Link></li>
+                        <li><Link to="/products?brand=Flashforge" onClick={onClose}>Flashforge</Link></li>
+                        <li><Link to="/products?brand=Skriware" onClick={onClose}>Skriware</Link></li>
+                        <li><Link to="/products?brand=Magforms" onClick={onClose}>Magforms</Link></li>
+                        <li><Link to="/products?brand=Zmorph" onClick={onClose}>Zmorph</Link></li>
+                        <li><Link to="/products?brand=Sunlu" onClick={onClose}>Sunlu</Link></li>
                         <li><Link to="/products?brand=Elegoo" onClick={onClose}>Elegoo</Link></li>
                       </>
                     ) : item.key === 'categories' ? (
