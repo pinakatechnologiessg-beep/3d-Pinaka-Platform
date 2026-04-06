@@ -48,6 +48,10 @@ router.post('/login', async (req, res) => {
       if (!user || !(await bcrypt.compare(password, user.password))) {
         return res.status(401).json({ message: 'Invalid credentials' });
       }
+
+      if (user.status === 'Blocked') {
+        return res.status(403).json({ message: 'Your account has been blocked. Please contact support.' });
+      }
     }
     
     const role = isRoleAdmin ? 'admin' : user.role;

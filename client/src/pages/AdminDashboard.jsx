@@ -144,6 +144,7 @@ const AdminDashboard = () => {
             if(selectedUserDetails && selectedUserDetails.id === userId) {
                 setSelectedUserDetails(prev => ({ ...prev, status: newStatus }));
             }
+            showToast(`User ${newStatus === 'Blocked' ? 'blocked' : 'unblocked'} successfully`, 'success');
         }
     } catch(err) {
         console.error('Failed to change user status', err);
