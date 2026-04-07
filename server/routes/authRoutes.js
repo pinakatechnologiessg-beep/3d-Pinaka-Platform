@@ -3,6 +3,10 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import Admin from '../models/Admin.js';
 import bcrypt from 'bcryptjs';
+import dns from 'dns';
+import { promisify } from 'util';
+
+const resolveMx = promisify(dns.resolveMx);
 
 const router = express.Router();
 
@@ -24,6 +28,17 @@ router.post('/register', async (req, res) => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailRegex.test(email)) {
       return res.status(400).json({ message: 'Email do not exist or invalid format' });
+    }
+
+    // Deep check for domain MX records
+    const domain = email.split('@')[1];
+    try {
+      const mxRecords = await resolveMx(domain);
+      if (!mxRecords || mxRecords.length === 0) {
+        return res.status(400).json({ message: 'Email do not exist (Domain has no mail server)' });
+      }
+    } catch (e) {
+      return res.status(400).json({ message: 'Email do not exist (Invalid or non-existent domain)' });
     }
 
     // Mobile validation (10 digits)
