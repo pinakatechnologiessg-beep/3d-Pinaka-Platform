@@ -13,7 +13,10 @@ const MyTickets = () => {
 
     const fetchTickets = async () => {
         const token = localStorage.getItem('token');
-        if (!token) return navigate('/login');
+        if (!token) {
+            setLoading(false);
+            return;
+        }
 
         try {
             const response = await fetch(`${API_BASE_URL}/api/support/my-tickets`, {
@@ -75,6 +78,20 @@ const MyTickets = () => {
     };
 
     if (loading) return <div style={{ textAlign: 'center', padding: '100px' }}>Loading tickets...</div>;
+
+    const token = localStorage.getItem('token');
+    if (!token) return (
+        <main style={{ padding: '4rem 0', textAlign: 'center' }}>
+            <div className="container">
+                <div style={{ background: 'white', padding: '3rem', borderRadius: '12px', border: '1px solid var(--border-color)', maxWidth: '500px', margin: '0 auto' }}>
+                    <ChatCircleDots size={48} color="var(--primary)" style={{ marginBottom: '1.5rem' }} />
+                    <h2 style={{ marginBottom: '1rem' }}>not loged in pls login</h2>
+                    <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>Please sign in to view your support tickets and technical assistance history.</p>
+                    <Link to="/login" className="btn btn-primary" style={{ width: '100%', display: 'inline-block' }}>Login Now</Link>
+                </div>
+            </div>
+        </main>
+    );
 
     return (
         <main className="tickets-page" style={{ background: 'var(--light-bg)', padding: '4rem 0', minHeight: '100vh' }}>

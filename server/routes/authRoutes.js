@@ -12,126 +12,25 @@ const resolveMx = promisify(dns.resolveMx);
 
 const router = express.Router();
 
-// Setup nodemailer transporter
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER || "connect2rachit882@gmail.com",
-    pass: process.env.EMAIL_PASS || ""
-  }
-});
-
-// Temp in-memory storage for OTPs (or use a dedicated collection)
-const otpStore = new Map();
-
 // GET /api/auth -> Base status
 router.get('/', (req, res) => {
   res.json({ status: "OK", message: "Auth API working 🔐" });
 });
 
-// Send OTP
-router.post('/send-otp', async (req, res) => {
-  const { email } = req.body;
-  if (!email) return res.status(400).json({ message: 'Email is required' });
-
-  // Email format check
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  if (!emailRegex.test(email)) {
-    return res.status(400).json({ message: 'Email do not exist' });
-  }
-
-  // Deep check for domain MX records
-  const domain = email.split('@')[1];
-  const prefix = email.split('@')[0];
-
-  // Gibberish Pattern Check (Simple entropy heuristic)
-  const gibberishRegex = /[^aeiouy0-9]{6,}/i; // 6+ consecutive non-vowels is usually fake
-  if (gibberishRegex.test(prefix) && prefix.length > 8) {
-    return res.status(400).json({ message: 'Email do not exist' });
-  }
-
-  try {
-    const mxRecords = await resolveMx(domain);
-    if (!mxRecords || mxRecords.length === 0) {
-      return res.status(400).json({ message: 'Email do not exist' });
-    }
-
-    // NEW: Real-time Mailbox existence check (Public API)
-    // We attempt a deep check but with a very short timeout to avoid hanging
-    try {
-        const checkRes = await Promise.race([
-            fetch(`https://api.eva.pingutil.com/email?email=${email}`).then(r => r.json()),
-            new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 4000))
-        ]);
-        if (checkRes.status === 'success' && checkRes.data.deliverable === false) {
-            return res.status(400).json({ message: 'Email do not exist' });
-        }
-    } catch (e) {
-        console.warn("Deep verification skipped (down/timeout)");
-    }
-
-  } catch (e) {
-    return res.status(400).json({ message: 'Email do not exist' });
-  }
-
-  // Check if already registered
-  const existingUser = await User.findOne({ email });
-  if (existingUser) return res.status(400).json({ message: 'Email already registered' });
-
-  // Generate 6-digit OTP
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
-  otpStore.set(email, { otp, expires: Date.now() + 600000 }); // 10 mins
-
-  console.log(`[AUTH] OTP for ${email}: ${otp}`);
-
-  // Send Email (Attempt)
-  if (process.env.EMAIL_PASS) {
-    try {
-      // Set a short timeout for mail delivery attempt
-      await Promise.race([
-        transporter.sendMail({
-          from: `"3D Pinaka" <${process.env.EMAIL_USER || "connect2rachit882@gmail.com"}>`,
-          to: email,
-          subject: "Verify your email - 3D Pinaka",
-          html: `<h3>Welcome to 3D Pinaka!</h3><p>Your verification code is: <b>${otp}</b></p><p>This code expires in 10 minutes.</p>`
-        }),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 8000))
-      ]);
-      res.json({ message: 'Verification code sent to your email' });
-    } catch (err) {
-      console.warn("MAIL ERROR: ", err.message);
-      // If we can't send mail, it's highly likely the email is invalid or service is down
-      return res.status(400).json({ message: 'Email do not exist' });
-    }
-  } else {
-    // Development fallback
-    res.json({ 
-        message: 'Verification code generated! (Testing Mode)', 
-        debug: `[Code: ${otp}]` 
-    });
-  }
+router.get('/status', (req, res) => {
+  res.json({ status: "OK", service: "Authentication Service" });
 });
 
 // Register
 router.post('/register', async (req, res) => {
   try {
-    const { firstName, lastName, mobile, email, password, otp } = req.body;
-
-    // Verify OTP
-    const stored = otpStore.get(email);
-    if (!stored || stored.otp !== otp || stored.expires < Date.now()) {
-      return res.status(400).json({ message: 'Invalid or expired verification code' });
-    }
-    
-    // Clear OTP after use
-    otpStore.delete(email);
-
-    const user = new User({ firstName, lastName, mobile, email, password, isVerified: true });
+    const { firstName, lastName, mobile, email, password } = req.body;
+    const user = new User({ firstName, lastName, mobile, email, password });
     await user.save();
     res.status(201).json({ message: 'User registered successfully' });
   } catch (err) {
     if (err.code === 11000) {
-      return res.status(400).json({ message: 'Email or Mobile already registered' });
+      return res.status(400).json({ message: 'Email already registered' });
     }
     res.status(400).json({ message: err.message });
   }

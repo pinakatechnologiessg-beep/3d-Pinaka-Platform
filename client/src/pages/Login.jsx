@@ -68,10 +68,6 @@ const Login = () => {
         }
     };
 
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [registrationStep, setRegistrationStep] = useState('initial'); // 'initial', 'otp'
-    const [otp, setOtp] = useState('');
-
     const handleRegister = async (e) => {
         e.preventDefault();
         setError(''); setSuccess('');
@@ -89,53 +85,23 @@ const Login = () => {
             return;
         }
 
-        setIsSubmitting(true);
-
-        // STEP 1: Send OTP
-        if (registrationStep === 'initial') {
-            try {
-                const res = await fetch(`${API_BASE_URL}/api/auth/send-otp`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: formData.email })
-                });
-                const data = await res.json();
-                if (res.ok) {
-                    setRegistrationStep('otp');
-                    setSuccess(data.message + (data.debug ? ' ' + data.debug : ''));
-                } else {
-                    setError(data.message || 'Email do not exist');
-                }
-            } catch (err) {
-                setError('Network error. Check if server is running.');
-            } finally {
-                setIsSubmitting(false);
-            }
-            return;
-        }
-
-        // STEP 2: Finalize Registration
         try {
             const res = await fetch(`${API_BASE_URL}/api/auth/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...formData, otp })
+                body: JSON.stringify(formData)
             });
             const data = await res.json();
             if (res.ok) {
                 setSuccess('Account created! You can now sign in.');
                 setActiveTab('signin');
-                setRegistrationStep('initial');
-                setOtp('');
                 const updatedUsers = await fetch(`${API_BASE_URL}/api/auth/users`).then(r => r.json());
                 setUsers(Array.isArray(updatedUsers) ? updatedUsers : []);
             } else {
                 setError(data.message || 'Registration failed');
             }
         } catch (err) {
-            setError('Network error. Check if server is running.');
-        } finally {
-            setIsSubmitting(false);
+            setError('Network error check if server is running');
         }
     };
 
@@ -157,14 +123,14 @@ const Login = () => {
                                  <div className="auth-tabs" style={{ display: 'flex', marginBottom: '2rem', borderBottom: '1px solid var(--border-color)' }}>
                                      <div 
                                          className={`auth-tab ${activeTab === 'signin' ? 'active' : ''}`} 
-                                         onClick={() => { setActiveTab('signin'); setRegistrationStep('initial'); setError(''); setSuccess(''); }}
+                                         onClick={() => setActiveTab('signin')}
                                          style={{ flex: 1, textAlign: 'center', padding: '1rem', fontWeight: 600, color: activeTab === 'signin' ? 'var(--primary)' : 'var(--text-muted)', cursor: 'pointer', borderBottom: activeTab === 'signin' ? '2px solid var(--primary)' : 'none' }}
                                      >
                                          Sign In
                                      </div>
                                      <div 
                                          className={`auth-tab ${activeTab === 'create-account' ? 'active' : ''}`} 
-                                         onClick={() => { setActiveTab('create-account'); setRegistrationStep('initial'); setError(''); setSuccess(''); }}
+                                         onClick={() => setActiveTab('create-account')}
                                          style={{ flex: 1, textAlign: 'center', padding: '1rem', fontWeight: 600, color: activeTab === 'create-account' ? 'var(--primary)' : 'var(--text-muted)', cursor: 'pointer', borderBottom: activeTab === 'create-account' ? '2px solid var(--primary)' : 'none' }}
                                      >
                                          Create Account
@@ -203,62 +169,31 @@ const Login = () => {
                                              <span style={{ fontSize: '1.2rem' }}>✅</span> {success}
                                          </div>}
                                          
-                                         {registrationStep === 'initial' ? (
-                                             <>
-                                                 <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
-                                                     <div className="form-group" style={{ flex: 1 }}>
-                                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 500, color: 'var(--text-dark)' }}>First Name</label>
-                                                         <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} placeholder="First name" style={{ width: '100%', padding: '12px 16px', border: '1px solid var(--border-color)', borderRadius: '6px' }} required />
-                                                     </div>
-                                                     <div className="form-group" style={{ flex: 1 }}>
-                                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 500, color: 'var(--text-dark)' }}>Last Name</label>
-                                                         <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} placeholder="Last name" style={{ width: '100%', padding: '12px 16px', border: '1px solid var(--border-color)', borderRadius: '6px' }} required />
-                                                     </div>
+                                             <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
+                                                 <div className="form-group" style={{ flex: 1 }}>
+                                                     <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 500, color: 'var(--text-dark)' }}>First Name</label>
+                                                     <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} placeholder="First name" style={{ width: '100%', padding: '12px 16px', border: '1px solid var(--border-color)', borderRadius: '6px' }} required />
                                                  </div>
-                                                 <div className="form-group" style={{ marginBottom: '1.5rem' }}>
-                                                     <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 500, color: 'var(--text-dark)' }}>Mobile Number</label>
-                                                     <input type="tel" name="mobile" value={formData.mobile} onChange={handleChange} placeholder="Enter your mobile number" style={{ width: '100%', padding: '12px 16px', border: '1px solid var(--border-color)', borderRadius: '6px' }} required />
+                                                 <div className="form-group" style={{ flex: 1 }}>
+                                                     <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 500, color: 'var(--text-dark)' }}>Last Name</label>
+                                                     <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} placeholder="Last name" style={{ width: '100%', padding: '12px 16px', border: '1px solid var(--border-color)', borderRadius: '6px' }} required />
                                                  </div>
-                                                 <div className="form-group" style={{ marginBottom: '1.5rem' }}>
-                                                     <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 500, color: 'var(--text-dark)' }}>Email Address</label>
-                                                     <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Enter your email" style={{ width: '100%', padding: '12px 16px', border: '1px solid var(--border-color)', borderRadius: '6px' }} required />
-                                                 </div>
-                                                 <div className="form-group" style={{ marginBottom: '1.5rem', textAlign: 'left' }}>
-                                                     <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 500, color: 'var(--text-dark)' }}>Password</label>
-                                                     <input type="password" name="password" value={formData.password} onChange={handleChange} placeholder="Create a password" style={{ width: '100%', padding: '12px 16px', border: '1px solid var(--border-color)', borderRadius: '6px' }} minLength="6" required />
-                                                 </div>
-                                                 <button type="submit" className="btn btn-primary" style={{ width: '100%', opacity: isSubmitting ? 0.7 : 1, cursor: isSubmitting ? 'not-allowed' : 'pointer' }} disabled={isSubmitting}>
-                                                     {isSubmitting ? 'Validating Email...' : 'Send Verification Code'}
-                                                 </button>
-                                             </>
-                                         ) : (
-                                             <>
-                                                 <div className="form-group" style={{ marginBottom: '1.5rem' }}>
-                                                     <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 500, color: 'var(--text-dark)' }}>Verification Code (OTP)</label>
-                                                     <input 
-                                                         type="text" 
-                                                         value={otp} 
-                                                         onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))} 
-                                                         placeholder="Enter 6-digit code sent to your email" 
-                                                         style={{ width: '100%', padding: '16px', border: '2px solid var(--primary)', borderRadius: '8px', fontSize: '1.2rem', textAlign: 'center', letterSpacing: '4px', fontWeight: '700' }} 
-                                                         maxLength="6" 
-                                                         required 
-                                                     />
-                                                     <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '8px', textAlign: 'center' }}>
-                                                         Checking inbox for verification email at {formData.email}
-                                                     </p>
-                                                 </div>
-                                                 <div style={{ display: 'flex', gap: '10px' }}>
-                                                     <button type="button" onClick={() => { setRegistrationStep('initial'); setSuccess(''); }} className="btn btn-outline" style={{ flex: 1 }} disabled={isSubmitting}>Change Email</button>
-                                                     <button type="submit" className="btn btn-primary" style={{ flex: 2, opacity: isSubmitting ? 0.7 : 1, cursor: isSubmitting ? 'not-allowed' : 'pointer' }} disabled={isSubmitting}>
-                                                         {isSubmitting ? 'Verifying...' : 'Verify & Create Account'}
-                                                     </button>
-                                                 </div>
-                                             </>
-                                         )}
+                                             </div>
+                                             <div className="form-group" style={{ marginBottom: '1.5rem' }}>
+                                                 <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 500, color: 'var(--text-dark)' }}>Mobile Number</label>
+                                                 <input type="tel" name="mobile" value={formData.mobile} onChange={handleChange} placeholder="Enter your mobile number" style={{ width: '100%', padding: '12px 16px', border: '1px solid var(--border-color)', borderRadius: '6px' }} required />
+                                             </div>
+                                             <div className="form-group" style={{ marginBottom: '1.5rem' }}>
+                                                 <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 500, color: 'var(--text-dark)' }}>Email Address</label>
+                                                 <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Enter your email" style={{ width: '100%', padding: '12px 16px', border: '1px solid var(--border-color)', borderRadius: '6px' }} required />
+                                             </div>
+                                             <div className="form-group" style={{ marginBottom: '1.5rem', textAlign: 'left' }}>
+                                                 <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 500, color: 'var(--text-dark)' }}>Password</label>
+                                                 <input type="password" name="password" value={formData.password} onChange={handleChange} placeholder="Create a password" style={{ width: '100%', padding: '12px 16px', border: '1px solid var(--border-color)', borderRadius: '6px' }} minLength="6" required />
+                                             </div>
+                                             <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>Create Account</button>
                                      </form>
                                  )}
-
                             </>
                         )}
                     </div>
@@ -267,6 +202,7 @@ const Login = () => {
             
             <a href="https://wa.me/918299475268" className="whatsapp-float" target="_blank" rel="noreferrer"><WhatsappLogo size={32} /></a>
         </main>
+    );</main>
     );
 };
 

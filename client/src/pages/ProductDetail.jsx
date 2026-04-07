@@ -88,7 +88,7 @@ const ProductDetail = () => {
         const storedUser = localStorage.getItem('user');
         if (!storedUser) {
             window.dispatchEvent(new CustomEvent(SHOW_TOAST, { 
-                detail: { message: 'Please sign in to place an order.', type: 'error' } 
+                detail: { message: 'not loged in pls login', type: 'error' } 
             }));
             setTimeout(() => navigate('/login'), 2000);
             return;

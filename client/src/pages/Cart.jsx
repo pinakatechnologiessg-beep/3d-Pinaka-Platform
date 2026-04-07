@@ -77,15 +77,6 @@ const Cart = () => {
     const handleCheckout = async (e) => {
         e.preventDefault();
 
-        // Email validation
-        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if (!emailRegex.test(form.customerEmail)) {
-            window.dispatchEvent(new CustomEvent(SHOW_TOAST, { 
-                detail: { message: 'Email do not exist', type: 'error' } 
-            }));
-            return;
-        }
-
         // Phone validation
         const phoneRegex = /^[0-9]{10}$/;
         if (!phoneRegex.test(form.phone)) {
@@ -241,7 +232,7 @@ const Cart = () => {
                                     const storedUser = localStorage.getItem('user');
                                     if (!storedUser) {
                                         window.dispatchEvent(new CustomEvent(SHOW_TOAST, { 
-                                            detail: { message: 'Please sign in to place an order.', type: 'error' } 
+                                            detail: { message: 'not loged in pls login', type: 'error' } 
                                         }));
                                         setTimeout(() => navigate('/login'), 2000);
                                         return;

@@ -21,7 +21,8 @@ const Account = () => {
                 fetchOrders(userData.email);
             } catch (e) { setUser(null); }
         } else {
-            navigate('/login');
+            // Optional: You can choose to show a message or do nothing here
+            // Removing mandatory redirect to let users explore
         }
 
         setWishlistCount(cartService.getWishlistCount());
@@ -60,7 +61,18 @@ const Account = () => {
         }
     };
 
-    if (!user) return null;
+    if (!user) return (
+        <main style={{ padding: '4rem 0', textAlign: 'center' }}>
+            <div className="container">
+                <div style={{ background: 'white', padding: '3rem', borderRadius: '12px', border: '1px solid var(--border-color)', maxWidth: '500px', margin: '0 auto' }}>
+                    <User size={48} color="var(--primary)" style={{ marginBottom: '1.5rem' }} />
+                    <h2 style={{ marginBottom: '1rem' }}>not loged in pls login</h2>
+                    <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>Please sign in to view your orders and manage your account.</p>
+                    <Link to="/login" className="btn btn-primary" style={{ width: '100%', display: 'inline-block' }}>Login Now</Link>
+                </div>
+            </div>
+        </main>
+    );
 
     return (
         <main className="account-page" style={{ backgroundColor: 'var(--light-bg)', padding: '4rem 0', minHeight: 'calc(100vh - 400px)' }}>
