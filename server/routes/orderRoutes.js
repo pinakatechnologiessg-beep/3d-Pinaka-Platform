@@ -3,6 +3,7 @@ import Order from '../models/Order.js';
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
+import nodemailer from 'nodemailer';
 
 dotenv.config();
 
@@ -12,6 +13,59 @@ const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID || 'dummy_id',
   key_secret: process.env.RAZORPAY_KEY_SECRET || 'dummy_secret'
 });
+
+// Setup nodemailer transporter
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER || "connect2rachit882@gmail.com",
+    pass: process.env.EMAIL_PASS || ""
+  }
+});
+
+/**
+ * Function to send email notification to admin
+ */
+const sendOrderEmailNotification = async (order) => {
+  try {
+    const isPaid = order.paymentStatus === 'Paid';
+    const statusText = isPaid ? 'CONFIRMED' : 'PLACED';
+    
+    await transporter.sendMail({
+      from: `"3D Pinaka Notifications" <${process.env.EMAIL_USER || "connect2rachit882@gmail.com"}>`,
+      to: "connect2rachit882@gmail.com",
+      subject: `New Order ${statusText}: ${order.orderId}`,
+      html: `
+        <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+          <h2 style="color: #2c3e50; text-align: center;">New Order Received</h2>
+          <hr />
+          <p><strong>Order ID:</strong> ${order.orderId}</p>
+          <p><strong>Status:</strong> ${order.status}</p>
+          <p><strong>Payment Method:</strong> ${order.paymentMethod}</p>
+          <p><strong>Payment Status:</strong> ${order.paymentStatus}</p>
+          <hr />
+          <h3>Customer Details</h3>
+          <p><strong>Name:</strong> ${order.customerName}</p>
+          <p><strong>Email:</strong> ${order.customerEmail}</p>
+          <p><strong>Phone:</strong> ${order.phone}</p>
+          <p><strong>Address:</strong> ${order.address}</p>
+          <hr />
+          <h3>Order Items</h3>
+          <p><strong>Product:</strong> ${order.productName}</p>
+          <p><strong>Quantity:</strong> ${order.quantity}</p>
+          <p><strong>Total Price:</strong> ₹${order.totalPrice}</p>
+          <hr />
+          <p style="font-size: 0.9em; color: #7f8c8d; text-align: center;">
+            This is an automated notification from your 3D Pinaka store.
+          </p>
+        </div>
+      `
+    });
+    console.log(`Notification email sent for Order: ${order.orderId}`);
+  } catch (error) {
+    console.error("Order Email notification failed:", error);
+  }
+};
 
 // GET /api/orders
 router.get('/', async (req, res) => {
@@ -45,6 +99,11 @@ router.post('/', async (req, res) => {
     });
 
     const savedOrder = await newOrder.save();
+
+    // If it's COD, send notification immediately
+    if (req.body.paymentMethod === 'COD') {
+        sendOrderEmailNotification(savedOrder);
+    }
 
     // If it's a Razorpay payment, create a Razorpay order
     if (req.body.paymentMethod === 'Razorpay') {
@@ -88,15 +147,22 @@ router.post('/verify', async (req, res) => {
       .digest("hex");
 
     if (expectedSignature === razorpay_signature) {
-      await Order.findOneAndUpdate(
+      const updatedOrder = await Order.findOneAndUpdate(
         { orderId: orderId },
         {
           paymentStatus: "Paid",
           razorpay_payment_id,
           razorpay_signature,
           status: "Confirmed"
-        }
+        },
+        { new: true }
       );
+      
+      // Email Notification after verification
+      if (updatedOrder) {
+          sendOrderEmailNotification(updatedOrder);
+      }
+
       res.json({ success: true, message: "Payment verified successfully" });
     } else {
       res.status(400).json({ success: false, message: "Invalid signature" });
@@ -143,3 +209,4 @@ router.delete('/:id', async (req, res) => {
 });
 
 export default router;
+
