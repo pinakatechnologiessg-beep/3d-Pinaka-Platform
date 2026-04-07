@@ -76,6 +76,25 @@ const Cart = () => {
 
     const handleCheckout = async (e) => {
         e.preventDefault();
+
+        // Email validation
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailRegex.test(form.customerEmail)) {
+            window.dispatchEvent(new CustomEvent(SHOW_TOAST, { 
+                detail: { message: 'Email do not exist or invalid format', type: 'error' } 
+            }));
+            return;
+        }
+
+        // Phone validation
+        const phoneRegex = /^[0-9]{10}$/;
+        if (!phoneRegex.test(form.phone)) {
+            window.dispatchEvent(new CustomEvent(SHOW_TOAST, { 
+                detail: { message: 'Invalid phone number. Must be 10 digits.', type: 'error' } 
+            }));
+            return;
+        }
+
         setLoading(true);
         
         const orderData = {

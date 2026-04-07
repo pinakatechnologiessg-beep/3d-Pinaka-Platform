@@ -19,6 +19,19 @@ router.get('/status', (req, res) => {
 router.post('/register', async (req, res) => {
   try {
     const { firstName, lastName, mobile, email, password } = req.body;
+
+    // Email validation
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: 'Email do not exist or invalid format' });
+    }
+
+    // Mobile validation (10 digits)
+    const mobileRegex = /^[0-9]{10}$/;
+    if (!mobileRegex.test(mobile)) {
+      return res.status(400).json({ message: 'Invalid mobile number. Must be 10 digits.' });
+    }
+
     const user = new User({ firstName, lastName, mobile, email, password });
     await user.save();
     res.status(201).json({ message: 'User registered successfully' });

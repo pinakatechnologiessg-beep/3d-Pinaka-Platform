@@ -73,6 +73,18 @@ const Login = () => {
         setError(''); setSuccess('');
         
         // Client-side check
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailRegex.test(formData.email)) {
+            setError('Email do not exist or invalid format');
+            return;
+        }
+
+        const mobileRegex = /^[0-9]{10}$/;
+        if (!mobileRegex.test(formData.mobile)) {
+            setError('Invalid mobile number. Must be 10 digits.');
+            return;
+        }
+
         if (users.some(u => u.email.toLowerCase() === formData.email.toLowerCase())) {
             setError('This email is already registered. Please login.');
             return;
