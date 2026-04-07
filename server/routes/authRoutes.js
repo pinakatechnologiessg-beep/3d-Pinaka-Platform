@@ -42,11 +42,34 @@ router.post('/send-otp', async (req, res) => {
 
   // Deep check for domain MX records
   const domain = email.split('@')[1];
+  const prefix = email.split('@')[0];
+
+  // Gibberish Pattern Check (Simple entropy heuristic)
+  const gibberishRegex = /[^aeiouy0-9]{6,}/i; // 6+ consecutive non-vowels is usually fake
+  if (gibberishRegex.test(prefix) && prefix.length > 8) {
+    return res.status(400).json({ message: 'Email do not exist' });
+  }
+
   try {
     const mxRecords = await resolveMx(domain);
     if (!mxRecords || mxRecords.length === 0) {
       return res.status(400).json({ message: 'Email do not exist' });
     }
+
+    // NEW: Real-time Mailbox existence check (Public API)
+    // We attempt a deep check but with a very short timeout to avoid hanging
+    try {
+        const checkRes = await Promise.race([
+            fetch(`https://api.eva.pingutil.com/email?email=${email}`).then(r => r.json()),
+            new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 4000))
+        ]);
+        if (checkRes.status === 'success' && checkRes.data.deliverable === false) {
+            return res.status(400).json({ message: 'Email do not exist' });
+        }
+    } catch (e) {
+        console.warn("Deep verification skipped (down/timeout)");
+    }
+
   } catch (e) {
     return res.status(400).json({ message: 'Email do not exist' });
   }
