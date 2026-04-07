@@ -3,6 +3,10 @@ import Order from '../models/Order.js';
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
+import dns from 'dns';
+import { promisify } from 'util';
+
+const resolveMx = promisify(dns.resolveMx);
 
 dotenv.config();
 
@@ -36,6 +40,26 @@ router.get('/user/:email', async (req, res) => {
 // POST /api/orders
 router.post('/', async (req, res) => {
   try {
+    const { customerEmail } = req.body;
+
+    // Deep check for domain MX records
+    if (customerEmail) {
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (!emailRegex.test(customerEmail)) {
+        return res.status(400).json({ message: 'Email do not exist or invalid format' });
+      }
+
+      const domain = customerEmail.split('@')[1];
+      try {
+        const mxRecords = await resolveMx(domain);
+        if (!mxRecords || mxRecords.length === 0) {
+          return res.status(400).json({ message: 'Email do not exist (Domain has no mail server)' });
+        }
+      } catch (e) {
+        return res.status(400).json({ message: 'Email do not exist (Invalid domain)' });
+      }
+    }
+
     const randomSuffix = Math.floor(1000 + Math.random() * 9000);
     const orderId = `ORD-${randomSuffix}`;
 

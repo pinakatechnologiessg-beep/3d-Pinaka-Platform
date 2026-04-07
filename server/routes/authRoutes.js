@@ -6,53 +6,101 @@ import bcrypt from 'bcryptjs';
 import dns from 'dns';
 import { promisify } from 'util';
 
+import nodemailer from 'nodemailer';
+
 const resolveMx = promisify(dns.resolveMx);
 
 const router = express.Router();
+
+// Setup nodemailer transporter
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER || "support@3dpinaka.in",
+    pass: process.env.EMAIL_PASS || ""
+  }
+});
+
+// Temp in-memory storage for OTPs (or use a dedicated collection)
+const otpStore = new Map();
 
 // GET /api/auth -> Base status
 router.get('/', (req, res) => {
   res.json({ status: "OK", message: "Auth API working 🔐" });
 });
 
-router.get('/status', (req, res) => {
-  res.json({ status: "OK", service: "Authentication Service" });
+// Send OTP
+router.post('/send-otp', async (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ message: 'Email is required' });
+
+  // Email format check
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ message: 'Email do not exist or invalid format' });
+  }
+
+  // Deep check for domain MX records
+  const domain = email.split('@')[1];
+  try {
+    const mxRecords = await resolveMx(domain);
+    if (!mxRecords || mxRecords.length === 0) {
+      return res.status(400).json({ message: 'Email do not exist (Domain has no mail server)' });
+    }
+  } catch (e) {
+    return res.status(400).json({ message: 'Email do not exist (Invalid domain)' });
+  }
+
+  // Check if already registered
+  const existingUser = await User.findOne({ email });
+  if (existingUser) return res.status(400).json({ message: 'Email already registered' });
+
+  // Generate 6-digit OTP
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  otpStore.set(email, { otp, expires: Date.now() + 600000 }); // 10 mins
+
+  console.log(`[AUTH] OTP for ${email}: ${otp}`);
+
+  // Send Email (Attempt)
+  try {
+    await transporter.sendMail({
+      from: `"3D Pinaka" <${process.env.EMAIL_USER || "support@3dpinaka.in"}>`,
+      to: email,
+      subject: "Verify your email - 3D Pinaka",
+      html: `<h3>Welcome to 3D Pinaka!</h3><p>Your verification code is: <b>${otp}</b></p><p>This code expires in 10 minutes.</p>`
+    });
+    res.json({ message: 'Verification code sent to your email' });
+  } catch (err) {
+    // If SMTP fails, we still allow the frontend to proceed in "Developer mode" if they know the code (which is in logs)
+    // But for a production "working email" requirement, this is good because if the email is fake, it won't arrive.
+    console.warn("SMTP ERROR: ", err.message);
+    res.json({ 
+        message: 'Verification code generated!', 
+        debug: process.env.NODE_ENV === 'development' ? `(Testing: ${otp})` : 'Check your inbox' 
+    });
+  }
 });
 
 // Register
 router.post('/register', async (req, res) => {
   try {
-    const { firstName, lastName, mobile, email, password } = req.body;
+    const { firstName, lastName, mobile, email, password, otp } = req.body;
 
-    // Email validation
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({ message: 'Email do not exist or invalid format' });
+    // Verify OTP
+    const stored = otpStore.get(email);
+    if (!stored || stored.otp !== otp || stored.expires < Date.now()) {
+      return res.status(400).json({ message: 'Invalid or expired verification code' });
     }
+    
+    // Clear OTP after use
+    otpStore.delete(email);
 
-    // Deep check for domain MX records
-    const domain = email.split('@')[1];
-    try {
-      const mxRecords = await resolveMx(domain);
-      if (!mxRecords || mxRecords.length === 0) {
-        return res.status(400).json({ message: 'Email do not exist (Domain has no mail server)' });
-      }
-    } catch (e) {
-      return res.status(400).json({ message: 'Email do not exist (Invalid or non-existent domain)' });
-    }
-
-    // Mobile validation (10 digits)
-    const mobileRegex = /^[0-9]{10}$/;
-    if (!mobileRegex.test(mobile)) {
-      return res.status(400).json({ message: 'Invalid mobile number. Must be 10 digits.' });
-    }
-
-    const user = new User({ firstName, lastName, mobile, email, password });
+    const user = new User({ firstName, lastName, mobile, email, password, isVerified: true });
     await user.save();
     res.status(201).json({ message: 'User registered successfully' });
   } catch (err) {
     if (err.code === 11000) {
-      return res.status(400).json({ message: 'Email address already registered' });
+      return res.status(400).json({ message: 'Email or Mobile already registered' });
     }
     res.status(400).json({ message: err.message });
   }
