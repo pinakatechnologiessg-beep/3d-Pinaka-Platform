@@ -9,7 +9,7 @@ const router = express.Router();
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.EMAIL_USER || "support@3dpinaka.in",
+    user: process.env.EMAIL_USER || "connect2rachit882@gmail.com",
     pass: process.env.EMAIL_PASS || ""
   }
 });

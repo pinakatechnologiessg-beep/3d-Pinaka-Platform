@@ -16,7 +16,7 @@ const router = express.Router();
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.EMAIL_USER || "support@3dpinaka.in",
+    user: process.env.EMAIL_USER || "connect2rachit882@gmail.com",
     pass: process.env.EMAIL_PASS || ""
   }
 });
@@ -90,7 +90,7 @@ router.post('/send-otp', async (req, res) => {
       // Set a short timeout for mail delivery attempt
       await Promise.race([
         transporter.sendMail({
-          from: `"3D Pinaka" <${process.env.EMAIL_USER || "support@3dpinaka.in"}>`,
+          from: `"3D Pinaka" <${process.env.EMAIL_USER || "connect2rachit882@gmail.com"}>`,
           to: email,
           subject: "Verify your email - 3D Pinaka",
           html: `<h3>Welcome to 3D Pinaka!</h3><p>Your verification code is: <b>${otp}</b></p><p>This code expires in 10 minutes.</p>`
