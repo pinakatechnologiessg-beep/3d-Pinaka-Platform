@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Star, ShoppingCart, Heart, WhatsappLogo, ArrowLeft, Plus, Minus, CheckCircle, Truck, ShieldCheck, ArrowsCounterClockwise } from '@phosphor-icons/react';
 import ProductImageZoom from '../components/ProductImageZoom';
-import { cartService } from '../services/cartService';
+import { cartService, SHOW_TOAST } from '../services/cartService';
 import { getImageUrl, PLACEHOLDER_SVG } from '../utils/imageUtils';
 import { API_BASE_URL } from '../api/config';
 import './ProductDetail.css';
@@ -61,7 +61,7 @@ const ProductDetail = () => {
                 const updatedProduct = await res.json();
                 setProduct(updatedProduct);
                 setReviewForm({ userName: '', rating: 5, comment: '' });
-                window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: 'Review added successfully!', type: 'success' } }));
+                window.dispatchEvent(new CustomEvent(SHOW_TOAST, { detail: { message: 'Review added successfully!', type: 'success' } }));
             }
         } catch (err) {
             console.error(err);
@@ -85,6 +85,14 @@ const ProductDetail = () => {
     };
 
     const handleBuyNow = () => {
+        const storedUser = localStorage.getItem('user');
+        if (!storedUser) {
+            window.dispatchEvent(new CustomEvent(SHOW_TOAST, { 
+                detail: { message: 'Please sign in to place an order.', type: 'error' } 
+            }));
+            setTimeout(() => navigate('/login'), 2000);
+            return;
+        }
         cartService.addToCart(product, quantity);
         navigate('/cart');
     };

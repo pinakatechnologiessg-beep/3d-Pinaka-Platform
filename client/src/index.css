@@ -2186,6 +2186,10 @@ footer {
   border-left-color: var(--secondary);
 }
 
+.toast-notification.error .toast-content {
+  border-left-color: #ef4444;
+}
+
 @keyframes toastSlideUp {
   from {
     transform: translateY(100px) scale(0.9);

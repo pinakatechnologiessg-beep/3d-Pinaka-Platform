@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../api/config';
 import { ArrowLeft, Trash, ShoppingCart, WhatsappLogo, CheckCircle, Package, MapPin, Phone, User as UserIcon } from '@phosphor-icons/react';
-import { cartService } from '../services/cartService';
+import { cartService, SHOW_TOAST } from '../services/cartService';
 import { getImageUrl } from '../utils/imageUtils';
 
 const Cart = () => {
+    const navigate = useNavigate();
     const [cartItems, setCartItems] = useState([]);
     const [total, setTotal] = useState(0);
     const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
@@ -214,8 +215,23 @@ const Cart = () => {
                         <div className="cart-total" style={{ textAlign: 'right', fontSize: '1.5rem', fontWeight: 700, marginTop: '20px' }}>
                             Total: ₹<span id="cart-total-price">{total.toLocaleString('en-IN')}</span>
                         </div>
-                        <div style={{ textAligned: 'right', marginTop: '20px', display: 'flex', justifyContent: 'flex-end' }}>
-                            <button className="btn btn-primary" onClick={() => setIsCheckoutModalOpen(true)}>Proceed to Checkout</button>
+                        <div style={{ textAlign: 'right', marginTop: '20px', display: 'flex', justifyContent: 'flex-end' }}>
+                            <button 
+                                className="btn btn-primary" 
+                                onClick={() => {
+                                    const storedUser = localStorage.getItem('user');
+                                    if (!storedUser) {
+                                        window.dispatchEvent(new CustomEvent(SHOW_TOAST, { 
+                                            detail: { message: 'Please sign in to place an order.', type: 'error' } 
+                                        }));
+                                        setTimeout(() => navigate('/login'), 2000);
+                                        return;
+                                    }
+                                    setIsCheckoutModalOpen(true);
+                                }}
+                            >
+                                Proceed to Checkout
+                            </button>
                         </div>
                     </div>
                 )}
