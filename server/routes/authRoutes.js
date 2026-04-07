@@ -37,7 +37,7 @@ router.post('/send-otp', async (req, res) => {
   // Email format check
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   if (!emailRegex.test(email)) {
-    return res.status(400).json({ message: 'Email do not exist or invalid format' });
+    return res.status(400).json({ message: 'Email do not exist' });
   }
 
   // Deep check for domain MX records
@@ -45,10 +45,10 @@ router.post('/send-otp', async (req, res) => {
   try {
     const mxRecords = await resolveMx(domain);
     if (!mxRecords || mxRecords.length === 0) {
-      return res.status(400).json({ message: 'Email do not exist (Domain has no mail server)' });
+      return res.status(400).json({ message: 'Email do not exist' });
     }
   } catch (e) {
-    return res.status(400).json({ message: 'Email do not exist (Invalid domain)' });
+    return res.status(400).json({ message: 'Email do not exist' });
   }
 
   // Check if already registered

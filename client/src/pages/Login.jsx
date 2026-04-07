@@ -78,7 +78,7 @@ const Login = () => {
         // Client-side format checks
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         if (!emailRegex.test(formData.email)) {
-            setError('Email do not exist or invalid format');
+            setError('Email do not exist');
             return;
         }
 

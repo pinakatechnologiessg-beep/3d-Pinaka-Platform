@@ -81,7 +81,7 @@ const Cart = () => {
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         if (!emailRegex.test(form.customerEmail)) {
             window.dispatchEvent(new CustomEvent(SHOW_TOAST, { 
-                detail: { message: 'Email do not exist or invalid format', type: 'error' } 
+                detail: { message: 'Email do not exist', type: 'error' } 
             }));
             return;
         }
