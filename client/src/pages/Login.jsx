@@ -68,6 +68,7 @@ const Login = () => {
         }
     };
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [registrationStep, setRegistrationStep] = useState('initial'); // 'initial', 'otp'
     const [otp, setOtp] = useState('');
 
@@ -88,6 +89,8 @@ const Login = () => {
             return;
         }
 
+        setIsSubmitting(true);
+
         // STEP 1: Send OTP
         if (registrationStep === 'initial') {
             try {
@@ -101,10 +104,12 @@ const Login = () => {
                     setRegistrationStep('otp');
                     setSuccess(data.message + (data.debug ? ' ' + data.debug : ''));
                 } else {
-                    setError(data.message || 'Failed to send verification code');
+                    setError(data.message || 'Email do not exist');
                 }
             } catch (err) {
                 setError('Network error. Check if server is running.');
+            } finally {
+                setIsSubmitting(false);
             }
             return;
         }
@@ -129,6 +134,8 @@ const Login = () => {
             }
         } catch (err) {
             setError('Network error. Check if server is running.');
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -220,7 +227,9 @@ const Login = () => {
                                                      <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 500, color: 'var(--text-dark)' }}>Password</label>
                                                      <input type="password" name="password" value={formData.password} onChange={handleChange} placeholder="Create a password" style={{ width: '100%', padding: '12px 16px', border: '1px solid var(--border-color)', borderRadius: '6px' }} minLength="6" required />
                                                  </div>
-                                                 <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>Send Verification Code</button>
+                                                 <button type="submit" className="btn btn-primary" style={{ width: '100%', opacity: isSubmitting ? 0.7 : 1, cursor: isSubmitting ? 'not-allowed' : 'pointer' }} disabled={isSubmitting}>
+                                                     {isSubmitting ? 'Validating Email...' : 'Send Verification Code'}
+                                                 </button>
                                              </>
                                          ) : (
                                              <>
@@ -240,8 +249,10 @@ const Login = () => {
                                                      </p>
                                                  </div>
                                                  <div style={{ display: 'flex', gap: '10px' }}>
-                                                     <button type="button" onClick={() => { setRegistrationStep('initial'); setSuccess(''); }} className="btn btn-outline" style={{ flex: 1 }}>Change Email</button>
-                                                     <button type="submit" className="btn btn-primary" style={{ flex: 2 }}>Verify & Create Account</button>
+                                                     <button type="button" onClick={() => { setRegistrationStep('initial'); setSuccess(''); }} className="btn btn-outline" style={{ flex: 1 }} disabled={isSubmitting}>Change Email</button>
+                                                     <button type="submit" className="btn btn-primary" style={{ flex: 2, opacity: isSubmitting ? 0.7 : 1, cursor: isSubmitting ? 'not-allowed' : 'pointer' }} disabled={isSubmitting}>
+                                                         {isSubmitting ? 'Verifying...' : 'Verify & Create Account'}
+                                                     </button>
                                                  </div>
                                              </>
                                          )}

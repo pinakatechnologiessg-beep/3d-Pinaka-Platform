@@ -62,21 +62,29 @@ router.post('/send-otp', async (req, res) => {
   console.log(`[AUTH] OTP for ${email}: ${otp}`);
 
   // Send Email (Attempt)
-  try {
-    await transporter.sendMail({
-      from: `"3D Pinaka" <${process.env.EMAIL_USER || "support@3dpinaka.in"}>`,
-      to: email,
-      subject: "Verify your email - 3D Pinaka",
-      html: `<h3>Welcome to 3D Pinaka!</h3><p>Your verification code is: <b>${otp}</b></p><p>This code expires in 10 minutes.</p>`
-    });
-    res.json({ message: 'Verification code sent to your email' });
-  } catch (err) {
-    // If SMTP fails, we still allow the frontend to proceed in "Developer mode" if they know the code (which is in logs)
-    // But for a production "working email" requirement, this is good because if the email is fake, it won't arrive.
-    console.warn("SMTP ERROR: ", err.message);
+  if (process.env.EMAIL_PASS) {
+    try {
+      // Set a short timeout for mail delivery attempt
+      await Promise.race([
+        transporter.sendMail({
+          from: `"3D Pinaka" <${process.env.EMAIL_USER || "support@3dpinaka.in"}>`,
+          to: email,
+          subject: "Verify your email - 3D Pinaka",
+          html: `<h3>Welcome to 3D Pinaka!</h3><p>Your verification code is: <b>${otp}</b></p><p>This code expires in 10 minutes.</p>`
+        }),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 8000))
+      ]);
+      res.json({ message: 'Verification code sent to your email' });
+    } catch (err) {
+      console.warn("MAIL ERROR: ", err.message);
+      // If we can't send mail, it's highly likely the email is invalid or service is down
+      return res.status(400).json({ message: 'Email do not exist' });
+    }
+  } else {
+    // Development fallback
     res.json({ 
-        message: 'Verification code generated!', 
-        debug: process.env.NODE_ENV === 'development' ? `(Testing: ${otp})` : 'Check your inbox' 
+        message: 'Verification code generated! (Testing Mode)', 
+        debug: `[Code: ${otp}]` 
     });
   }
 });
