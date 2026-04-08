@@ -24,9 +24,9 @@ const transporter = nodemailer.createTransport({
 });
 
 /**
- * Function to send email notification to admin
+ * Function to send email notification to admin and customer
  */
-const sendOrderEmailNotification = async (order) => {
+export const sendOrderEmailNotification = async (order) => {
   try {
     const isPaid = order.paymentStatus === 'Paid';
     const statusText = isPaid ? 'CONFIRMED' : 'PLACED';
@@ -61,7 +61,30 @@ const sendOrderEmailNotification = async (order) => {
         </div>
       `
     });
-    console.log(`Notification email sent for Order: ${order.orderId}`);
+
+    // Send confirmation email to customer
+    await transporter.sendMail({
+      from: `"3D Pinaka" <${process.env.EMAIL_USER}>`,
+      to: order.customerEmail,
+      subject: `Order Confirmation - ${order.orderId}`,
+      html: `
+        <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+          <h2 style="color: #16a34a; text-align: center;">Thank You for Your Order!</h2>
+          <p>Hi ${order.customerName},</p>
+          <p>Your order has been successfully ${statusText.toLowerCase()}. We'll start processing it right away!</p>
+          <hr style="border: none; border-top: 1px solid #eee;" />
+          <p><strong>Order ID:</strong> ${order.orderId}</p>
+          <p><strong>Product:</strong> ${order.productName}</p>
+          <p><strong>Total Amount:</strong> ₹${order.totalPrice}</p>
+          <p><strong>Payment Method:</strong> ${order.paymentMethod}</p>
+          <hr style="border: none; border-top: 1px solid #eee;" />
+          <p>We will notify you once your order is shipped.</p>
+          <p>Best regards,<br /><strong>3D Pinaka Team</strong></p>
+        </div>
+      `
+    });
+
+    console.log(`Notification emails sent to Admin and Customer for Order: ${order.orderId}`);
   } catch (error) {
     console.error("Order Email notification failed:", error);
   }

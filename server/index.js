@@ -14,6 +14,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import crypto from 'crypto';
 import Order from './models/Order.js';
+import { sendOrderEmailNotification } from './routes/orderRoutes.js';
 
 // Resolve directory name for ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -86,6 +87,9 @@ app.post('/api/webhook', express.json(), async (req, res) => {
                     order.razorpay_payment_id = razorpayPaymentId;
                     await order.save();
                     console.log(`Order ${order.orderId} marked as Paid via Webhook`);
+                    
+                    // Trigger email notification to admin and customer
+                    await sendOrderEmailNotification(order);
                 }
             }
             return res.status(200).json({ status: 'ok' });
