@@ -280,6 +280,13 @@ const Cart = () => {
                                     </div>
                                 </div>
                                 <div style={{ marginBottom: '1.5rem' }}>
+                                    <label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '5px', fontWeight: 600 }}>Email Address</label>
+                                    <div style={{ position: 'relative' }}>
+                                        <UserIcon size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+                                        <input required type="email" value={form.customerEmail} onChange={e => setForm({...form, customerEmail: e.target.value})} style={{ width: '100%', padding: '12px 12px 12px 40px', borderRadius: '8px', border: '1.5px solid #e2e8f0', outline: 'none' }} placeholder="your@email.com" />
+                                    </div>
+                                </div>
+                                <div style={{ marginBottom: '1.5rem' }}>
                                     <label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '5px', fontWeight: 600 }}>Delivery Address</label>
                                     <div style={{ position: 'relative' }}>
                                         <MapPin size={18} style={{ position: 'absolute', left: '12px', top: '15px', color: '#94a3b8' }} />
