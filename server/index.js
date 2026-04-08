@@ -12,6 +12,8 @@ import userRoutes from './routes/userRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import crypto from 'crypto';
+import Order from './models/Order.js';
 
 // Resolve directory name for ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -52,6 +54,49 @@ app.use((req, res, next) => {
         console.log(`API Request: ${req.method} ${req.path}`);
     }
     next();
+});
+
+// Razorpay Webhook Handler
+app.post('/api/webhook', express.json(), async (req, res) => {
+    const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
+    const signature = req.headers['x-razorpay-signature'];
+
+    try {
+        const body = JSON.stringify(req.body);
+        const expectedSignature = crypto
+            .createHmac('sha256', secret)
+            .update(body)
+            .digest('hex');
+
+        if (expectedSignature === signature) {
+            const { event, payload } = req.body;
+            console.log(`Razorpay Webhook Verified: ${event}`);
+
+            if (event === 'payment.captured' || event === 'order.paid') {
+                const paymentEntity = payload.payment ? payload.payment.entity : payload.order.entity;
+                const razorpayOrderId = paymentEntity.order_id;
+                const razorpayPaymentId = paymentEntity.id;
+
+                // Find order by razorpay_order_id
+                const order = await Order.findOne({ razorpay_order_id: razorpayOrderId });
+                
+                if (order && order.paymentStatus !== 'Paid') {
+                    order.paymentStatus = 'Paid';
+                    order.status = 'Confirmed';
+                    order.razorpay_payment_id = razorpayPaymentId;
+                    await order.save();
+                    console.log(`Order ${order.orderId} marked as Paid via Webhook`);
+                }
+            }
+            return res.status(200).json({ status: 'ok' });
+        } else {
+            console.error('Invalid Razorpay Webhook Signature');
+            return res.status(400).send('Invalid signature');
+        }
+    } catch (error) {
+        console.error('Webhook Error:', error);
+        return res.status(500).send('Webhook Processing Failed');
+    }
 });
 
 app.use('/api/products', productRoutes);

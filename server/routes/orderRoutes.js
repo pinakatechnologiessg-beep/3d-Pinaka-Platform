@@ -18,8 +18,8 @@ const razorpay = new Razorpay({
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.EMAIL_USER || "connect2rachit882@gmail.com",
-    pass: process.env.EMAIL_PASS || ""
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
   }
 });
 
@@ -32,8 +32,8 @@ const sendOrderEmailNotification = async (order) => {
     const statusText = isPaid ? 'CONFIRMED' : 'PLACED';
     
     await transporter.sendMail({
-      from: `"3D Pinaka Notifications" <${process.env.EMAIL_USER || "connect2rachit882@gmail.com"}>`,
-      to: "connect2rachit882@gmail.com",
+      from: `"3D Pinaka Notifications" <${process.env.EMAIL_USER}>`,
+      to: process.env.EMAIL_USER,
       subject: `New Order ${statusText}: ${order.orderId}`,
       html: `
         <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
