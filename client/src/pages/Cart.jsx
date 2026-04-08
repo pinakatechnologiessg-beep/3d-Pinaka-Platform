@@ -19,7 +19,7 @@ const Cart = () => {
         address: '',
         customerEmail: ''
     });
-    const [paymentMethod, setPaymentMethod] = useState('COD');
+    const [paymentMethod, setPaymentMethod] = useState('Online');
 
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
@@ -288,43 +288,20 @@ const Cart = () => {
                                 </div>
                                 <div style={{ marginBottom: '1.5rem' }}>
                                     <label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '10px', fontWeight: 600 }}>Payment Method</label>
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                                        <div 
-                                            onClick={() => setPaymentMethod('COD')}
-                                            style={{ 
-                                                padding: '12px', 
-                                                borderRadius: '10px', 
-                                                border: `2px solid ${paymentMethod === 'COD' ? 'var(--primary)' : '#e2e8f0'}`,
-                                                background: paymentMethod === 'COD' ? '#f0f9ff' : 'white',
-                                                cursor: 'pointer',
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                alignItems: 'center',
-                                                gap: '5px',
-                                                transition: 'all 0.2s'
-                                            }}
-                                        >
-                                            <Package size={20} weight={paymentMethod === 'COD' ? 'fill' : 'regular'} color={paymentMethod === 'COD' ? 'var(--primary)' : '#64748b'} />
-                                            <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>COD</span>
-                                        </div>
-                                        <div 
-                                            onClick={() => setPaymentMethod('Online')}
-                                            style={{ 
-                                                padding: '12px', 
-                                                borderRadius: '10px', 
-                                                border: `2px solid ${paymentMethod === 'Online' ? 'var(--primary)' : '#e2e8f0'}`,
-                                                background: paymentMethod === 'Online' ? '#f0f9ff' : 'white',
-                                                cursor: 'pointer',
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                alignItems: 'center',
-                                                gap: '5px',
-                                                transition: 'all 0.2s'
-                                            }}
-                                        >
-                                            <CheckCircle size={20} weight={paymentMethod === 'Online' ? 'fill' : 'regular'} color={paymentMethod === 'Online' ? 'var(--primary)' : '#64748b'} />
-                                            <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>Pay Online</span>
-                                        </div>
+                                    <div 
+                                        style={{ 
+                                            padding: '12px', 
+                                            borderRadius: '10px', 
+                                            border: `2px solid var(--primary)`,
+                                            background: '#f0f9ff',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            gap: '8px',
+                                        }}
+                                    >
+                                        <CheckCircle size={20} weight="fill" color="var(--primary)" />
+                                        <span style={{ fontSize: '0.9rem', fontWeight: 700 }}>Secure Online Payment (Razorpay)</span>
                                     </div>
                                 </div>
                                 <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '12px', marginBottom: '1.5rem', border: '1px dashed #cbd5e1' }}>
