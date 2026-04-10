@@ -18,10 +18,11 @@ const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu }) => {
   useEffect(() => {
     const fetchFeaturedRefurbished = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/api/products?condition=Refurbished&featured=true`);
+        const res = await fetch(`${API_BASE_URL}/api/products?featured=true`);
         if (res.ok) {
           const data = await res.json();
-          setFeaturedRefurbished(data.slice(0, 3));
+          const filtered = data.filter(p => p.condition?.toLowerCase() === 'refurbished');
+          setFeaturedRefurbished(filtered.slice(0, 3));
         }
       } catch (err) {
         console.error("Error fetching featured refurbished:", err);

@@ -63,7 +63,7 @@ router.get('/', async (req, res) => {
     }
 
     if (condition) {
-      filter.condition = condition;
+      filter.condition = new RegExp(`^${condition}$`, 'i');
     }
 
     if (q) {
