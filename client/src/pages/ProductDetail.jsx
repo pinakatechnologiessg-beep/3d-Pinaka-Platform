@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Star, ShoppingCart, Heart, WhatsappLogo, ArrowLeft, Plus, Minus, CheckCircle, Truck, ShieldCheck, ArrowsCounterClockwise } from '@phosphor-icons/react';
 import ProductImageZoom from '../components/ProductImageZoom';
-import { cartService, SHOW_TOAST } from '../services/cartService';
+import { cartService, SHOW_TOAST, WISHLIST_UPDATED } from '../services/cartService';
 import { getImageUrl, PLACEHOLDER_SVG } from '../utils/imageUtils';
 import { API_BASE_URL } from '../api/config';
 import './ProductDetail.css';
@@ -22,6 +22,7 @@ const ProductDetail = () => {
     // Review form state
     const [reviewForm, setReviewForm] = useState({ userName: '', rating: 5, comment: '' });
     const [submittingReview, setSubmittingReview] = useState(false);
+    const [isInWishlist, setIsInWishlist] = useState(false);
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -46,6 +47,13 @@ const ProductDetail = () => {
             }
         };
         fetchProduct();
+
+        const checkWishlistStatus = () => {
+            setIsInWishlist(cartService.isInWishlist(id));
+        };
+        checkWishlistStatus();
+        window.addEventListener(WISHLIST_UPDATED, checkWishlistStatus);
+        return () => window.removeEventListener(WISHLIST_UPDATED, checkWishlistStatus);
     }, [id]);
 
     const handleAddReview = async (e) => {
@@ -185,11 +193,11 @@ const ProductDetail = () => {
                             >
                                 <ShoppingCart size={20} weight="bold" /> Add to Cart
                             </button>
-                            <button 
-                                className="wishlist-btn-secondary"
+                             <button 
+                                className={`wishlist-btn-secondary ${isInWishlist ? 'active' : ''}`}
                                 onClick={() => cartService.toggleWishlist(product)}
                             >
-                                <Heart size={24} />
+                                <Heart size={24} weight={isInWishlist ? "fill" : "regular"} />
                             </button>
                         </div>
 

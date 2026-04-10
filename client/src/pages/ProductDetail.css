@@ -199,6 +199,12 @@
   color: #e11d48;
 }
 
+.wishlist-btn-secondary.active {
+  color: #ef4444;
+  border-color: #fecdd3;
+  background-color: #fff1f2;
+}
+
 .trust-badges {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
