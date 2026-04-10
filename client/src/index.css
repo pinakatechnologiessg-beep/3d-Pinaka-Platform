@@ -1754,6 +1754,27 @@ footer {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  max-height: 380px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.refurbished-products-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+.refurbished-products-list::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 10px;
+}
+
+.refurbished-products-list::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+.refurbished-products-list::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
 .refurbished-product-item {

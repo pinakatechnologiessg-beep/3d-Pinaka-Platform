@@ -22,7 +22,7 @@ const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu }) => {
         if (res.ok) {
           const data = await res.json();
           const filtered = data.filter(p => p.condition?.toLowerCase() === 'refurbished');
-          setFeaturedRefurbished(filtered.slice(0, 3));
+          setFeaturedRefurbished(filtered);
         }
       } catch (err) {
         console.error("Error fetching featured refurbished:", err);
