@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { UploadSimple, Cube, CheckCircle, Warning, Clock, CurrencyInr, Info, WhatsappLogo } from '@phosphor-icons/react';
 import axios from 'axios';
+import { API_BASE_URL } from '../api/config';
 
 const PrintingServices = () => {
     const [file, setFile] = useState(null);
@@ -38,7 +39,7 @@ const PrintingServices = () => {
 
         try {
             // Since we are doing a light-weight calculation, we only send the parameters
-            const response = await axios.post('/api/calculate/calculate-price', {
+            const response = await axios.post(`${API_BASE_URL}/api/calculate/calculate-price`, {
                 material,
                 quality,
                 infill
