@@ -99,7 +99,7 @@ const Home = () => {
   useEffect(() => {
     const fetchFeatured = async () => {
         try {
-            const res = await fetch(`${BASE_URL}/api/products/featured`);
+            const res = await fetch(`${BASE_URL}/api/products?featured=true&condition=Refurbished`);
             if (res.ok) {
                 const data = await res.json();
                 console.log("Featured Products Data:", data); 
@@ -243,7 +243,7 @@ const Home = () => {
         </div>
 
         <div className="products-grid">
-            {(dbFeaturedProducts.length > 0 ? dbFeaturedProducts : PRODUCTS.filter(p => p.featured)).map((product, index) => {
+            {(dbFeaturedProducts.length > 0 ? dbFeaturedProducts.filter(p => p.condition === 'Refurbished') : PRODUCTS.filter(p => p.featured)).map((product, index) => {
                 console.log("Featured Product Item:", product); // Debug Step: Console log individual product
                 
                 const price = Number(parsePriceLocal(product.price));
