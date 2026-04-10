@@ -194,7 +194,7 @@ const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu }) => {
                       ) : (
                         <div style={{ padding: '10px', color: '#64748b', fontSize: '0.85rem' }}>No featured items yet</div>
                       )}
-                    </div></div>
+                    </div>
                 </div>
               </div>
             </div>

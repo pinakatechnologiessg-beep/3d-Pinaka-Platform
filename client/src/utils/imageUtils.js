@@ -30,3 +30,11 @@ export const getImageUrl = (img) => {
   
   return PLACEHOLDER_SVG;
 };
+
+export const parsePriceLocal = (price) => {
+  if (!price) return 0;
+  if (typeof price === 'number') return price;
+  return parseInt(String(price).replace(/[^0-9]/g, '')) || 0;
+};
+
+export default getImageUrl;
