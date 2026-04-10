@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ShoppingCart, Heart, User, List, X, CaretDown, MagnifyingGlass, Package, Shield } from '@phosphor-icons/react';
 import { cartService } from '../services/cartService';
 import { getImageUrl, PLACEHOLDER_SVG } from '../utils/imageUtils';
+import { API_BASE_URL } from '../api/config';
 import Logo from './Logo';
 import MaterialsMenu from './MaterialsMenu';
 
@@ -10,8 +11,24 @@ const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu }) => {
   const [showAdminAlert, setShowAdminAlert] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [featuredRefurbished, setFeaturedRefurbished] = useState([]);
   const location = useLocation();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchFeaturedRefurbished = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/products?condition=Refurbished&featured=true`);
+        if (res.ok) {
+          const data = await res.json();
+          setFeaturedRefurbished(data.slice(0, 3));
+        }
+      } catch (err) {
+        console.error("Error fetching featured refurbished:", err);
+      }
+    };
+    fetchFeaturedRefurbished();
+  }, []);
 
   const isAdminRoute = location.pathname.startsWith('/admin');
 
@@ -156,35 +173,28 @@ const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu }) => {
                     <div className="col-header">
                       <h4>Top Products</h4>
                     </div>
-                    <div className="refurbished-products-list">
-                      <div className="refurbished-product-item">
-                        <div className="product-thumb">
-                          <img src={getImageUrl("/images/refurbished-anycubic-kobra-3-combo-3d-printer.png")} alt="Refurbished Anycubic Kobra 3 Combo 3D Printer" loading="lazy" onError={(e) => (e.target.src = PLACEHOLDER_SVG)}/>
-                        </div>
-                        <div className="product-details">
-                          <Link to="/products?condition=Refurbished&brand=anycubic" className="product-name">Refurbished Anycubic Kobra 3 Combo 3D Printer</Link>
-                          <span className="product-price">₹36,999.00</span>
-                        </div>
-                      </div>
-                      <div className="refurbished-product-item">
-                        <div className="product-thumb">
-                          <img src={getImageUrl("/images/refurbished-ender-3-s1-pro-3d-printer.png")} alt="Refurbished Ender-3 S1 Pro 3D Printer" loading="lazy" onError={(e) => (e.target.src = PLACEHOLDER_SVG)}/>
-                        </div>
-                        <div className="product-details">
-                          <Link to="/products?condition=Refurbished&brand=creality" className="product-name">Refurbished Ender-3 S1 Pro 3D Printer</Link>
-                          <span className="product-price">₹34,999.00</span>
-                        </div>
-                      </div>
-                      <div className="refurbished-product-item">
-                        <div className="product-thumb">
-                          <img src={getImageUrl("/images/refurbished-anycubic-kobra-3-combo-3d-printer-with-4-color-3idea-pla-filaments-green-purple-sky-blue-skin-.png")} alt="Refurbished Anycubic Kobra 3 Combo 3D Printer with 4 Color 3Idea PLA Filaments" loading="lazy" onError={(e) => (e.target.src = PLACEHOLDER_SVG)}/>
-                        </div>
-                        <div className="product-details">
-                          <Link to="/products?condition=Refurbished&brand=anycubic" className="product-name">Refurbished Anycubic Kobra 3 Combo 3D Printer with 4 Color 3Idea PLA Filaments (Green,Purple,Sky Blue,Skin)</Link>
-                          <span className="product-price">₹49,999.00</span>
-                        </div>
-                      </div>
-                    </div>
+                     <div className="refurbished-products-list">
+                      {featuredRefurbished.length > 0 ? (
+                        featuredRefurbished.map((item) => (
+                          <div key={item._id} className="refurbished-product-item">
+                            <div className="product-thumb">
+                              <img 
+                                src={getImageUrl(item.image)} 
+                                alt={item.name} 
+                                loading="lazy" 
+                                onError={(e) => (e.target.src = PLACEHOLDER_SVG)}
+                              />
+                            </div>
+                            <div className="product-details">
+                              <Link to={`/product/${item._id}`} className="product-name">{item.name}</Link>
+                              <span className="product-price">₹{item.price?.toLocaleString('en-IN') || '0.00'}</span>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div style={{ padding: '10px', color: '#64748b', fontSize: '0.85rem' }}>No featured items yet</div>
+                      )}
+                    </div></div>
                 </div>
               </div>
             </div>
