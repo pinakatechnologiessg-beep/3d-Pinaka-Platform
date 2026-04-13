@@ -246,8 +246,22 @@ router.put('/:id', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'image
       updateData.image = req.files['image'][0].path;
     }
     
+    // Handle gallery update
+    let galleryImages = [];
+    if (req.body.existingImages) {
+        galleryImages = JSON.parse(req.body.existingImages).filter(img => img && typeof img === 'string' && img.startsWith('http'));
+    }
+    
     if (req.files && req.files['images']) {
-        updateData.images = req.files['images'].map(file => file.path);
+        const newImages = req.files['images'].map(file => file.path);
+        // If the user provided existingImages, we should ideally know their positions.
+        // For simplicity, we'll just combine them or replace them based on the frontend logic.
+        // Let's assume frontend sends the final desired state of URLs for the "kept" ones.
+        galleryImages = [...galleryImages, ...newImages];
+    }
+    
+    if (galleryImages.length > 0) {
+        updateData.images = galleryImages;
     }
     
     if (updateData.image && !updateData.image.startsWith("http")) {

@@ -59,10 +59,10 @@ const AdminDashboard = () => {
   const [editSelectedFile, setEditSelectedFile] = useState(null);
   const [deleteConfirmState, setDeleteConfirmState] = useState(null);
   const [productSearchQuery, setProductSearchQuery] = useState('');
-  const [additionalSelectedFiles, setAdditionalSelectedFiles] = useState([]);
-  const [additionalImagePreviews, setAdditionalImagePreviews] = useState([]);
-  const [editAdditionalSelectedFiles, setEditAdditionalSelectedFiles] = useState([]);
-  const [editAdditionalImagePreviews, setEditAdditionalImagePreviews] = useState([]);
+  const [additionalSelectedFiles, setAdditionalSelectedFiles] = useState([null, null, null, null, null]);
+  const [additionalImagePreviews, setAdditionalImagePreviews] = useState([null, null, null, null, null]);
+  const [editAdditionalSelectedFiles, setEditAdditionalSelectedFiles] = useState([null, null, null, null, null]);
+  const [editAdditionalImagePreviews, setEditAdditionalImagePreviews] = useState([null, null, null, null, null]);
 
   // --- Orders State ---
   const [orders, setOrders] = useState([]);
@@ -194,19 +194,42 @@ const AdminDashboard = () => {
       }
   };
 
-  const handleAdditionalImagesUpload = (e) => {
-    const files = Array.from(e.target.files);
-    if (files.length > 0) {
-        setAdditionalSelectedFiles(files);
-        setAdditionalImagePreviews(files.map(file => URL.createObjectURL(file)));
+  const handleSlotImageUpload = (e, index, isEdit = false) => {
+    const file = e.target.files[0];
+    if (file) {
+        if (isEdit) {
+            const newFiles = [...editAdditionalSelectedFiles];
+            const newPreviews = [...editAdditionalImagePreviews];
+            newFiles[index] = file;
+            newPreviews[index] = URL.createObjectURL(file);
+            setEditAdditionalSelectedFiles(newFiles);
+            setEditAdditionalImagePreviews(newPreviews);
+        } else {
+            const newFiles = [...additionalSelectedFiles];
+            const newPreviews = [...additionalImagePreviews];
+            newFiles[index] = file;
+            newPreviews[index] = URL.createObjectURL(file);
+            setAdditionalSelectedFiles(newFiles);
+            setAdditionalImagePreviews(newPreviews);
+        }
     }
   };
 
-  const handleEditAdditionalImagesUpload = (e) => {
-    const files = Array.from(e.target.files);
-    if (files.length > 0) {
-        setEditAdditionalSelectedFiles(files);
-        setEditAdditionalImagePreviews(files.map(file => URL.createObjectURL(file)));
+  const handleRemoveSlotImage = (index, isEdit = false) => {
+    if (isEdit) {
+        const newFiles = [...editAdditionalSelectedFiles];
+        const newPreviews = [...editAdditionalImagePreviews];
+        newFiles[index] = null;
+        newPreviews[index] = null;
+        setEditAdditionalSelectedFiles(newFiles);
+        setEditAdditionalImagePreviews(newPreviews);
+    } else {
+        const newFiles = [...additionalSelectedFiles];
+        const newPreviews = [...additionalImagePreviews];
+        newFiles[index] = null;
+        newPreviews[index] = null;
+        setAdditionalSelectedFiles(newFiles);
+        setAdditionalImagePreviews(newPreviews);
     }
   };
 
@@ -561,7 +584,11 @@ const AdminDashboard = () => {
               </div>
 
               <button 
-                onClick={() => setIsAddModalOpen(true)}
+                onClick={() => {
+                    setAdditionalSelectedFiles([null, null, null, null, null]);
+                    setAdditionalImagePreviews([null, null, null, null, null]);
+                    setIsAddModalOpen(true);
+                }}
                 className="add-product-btn-admin"
               >
                 <Plus size={20} weight="bold" /> Add New Product
@@ -586,9 +613,15 @@ const AdminDashboard = () => {
                                         setEditProductState(product);
                                         setEditImagePreview(product.image?.startsWith('/uploads') ? `${BASE_URL}${product.image}` : product.image);
                                         setEditSelectedFile(null);
-                                        // Initialize additional images
-                                        setEditAdditionalImagePreviews(product.images || []);
-                                        setEditAdditionalSelectedFiles([]);
+                                        // Initialize additional images in the correct slots (max 5)
+                                        const initialPreviews = [null, null, null, null, null];
+                                        if (product.images) {
+                                            product.images.slice(0, 5).forEach((img, i) => {
+                                                initialPreviews[i] = img;
+                                            });
+                                        }
+                                        setEditAdditionalImagePreviews(initialPreviews);
+                                        setEditAdditionalSelectedFiles([null, null, null, null, null]);
                                         setIsEditModalOpen(true);
                                     }}
                                     style={{ background: 'white', border: 'none', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', color: '#3b82f6', transition: 'all 0.2s' }}
@@ -1203,36 +1236,32 @@ const AdminDashboard = () => {
                    </label>
                 </div>
 
-                <div>
-                   <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#334155' }}>Additional Images ({additionalImagePreviews.length}/6)</label>
-                   <div style={{ display: 'flex', flexDirection: 'column', border: '2px dashed #cbd5e1', borderRadius: '8px', padding: '1rem', background: '#f8fafc' }}>
-                       {additionalImagePreviews.length > 0 ? (
-                           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', width: '100%', marginBottom: '10px' }}>
-                               {additionalImagePreviews.map((src, i) => (
-                                   <div key={i} style={{ position: 'relative', height: '80px', borderRadius: '6px', overflow: 'hidden', border: '1px solid #e2e8f0' }}>
-                                       <img src={getImageUrl(src)} alt={`Preview ${i}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                       <button 
-                                           onClick={() => {
-                                               const newPreviews = [...additionalImagePreviews];
-                                               const newFiles = [...additionalSelectedFiles];
-                                               newPreviews.splice(i, 1);
-                                               newFiles.splice(i, 1);
-                                               setAdditionalImagePreviews(newPreviews);
-                                               setAdditionalSelectedFiles(newFiles);
-                                           }}
-                                           style={{ position: 'absolute', top: '2px', right: '2px', background: 'rgba(255,255,255,0.8)', border: 'none', borderRadius: '50%', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#ef4444' }}
-                                       >
-                                           <X size={14} weight="bold" />
-                                       </button>
-                                   </div>
-                               ))}
+                <div style={{ marginTop: '1rem' }}>
+                   <label style={{ display: 'block', marginBottom: '0.8rem', fontWeight: 600, color: '#334155', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.5rem' }}>Product Gallery (Additional Images)</label>
+                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+                       {additionalImagePreviews.map((src, i) => (
+                           <div key={i}>
+                               <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '2px dashed #cbd5e1', borderRadius: '8px', padding: '1rem', cursor: 'pointer', background: '#f8fafc', height: '100px', position: 'relative', transition: 'all 0.2s' }}>
+                                   {src ? (
+                                       <>
+                                           <img src={getImageUrl(src)} alt={`Gallery ${i+1}`} style={{ height: '100%', width: '100%', objectFit: 'contain' }} />
+                                           <button 
+                                               type="button"
+                                               onClick={(e) => { e.stopPropagation(); handleRemoveSlotImage(i, false); }} 
+                                               style={{ position: 'absolute', top: '5px', right: '5px', background: 'white', borderRadius: '50%', width: '22px', height: '22px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ef4444', border: '1px solid #fee2e2', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+                                               <X size={12} weight="bold" />
+                                           </button>
+                                       </>
+                                   ) : (
+                                       <>
+                                          <UploadSimple size={20} color="#94a3b8" />
+                                          <span style={{ fontSize: '10px', color: '#94a3b8', marginTop: '4px' }}>Image {i+1}</span>
+                                       </>
+                                   )}
+                                   <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleSlotImageUpload(e, i, false)} />
+                               </label>
                            </div>
-                       ) : null}
-                       <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: '1rem' }}>
-                           <UploadSimple size={24} color="#64748b" style={{ marginBottom: '8px' }} />
-                           <span style={{ color: '#64748b', fontWeight: 500, fontSize: '0.85rem' }}>Add Gallery Images</span>
-                           <input type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={handleAdditionalImagesUpload} />
-                       </label>
+                       ))}
                    </div>
                 </div>
 
@@ -1268,7 +1297,7 @@ const AdminDashboard = () => {
                                 formData.append('specifications', JSON.stringify(newProduct.specifications.filter(s => s.key && s.value)));
                                 formData.append('image', selectedFile);
                                 additionalSelectedFiles.forEach(file => {
-                                    formData.append('images', file);
+                                    if (file) formData.append('images', file);
                                 });
 
                                 const res = await fetch(`${BASE_URL}/api/products`, {
@@ -1289,8 +1318,8 @@ const AdminDashboard = () => {
                                     setNewProduct({ name: '', category: 'FDM', price: '', mrp: '', inStock: true, image: '', rating: 5.0, featured: false, tags: 'None', badgeStyle: null, description: '', brand: 'Anycubic', otherCategory: '', condition: 'New', specifications: [{ key: '', value: '' }] });
                                     setImagePreview(null);
                                     setSelectedFile(null);
-                                    setAdditionalSelectedFiles([]);
-                                    setAdditionalImagePreviews([]);
+                                    setAdditionalSelectedFiles([null, null, null, null, null]);
+                                    setAdditionalImagePreviews([null, null, null, null, null]);
                                     showToast('Success: Product added to catalog!', 'success');
                                 } else {
                                     showToast(data.message || 'Server Error: Could not add product', 'error');
@@ -1463,42 +1492,32 @@ const AdminDashboard = () => {
                    </label>
                 </div>
 
-                <div>
-                   <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#334155' }}>Additional Images ({editAdditionalImagePreviews.length}/6)</label>
-                   <div style={{ display: 'flex', flexDirection: 'column', border: '2px dashed #cbd5e1', borderRadius: '8px', padding: '1rem', background: '#f8fafc' }}>
-                       {editAdditionalImagePreviews.length > 0 ? (
-                           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', width: '100%', marginBottom: '10px' }}>
-                               {editAdditionalImagePreviews.map((src, i) => (
-                                   <div key={i} style={{ position: 'relative', height: '80px', borderRadius: '6px', overflow: 'hidden', border: '1px solid #e2e8f0' }}>
-                                       <img src={getImageUrl(src)} alt={`Preview ${i}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                       <button 
-                                           onClick={() => {
-                                               const newPreviews = [...editAdditionalImagePreviews];
-                                               const newFiles = [...editAdditionalSelectedFiles];
-                                               newPreviews.splice(i, 1);
-                                               // Find if this preview corresponds to a file we just selected
-                                               // This is a bit tricky since some are URLs and some are blob URLs
-                                               // But for now, let's just clear the corresponding index in files if it was newly added
-                                               if (src.startsWith('blob:')) {
-                                                   // This is approximate but should work for the session
-                                                   newFiles.splice(i - (editAdditionalImagePreviews.length - editAdditionalSelectedFiles.length), 1);
-                                               }
-                                               setEditAdditionalImagePreviews(newPreviews);
-                                               setEditAdditionalSelectedFiles(newFiles);
-                                           }}
-                                           style={{ position: 'absolute', top: '2px', right: '2px', background: 'rgba(255,255,255,0.8)', border: 'none', borderRadius: '50%', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#ef4444' }}
-                                       >
-                                           <X size={14} weight="bold" />
-                                       </button>
-                                   </div>
-                               ))}
+                <div style={{ marginTop: '1rem' }}>
+                   <label style={{ display: 'block', marginBottom: '0.8rem', fontWeight: 600, color: '#334155', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.5rem' }}>Product Gallery (Additional Images)</label>
+                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+                       {editAdditionalImagePreviews.map((src, i) => (
+                           <div key={i}>
+                               <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '2px dashed #cbd5e1', borderRadius: '8px', padding: '1rem', cursor: 'pointer', background: '#f8fafc', height: '100px', position: 'relative', transition: 'all 0.2s' }}>
+                                   {src ? (
+                                       <>
+                                           <img src={getImageUrl(src)} alt={`Gallery ${i+1}`} style={{ height: '100%', width: '100%', objectFit: 'contain' }} />
+                                           <button 
+                                               type="button"
+                                               onClick={(e) => { e.stopPropagation(); handleRemoveSlotImage(i, true); }} 
+                                               style={{ position: 'absolute', top: '5px', right: '5px', background: 'white', borderRadius: '50%', width: '22px', height: '22px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ef4444', border: '1px solid #fee2e2', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+                                               <X size={12} weight="bold" />
+                                           </button>
+                                       </>
+                                   ) : (
+                                       <>
+                                          <UploadSimple size={20} color="#94a3b8" />
+                                          <span style={{ fontSize: '10px', color: '#94a3b8', marginTop: '4px' }}>Image {i+1}</span>
+                                       </>
+                                   )}
+                                   <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleSlotImageUpload(e, i, true)} />
+                               </label>
                            </div>
-                       ) : null}
-                       <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: '1rem' }}>
-                           <UploadSimple size={24} color="#64748b" style={{ marginBottom: '8px' }} />
-                           <span style={{ color: '#64748b', fontWeight: 500, fontSize: '0.85rem' }}>Add Gallery Images</span>
-                           <input type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={handleEditAdditionalImagesUpload} />
-                       </label>
+                       ))}
                    </div>
                 </div>
 
@@ -1527,8 +1546,13 @@ const AdminDashboard = () => {
                                 formData.append('description', editProductState.description || '');
                                 formData.append('specifications', JSON.stringify((editProductState.specifications || []).filter(s => s.key && s.value)));
                                 if (editSelectedFile) formData.append('image', editSelectedFile);
+                                
+                                // Existing images to keep (not blob URLs)
+                                const existingToKeep = editAdditionalImagePreviews.filter(src => src && !src.startsWith('blob:'));
+                                formData.append('existingImages', JSON.stringify(existingToKeep));
+
                                 editAdditionalSelectedFiles.forEach(file => {
-                                    formData.append('images', file);
+                                    if (file) formData.append('images', file);
                                 });
 
                                 const res = await fetch(`${BASE_URL}/api/products/${editProductState._id}`, {
