@@ -1205,21 +1205,35 @@ const AdminDashboard = () => {
 
                 <div>
                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#334155' }}>Additional Images ({additionalImagePreviews.length}/6)</label>
-                   <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '2px dashed #cbd5e1', borderRadius: '8px', padding: '1.5rem', cursor: 'pointer', background: '#f8fafc', transition: 'all 0.2s' }}>
+                   <div style={{ display: 'flex', flexDirection: 'column', border: '2px dashed #cbd5e1', borderRadius: '8px', padding: '1rem', background: '#f8fafc' }}>
                        {additionalImagePreviews.length > 0 ? (
-                           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', width: '100%' }}>
+                           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', width: '100%', marginBottom: '10px' }}>
                                {additionalImagePreviews.map((src, i) => (
-                                   <img key={i} src={src} alt={`Preview ${i}`} style={{ width: '100%', height: '60px', objectFit: 'cover', borderRadius: '4px' }} />
+                                   <div key={i} style={{ position: 'relative', height: '80px', borderRadius: '6px', overflow: 'hidden', border: '1px solid #e2e8f0' }}>
+                                       <img src={getImageUrl(src)} alt={`Preview ${i}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                       <button 
+                                           onClick={() => {
+                                               const newPreviews = [...additionalImagePreviews];
+                                               const newFiles = [...additionalSelectedFiles];
+                                               newPreviews.splice(i, 1);
+                                               newFiles.splice(i, 1);
+                                               setAdditionalImagePreviews(newPreviews);
+                                               setAdditionalSelectedFiles(newFiles);
+                                           }}
+                                           style={{ position: 'absolute', top: '2px', right: '2px', background: 'rgba(255,255,255,0.8)', border: 'none', borderRadius: '50%', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#ef4444' }}
+                                       >
+                                           <X size={14} weight="bold" />
+                                       </button>
+                                   </div>
                                ))}
                            </div>
-                       ) : (
-                           <>
-                              <UploadSimple size={24} color="#64748b" style={{ marginBottom: '8px' }} />
-                              <span style={{ color: '#64748b', fontWeight: 500, fontSize: '0.9rem' }}>Gallery Images (Up to 6)</span>
-                           </>
-                       )}
-                       <input type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={handleAdditionalImagesUpload} />
-                   </label>
+                       ) : null}
+                       <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: '1rem' }}>
+                           <UploadSimple size={24} color="#64748b" style={{ marginBottom: '8px' }} />
+                           <span style={{ color: '#64748b', fontWeight: 500, fontSize: '0.85rem' }}>Add Gallery Images</span>
+                           <input type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={handleAdditionalImagesUpload} />
+                       </label>
+                   </div>
                 </div>
 
                 <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
@@ -1451,21 +1465,41 @@ const AdminDashboard = () => {
 
                 <div>
                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#334155' }}>Additional Images ({editAdditionalImagePreviews.length}/6)</label>
-                   <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '2px dashed #cbd5e1', borderRadius: '8px', padding: '1.5rem', cursor: 'pointer', background: '#f8fafc', transition: 'all 0.2s' }}>
+                   <div style={{ display: 'flex', flexDirection: 'column', border: '2px dashed #cbd5e1', borderRadius: '8px', padding: '1rem', background: '#f8fafc' }}>
                        {editAdditionalImagePreviews.length > 0 ? (
-                           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', width: '100%' }}>
+                           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', width: '100%', marginBottom: '10px' }}>
                                {editAdditionalImagePreviews.map((src, i) => (
-                                   <img key={i} src={src} alt={`Preview ${i}`} style={{ width: '100%', height: '60px', objectFit: 'cover', borderRadius: '4px' }} />
+                                   <div key={i} style={{ position: 'relative', height: '80px', borderRadius: '6px', overflow: 'hidden', border: '1px solid #e2e8f0' }}>
+                                       <img src={getImageUrl(src)} alt={`Preview ${i}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                       <button 
+                                           onClick={() => {
+                                               const newPreviews = [...editAdditionalImagePreviews];
+                                               const newFiles = [...editAdditionalSelectedFiles];
+                                               newPreviews.splice(i, 1);
+                                               // Find if this preview corresponds to a file we just selected
+                                               // This is a bit tricky since some are URLs and some are blob URLs
+                                               // But for now, let's just clear the corresponding index in files if it was newly added
+                                               if (src.startsWith('blob:')) {
+                                                   // This is approximate but should work for the session
+                                                   newFiles.splice(i - (editAdditionalImagePreviews.length - editAdditionalSelectedFiles.length), 1);
+                                               }
+                                               setEditAdditionalImagePreviews(newPreviews);
+                                               setEditAdditionalSelectedFiles(newFiles);
+                                           }}
+                                           style={{ position: 'absolute', top: '2px', right: '2px', background: 'rgba(255,255,255,0.8)', border: 'none', borderRadius: '50%', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#ef4444' }}
+                                       >
+                                           <X size={14} weight="bold" />
+                                       </button>
+                                   </div>
                                ))}
                            </div>
-                       ) : (
-                           <>
-                              <UploadSimple size={24} color="#64748b" style={{ marginBottom: '8px' }} />
-                              <span style={{ color: '#64748b', fontWeight: 500, fontSize: '0.9rem' }}>Gallery Images (Up to 6)</span>
-                           </>
-                       )}
-                       <input type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={handleEditAdditionalImagesUpload} />
-                   </label>
+                       ) : null}
+                       <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: '1rem' }}>
+                           <UploadSimple size={24} color="#64748b" style={{ marginBottom: '8px' }} />
+                           <span style={{ color: '#64748b', fontWeight: 500, fontSize: '0.85rem' }}>Add Gallery Images</span>
+                           <input type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={handleEditAdditionalImagesUpload} />
+                       </label>
+                   </div>
                 </div>
 
                 <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>

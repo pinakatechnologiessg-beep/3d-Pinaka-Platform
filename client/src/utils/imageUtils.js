@@ -6,7 +6,7 @@ export const PLACEHOLDER_SVG = "https://images.unsplash.com/photo-1627389811802-
 
 export const getImageUrl = (img) => {
   if (!img) return PLACEHOLDER_SVG;
-  if (img.startsWith("http")) return img;
+  if (img.startsWith("http") || img.startsWith("blob:")) return img;
   
   // Cache buster to force Vercel to bypass Edge delivery stale assets
   const bust = "?v=" + new Date().getTime().toString().slice(-4);

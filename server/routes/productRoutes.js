@@ -114,7 +114,8 @@ router.get('/', async (req, res) => {
         tags: p.tags || "None",
         badgeStyle: p.badgeStyle,
         badge: p.badge || (p.tags === 'Sale' ? 'sale' : p.tags === 'Best Seller' ? 'best-seller' : null),
-        featured: p.featured || false
+        featured: p.featured || false,
+        images: p.images || []
     }));
     
     console.log("Fetching all products...");
@@ -286,7 +287,8 @@ router.get('/featured', async (req, res) => {
         tags: p.tags || "None",
         badgeStyle: p.badgeStyle,
         badge: p.badge || (p.tags === 'Sale' ? 'sale' : p.tags === 'Best Seller' ? 'best-seller' : null),
-        featured: p.featured || false
+        featured: p.featured || false,
+        images: p.images || []
     }));
     
     console.log("Fetching featured products...");
