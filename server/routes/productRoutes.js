@@ -126,11 +126,12 @@ router.get('/', async (req, res) => {
 });
 
 // Add a single product
-router.post('/', upload.single('image'), async (req, res) => {
+router.post('/', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'images', maxCount: 6 }]), async (req, res) => {
   console.log("POST /api/products request received");
   console.log("Form Body:", req.body);
-  console.log("File Uploaded:", req.file ? "YES" : "NO");
-  if (req.file) console.log("File Path (Cloudinary):", req.file.path);
+  console.log("Files Uploaded:", req.files ? "YES" : "NO");
+  if (req.files && req.files['image']) console.log("Main Image Path (Cloudinary):", req.files['image'][0].path);
+  if (req.files && req.files['images']) console.log("Additional Images Count:", req.files['images'].length);
   
   try {
     const { name, brand, category, price, mrp, inStock, rating, tags, description, specifications, badgeStyle, condition } = req.body;
@@ -167,15 +168,23 @@ router.post('/', upload.single('image'), async (req, res) => {
       featured: String(req.body.featured) === 'true' || req.body.featured === true
     };
 
-    if (req.file) {
-      productData.image = req.file.path;
+    if (req.files && req.files['image']) {
+      productData.image = req.files['image'][0].path;
     } else {
       console.error("VALIDATION ERROR: Image file is mandatory.");
       return res.status(400).json({ message: "Product image is required." });
     }
+
+    if (req.files && req.files['images']) {
+      productData.images = req.files['images'].map(file => file.path);
+    }
     
-    if (!productData.image.startsWith("http")) {
+    if (productData.image && !productData.image.startsWith("http")) {
       throw new Error("Only Cloudinary URLs allowed");
+    }
+    
+    if (productData.images && productData.images.some(img => !img.startsWith("http"))) {
+        throw new Error("Only Cloudinary URLs allowed for additional images");
     }
     
     console.log("Saving product to MongoDB...");
@@ -212,7 +221,7 @@ router.post('/seed', async (req, res) => {
   }
 });
 // Update product via PUT
-router.put('/:id', upload.single('image'), async (req, res) => {
+router.put('/:id', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'images', maxCount: 6 }]), async (req, res) => {
   try {
     const { name, brand, category, price, mrp, inStock, rating, tags, description, specifications, badgeStyle, condition } = req.body;
     const updateData = {
@@ -231,13 +240,21 @@ router.put('/:id', upload.single('image'), async (req, res) => {
       featured: req.body.featured !== undefined ? (String(req.body.featured) === 'true' || req.body.featured === true) : undefined,
     };
 
-    if (req.file) {
+    if (req.files && req.files['image']) {
       // With CloudinaryStorage, req.file.path contains the direct URL
-      updateData.image = req.file.path;
+      updateData.image = req.files['image'][0].path;
+    }
+    
+    if (req.files && req.files['images']) {
+        updateData.images = req.files['images'].map(file => file.path);
     }
     
     if (updateData.image && !updateData.image.startsWith("http")) {
       throw new Error("Only Cloudinary URLs allowed");
+    }
+
+    if (updateData.images && updateData.images.some(img => !img.startsWith("http"))) {
+        throw new Error("Only Cloudinary URLs allowed for additional images");
     }
     
     const product = await Product.findByIdAndUpdate(req.params.id, updateData, { new: true });

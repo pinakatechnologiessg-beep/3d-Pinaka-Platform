@@ -6,6 +6,7 @@ const productSchema = new mongoose.Schema({
   mrp: { type: Number },
   category: { type: String, required: true },
   image: { type: String, required: true },
+  images: [{ type: String }],
   rating: { type: Number, default: 5.0 },
   tags: { type: String },
   badgeStyle: { type: Object },

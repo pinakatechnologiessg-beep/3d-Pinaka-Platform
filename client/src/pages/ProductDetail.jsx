@@ -23,6 +23,7 @@ const ProductDetail = () => {
     const [reviewForm, setReviewForm] = useState({ userName: '', rating: 5, comment: '' });
     const [submittingReview, setSubmittingReview] = useState(false);
     const [isInWishlist, setIsInWishlist] = useState(false);
+    const [activeImage, setActiveImage] = useState(null);
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -33,6 +34,7 @@ const ProductDetail = () => {
                 const data = await res.json();
                 console.log("Product Detail Data:", data); // Debug Step: Console log API response
                 setProduct(data);
+                setActiveImage(getImageUrl(data.image));
                 
                 // Fetch related products
                 const relatedRes = await fetch(`${BASE_URL}/api/products?category=${data.category}`);
@@ -139,8 +141,32 @@ const ProductDetail = () => {
                 <div className="product-main">
                     <div className="product-gallery">
                         <div className="main-image">
-                            <ProductImageZoom image={imageUrl} alt={product.name} />
+                            <ProductImageZoom image={activeImage || imageUrl} alt={product.name} />
                         </div>
+                        {product.images && product.images.length > 0 && (
+                            <div className="thumbnail-gallery" style={{ display: 'flex', gap: '10px', marginTop: '15px', overflowX: 'auto', paddingBottom: '5px' }}>
+                                <div 
+                                    className={`thumbnail-item ${activeImage === imageUrl ? 'active' : ''}`}
+                                    onClick={() => setActiveImage(imageUrl)}
+                                    style={{ width: '70px', height: '70px', borderRadius: '8px', border: `2px solid ${activeImage === imageUrl ? '#2563eb' : '#e2e8f0'}`, overflow: 'hidden', cursor: 'pointer', flexShrink: 0 }}
+                                >
+                                    <img src={imageUrl} alt="thumbnail" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                </div>
+                                {product.images.map((img, i) => {
+                                    const thumbUrl = getImageUrl(img);
+                                    return (
+                                        <div 
+                                            key={i}
+                                            className={`thumbnail-item ${activeImage === thumbUrl ? 'active' : ''}`}
+                                            onClick={() => setActiveImage(thumbUrl)}
+                                            style={{ width: '70px', height: '70px', borderRadius: '8px', border: `2px solid ${activeImage === thumbUrl ? '#2563eb' : '#e2e8f0'}`, overflow: 'hidden', cursor: 'pointer', flexShrink: 0 }}
+                                        >
+                                            <img src={thumbUrl} alt={`thumbnail ${i}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
                     </div>
 
                     <div className="product-info-panel">

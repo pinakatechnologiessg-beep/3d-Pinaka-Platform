@@ -59,6 +59,10 @@ const AdminDashboard = () => {
   const [editSelectedFile, setEditSelectedFile] = useState(null);
   const [deleteConfirmState, setDeleteConfirmState] = useState(null);
   const [productSearchQuery, setProductSearchQuery] = useState('');
+  const [additionalSelectedFiles, setAdditionalSelectedFiles] = useState([]);
+  const [additionalImagePreviews, setAdditionalImagePreviews] = useState([]);
+  const [editAdditionalSelectedFiles, setEditAdditionalSelectedFiles] = useState([]);
+  const [editAdditionalImagePreviews, setEditAdditionalImagePreviews] = useState([]);
 
   // --- Orders State ---
   const [orders, setOrders] = useState([]);
@@ -188,6 +192,22 @@ const AdminDashboard = () => {
           setSelectedFile(file);
           setImagePreview(URL.createObjectURL(file));
       }
+  };
+
+  const handleAdditionalImagesUpload = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length > 0) {
+        setAdditionalSelectedFiles(files);
+        setAdditionalImagePreviews(files.map(file => URL.createObjectURL(file)));
+    }
+  };
+
+  const handleEditAdditionalImagesUpload = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length > 0) {
+        setEditAdditionalSelectedFiles(files);
+        setEditAdditionalImagePreviews(files.map(file => URL.createObjectURL(file)));
+    }
   };
 
   const handleAddSpec = (isEdit = false) => {
@@ -566,6 +586,9 @@ const AdminDashboard = () => {
                                         setEditProductState(product);
                                         setEditImagePreview(product.image?.startsWith('/uploads') ? `${BASE_URL}${product.image}` : product.image);
                                         setEditSelectedFile(null);
+                                        // Initialize additional images
+                                        setEditAdditionalImagePreviews(product.images || []);
+                                        setEditAdditionalSelectedFiles([]);
                                         setIsEditModalOpen(true);
                                     }}
                                     style={{ background: 'white', border: 'none', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', color: '#3b82f6', transition: 'all 0.2s' }}
@@ -1166,18 +1189,36 @@ const AdminDashboard = () => {
                 </div>
 
                 <div>
-                   <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#334155' }}>Product Image</label>
-                   <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '2px dashed #cbd5e1', borderRadius: '8px', padding: '2rem', cursor: 'pointer', background: '#f8fafc', transition: 'all 0.2s' }}>
+                   <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#334155' }}>Product Image (Main)</label>
+                   <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '2px dashed #cbd5e1', borderRadius: '8px', padding: '1.5rem', cursor: 'pointer', background: '#f8fafc', transition: 'all 0.2s' }}>
                        {imagePreview ? (
-                           <img src={imagePreview} alt="Preview" style={{ height: '150px', objectFit: 'contain' }} />
+                           <img src={imagePreview} alt="Preview" style={{ height: '120px', objectFit: 'contain' }} />
                        ) : (
                            <>
-                              <UploadSimple size={32} color="#64748b" style={{ marginBottom: '10px' }} />
-                              <span style={{ color: '#64748b', fontWeight: 500 }}>Drop image here or click to browse</span>
-                              <span style={{ color: '#94a3b8', fontSize: '0.8rem', marginTop: '5px' }}>Supported formats: JPG, PNG, WEBP</span>
+                              <UploadSimple size={24} color="#64748b" style={{ marginBottom: '8px' }} />
+                              <span style={{ color: '#64748b', fontWeight: 500, fontSize: '0.9rem' }}>Main Image</span>
                            </>
                        )}
                        <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageUpload} />
+                   </label>
+                </div>
+
+                <div>
+                   <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#334155' }}>Additional Images ({additionalImagePreviews.length}/6)</label>
+                   <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '2px dashed #cbd5e1', borderRadius: '8px', padding: '1.5rem', cursor: 'pointer', background: '#f8fafc', transition: 'all 0.2s' }}>
+                       {additionalImagePreviews.length > 0 ? (
+                           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', width: '100%' }}>
+                               {additionalImagePreviews.map((src, i) => (
+                                   <img key={i} src={src} alt={`Preview ${i}`} style={{ width: '100%', height: '60px', objectFit: 'cover', borderRadius: '4px' }} />
+                               ))}
+                           </div>
+                       ) : (
+                           <>
+                              <UploadSimple size={24} color="#64748b" style={{ marginBottom: '8px' }} />
+                              <span style={{ color: '#64748b', fontWeight: 500, fontSize: '0.9rem' }}>Gallery Images (Up to 6)</span>
+                           </>
+                       )}
+                       <input type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={handleAdditionalImagesUpload} />
                    </label>
                 </div>
 
@@ -1212,6 +1253,9 @@ const AdminDashboard = () => {
                                 formData.append('description', newProduct.description);
                                 formData.append('specifications', JSON.stringify(newProduct.specifications.filter(s => s.key && s.value)));
                                 formData.append('image', selectedFile);
+                                additionalSelectedFiles.forEach(file => {
+                                    formData.append('images', file);
+                                });
 
                                 const res = await fetch(`${BASE_URL}/api/products`, {
                                     method: 'POST',
@@ -1231,6 +1275,8 @@ const AdminDashboard = () => {
                                     setNewProduct({ name: '', category: 'FDM', price: '', mrp: '', inStock: true, image: '', rating: 5.0, featured: false, tags: 'None', badgeStyle: null, description: '', brand: 'Anycubic', otherCategory: '', condition: 'New', specifications: [{ key: '', value: '' }] });
                                     setImagePreview(null);
                                     setSelectedFile(null);
+                                    setAdditionalSelectedFiles([]);
+                                    setAdditionalImagePreviews([]);
                                     showToast('Success: Product added to catalog!', 'success');
                                 } else {
                                     showToast(data.message || 'Server Error: Could not add product', 'error');
@@ -1389,18 +1435,36 @@ const AdminDashboard = () => {
                 </div>
 
                 <div>
-                   <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#334155' }}>Product Image</label>
-                   <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '2px dashed #cbd5e1', borderRadius: '8px', padding: '2rem', cursor: 'pointer', background: '#f8fafc', transition: 'all 0.2s' }}>
+                   <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#334155' }}>Product Image (Main)</label>
+                   <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '2px dashed #cbd5e1', borderRadius: '8px', padding: '1.5rem', cursor: 'pointer', background: '#f8fafc', transition: 'all 0.2s' }}>
                        {editImagePreview ? (
-                           <img src={editImagePreview} alt="Preview" style={{ height: '150px', objectFit: 'contain' }} />
+                           <img src={editImagePreview} alt="Preview" style={{ height: '120px', objectFit: 'contain' }} />
                        ) : (
                            <>
-                              <UploadSimple size={32} color="#64748b" style={{ marginBottom: '10px' }} />
-                              <span style={{ color: '#64748b', fontWeight: 500 }}>Drop image here or click to change</span>
-                              <span style={{ color: '#94a3b8', fontSize: '0.8rem', marginTop: '5px' }}>Optional. Leave blank to keep current image.</span>
+                              <UploadSimple size={24} color="#64748b" style={{ marginBottom: '8px' }} />
+                              <span style={{ color: '#64748b', fontWeight: 500, fontSize: '0.9rem' }}>Main Image</span>
                            </>
                        )}
                        <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handleEditImageUpload} />
+                   </label>
+                </div>
+
+                <div>
+                   <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#334155' }}>Additional Images ({editAdditionalImagePreviews.length}/6)</label>
+                   <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '2px dashed #cbd5e1', borderRadius: '8px', padding: '1.5rem', cursor: 'pointer', background: '#f8fafc', transition: 'all 0.2s' }}>
+                       {editAdditionalImagePreviews.length > 0 ? (
+                           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', width: '100%' }}>
+                               {editAdditionalImagePreviews.map((src, i) => (
+                                   <img key={i} src={src} alt={`Preview ${i}`} style={{ width: '100%', height: '60px', objectFit: 'cover', borderRadius: '4px' }} />
+                               ))}
+                           </div>
+                       ) : (
+                           <>
+                              <UploadSimple size={24} color="#64748b" style={{ marginBottom: '8px' }} />
+                              <span style={{ color: '#64748b', fontWeight: 500, fontSize: '0.9rem' }}>Gallery Images (Up to 6)</span>
+                           </>
+                       )}
+                       <input type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={handleEditAdditionalImagesUpload} />
                    </label>
                 </div>
 
@@ -1429,6 +1493,9 @@ const AdminDashboard = () => {
                                 formData.append('description', editProductState.description || '');
                                 formData.append('specifications', JSON.stringify((editProductState.specifications || []).filter(s => s.key && s.value)));
                                 if (editSelectedFile) formData.append('image', editSelectedFile);
+                                editAdditionalSelectedFiles.forEach(file => {
+                                    formData.append('images', file);
+                                });
 
                                 const res = await fetch(`${BASE_URL}/api/products/${editProductState._id}`, {
                                     method: 'PUT',
