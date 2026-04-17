@@ -168,6 +168,7 @@ const PrintingServices = () => {
                                     { id: 'PLA', label: 'PLA', sub: 'Standard' },
                                     { id: 'ABS', label: 'ABS', sub: 'Durable' },
                                     { id: 'PETG', label: 'PETG', sub: 'Balanced' },
+                                    { id: 'Resin', label: 'Resin', sub: 'High Detail' },
                                     { id: 'TPU', label: 'TPU', sub: 'Flexible' }
                                 ].map((opt) => (
                                     <div 
@@ -235,11 +236,11 @@ const PrintingServices = () => {
                                     </div>
                                     <div style={{ textAlign: 'center' }}>
                                         <div style={{ fontSize: '0.65rem', opacity: 0.6 }}>Processing</div>
-                                        <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>₹{result.breakdown.laborCost}</div>
+                                        <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>₹{(parseFloat(result.breakdown.machineCost) + parseFloat(result.breakdown.laborCost)).toFixed(2)}</div>
                                     </div>
                                     <div style={{ textAlign: 'center' }}>
-                                        <div style={{ fontSize: '0.65rem', opacity: 0.6 }}>GST & Handling</div>
-                                        <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>₹{result.breakdown.baseProfit}</div>
+                                        <div style={{ fontSize: '0.65rem', opacity: 0.6 }}>GST (18%)</div>
+                                        <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>₹{result.breakdown.tax}</div>
                                     </div>
                                 </div>
                             </div>
