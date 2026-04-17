@@ -171,6 +171,91 @@ const PrintingServices = () => {
                                 {error}
                             </div>
                         )}
+
+                        {/* 3D Viewer Placeholder (Only shows when file is selected) */}
+                        {file && (
+                            <div style={{ marginTop: '1.5rem', background: '#f8fafc', borderRadius: '15px', border: '1px solid #e2e8f0', overflow: 'hidden', height: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+                                <Cube size={120} weight="thin" color="#e2e8f0" />
+                                <div style={{ position: 'absolute', bottom: '10px', right: '10px', display: 'flex', gap: '5px' }}>
+                                    <span style={{ fontSize: '0.65rem', color: '#94a3b8', background: 'white', padding: '2px 6px', borderRadius: '4px', border: '1px solid #e2e8f0' }}>X: {rotationX}°</span>
+                                    <span style={{ fontSize: '0.65rem', color: '#94a3b8', background: 'white', padding: '2px 6px', borderRadius: '4px', border: '1px solid #e2e8f0' }}>Y: {rotationY}°</span>
+                                </div>
+                                <div style={{ color: '#94a3b8', fontSize: '0.8rem' }}>3D Preview Ready</div>
+                            </div>
+                        )}
+
+                        {/* Rotation Controls (Moved from right side as per image) */}
+                        {file && (
+                           <div style={{ marginTop: '1.5rem', background: 'white', padding: '1.5rem', borderRadius: '20px', border: '1px solid #e2e8f0', textAlign: 'left' }}>
+                                <label style={{ fontWeight: 800, fontSize: '0.9rem', marginBottom: '1.5rem', display: 'block' }}>Rotation</label>
+                                
+                                {/* X Axis */}
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                                        <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#64748b' }}>X Axis</span>
+                                        <div style={{ display: 'flex', gap: '8px' }}>
+                                            <button onClick={() => setRotationX(prev => Math.max(-180, prev - 90))} style={{ padding: '4px 10px', border: '1px solid #cbd5e1', borderRadius: '4px', background: 'white', fontSize: '0.75rem', cursor: 'pointer' }}>-90°</button>
+                                            <button onClick={() => setRotationX(prev => Math.min(180, prev + 90))} style={{ padding: '4px 10px', border: '1px solid #cbd5e1', borderRadius: '4px', background: 'white', fontSize: '0.75rem', cursor: 'pointer' }}>+90°</button>
+                                        </div>
+                                    </div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                                        <input 
+                                            type="range" 
+                                            min="-180" 
+                                            max="180" 
+                                            value={rotationX} 
+                                            onChange={(e) => setRotationX(parseInt(e.target.value))}
+                                            style={{ flex: 1, accentColor: 'var(--primary)', height: '6px', borderRadius: '3px', cursor: 'pointer' }}
+                                        />
+                                        <span style={{ fontSize: '0.85rem', fontWeight: 700, minWidth: '40px', textAlign: 'right' }}>{rotationX}°</span>
+                                    </div>
+                                </div>
+
+                                {/* Y Axis */}
+                                <div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                                        <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#64748b' }}>Y Axis</span>
+                                        <div style={{ display: 'flex', gap: '8px' }}>
+                                            <button onClick={() => setRotationY(prev => Math.max(-180, prev - 90))} style={{ padding: '4px 10px', border: '1px solid #cbd5e1', borderRadius: '4px', background: 'white', fontSize: '0.75rem', cursor: 'pointer' }}>-90°</button>
+                                            <button onClick={() => setRotationY(prev => Math.min(180, prev + 90))} style={{ padding: '4px 10px', border: '1px solid #cbd5e1', borderRadius: '4px', background: 'white', fontSize: '0.75rem', cursor: 'pointer' }}>+90°</button>
+                                        </div>
+                                    </div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                                        <input 
+                                            type="range" 
+                                            min="-180" 
+                                            max="180" 
+                                            value={rotationY} 
+                                            onChange={(e) => setRotationY(parseInt(e.target.value))}
+                                            style={{ flex: 1, accentColor: 'var(--primary)', height: '6px', borderRadius: '3px', cursor: 'pointer' }}
+                                        />
+                                        <span style={{ fontSize: '0.85rem', fontWeight: 700, minWidth: '40px', textAlign: 'right' }}>{rotationY}°</span>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Model Information Box (New as per image) */}
+                        {file && (
+                            <div style={{ marginTop: '1.5rem', background: '#f0f9ff', padding: '1.5rem', borderRadius: '20px', border: '1px solid #e0f2fe', textAlign: 'left' }}>
+                                <label style={{ fontWeight: 800, fontSize: '0.9rem', marginBottom: '1.5rem', display: 'block', color: '#0369a1' }}>MODEL INFORMATION</label>
+                                
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dashed #bae6fd', paddingBottom: '8px' }}>
+                                        <span style={{ fontSize: '0.85rem', color: '#64748b' }}>Volume</span>
+                                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0c4a6e' }}>1.00 mm³ (0.00 cm³)</span>
+                                    </div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dashed #bae6fd', paddingBottom: '8px' }}>
+                                        <span style={{ fontSize: '0.85rem', color: '#64748b' }}>Triangles</span>
+                                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0c4a6e' }}>12</span>
+                                    </div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                        <span style={{ fontSize: '0.85rem', color: '#64748b' }}>Dimensions</span>
+                                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0c4a6e' }}>1.00 × 1.00 × 1.00 mm</span>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     {/* Right Side: Options & Price */}
@@ -269,53 +354,6 @@ const PrintingServices = () => {
                             </div>
                         </div>
 
-                        {/* Rotation Controls */}
-                        <div style={{ marginBottom: '2.5rem', background: '#f8fafc', padding: '1.5rem', borderRadius: '15px', border: '1px solid #e2e8f0' }}>
-                            <label style={{ fontWeight: 800, fontSize: '0.9rem', marginBottom: '1.5rem', display: 'block' }}>Rotation</label>
-                            
-                            {/* X Axis */}
-                            <div style={{ marginBottom: '1.5rem' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                                    <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#64748b' }}>X Axis</span>
-                                    <div style={{ display: 'flex', gap: '8px' }}>
-                                        <button onClick={() => setRotationX(prev => Math.max(-180, prev - 90))} style={{ padding: '4px 10px', border: '1px solid #cbd5e1', borderRadius: '4px', background: 'white', fontSize: '0.75rem', cursor: 'pointer' }}>-90°</button>
-                                        <button onClick={() => setRotationX(prev => Math.min(180, prev + 90))} style={{ padding: '4px 10px', border: '1px solid #cbd5e1', borderRadius: '4px', background: 'white', fontSize: '0.75rem', cursor: 'pointer' }}>+90°</button>
-                                    </div>
-                                </div>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                                    <input 
-                                        type="range" 
-                                        min="-180" 
-                                        max="180" 
-                                        value={rotationX} 
-                                        onChange={(e) => setRotationX(parseInt(e.target.value))}
-                                        style={{ flex: 1, accentColor: 'var(--primary)', height: '6px', borderRadius: '3px', cursor: 'pointer' }}
-                                    />
-                                    <span style={{ fontSize: '0.85rem', fontWeight: 700, minWidth: '40px', textAlign: 'right' }}>{rotationX}°</span>
-                                </div>
-                            </div>
-
-                            {/* Y Axis */}
-                            <div>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                                    <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#64748b' }}>Y Axis</span>
-                                    <div style={{ display: 'flex', gap: '8px' }}>
-                                        <button onClick={() => setRotationY(prev => Math.max(-180, prev - 90))} style={{ padding: '4px 10px', border: '1px solid #cbd5e1', borderRadius: '4px', background: 'white', fontSize: '0.75rem', cursor: 'pointer' }}>-90°</button>
-                                        <button onClick={() => setRotationY(prev => Math.min(180, prev + 90))} style={{ padding: '4px 10px', border: '1px solid #cbd5e1', borderRadius: '4px', background: 'white', fontSize: '0.75rem', cursor: 'pointer' }}>+90°</button>
-                                    </div>
-                                </div>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                                    <input 
-                                        type="range" 
-                                        min="-180" 
-                                        max="180" 
-                                        value={rotationY} 
-                                        onChange={(e) => setRotationY(parseInt(e.target.value))}
-                                        style={{ flex: 1, accentColor: 'var(--primary)', height: '6px', borderRadius: '3px', cursor: 'pointer' }}
-                                    />
-                                    <span style={{ fontSize: '0.85rem', fontWeight: 700, minWidth: '40px', textAlign: 'right' }}>{rotationY}°</span>
-                                </div>
-                            </div>
                         </div>
 
                         {/* Result Display */}
