@@ -266,6 +266,9 @@ const PrintingServices = () => {
                                         <div style={{ fontSize: '0.7rem', opacity: 0.7 }}>{opt.sub}</div>
                                     </div>
                                 ))}
+                            </div>
+                        </div>
+
                         {/* Rotation Controls */}
                         <div style={{ marginBottom: '2.5rem', background: '#f8fafc', padding: '1.5rem', borderRadius: '15px', border: '1px solid #e2e8f0' }}>
                             <label style={{ fontWeight: 800, fontSize: '0.9rem', marginBottom: '1.5rem', display: 'block' }}>Rotation</label>
