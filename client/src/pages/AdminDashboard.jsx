@@ -630,7 +630,7 @@ const AdminDashboard = () => {
                                     title="Edit Product Details"
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        setEditProductState({...product, stockQuantity: (typeof product.stockQuantity === 'number') ? product.stockQuantity : (parseInt(product.stockQuantity) || 0)});
+                                        setEditProductState({...product, discount: product.discount || 0, stockQuantity: (typeof product.stockQuantity === 'number') ? product.stockQuantity : (parseInt(product.stockQuantity) || 0)});
                                         setEditImagePreview(product.image?.startsWith('/uploads') ? `${BASE_URL}${product.image}` : product.image);
                                         setEditSelectedFile(null);
                                         // Initialize additional images in the correct slots (max 5)
@@ -1214,9 +1214,18 @@ const AdminDashboard = () => {
                       <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Discount (%)</label>
                       <input 
                         type="number" 
-                        readOnly
+                        placeholder="e.g. 15"
                         value={newProduct.discount} 
-                        style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #e2e8f0', outline: 'none', background: '#f8fafc', color: '#64748b' }} 
+                        onChange={e => {
+                            const d = e.target.value;
+                            const m = newProduct.mrp;
+                            let p = newProduct.price;
+                            if (m && d !== '') {
+                                p = Math.round(m - (m * d / 100));
+                            }
+                            setNewProduct({...newProduct, discount: d, price: p});
+                        }}
+                        style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} 
                       />
                     </div>
                 </div>
@@ -1518,9 +1527,18 @@ const AdminDashboard = () => {
                       <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Discount (%)</label>
                       <input 
                         type="number" 
-                        readOnly
+                        placeholder="e.g. 15"
                         value={editProductState.discount || 0} 
-                        style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #e2e8f0', outline: 'none', background: '#f8fafc', color: '#64748b' }} 
+                        onChange={e => {
+                            const d = e.target.value;
+                            const m = editProductState.mrp;
+                            let p = editProductState.price;
+                            if (m && d !== '') {
+                                p = Math.round(m - (m * d / 100));
+                            }
+                            setEditProductState({...editProductState, discount: d, price: p});
+                        }}
+                        style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} 
                       />
                     </div>
                 </div>
