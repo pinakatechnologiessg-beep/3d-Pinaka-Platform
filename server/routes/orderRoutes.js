@@ -1,5 +1,6 @@
 import express from 'express';
 import Order from '../models/Order.js';
+import Product from '../models/Product.js';
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
@@ -116,9 +117,38 @@ router.post('/', async (req, res) => {
     const randomSuffix = Math.floor(1000 + Math.random() * 9000);
     const orderId = `ORD-${randomSuffix}`;
 
+    // Verify Stock and Prepare Decrements
+    const items = req.body.items || [{ productId: req.body.productId, quantity: req.body.quantity, productName: req.body.productName, price: req.body.totalPrice }];
+    const productUpdates = [];
+
+    for (const item of items) {
+        if (!item.productId) continue;
+        const product = await Product.findById(item.productId);
+        if (!product) {
+            return res.status(404).json({ message: `Product ${item.productName || item.productId} not found to verify stock.` });
+        }
+        if (product.stockQuantity < (item.quantity || 1)) {
+            return res.status(400).json({ message: `Requested quantity for ${product.name} not available in stock.` });
+        }
+        productUpdates.push({ product, quantity: item.quantity || 1 });
+    }
+
+    // Execute Decrements
+    for (const update of productUpdates) {
+        update.product.stockQuantity -= update.quantity;
+        if (update.product.stockQuantity <= 0) {
+            update.product.inStock = false;
+        }
+        await update.product.save();
+    }
+
     const newOrder = new Order({
       ...req.body,
-      orderId
+      orderId,
+      productId: items[0]?.productId, // Keep single fields for backward compatibility/Admin Dashboard
+      productName: req.body.productName || items[0]?.productName,
+      quantity: req.body.quantity || items.reduce((acc, i) => acc + (i.quantity || 1), 0),
+      items // If items array was passed, save it properly
     });
 
     const savedOrder = await newOrder.save();

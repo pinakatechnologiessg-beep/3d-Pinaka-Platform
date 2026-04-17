@@ -199,22 +199,29 @@ const ProductDetail = () => {
                         </div>
 
                         <div className="stock-status">
-                            {product.inStock ? (
-                                <span className="in-stock"><CheckCircle size={18} weight="fill" /> In Stock</span>
+                            {product.inStock && product.stockQuantity > 0 ? (
+                                <>
+                                    <span className="in-stock"><CheckCircle size={18} weight="fill" /> In Stock</span>
+                                    {product.stockQuantity < 10 && (
+                                        <span className="low-stock-warning" style={{ color: '#ef4444', fontSize: '0.9rem', fontWeight: 600, marginLeft: '10px' }}>
+                                            Only {product.stockQuantity} left!
+                                        </span>
+                                    )}
+                                </>
                             ) : (
-                                <span className="out-of-stock">Currently Out of Stock</span>
+                                <span className="out-of-stock" style={{ color: '#ef4444', fontWeight: 700 }}>Out of Stock</span>
                             )}
                         </div>
 
                         <div className="action-area">
                             <div className="quantity-selector">
-                                <button onClick={() => setQuantity(prev => Math.max(1, prev - 1))}><Minus size={16} /></button>
+                                <button onClick={() => setQuantity(prev => Math.max(1, prev - 1))} disabled={!product.inStock || product.stockQuantity <= 0}><Minus size={16} /></button>
                                 <span>{quantity}</span>
-                                <button onClick={() => setQuantity(prev => prev + 1)}><Plus size={16} /></button>
+                                <button onClick={() => setQuantity(prev => Math.min(product.stockQuantity || 0, prev + 1))} disabled={!product.inStock || product.stockQuantity <= 0 || quantity >= product.stockQuantity}><Plus size={16} /></button>
                             </div>
                             <button 
                                 className="btn btn-primary add-to-cart-btn" 
-                                disabled={!product.inStock}
+                                disabled={!product.inStock || product.stockQuantity <= 0}
                                 onClick={() => cartService.addToCart(product, quantity)}
                             >
                                 <ShoppingCart size={20} weight="bold" /> Add to Cart

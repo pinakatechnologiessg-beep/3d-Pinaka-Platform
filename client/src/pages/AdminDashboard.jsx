@@ -48,7 +48,7 @@ const AdminDashboard = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [newProduct, setNewProduct] = useState({
       name: '', category: 'FDM', price: '', mrp: '', 
-      inStock: true, image: '', rating: 5.0, tags: 'None', badgeStyle: null, description: '',
+      inStock: true, stockQuantity: 0, image: '', rating: 5.0, tags: 'None', badgeStyle: null, description: '',
       brand: 'Anycubic', otherCategory: '', condition: 'New',
       specifications: [{ key: '', value: '' }]
   });
@@ -610,7 +610,7 @@ const AdminDashboard = () => {
                                     title="Edit Product Details"
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        setEditProductState(product);
+                                        setEditProductState({...product, stockQuantity: (typeof product.stockQuantity === 'number') ? product.stockQuantity : (parseInt(product.stockQuantity) || 0)});
                                         setEditImagePreview(product.image?.startsWith('/uploads') ? `${BASE_URL}${product.image}` : product.image);
                                         setEditSelectedFile(null);
                                         // Initialize additional images in the correct slots (max 5)
@@ -664,7 +664,11 @@ const AdminDashboard = () => {
                                 <div className="product-price">
                                     ₹{Number(parsePriceLocal(product.price || 0)).toLocaleString('en-IN')}
                                     {product.mrp && <span className="old-price" style={{ textDecoration: 'line-through', fontSize: '0.8rem', color: '#94a3b8', marginLeft: '8px' }}>₹{Number(parsePriceLocal(product.mrp)).toLocaleString('en-IN')}</span>}
-                                    {!product.inStock && <span className="out-of-stock-label">Out Of Stock</span>}
+                                    {!product.inStock || (product.stockQuantity == null || product.stockQuantity <= 0) ? (
+                                        <span className="out-of-stock-label" style={{ background: '#fee2e2', color: '#ef4444', padding: '2px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600, marginLeft: '8px' }}>Out Of Stock</span>
+                                    ) : (
+                                        <span style={{ color: '#10b981', fontSize: '0.75rem', fontWeight: 600, marginLeft: '8px' }}>Stock: {product.stockQuantity}</span>
+                                    )}
                                 </div>
                                 {/* Admin specific action area */}
                                 <div className="admin-product-actions" style={{ marginTop: '15px', paddingTop: '15px', borderTop: '1px solid var(--admin-border-color)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -1181,17 +1185,35 @@ const AdminDashboard = () => {
                     </div>
                 </div>
 
-                <div className="modal-grid-row">
+                <div className="modal-grid-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                     <div>
                       <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Stock Status</label>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', height: '45px' }}>
                           <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', color: '#334155', whiteSpace: 'nowrap' }}>
-                              <input type="radio" name="stock" checked={newProduct.inStock} onChange={() => setNewProduct({...newProduct, inStock: true})} /> In Stock
+                              <input type="radio" name="stock" checked={newProduct.inStock} onChange={() => setNewProduct({...newProduct, inStock: true, stockQuantity: newProduct.stockQuantity === 0 ? 1 : newProduct.stockQuantity})} /> In Stock
                           </label>
                           <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', color: '#334155', whiteSpace: 'nowrap' }}>
-                              <input type="radio" name="stock" checked={!newProduct.inStock} onChange={() => setNewProduct({...newProduct, inStock: false})} /> Out of Stock
+                              <input type="radio" name="stock" checked={!newProduct.inStock} onChange={() => setNewProduct({...newProduct, inStock: false, stockQuantity: 0})} /> Out of Stock
                           </label>
                       </div>
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Stock Quantity</label>
+                      <input 
+                        type="number" 
+                        min="0" 
+                        placeholder="Available Units" 
+                        value={newProduct.stockQuantity ?? ''} 
+                        onChange={e => {
+                          const val = e.target.value;
+                          setNewProduct({
+                            ...newProduct, 
+                            stockQuantity: val, 
+                            inStock: val !== '' && parseInt(val, 10) > 0
+                          });
+                        }} 
+                        style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} 
+                      />
                     </div>
                 </div>
 
@@ -1289,6 +1311,7 @@ const AdminDashboard = () => {
                                 formData.append('price', newProduct.price);
                                 formData.append('mrp', newProduct.mrp);
                                 formData.append('inStock', newProduct.inStock);
+                                formData.append('stockQuantity', newProduct.stockQuantity || 0);
                                 formData.append('rating', newProduct.rating);
                                 formData.append('tags', newProduct.tags);
                                 if (newProduct.badgeStyle) formData.append('badgeStyle', JSON.stringify(newProduct.badgeStyle));
@@ -1315,7 +1338,7 @@ const AdminDashboard = () => {
                                     fetch(`${BASE_URL}/api/stats`).then(s => s.json()).then(newData => setStats(newData)).catch(() => {});
                                     
                                     setIsAddModalOpen(false);
-                                    setNewProduct({ name: '', category: 'FDM', price: '', mrp: '', inStock: true, image: '', rating: 5.0, featured: false, tags: 'None', badgeStyle: null, description: '', brand: 'Anycubic', otherCategory: '', condition: 'New', specifications: [{ key: '', value: '' }] });
+                                    setNewProduct({ name: '', category: 'FDM', price: '', mrp: '', inStock: true, stockQuantity: 0, image: '', rating: 5.0, featured: false, tags: 'None', badgeStyle: null, description: '', brand: 'Anycubic', otherCategory: '', condition: 'New', specifications: [{ key: '', value: '' }] });
                                     setImagePreview(null);
                                     setSelectedFile(null);
                                     setAdditionalSelectedFiles([null, null, null, null, null]);
@@ -1415,14 +1438,14 @@ const AdminDashboard = () => {
                     </div>
                     <div>
                       <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>MRP (₹)</label>
-                      <input type="number" placeholder="e.g. 35000" value={editProductState.mrp || ''} onChange={e => setEditProductState({...editProductState, mrp: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} />
+                      <input type="number" placeholder="e.g. 35000" value={editProductState.mrp ?? ''} onChange={e => setEditProductState({...editProductState, mrp: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} />
                     </div>
                 </div>
                 
                 <div className="modal-grid-row">
                     <div>
                       <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Rating (0-5)</label>
-                      <input type="number" step="0.1" min="0" max="5" placeholder="e.g. 4.5" value={editProductState.rating || ''} onChange={e => setEditProductState({...editProductState, rating: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} />
+                      <input type="number" step="0.1" min="0" max="5" placeholder="e.g. 4.5" value={editProductState.rating ?? ''} onChange={e => setEditProductState({...editProductState, rating: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} />
                     </div>
                     <div>
                       <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Tags / Badge</label>
@@ -1438,16 +1461,36 @@ const AdminDashboard = () => {
                            </label>
                        </div>
                     </div>
+                </div>
+
+                <div className="modal-grid-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                     <div>
                       <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Stock Status</label>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', height: '45px' }}>
                           <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', color: '#334155' }}>
-                              <input type="radio" name="editstock" checked={editProductState.inStock} onChange={() => setEditProductState({...editProductState, inStock: true})} /> In Stock
+                              <input type="radio" name="editstock" checked={editProductState.inStock} onChange={() => setEditProductState({...editProductState, inStock: true, stockQuantity: editProductState.stockQuantity === 0 ? 1 : editProductState.stockQuantity})} /> In Stock
                           </label>
                           <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', color: '#334155' }}>
-                              <input type="radio" name="editstock" checked={!editProductState.inStock} onChange={() => setEditProductState({...editProductState, inStock: false})} /> Out of Stock
+                              <input type="radio" name="editstock" checked={!editProductState.inStock} onChange={() => setEditProductState({...editProductState, inStock: false, stockQuantity: 0})} /> Out of Stock
                           </label>
                       </div>
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Stock Quantity</label>
+                      <input 
+                        type="number" 
+                        min="0" 
+                        value={editProductState.stockQuantity ?? ''} 
+                        onChange={e => {
+                          const val = e.target.value;
+                          setEditProductState({
+                            ...editProductState, 
+                            stockQuantity: val, 
+                            inStock: val !== '' && parseInt(val, 10) > 0
+                          });
+                        }} 
+                        style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} 
+                      />
                     </div>
                 </div>
 
@@ -1538,6 +1581,7 @@ const AdminDashboard = () => {
                                 formData.append('price', editProductState.price);
                                 if (editProductState.mrp) formData.append('mrp', editProductState.mrp);
                                 formData.append('inStock', editProductState.inStock);
+                                formData.append('stockQuantity', editProductState.stockQuantity || 0);
                                 if (editProductState.rating) formData.append('rating', editProductState.rating);
                                 formData.append('tags', editProductState.tags || 'None');
                                 formData.append('featured', editProductState.featured || false);

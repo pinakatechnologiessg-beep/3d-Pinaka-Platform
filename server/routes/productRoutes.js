@@ -109,6 +109,7 @@ router.get('/', async (req, res) => {
         originalPrice: typeof p.mrp === 'number' ? p.mrp : (parseInt(String(p.mrp || p.oldPrice || 0).replace(/[^0-9]/g, '')) || 0),
         rating: p.rating || 5.0,
         inStock: p.inStock,
+        stockQuantity: (p.stockQuantity !== undefined && p.stockQuantity !== null) ? p.stockQuantity : (p.quantity || p.inventory || 0),
         condition: p.condition || "New",
         image: p.image,
         tags: p.tags || "None",
@@ -135,7 +136,7 @@ router.post('/', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'images'
   if (req.files && req.files['images']) console.log("Additional Images Count:", req.files['images'].length);
   
   try {
-    const { name, brand, category, price, mrp, inStock, rating, tags, description, specifications, badgeStyle, condition } = req.body;
+    const { name, brand, category, price, mrp, inStock, stockQuantity, rating, tags, description, specifications, badgeStyle, condition } = req.body;
     
     // Detailed parsing logs to identify JSON.parse failures
     let parsedBadge = undefined;
@@ -166,6 +167,7 @@ router.post('/', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'images'
       description: description || '',
       badgeStyle: parsedBadge,
       specifications: parsedSpecs,
+      stockQuantity: Number(stockQuantity) || 0,
       featured: String(req.body.featured) === 'true' || req.body.featured === true
     };
 
@@ -224,7 +226,7 @@ router.post('/seed', async (req, res) => {
 // Update product via PUT
 router.put('/:id', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'images', maxCount: 6 }]), async (req, res) => {
   try {
-    const { name, brand, category, price, mrp, inStock, rating, tags, description, specifications, badgeStyle, condition } = req.body;
+    const { name, brand, category, price, mrp, inStock, stockQuantity, rating, tags, description, specifications, badgeStyle, condition } = req.body;
     const updateData = {
       name,
       brand: brand ? brand.trim() : undefined,
@@ -232,6 +234,7 @@ router.put('/:id', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'image
       price: price ? Number(price) : undefined,
       mrp: mrp ? Number(mrp) : undefined,
       inStock: inStock !== undefined ? (inStock === 'true' || inStock === true) : undefined,
+      stockQuantity: stockQuantity !== undefined ? parseInt(stockQuantity, 10) : undefined,
       rating: rating ? Number(rating) : undefined,
       tags,
       condition,
@@ -296,6 +299,7 @@ router.get('/featured', async (req, res) => {
         originalPrice: typeof p.mrp === 'number' ? p.mrp : (parseInt(String(p.mrp || p.oldPrice || 0).replace(/[^0-9]/g, '')) || 0),
         rating: p.rating || 5.0,
         inStock: p.inStock,
+        stockQuantity: p.stockQuantity || 0,
         condition: p.condition || "New",
         image: p.image,
         tags: p.tags || "None",

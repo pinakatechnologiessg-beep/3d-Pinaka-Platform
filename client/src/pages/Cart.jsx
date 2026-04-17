@@ -94,11 +94,17 @@ const Cart = () => {
             phone: form.phone,
             address: form.address,
             productName: cartItems.map(i => i.title).join(', '),
-            quantity: cartItems.length,
+            quantity: cartItems.reduce((acc, i) => acc + (i.quantity || 1), 0),
+            items: cartItems.map(i => ({
+                productId: i.productId,
+                productName: i.title,
+                quantity: i.quantity || 1,
+                price: i.price
+            })),
             totalPrice: total,
             status: 'Pending',
-            paymentStatus: paymentMethod === 'COD' ? 'Pending' : 'Unpaid',
-            paymentMethod: paymentMethod === 'COD' ? 'Cash on Delivery' : 'Razorpay'
+            paymentStatus: paymentMethod === 'Online' ? 'Unpaid' : 'Pending',
+            paymentMethod: paymentMethod === 'Online' ? 'Razorpay' : 'Cash on Delivery'
         };
 
         try {

@@ -6,8 +6,15 @@ const orderSchema = new mongoose.Schema({
   customerEmail: { type: String }, // Added for linking with user account
   phone: { type: String },
   address: { type: String },
+  productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
   productName: { type: String },
   quantity: { type: Number },
+  items: [{
+    productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
+    productName: { type: String },
+    quantity: { type: Number },
+    price: { type: Number }
+  }],
   totalPrice: { type: Number },
   status: {
     type: String,

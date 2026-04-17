@@ -11,6 +11,7 @@ const productSchema = new mongoose.Schema({
   tags: { type: String },
   badgeStyle: { type: Object },
   inStock: { type: Boolean, default: true },
+  stockQuantity: { type: Number, default: 0 },
   featured: { type: Boolean, default: false },
   brand: { type: String, required: true },
   condition: { type: String, enum: ['New', 'Refurbished'], default: 'New' },
