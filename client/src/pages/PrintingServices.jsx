@@ -354,8 +354,6 @@ const PrintingServices = () => {
                             </div>
                         </div>
 
-                        </div>
-
                         {/* Result Display */}
                         {result ? (
                             <div style={{ background: '#1e293b', color: 'white', padding: '1.5rem', borderRadius: '15px', marginBottom: '2rem', animation: 'fadeIn 0.5s' }}>
