@@ -8,7 +8,7 @@ export const parseSTL = (filePath) => {
         if (buffer.length < 84) return false;
         const faceCount = buffer.readUInt32LE(80);
         const expectedSize = 84 + (faceCount * 50);
-        return buffer.length === expectedSize;
+        return buffer.length >= expectedSize;
     };
 
     let volume = 0;
@@ -71,9 +71,9 @@ export const parseSTL = (filePath) => {
         volume: Math.abs(volume),
         triangles: triangleCount,
         dimensions: {
-            x: maxX - minX,
-            y: maxY - minY,
-            z: maxZ - minZ
+            x: minX === Infinity ? 0 : maxX - minX,
+            y: minY === Infinity ? 0 : maxY - minY,
+            z: minZ === Infinity ? 0 : maxZ - minZ
         },
         boundingBox: { minX, maxX, minY, maxY, minZ, maxZ }
     };
