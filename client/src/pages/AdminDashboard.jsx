@@ -59,6 +59,7 @@ const AdminDashboard = () => {
   const [editSelectedFile, setEditSelectedFile] = useState(null);
   const [deleteConfirmState, setDeleteConfirmState] = useState(null);
   const [productSearchQuery, setProductSearchQuery] = useState('');
+  const [stockFilter, setStockFilter] = useState('All Status');
   const [additionalSelectedFiles, setAdditionalSelectedFiles] = useState([null, null, null, null, null]);
   const [additionalImagePreviews, setAdditionalImagePreviews] = useState([null, null, null, null, null]);
   const [editAdditionalSelectedFiles, setEditAdditionalSelectedFiles] = useState([null, null, null, null, null]);
@@ -568,7 +569,7 @@ const AdminDashboard = () => {
 
         {activeTab === 'Products' && (
           <div className="dashboard-content" style={{ padding: '24px' }}>
-            <div className="products-mgmt-header">
+            <div className="products-mgmt-header" style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '25px', flexWrap: 'wrap' }}>
               <h2 className="products-mgmt-title">Products Management ({adminProducts.length} items)</h2>
               
               <div className="search-bar-wrapper">
@@ -581,6 +582,19 @@ const AdminDashboard = () => {
                   style={{ border: 'none', outline: 'none', width: '100%', fontSize: '0.95rem', background: 'transparent' }} 
                 />
                 {productSearchQuery && <X size={18} style={{ color: 'var(--admin-text-muted)', cursor: 'pointer' }} onClick={() => setProductSearchQuery('')} />}
+              </div>
+
+              <div className="filter-dropdown-wrapper" style={{ display: 'flex', alignItems: 'center', background: 'white', padding: '0 15px', borderRadius: '8px', border: '1px solid var(--admin-border-color)', height: '100%', minWidth: '150px' }}>
+                <List size={18} style={{ color: 'var(--admin-text-muted)', marginRight: '8px' }} />
+                <select 
+                  value={stockFilter} 
+                  onChange={(e) => setStockFilter(e.target.value)}
+                  style={{ border: 'none', outline: 'none', background: 'transparent', fontSize: '0.9rem', color: '#475569', cursor: 'pointer', width: '100%', height: '40px' }}
+                >
+                  <option value="All Status">All Status</option>
+                  <option value="In Stock">In Stock</option>
+                  <option value="Out of Stock">Out of Stock</option>
+                </select>
               </div>
 
               <button 
@@ -598,11 +612,17 @@ const AdminDashboard = () => {
                 <div style={{ textAlign: 'center', padding: '40px', color: 'var(--admin-text-muted)' }}>Loading products...</div>
             ) : (
                 <div className="products-grid admin-products-grid">
-                    {adminProducts.filter(p => 
-                        (p.name || p.title || "").toLowerCase().includes(productSearchQuery.toLowerCase()) ||
-                        (p.brand || "").toLowerCase().includes(productSearchQuery.toLowerCase()) ||
-                        (p.category || "").toLowerCase().includes(productSearchQuery.toLowerCase())
-                    ).map(product => (
+                    {adminProducts.filter(p => {
+                        const matchesSearch = (p.name || p.title || "").toLowerCase().includes(productSearchQuery.toLowerCase()) ||
+                                              (p.brand || "").toLowerCase().includes(productSearchQuery.toLowerCase()) ||
+                                              (p.category || "").toLowerCase().includes(productSearchQuery.toLowerCase());
+                        
+                        const matchesStock = stockFilter === 'All Status' || 
+                                             (stockFilter === 'In Stock' && (p.inStock && (p.stockQuantity == null || p.stockQuantity > 0))) || 
+                                             (stockFilter === 'Out of Stock' && (!p.inStock || (p.stockQuantity != null && p.stockQuantity <= 0)));
+                                             
+                        return matchesSearch && matchesStock;
+                    }).map(product => (
                         <div key={product._id || Math.random()} className={`product-card ${!product.inStock ? 'sold-out' : ''}`}>
                             <div style={{ position: 'absolute', top: '10px', right: '10px', display: 'flex', gap: '8px', zIndex: 10 }}>
                                 <button 
