@@ -106,6 +106,7 @@ router.get('/', async (req, res) => {
         category: p.category || "Category",
         price: typeof p.price === 'number' ? p.price : (parseInt(String(p.price || p.sellingPrice || 0).replace(/[^0-9]/g, '')) || 0),
         mrp: typeof p.mrp === 'number' ? p.mrp : (parseInt(String(p.mrp || p.oldPrice || 0).replace(/[^0-9]/g, '')) || 0),
+        discount: p.discount || 0,
         originalPrice: typeof p.mrp === 'number' ? p.mrp : (parseInt(String(p.mrp || p.oldPrice || 0).replace(/[^0-9]/g, '')) || 0),
         rating: p.rating || 5.0,
         inStock: p.inStock,
@@ -136,7 +137,7 @@ router.post('/', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'images'
   if (req.files && req.files['images']) console.log("Additional Images Count:", req.files['images'].length);
   
   try {
-    const { name, brand, category, price, mrp, inStock, stockQuantity, rating, tags, description, specifications, badgeStyle, condition } = req.body;
+    const { name, brand, category, price, mrp, discount, inStock, stockQuantity, rating, tags, description, specifications, badgeStyle, condition } = req.body;
     
     // Detailed parsing logs to identify JSON.parse failures
     let parsedBadge = undefined;
@@ -160,6 +161,7 @@ router.post('/', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'images'
       category: (category || "Other").trim(),
       price: Number(price) || 0,
       mrp: Number(mrp) || Number(price) || 0,
+      discount: Number(discount) || 0,
       inStock: String(inStock) === 'true',
       rating: Number(rating) || 5.0,
       tags: tags || 'None',
@@ -226,13 +228,14 @@ router.post('/seed', async (req, res) => {
 // Update product via PUT
 router.put('/:id', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'images', maxCount: 6 }]), async (req, res) => {
   try {
-    const { name, brand, category, price, mrp, inStock, stockQuantity, rating, tags, description, specifications, badgeStyle, condition } = req.body;
+    const { name, brand, category, price, mrp, discount, inStock, stockQuantity, rating, tags, description, specifications, badgeStyle, condition } = req.body;
     const updateData = {
       name,
       brand: brand ? brand.trim() : undefined,
       category: category ? category.trim() : undefined,
       price: price ? Number(price) : undefined,
       mrp: mrp ? Number(mrp) : undefined,
+      discount: discount !== undefined ? Number(discount) : undefined,
       inStock: inStock !== undefined ? (inStock === 'true' || inStock === true) : undefined,
       stockQuantity: stockQuantity !== undefined ? parseInt(stockQuantity, 10) : undefined,
       rating: rating ? Number(rating) : undefined,
@@ -296,6 +299,7 @@ router.get('/featured', async (req, res) => {
         category: p.category || "Category",
         price: typeof p.price === 'number' ? p.price : (parseInt(String(p.price || p.sellingPrice || 0).replace(/[^0-9]/g, '')) || 0),
         mrp: typeof p.mrp === 'number' ? p.mrp : (parseInt(String(p.mrp || p.oldPrice || 0).replace(/[^0-9]/g, '')) || 0),
+        discount: p.discount || 0,
         originalPrice: typeof p.mrp === 'number' ? p.mrp : (parseInt(String(p.mrp || p.oldPrice || 0).replace(/[^0-9]/g, '')) || 0),
         rating: p.rating || 5.0,
         inStock: p.inStock,

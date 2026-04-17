@@ -47,7 +47,7 @@ const AdminDashboard = () => {
   const [imagePreview, setImagePreview] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [newProduct, setNewProduct] = useState({
-      name: '', category: 'FDM', price: '', mrp: '', 
+      name: '', category: 'FDM', price: '', mrp: '', discount: 0,
       inStock: true, stockQuantity: 0, image: '', rating: 5.0, tags: 'None', badgeStyle: null, description: '',
       brand: 'Anycubic', otherCategory: '', condition: 'New',
       specifications: [{ key: '', value: '' }]
@@ -1179,14 +1179,45 @@ const AdminDashboard = () => {
                     </div>
                 </div>
 
-                <div className="modal-grid-row">
+                <div className="modal-grid-row" style={{ gridTemplateColumns: '1fr 1fr 1fr' }}>
                     <div>
                       <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Selling Price (₹)</label>
-                      <input type="number" placeholder="e.g. 25000" value={newProduct.price} onChange={e => setNewProduct({...newProduct, price: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} />
+                      <input 
+                        type="number" 
+                        placeholder="e.g. 25000" 
+                        value={newProduct.price} 
+                        onChange={e => {
+                            const p = e.target.value;
+                            const m = newProduct.mrp;
+                            const d = (p && m && m > 0) ? Math.round(((m - p) / m) * 100) : 0;
+                            setNewProduct({...newProduct, price: p, discount: d});
+                        }} 
+                        style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} 
+                      />
                     </div>
                     <div>
                       <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>MRP (₹)</label>
-                      <input type="number" placeholder="e.g. 35000" value={newProduct.mrp} onChange={e => setNewProduct({...newProduct, mrp: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} />
+                      <input 
+                        type="number" 
+                        placeholder="e.g. 35000" 
+                        value={newProduct.mrp} 
+                        onChange={e => {
+                            const m = e.target.value;
+                            const p = newProduct.price;
+                            const d = (p && m && m > 0) ? Math.round(((m - p) / m) * 100) : 0;
+                            setNewProduct({...newProduct, mrp: m, discount: d});
+                        }} 
+                        style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} 
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Discount (%)</label>
+                      <input 
+                        type="number" 
+                        readOnly
+                        value={newProduct.discount} 
+                        style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #e2e8f0', outline: 'none', background: '#f8fafc', color: '#64748b' }} 
+                      />
                     </div>
                 </div>
                 
@@ -1330,6 +1361,7 @@ const AdminDashboard = () => {
                                 formData.append('brand', newProduct.brand);
                                 formData.append('price', newProduct.price);
                                 formData.append('mrp', newProduct.mrp);
+                                formData.append('discount', newProduct.discount || 0);
                                 formData.append('inStock', newProduct.inStock);
                                 formData.append('stockQuantity', newProduct.stockQuantity || 0);
                                 formData.append('rating', newProduct.rating);
@@ -1451,14 +1483,45 @@ const AdminDashboard = () => {
                     </div>
                 </div>
 
-                <div className="modal-grid-row">
+                <div className="modal-grid-row" style={{ gridTemplateColumns: '1fr 1fr 1fr' }}>
                     <div>
                       <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Selling Price (₹)</label>
-                      <input type="number" placeholder="e.g. 25000" value={editProductState.price} onChange={e => setEditProductState({...editProductState, price: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} />
+                      <input 
+                        type="number" 
+                        placeholder="e.g. 25000" 
+                        value={editProductState.price} 
+                        onChange={e => {
+                            const p = e.target.value;
+                            const m = editProductState.mrp;
+                            const d = (p && m && m > 0) ? Math.round(((m - p) / m) * 100) : 0;
+                            setEditProductState({...editProductState, price: p, discount: d});
+                        }} 
+                        style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} 
+                      />
                     </div>
                     <div>
                       <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>MRP (₹)</label>
-                      <input type="number" placeholder="e.g. 35000" value={editProductState.mrp ?? ''} onChange={e => setEditProductState({...editProductState, mrp: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} />
+                      <input 
+                        type="number" 
+                        placeholder="e.g. 35000" 
+                        value={editProductState.mrp ?? ''} 
+                        onChange={e => {
+                            const m = e.target.value;
+                            const p = editProductState.price;
+                            const d = (p && m && m > 0) ? Math.round(((m - p) / m) * 100) : 0;
+                            setEditProductState({...editProductState, mrp: m, discount: d});
+                        }} 
+                        style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} 
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Discount (%)</label>
+                      <input 
+                        type="number" 
+                        readOnly
+                        value={editProductState.discount || 0} 
+                        style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #e2e8f0', outline: 'none', background: '#f8fafc', color: '#64748b' }} 
+                      />
                     </div>
                 </div>
                 
@@ -1600,6 +1663,7 @@ const AdminDashboard = () => {
                                 formData.append('brand', editProductState.brand || 'Custom');
                                 formData.append('price', editProductState.price);
                                 if (editProductState.mrp) formData.append('mrp', editProductState.mrp);
+                                formData.append('discount', editProductState.discount || 0);
                                 formData.append('inStock', editProductState.inStock);
                                 formData.append('stockQuantity', editProductState.stockQuantity || 0);
                                 if (editProductState.rating) formData.append('rating', editProductState.rating);

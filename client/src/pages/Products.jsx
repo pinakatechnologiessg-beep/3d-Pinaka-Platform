@@ -437,8 +437,8 @@ const Products = () => {
                                                                 </div>
                                                             )}
                                                             {product.mrp && product.mrp > product.price && (
-                                                                <div style={{ fontSize: '0.7rem', color: '#10b981', fontWeight: 700, background: '#f0fdf4', padding: '2px 4px', borderRadius: '4px' }}>
-                                                                    {Math.round(((product.mrp - product.price) / product.mrp) * 100)}%
+                                                                 <div style={{ fontSize: '0.7rem', color: '#10b981', fontWeight: 700, background: '#f0fdf4', padding: '2px 4px', borderRadius: '4px' }}>
+                                                                    {product.discount || Math.round(((product.mrp - product.price) / product.mrp) * 100)}% OFF
                                                                 </div>
                                                             )}
                                                         </div>

@@ -116,7 +116,7 @@ const ProductDetail = () => {
         ? product.reviews.reduce((acc, r) => acc + r.rating, 0) / product.reviews.length 
         : 5.0;
 
-    const discount = product.mrp ? Math.round(((product.mrp - product.price) / product.mrp) * 100) : 0;
+    const discount = product.discount || (product.mrp ? Math.round(((product.mrp - product.price) / product.mrp) * 100) : 0);
     
     let imageUrl = getImageUrl(product.image);
     // DEBUG and targeted fix for specific product without affecting global logic

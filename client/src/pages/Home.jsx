@@ -248,8 +248,8 @@ const Home = () => {
                 
                 const price = Number(parsePriceLocal(product.price));
                 const originalPrice = Number(parsePriceLocal(product.mrp || product.originalPrice));
-                const hasDiscount = originalPrice > 0 && originalPrice > price;
-                const discountPercent = hasDiscount ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0;
+                const hasDiscount = originalPrice > price;
+                const discountPercent = product.discount || (hasDiscount ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0);
 
                 return (
                 <div key={product._id || product.id} className="product-card reveal" ref={addToRevealRefs}>
