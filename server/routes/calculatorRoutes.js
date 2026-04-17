@@ -1,5 +1,6 @@
 import express from 'express';
 import upload3d from '../middleware/upload3d.js';
+import { parseSTL } from '../utils/stlParser.js';
 const router = express.Router();
 
 // Configuration Constants (Indian Market Rates) - Updated as per client request
@@ -19,9 +20,17 @@ const PRICING_CONFIG = {
 };
 
 router.post('/calculate-price', upload3d.single('file'), (req, res) => {
-
     try {
         const { materialType, material, weightGrams, printHours, laborHours, quality, infill, rotationX, rotationY } = req.body;
+
+        let modelInfo = null;
+        if (req.file) {
+            try {
+                modelInfo = parseSTL(req.file.path);
+            } catch (err) {
+                console.error("Error parsing STL:", err);
+            }
+        }
 
         // Use either new parameter names or legacy ones
         const selectedMaterial = materialType || material || "PLA";
@@ -32,9 +41,24 @@ router.post('/calculate-price', upload3d.single('file'), (req, res) => {
         const infillFactor = (parseInt(infill) || 20) / 100;
         const BASE_VOLUME = 100; // Expected average volume in cm3
         
-        // If values aren't provided, estimate them
-        const calcWeight = weightGrams || (BASE_VOLUME * (infillFactor + 0.1)); 
-        const calcPrintHours = printHours || (qualityFactor * (BASE_VOLUME / 20) * (infillFactor + 0.5));
+        // If values aren't provided, estimate them using modelInfo if available
+        let calcWeight, calcPrintHours;
+        const densities = { "PLA": 1.24, "ABS": 1.04, "PETG": 1.27, "Resin": 1.1, "TPU": 1.21 };
+
+        if (modelInfo && modelInfo.volume > 0) {
+            const volumeCm3 = modelInfo.volume / 1000;
+            const density = densities[selectedMaterial] || 1.24;
+            calcWeight = weightGrams || (volumeCm3 * density * (infillFactor + 0.1));
+            
+            // Heuristic for print time: Volume mixed with surface area factor (simplified)
+            // standard speed is approx 20-30 cm3 per hour at 0.2mm
+            calcPrintHours = printHours || (qualityFactor * (volumeCm3 / 25) * (infillFactor + 0.5));
+        } else {
+            const calcWeightFallback = weightGrams || (BASE_VOLUME * (infillFactor + 0.1)); 
+            calcWeight = calcWeightFallback;
+            calcPrintHours = printHours || (qualityFactor * (BASE_VOLUME / 20) * (infillFactor + 0.5));
+        }
+        
         const calcLaborHours = laborHours || 0.5; // Default 30 mins for prep/post if not specified
 
         // 1. Calculate Base Costs
@@ -57,6 +81,7 @@ router.post('/calculate-price', upload3d.single('file'), (req, res) => {
             price: finalPrice, // Keep for backward compatibility
             fileUploaded: !!req.file,
             fileName: req.file ? req.file.filename : null,
+            modelInfo: modelInfo,
             breakdown: {
                 materialCost: materialCost.toFixed(2),
                 machineCost: machineCost.toFixed(2),

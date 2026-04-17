@@ -235,7 +235,7 @@ const PrintingServices = () => {
                             </div>
                         )}
 
-                        {/* Model Information Box (New as per image) */}
+                        {/* Model Information Box (Dynamic from Backend) */}
                         {file && (
                             <div style={{ marginTop: '1.5rem', background: '#f0f9ff', padding: '1.5rem', borderRadius: '20px', border: '1px solid #e0f2fe', textAlign: 'left' }}>
                                 <label style={{ fontWeight: 800, fontSize: '0.9rem', marginBottom: '1.5rem', display: 'block', color: '#0369a1' }}>MODEL INFORMATION</label>
@@ -243,15 +243,21 @@ const PrintingServices = () => {
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dashed #bae6fd', paddingBottom: '8px' }}>
                                         <span style={{ fontSize: '0.85rem', color: '#64748b' }}>Volume</span>
-                                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0c4a6e' }}>1.00 mm³ (0.00 cm³)</span>
+                                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0c4a6e' }}>
+                                            {result?.modelInfo ? `${(result.modelInfo.volume).toFixed(2)} mm³ (${(result.modelInfo.volume / 1000).toFixed(2)} cm³)` : 'Analyzing...'}
+                                        </span>
                                     </div>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dashed #bae6fd', paddingBottom: '8px' }}>
                                         <span style={{ fontSize: '0.85rem', color: '#64748b' }}>Triangles</span>
-                                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0c4a6e' }}>12</span>
+                                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0c4a6e' }}>
+                                            {result?.modelInfo ? result.modelInfo.triangles.toLocaleString() : 'Analyzing...'}
+                                        </span>
                                     </div>
                                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                         <span style={{ fontSize: '0.85rem', color: '#64748b' }}>Dimensions</span>
-                                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0c4a6e' }}>1.00 × 1.00 × 1.00 mm</span>
+                                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0c4a6e' }}>
+                                            {result?.modelInfo ? `${result.modelInfo.dimensions.x.toFixed(2)} × ${result.modelInfo.dimensions.y.toFixed(2)} × ${result.modelInfo.dimensions.z.toFixed(2)} mm` : 'Analyzing...'}
+                                        </span>
                                     </div>
                                 </div>
                             </div>
