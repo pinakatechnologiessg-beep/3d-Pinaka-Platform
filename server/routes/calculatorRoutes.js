@@ -1,4 +1,5 @@
 import express from 'express';
+import upload3d from '../middleware/upload3d.js';
 const router = express.Router();
 
 // Configuration Constants (Indian Market Rates) - Updated as per client request
@@ -17,9 +18,10 @@ const PRICING_CONFIG = {
     gstRate: 0.18          // 18% GST
 };
 
-router.post('/calculate-price', (req, res) => {
+router.post('/calculate-price', upload3d.single('file'), (req, res) => {
+
     try {
-        const { materialType, material, weightGrams, printHours, laborHours, quality, infill } = req.body;
+        const { materialType, material, weightGrams, printHours, laborHours, quality, infill, rotationX, rotationY } = req.body;
 
         // Use either new parameter names or legacy ones
         const selectedMaterial = materialType || material || "PLA";
@@ -53,6 +55,8 @@ router.post('/calculate-price', (req, res) => {
             status: "success",
             success: true, // Keep for backward compatibility
             price: finalPrice, // Keep for backward compatibility
+            fileUploaded: !!req.file,
+            fileName: req.file ? req.file.filename : null,
             breakdown: {
                 materialCost: materialCost.toFixed(2),
                 machineCost: machineCost.toFixed(2),

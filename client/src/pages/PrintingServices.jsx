@@ -10,6 +10,8 @@ const PrintingServices = () => {
     const [infill, setInfill] = useState('20');
     const [calculating, setCalculating] = useState(false);
     const [result, setResult] = useState(null);
+    const [rotationX, setRotationX] = useState(0);
+    const [rotationY, setRotationY] = useState(0);
     const [error, setError] = useState(null);
 
     const fileInputRef = useRef(null);
@@ -38,11 +40,18 @@ const PrintingServices = () => {
         setError(null);
 
         try {
-            // Since we are doing a light-weight calculation, we only send the parameters
-            const response = await axios.post(`${API_BASE_URL}/api/calculate/calculate-price`, {
-                material,
-                quality,
-                infill
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('material', material);
+            formData.append('quality', quality);
+            formData.append('infill', infill);
+            formData.append('rotationX', rotationX);
+            formData.append('rotationY', rotationY);
+
+            const response = await axios.post(`${API_BASE_URL}/api/calculate/calculate-price`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
             });
             setResult(response.data);
         } catch (err) {
@@ -102,11 +111,49 @@ const PrintingServices = () => {
                                 accept=".stl,.obj,.step,.stp,.glb"
                             />
                             {file ? (
-                                <div>
-                                    <CheckCircle size={48} weight="fill" color="var(--success)" />
-                                    <h5 style={{ marginTop: '1rem', wordBreak: 'break-all' }}>{file.name}</h5>
-                                    <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{(file.size / 1024 / 1024).toFixed(2)} MB</p>
-                                    <button className="btn btn-secondary" style={{ marginTop: '1rem', padding: '6px 15px', fontSize: '0.8rem' }}>Change File</button>
+                                <div style={{ 
+                                    display: 'flex', 
+                                    alignItems: 'center', 
+                                    gap: '1rem', 
+                                    background: '#f8fafc', 
+                                    padding: '1rem', 
+                                    borderRadius: '12px', 
+                                    border: '1px solid #e2e8f0',
+                                    textAlign: 'left'
+                                }}>
+                                    <div style={{ 
+                                        width: '48px', 
+                                        height: '48px', 
+                                        background: 'white', 
+                                        borderRadius: '8px', 
+                                        display: 'flex', 
+                                        alignItems: 'center', 
+                                        justifyContent: 'center',
+                                        boxShadow: '0 2px 5px rgba(0,0,0,0.05)'
+                                    }}>
+                                        <Cube size={28} weight="fill" color="var(--primary)" />
+                                    </div>
+                                    <div style={{ flex: 1, minWidth: 0 }}>
+                                        <h5 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-dark)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{file.name}</h5>
+                                        <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-muted)' }}>{(file.size / 1024 / 1024).toFixed(2)} MB • {file.name.split('.').pop().toUpperCase()} File</p>
+                                    </div>
+                                    <button 
+                                        onClick={(e) => { e.stopPropagation(); fileInputRef.current.click(); }}
+                                        style={{ 
+                                            background: 'white', 
+                                            border: '1px solid #e2e8f0', 
+                                            padding: '5px 12px', 
+                                            borderRadius: '6px', 
+                                            fontSize: '0.75rem', 
+                                            fontWeight: 600, 
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s'
+                                        }}
+                                        onMouseOver={(e) => e.target.style.background = '#f1f5f9'}
+                                        onMouseOut={(e) => e.target.style.background = 'white'}
+                                    >
+                                        Change
+                                    </button>
                                 </div>
                             ) : (
                                 <div>
@@ -219,6 +266,52 @@ const PrintingServices = () => {
                                         <div style={{ fontSize: '0.7rem', opacity: 0.7 }}>{opt.sub}</div>
                                     </div>
                                 ))}
+                        {/* Rotation Controls */}
+                        <div style={{ marginBottom: '2.5rem', background: '#f8fafc', padding: '1.5rem', borderRadius: '15px', border: '1px solid #e2e8f0' }}>
+                            <label style={{ fontWeight: 800, fontSize: '0.9rem', marginBottom: '1.5rem', display: 'block' }}>Rotation</label>
+                            
+                            {/* X Axis */}
+                            <div style={{ marginBottom: '1.5rem' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                                    <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#64748b' }}>X Axis</span>
+                                    <div style={{ display: 'flex', gap: '8px' }}>
+                                        <button onClick={() => setRotationX(prev => Math.max(-180, prev - 90))} style={{ padding: '4px 10px', border: '1px solid #cbd5e1', borderRadius: '4px', background: 'white', fontSize: '0.75rem', cursor: 'pointer' }}>-90°</button>
+                                        <button onClick={() => setRotationX(prev => Math.min(180, prev + 90))} style={{ padding: '4px 10px', border: '1px solid #cbd5e1', borderRadius: '4px', background: 'white', fontSize: '0.75rem', cursor: 'pointer' }}>+90°</button>
+                                    </div>
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                                    <input 
+                                        type="range" 
+                                        min="-180" 
+                                        max="180" 
+                                        value={rotationX} 
+                                        onChange={(e) => setRotationX(parseInt(e.target.value))}
+                                        style={{ flex: 1, accentColor: 'var(--primary)', height: '6px', borderRadius: '3px', cursor: 'pointer' }}
+                                    />
+                                    <span style={{ fontSize: '0.85rem', fontWeight: 700, minWidth: '40px', textAlign: 'right' }}>{rotationX}°</span>
+                                </div>
+                            </div>
+
+                            {/* Y Axis */}
+                            <div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                                    <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#64748b' }}>Y Axis</span>
+                                    <div style={{ display: 'flex', gap: '8px' }}>
+                                        <button onClick={() => setRotationY(prev => Math.max(-180, prev - 90))} style={{ padding: '4px 10px', border: '1px solid #cbd5e1', borderRadius: '4px', background: 'white', fontSize: '0.75rem', cursor: 'pointer' }}>-90°</button>
+                                        <button onClick={() => setRotationY(prev => Math.min(180, prev + 90))} style={{ padding: '4px 10px', border: '1px solid #cbd5e1', borderRadius: '4px', background: 'white', fontSize: '0.75rem', cursor: 'pointer' }}>+90°</button>
+                                    </div>
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                                    <input 
+                                        type="range" 
+                                        min="-180" 
+                                        max="180" 
+                                        value={rotationY} 
+                                        onChange={(e) => setRotationY(parseInt(e.target.value))}
+                                        style={{ flex: 1, accentColor: 'var(--primary)', height: '6px', borderRadius: '3px', cursor: 'pointer' }}
+                                    />
+                                    <span style={{ fontSize: '0.85rem', fontWeight: 700, minWidth: '40px', textAlign: 'right' }}>{rotationY}°</span>
+                                </div>
                             </div>
                         </div>
 
