@@ -16,16 +16,44 @@ const PrintingServices = () => {
 
     const fileInputRef = useRef(null);
 
-    const handleFileChange = (e) => {
+    const handleFileChange = async (e) => {
         const selectedFile = e.target.files[0];
         if (selectedFile) {
             const ext = selectedFile.name.split('.').pop().toLowerCase();
             if (['stl', 'obj', 'step', 'stp', 'glb'].includes(ext)) {
                 setFile(selectedFile);
                 setError(null);
+                // Trigger auto-analysis immediately
+                autoAnalyzeFile(selectedFile);
             } else {
                 setError('Invalid file format. Please upload .stl, .obj, .step, or .stp');
             }
+        }
+    };
+
+    const autoAnalyzeFile = async (selectedFile) => {
+        setCalculating(true);
+        setResult(null);
+        setError(null);
+
+        try {
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+            formData.append('material', material);
+            formData.append('quality', quality);
+            formData.append('infill', infill);
+            formData.append('rotationX', rotationX);
+            formData.append('rotationY', rotationY);
+
+            const response = await axios.post(`${API_BASE_URL}/api/calculate/calculate-price`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            setResult(response.data);
+        } catch (err) {
+            console.error(err);
+            setError('Failed to analyze file. Please try again.');
+        } finally {
+            setCalculating(false);
         }
     };
 
@@ -244,19 +272,19 @@ const PrintingServices = () => {
                                     <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dashed #bae6fd', paddingBottom: '8px' }}>
                                         <span style={{ fontSize: '0.85rem', color: '#64748b' }}>Volume</span>
                                         <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0c4a6e' }}>
-                                            {result?.modelInfo ? `${(result.modelInfo.volume).toFixed(2)} mm³ (${(result.modelInfo.volume / 1000).toFixed(2)} cm³)` : 'Analyzing...'}
+                                            {calculating ? 'Analyzing...' : result?.modelInfo ? `${(result.modelInfo.volume).toFixed(2)} mm³ (${(result.modelInfo.volume / 1000).toFixed(2)} cm³)` : '---'}
                                         </span>
                                     </div>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dashed #bae6fd', paddingBottom: '8px' }}>
                                         <span style={{ fontSize: '0.85rem', color: '#64748b' }}>Triangles</span>
                                         <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0c4a6e' }}>
-                                            {result?.modelInfo ? result.modelInfo.triangles.toLocaleString() : 'Analyzing...'}
+                                            {calculating ? 'Analyzing...' : result?.modelInfo ? result.modelInfo.triangles.toLocaleString() : '---'}
                                         </span>
                                     </div>
                                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                         <span style={{ fontSize: '0.85rem', color: '#64748b' }}>Dimensions</span>
                                         <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0c4a6e' }}>
-                                            {result?.modelInfo ? `${result.modelInfo.dimensions.x.toFixed(2)} × ${result.modelInfo.dimensions.y.toFixed(2)} × ${result.modelInfo.dimensions.z.toFixed(2)} mm` : 'Analyzing...'}
+                                            {calculating ? 'Analyzing...' : result?.modelInfo ? `${result.modelInfo.dimensions.x.toFixed(2)} × ${result.modelInfo.dimensions.y.toFixed(2)} × ${result.modelInfo.dimensions.z.toFixed(2)} mm` : '---'}
                                         </span>
                                     </div>
                                 </div>
