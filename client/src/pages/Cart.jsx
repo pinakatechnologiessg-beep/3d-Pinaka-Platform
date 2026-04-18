@@ -264,29 +264,57 @@ const Cart = () => {
                 )}
 
                 {isCheckoutModalOpen && !isOrderSuccess && (
-                    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.6)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)' }}>
-                        <div style={{ background: 'white', padding: '2.5rem', borderRadius: '20px', maxWidth: '500px', width: '90%', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                    <div style={{ 
+                        position: 'fixed', 
+                        top: 0, 
+                        left: 0, 
+                        right: 0, 
+                        bottom: 0, 
+                        background: 'rgba(0,0,0,0.6)', 
+                        zIndex: 1000, 
+                        display: 'flex', 
+                        alignItems: 'flex-start', 
+                        justifyContent: 'center', 
+                        backdropFilter: 'blur(4px)',
+                        overflowY: 'auto',
+                        padding: '2rem 1rem'
+                    }}>
+                        <div style={{ 
+                            background: 'white', 
+                            padding: '2.5rem', 
+                            borderRadius: '20px', 
+                            maxWidth: '500px', 
+                            width: '100%', 
+                            boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
+                            position: 'relative',
+                            marginTop: '2rem',
+                            marginBottom: '2rem'
+                        }}>
+                            <button 
+                                onClick={() => setIsCheckoutModalOpen(false)} 
+                                style={{ 
+                                    position: 'absolute',
+                                    top: '1.5rem',
+                                    right: '1.5rem',
+                                    background: '#f1f5f9', 
+                                    border: 'none', 
+                                    padding: '8px',
+                                    borderRadius: '50%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    cursor: 'pointer',
+                                    color: '#64748b',
+                                    zIndex: 10,
+                                    transition: 'all 0.2s'
+                                }}
+                                onMouseOver={(e) => e.currentTarget.style.background = '#e2e8f0'}
+                                onMouseOut={(e) => e.currentTarget.style.background = '#f1f5f9'}
+                            >
+                                <X size={20} weight="bold" />
+                            </button>
+                            <div style={{ marginBottom: '1.5rem' }}>
                                 <h2 style={{ fontWeight: 800 }}>Complete Your Order</h2>
-                                <button 
-                                    onClick={() => setIsCheckoutModalOpen(false)} 
-                                    style={{ 
-                                        background: '#f1f5f9', 
-                                        border: 'none', 
-                                        padding: '8px',
-                                        borderRadius: '50%',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        cursor: 'pointer',
-                                        color: '#64748b',
-                                        transition: 'all 0.2s'
-                                    }}
-                                    onMouseOver={(e) => e.currentTarget.style.background = '#e2e8f0'}
-                                    onMouseOut={(e) => e.currentTarget.style.background = '#f1f5f9'}
-                                >
-                                    <X size={20} weight="bold" />
-                                </button>
                             </div>
                             <form onSubmit={handleCheckout}>
                                 <div style={{ marginBottom: '1rem' }}>
