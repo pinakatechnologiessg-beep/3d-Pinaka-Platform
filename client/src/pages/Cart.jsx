@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../api/config';
-import { ArrowLeft, Trash, ShoppingCart, WhatsappLogo, CheckCircle, Package, MapPin, Phone, User as UserIcon } from '@phosphor-icons/react';
+import { ArrowLeft, Trash, ShoppingCart, WhatsappLogo, CheckCircle, Package, MapPin, Phone, User as UserIcon, X } from '@phosphor-icons/react';
 import { cartService, SHOW_TOAST } from '../services/cartService';
 import { getImageUrl } from '../utils/imageUtils';
 
@@ -268,7 +268,25 @@ const Cart = () => {
                         <div style={{ background: 'white', padding: '2.5rem', borderRadius: '20px', maxWidth: '500px', width: '90%', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                                 <h2 style={{ fontWeight: 800 }}>Complete Your Order</h2>
-                                <button onClick={() => setIsCheckoutModalOpen(false)} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>&times;</button>
+                                <button 
+                                    onClick={() => setIsCheckoutModalOpen(false)} 
+                                    style={{ 
+                                        background: '#f1f5f9', 
+                                        border: 'none', 
+                                        padding: '8px',
+                                        borderRadius: '50%',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        cursor: 'pointer',
+                                        color: '#64748b',
+                                        transition: 'all 0.2s'
+                                    }}
+                                    onMouseOver={(e) => e.currentTarget.style.background = '#e2e8f0'}
+                                    onMouseOut={(e) => e.currentTarget.style.background = '#f1f5f9'}
+                                >
+                                    <X size={20} weight="bold" />
+                                </button>
                             </div>
                             <form onSubmit={handleCheckout}>
                                 <div style={{ marginBottom: '1rem' }}>
