@@ -85,11 +85,7 @@ function App() {
     setTimeout(() => setToast({ show: false, message: '', type: 'success' }), 3000);
   };
 
-  useEffect(() => {
-    updateCartCount();
-    updateWishlistCount();
-    updateUser();
-
+  const fetchMeta = () => {
     fetch(`${API_BASE_URL}/api/products/meta`)
       .then(res => res.json())
       .then(data => {
@@ -99,6 +95,14 @@ function App() {
         }));
       })
       .catch(console.error);
+  };
+
+  useEffect(() => {
+    updateCartCount();
+    updateWishlistCount();
+    updateUser();
+
+    fetchMeta();
 
     const handleStorage = () => {
         updateCartCount();
@@ -109,11 +113,13 @@ function App() {
     window.addEventListener('storage', handleStorage);
     window.addEventListener(CART_UPDATED, updateCartCount);
     window.addEventListener(WISHLIST_UPDATED, updateWishlistCount);
+    window.addEventListener('META_UPDATED', fetchMeta);
     window.addEventListener(SHOW_TOAST, showToast);
     return () => {
       window.removeEventListener('storage', handleStorage);
       window.removeEventListener(CART_UPDATED, updateCartCount);
       window.removeEventListener(WISHLIST_UPDATED, updateWishlistCount);
+      window.removeEventListener('META_UPDATED', fetchMeta);
       window.removeEventListener(SHOW_TOAST, showToast);
     };
   }, []);

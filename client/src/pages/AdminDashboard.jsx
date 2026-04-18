@@ -1420,6 +1420,7 @@ const AdminDashboard = () => {
                                     
                                     // Silent Background Refresh
                                     fetch(`${BASE_URL}/api/stats`).then(s => s.json()).then(newData => setStats(newData)).catch(() => {});
+                                    window.dispatchEvent(new Event('META_UPDATED'));
                                     
                                     setIsAddModalOpen(false);
                                     setNewProduct({ name: '', category: 'FDM', price: '', mrp: '', inStock: true, stockQuantity: 0, image: '', rating: 5.0, featured: false, tags: 'None', badgeStyle: null, description: '', brand: 'Anycubic', otherCategory: '', condition: 'New', specifications: [{ key: '', value: '' }] });
@@ -1741,6 +1742,7 @@ const AdminDashboard = () => {
                                 if(res.ok) {
                                     const updatedProduct = await res.json();
                                     setAdminProducts(prev => prev.map(p => p._id === updatedProduct._id ? updatedProduct : p));
+                                    window.dispatchEvent(new Event('META_UPDATED'));
                                     setIsEditModalOpen(false);
                                     showToast('Successfully updated product!', 'success');
                                 } else {

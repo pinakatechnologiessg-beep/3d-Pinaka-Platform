@@ -41,8 +41,8 @@ router.get('/meta', async (req, res) => {
     };
 
     res.json({ 
-        brands: [...new Set(brands.filter(Boolean).map(normalize))].sort(), 
-        categories: [...new Set(categories.filter(Boolean).map(normalize))].sort() 
+        brands: [...new Set(brands.filter(Boolean).map(normalize).filter(b => b.toLowerCase() !== 'other'))].sort(), 
+        categories: [...new Set(categories.filter(Boolean).map(normalize).filter(c => c.toLowerCase() !== 'other'))].sort() 
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
