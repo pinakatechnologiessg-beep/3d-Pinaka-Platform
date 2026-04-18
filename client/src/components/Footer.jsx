@@ -48,7 +48,7 @@ const Footer = () => {
         </div>
       </div>
       <div className="container footer-bottom">
-        <p>@2023 3DPinaka.com. All rights reserved.</p>
+        <p>@2023 3dpinaka.in. All rights reserved.</p>
       </div>
     </footer>
   );

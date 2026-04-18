@@ -1,4 +1,4 @@
-const PRODUCTION_BACKEND_URL = "https://threed-pinaka-platform.onrender.com";
+const PRODUCTION_BACKEND_URL = import.meta.env.VITE_API_URL || "https://threed-pinaka-platform.onrender.com";
 const LOCAL_BACKEND_URL = "http://localhost:10000";
 
 // Ultra-stable cloud-based placeholder (Unsplash transparent/icon)
