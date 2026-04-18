@@ -23,6 +23,7 @@ import TermsAndConditions from './pages/TermsAndConditions';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import { Navigate } from 'react-router-dom';
 import { cartService, CART_UPDATED, WISHLIST_UPDATED, SHOW_TOAST } from './services/cartService';
+import { API_BASE_URL } from './api/config';
 import './index.css';
 
 // Scroll to top on route change
@@ -57,6 +58,11 @@ function App() {
     refurbishedCategories: false
   });
 
+  const [meta, setMeta] = useState({
+    brands: ['Anycubic', 'Bambu Lab', 'Creality', 'Snapmaker', 'Rotrics', 'Flashforge', 'Skriware', 'Magforms', 'Zmorph', 'Sunlu', 'Elegoo'],
+    categories: ['3D Printer', 'Laser Engraver', 'Food Printer', '3D Scanner', 'CNC Router', 'Robotics', '3D Pen', 'Filament', 'Resin', 'Spare Parts', 'Accessory']
+  });
+
   const updateCartCount = () => {
     setCartCount(cartService.getCartCount());
   };
@@ -83,6 +89,16 @@ function App() {
     updateCartCount();
     updateWishlistCount();
     updateUser();
+
+    fetch(`${API_BASE_URL}/api/products/meta`)
+      .then(res => res.json())
+      .then(data => {
+        setMeta(prev => ({
+          brands: data.brands?.length ? data.brands : prev.brands,
+          categories: data.categories?.length ? data.categories : prev.categories
+        }));
+      })
+      .catch(console.error);
 
     const handleStorage = () => {
         updateCartCount();
@@ -132,6 +148,7 @@ function App() {
           cartCount={cartCount} 
           wishlistCount={wishlistCount}
           toggleMobileMenu={toggleMobileMenu} 
+          meta={meta}
         />
 
         {toast.show && (
@@ -150,6 +167,7 @@ function App() {
           toggleDropdown={toggleDropdown}
           cartCount={cartCount}
           wishlistCount={wishlistCount}
+          meta={meta}
         />
 
         <Routes>

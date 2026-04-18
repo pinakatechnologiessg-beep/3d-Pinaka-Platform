@@ -7,7 +7,7 @@ import { API_BASE_URL } from '../api/config';
 import Logo from './Logo';
 import MaterialsMenu from './MaterialsMenu';
 
-const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu }) => {
+const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu, meta }) => {
   const [showAdminAlert, setShowAdminAlert] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -87,17 +87,9 @@ const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu }) => {
                     <Link to="/products" className="view-all">VIEW ALL</Link>
                   </div>
                   <ul className="mega-list">
-                    <li><Link to="/products?brand=anycubic">Anycubic</Link></li>
-                    <li><Link to="/products?brand=bambu lab">Bambu Lab</Link></li>
-                    <li><Link to="/products?brand=creality">Creality</Link></li>
-                    <li><Link to="/products?brand=snapmaker">Snapmaker</Link></li>
-                    <li><Link to="/products?brand=rotrics">Rotrics</Link></li>
-                    <li><Link to="/products?brand=flashforge">Flashforge</Link></li>
-                    <li><Link to="/products?brand=skriware">Skriware</Link></li>
-                    <li><Link to="/products?brand=magforms">Magforms</Link></li>
-                    <li><Link to="/products?brand=zmorph">Zmorph</Link></li>
-                    <li><Link to="/products?brand=sunlu">Sunlu</Link></li>
-                    <li><Link to="/products?brand=elegoo">Elegoo</Link></li>
+                    {meta?.brands?.map((brand) => (
+                      <li key={brand}><Link to={`/products?brand=${encodeURIComponent(brand)}`}>{brand}</Link></li>
+                    ))}
                   </ul>
                 </div>
                 <div className="mega-col">
@@ -105,17 +97,9 @@ const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu }) => {
                     <h4>CATEGORIES</h4>
                   </div>
                   <ul className="mega-list">
-                    <li><Link to="/products?category=3D Printer">3D Printer <span className="hot-badge">Hot</span></Link></li>
-                    <li><Link to="/products?category=Laser Engraver">Laser Engraver</Link></li>
-                    <li><Link to="/products?category=Food Printer">Food Printer</Link></li>
-                    <li><Link to="/products?category=3D Scanner">3D Scanner</Link></li>
-                    <li><Link to="/products?category=CNC Router">CNC Router</Link></li>
-                    <li><Link to="/products?category=Robotics">Robotics</Link></li>
-                    <li><Link to="/products?category=3D Pen">3D Pen</Link></li>
-                    <li><Link to="/products?category=Filament">Filament</Link></li>
-                    <li><Link to="/products?category=Resin">Resin</Link></li>
-                    <li><Link to="/products?category=Spare Parts">Spare Parts</Link></li>
-                    <li><Link to="/products?category=Accessory">Accessory</Link></li>
+                    {meta?.categories?.map((category) => (
+                      <li key={category}><Link to={`/products?category=${encodeURIComponent(category)}`}>{category} {category === '3D Printer' ? <span className="hot-badge">Hot</span> : null}</Link></li>
+                    ))}
                   </ul>
                 </div>
                 <div className="mega-col" style={{ borderRight: 'none', paddingRight: 0 }}>
@@ -158,16 +142,9 @@ const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu }) => {
                     <h4>Categories</h4>
                   </div>
                   <ul className="mega-list">
-                    <li><Link to="/products?condition=Refurbished&category=3D Printer">3D Printer</Link></li>
-                    <li><Link to="/products?condition=Refurbished&category=Laser Engraver">Laser Engraver</Link></li>
-                    <li><Link to="/products?condition=Refurbished&category=Food Printer">Food Printer</Link></li>
-                    <li><Link to="/products?condition=Refurbished&category=3D Scanner">3D Scanner</Link></li>
-                    <li><Link to="/products?condition=Refurbished&category=CNC Router">CNC Router</Link></li>
-                    <li><Link to="/products?condition=Refurbished&category=3D Pen">3D Pen</Link></li>
-                    <li><Link to="/products?condition=Refurbished&category=Filament">Filament</Link></li>
-                    <li><Link to="/products?condition=Refurbished&category=Resin">Resin</Link></li>
-                    <li><Link to="/products?condition=Refurbished&category=Spare Parts">Spare Parts</Link></li>
-                    <li><Link to="/products?condition=Refurbished&category=Accessory">Accessory</Link></li>
+                    {meta?.categories?.map((category) => (
+                      <li key={category}><Link to={`/products?condition=Refurbished&category=${encodeURIComponent(category)}`}>{category}</Link></li>
+                    ))}
                   </ul>
                 </div>
                 <div className="mega-col products-col">

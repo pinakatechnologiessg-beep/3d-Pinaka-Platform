@@ -5,7 +5,7 @@ const productSchema = new mongoose.Schema({
   price: { type: Number, required: true },
   mrp: { type: Number },
   discount: { type: Number, default: 0 },
-  category: { type: String, required: true },
+  category: { type: String, required: true, trim: true },
   image: { type: String, required: true },
   images: [{ type: String }],
   rating: { type: Number, default: 5.0 },
@@ -14,7 +14,7 @@ const productSchema = new mongoose.Schema({
   inStock: { type: Boolean, default: true },
   stockQuantity: { type: Number, default: 0 },
   featured: { type: Boolean, default: false },
-  brand: { type: String, required: true },
+  brand: { type: String, required: true, trim: true },
   condition: { type: String, enum: ['New', 'Refurbished'], default: 'New' },
   description: { type: String },
   specifications: [

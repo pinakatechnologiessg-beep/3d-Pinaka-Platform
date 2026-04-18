@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { X, CaretDown, House, Storefront, Flask, ChatTeardropText, User, Users, ShoppingCart, Heart, MagnifyingGlass, Plus, Minus, SquaresFour, ShoppingBag, Gear, Package, Bell } from '@phosphor-icons/react';
 
-const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, cartCount, wishlistCount }) => {
+const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, cartCount, wishlistCount, meta }) => {
   const location = useLocation();
   return (
     <>
@@ -118,31 +118,15 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
                     {/* ... nested items ... */}
                     {item.key === 'brands' ? (
                       <>
-                        <li><Link to="/products?brand=Anycubic" onClick={onClose}>Anycubic</Link></li>
-                        <li><Link to="/products?brand=Bambu Lab" onClick={onClose}>Bambu Lab</Link></li>
-                        <li><Link to="/products?brand=Creality" onClick={onClose}>Creality</Link></li>
-                        <li><Link to="/products?brand=Snapmaker" onClick={onClose}>Snapmaker</Link></li>
-                        <li><Link to="/products?brand=Rotrics" onClick={onClose}>Rotrics</Link></li>
-                        <li><Link to="/products?brand=Flashforge" onClick={onClose}>Flashforge</Link></li>
-                        <li><Link to="/products?brand=Skriware" onClick={onClose}>Skriware</Link></li>
-                        <li><Link to="/products?brand=Magforms" onClick={onClose}>Magforms</Link></li>
-                        <li><Link to="/products?brand=Zmorph" onClick={onClose}>Zmorph</Link></li>
-                        <li><Link to="/products?brand=Sunlu" onClick={onClose}>Sunlu</Link></li>
-                        <li><Link to="/products?brand=Elegoo" onClick={onClose}>Elegoo</Link></li>
+                        {meta?.brands?.map((brand) => (
+                           <li key={brand}><Link to={`/products?brand=${encodeURIComponent(brand)}`} onClick={onClose}>{brand}</Link></li>
+                        ))}
                       </>
                     ) : item.key === 'categories' ? (
                       <>
-                        <li><Link to="/products?category=3D Printer" onClick={onClose}>3D Printer</Link></li>
-                        <li><Link to="/products?category=Laser Engraver" onClick={onClose}>Laser Engraver</Link></li>
-                        <li><Link to="/products?category=Food Printer" onClick={onClose}>Food Printer</Link></li>
-                        <li><Link to="/products?category=3D Scanner" onClick={onClose}>3D Scanner</Link></li>
-                        <li><Link to="/products?category=CNC Router" onClick={onClose}>CNC Router</Link></li>
-                        <li><Link to="/products?category=Robotics" onClick={onClose}>Robotics</Link></li>
-                        <li><Link to="/products?category=3D Pen" onClick={onClose}>3D Pen</Link></li>
-                        <li><Link to="/products?category=Filament" onClick={onClose}>Filament</Link></li>
-                        <li><Link to="/products?category=Resin" onClick={onClose}>Resin</Link></li>
-                        <li><Link to="/products?category=Spare Parts" onClick={onClose}>Spare Parts</Link></li>
-                        <li><Link to="/products?category=Accessory" onClick={onClose}>Accessory</Link></li>
+                        {meta?.categories?.map((category) => (
+                           <li key={category}><Link to={`/products?category=${encodeURIComponent(category)}`} onClick={onClose}>{category}</Link></li>
+                        ))}
                       </>
                     ) : item.key === 'exclusive' ? (
                       <>
@@ -171,16 +155,9 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
                         </div>
                         {activeDropdowns.refurbishedCategories && (
                         <ul className="menu-dropdown-items nested-items" style={{ display: 'block', background: 'transparent' }}>
-                            <li><Link to="/products?condition=Refurbished&category=3D Printer" onClick={onClose}><span className="bullet">•</span> 3D Printer</Link></li>
-                            <li><Link to="/products?condition=Refurbished&category=Laser Engraver" onClick={onClose}><span className="bullet">•</span> Laser Engraver</Link></li>
-                            <li><Link to="/products?condition=Refurbished&category=Food Printer" onClick={onClose}><span className="bullet">•</span> Food Printer</Link></li>
-                            <li><Link to="/products?condition=Refurbished&category=3D Scanner" onClick={onClose}><span className="bullet">•</span> 3D Scanner</Link></li>
-                            <li><Link to="/products?condition=Refurbished&category=CNC Router" onClick={onClose}><span className="bullet">•</span> CNC Router</Link></li>
-                            <li><Link to="/products?condition=Refurbished&category=3D Pen" onClick={onClose}><span className="bullet">•</span> 3D Pen</Link></li>
-                            <li><Link to="/products?condition=Refurbished&category=Filament" onClick={onClose}><span className="bullet">•</span> Filament</Link></li>
-                            <li><Link to="/products?condition=Refurbished&category=Resin" onClick={onClose}><span className="bullet">•</span> Resin</Link></li>
-                            <li><Link to="/products?condition=Refurbished&category=Spare Parts" onClick={onClose}><span className="bullet">•</span> Spare Parts</Link></li>
-                            <li><Link to="/products?condition=Refurbished&category=Accessory" onClick={onClose}><span className="bullet">•</span> Accessory</Link></li>
+                            {meta?.categories?.map((category) => (
+                               <li key={category}><Link to={`/products?condition=Refurbished&category=${encodeURIComponent(category)}`} onClick={onClose}><span className="bullet">•</span> {category}</Link></li>
+                            ))}
                         </ul>
                         )}
                       </div>

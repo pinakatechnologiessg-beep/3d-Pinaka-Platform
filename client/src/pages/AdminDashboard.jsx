@@ -49,7 +49,7 @@ const AdminDashboard = () => {
   const [newProduct, setNewProduct] = useState({
       name: '', category: 'FDM', price: '', mrp: '', discount: 0,
       inStock: true, stockQuantity: 0, image: '', rating: 5.0, tags: 'None', badgeStyle: null, description: '',
-      brand: 'Anycubic', otherCategory: '', condition: 'New',
+      brand: 'Anycubic', otherBrand: '', otherCategory: '', condition: 'New',
       specifications: [{ key: '', value: '' }]
   });
 
@@ -630,7 +630,20 @@ const AdminDashboard = () => {
                                     title="Edit Product Details"
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        setEditProductState({...product, discount: product.discount || 0, stockQuantity: (typeof product.stockQuantity === 'number') ? product.stockQuantity : (parseInt(product.stockQuantity) || 0)});
+                                        const predefinedBrands = ['Anycubic', 'Bambu Lab', 'Creality', 'Snapmaker', 'Rotrics', 'Flashforge', 'Skriware', 'Magforms', 'Zmorph', 'Sunlu', 'Elegoo'];
+                                        const isPredefinedBrand = product.brand && predefinedBrands.includes(product.brand);
+                                        const predefinedCategories = ['FDM', 'Resin', 'Filament', 'Accessory', 'Spare Parts', '3D Pen', '3D Scanner', 'Laser Engraver', 'CNC Router', 'Food Printer', 'Robotics'];
+                                        const isPredefinedCategory = product.category && predefinedCategories.includes(product.category);
+
+                                        setEditProductState({
+                                            ...product, 
+                                            discount: product.discount || 0, 
+                                            stockQuantity: (typeof product.stockQuantity === 'number') ? product.stockQuantity : (parseInt(product.stockQuantity) || 0),
+                                            brand: isPredefinedBrand ? product.brand : 'Other',
+                                            otherBrand: isPredefinedBrand ? '' : product.brand,
+                                            category: isPredefinedCategory ? product.category : 'Other',
+                                            otherCategory: isPredefinedCategory ? '' : product.category
+                                        });
                                         setEditImagePreview(product.image?.startsWith('/uploads') ? `${BASE_URL}${product.image}` : product.image);
                                         setEditSelectedFile(null);
                                         // Initialize additional images in the correct slots (max 5)
@@ -1147,7 +1160,17 @@ const AdminDashboard = () => {
                           {['Anycubic', 'Bambu Lab', 'Creality', 'Snapmaker', 'Rotrics', 'Flashforge', 'Skriware', 'Magforms', 'Zmorph', 'Sunlu', 'Elegoo'].map(b => (
                               <option key={b} value={b}>{b}</option>
                           ))}
+                          <option value="Other">Other (Manually Input)</option>
                       </select>
+                      {newProduct.brand === 'Other' && (
+                          <input 
+                              type="text" 
+                              placeholder="Enter Custom Brand" 
+                              value={newProduct.otherBrand || ''} 
+                              onChange={e => setNewProduct({...newProduct, otherBrand: e.target.value})}
+                              style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none', marginTop: '0.5rem' }}
+                          />
+                      )}
                     </div>
                     <div>
                       <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Category</label>
@@ -1367,7 +1390,7 @@ const AdminDashboard = () => {
                                 formData.append('name', newProduct.name);
                                 formData.append('category', newProduct.category === 'Other' ? newProduct.otherCategory : newProduct.category);
                                 formData.append('featured', newProduct.featured || false);
-                                formData.append('brand', newProduct.brand);
+                                formData.append('brand', newProduct.brand === 'Other' ? newProduct.otherBrand : newProduct.brand);
                                 formData.append('price', newProduct.price);
                                 formData.append('mrp', newProduct.mrp);
                                 formData.append('discount', newProduct.discount || 0);
@@ -1460,7 +1483,17 @@ const AdminDashboard = () => {
                           {['Anycubic', 'Bambu Lab', 'Creality', 'Snapmaker', 'Rotrics', 'Flashforge', 'Skriware', 'Magforms', 'Zmorph', 'Sunlu', 'Elegoo'].map(b => (
                               <option key={b} value={b}>{b}</option>
                           ))}
+                          <option value="Other">Other (Manually Input)</option>
                       </select>
+                      {editProductState.brand === 'Other' && (
+                          <input 
+                              type="text" 
+                              placeholder="Enter Custom Brand" 
+                              value={editProductState.otherBrand || ''} 
+                              onChange={e => setEditProductState({...editProductState, otherBrand: e.target.value})}
+                              style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none', marginTop: '0.5rem' }}
+                          />
+                      )}
                     </div>
                     <div>
                       <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Category</label>
@@ -1678,7 +1711,7 @@ const AdminDashboard = () => {
                                 const formData = new FormData();
                                 formData.append('name', editProductState.name);
                                 formData.append('category', editProductState.category === 'Other' ? editProductState.otherCategory : editProductState.category);
-                                formData.append('brand', editProductState.brand || 'Custom');
+                                formData.append('brand', editProductState.brand === 'Other' ? editProductState.otherBrand : (editProductState.brand || 'Custom'));
                                 formData.append('price', editProductState.price);
                                 if (editProductState.mrp) formData.append('mrp', editProductState.mrp);
                                 formData.append('discount', editProductState.discount || 0);
