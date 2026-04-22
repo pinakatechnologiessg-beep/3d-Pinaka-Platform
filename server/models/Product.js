@@ -17,6 +17,7 @@ const productSchema = new mongoose.Schema({
   brand: { type: String, required: true, trim: true },
   condition: { type: String, enum: ['New', 'Refurbished'], default: 'New' },
   description: { type: String },
+  descriptionImages: [{ type: String }],
   specifications: [
     {
       key: { type: String },

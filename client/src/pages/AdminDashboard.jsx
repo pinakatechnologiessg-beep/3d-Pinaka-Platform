@@ -64,6 +64,10 @@ const AdminDashboard = () => {
   const [additionalImagePreviews, setAdditionalImagePreviews] = useState([null, null, null, null, null]);
   const [editAdditionalSelectedFiles, setEditAdditionalSelectedFiles] = useState([null, null, null, null, null]);
   const [editAdditionalImagePreviews, setEditAdditionalImagePreviews] = useState([null, null, null, null, null]);
+  const [descSelectedFiles, setDescSelectedFiles] = useState([null, null, null, null]);
+  const [descImagePreviews, setDescImagePreviews] = useState([null, null, null, null]);
+  const [editDescSelectedFiles, setEditDescSelectedFiles] = useState([null, null, null, null]);
+  const [editDescImagePreviews, setEditDescImagePreviews] = useState([null, null, null, null]);
 
   // --- Orders State ---
   const [orders, setOrders] = useState([]);
@@ -97,12 +101,21 @@ const AdminDashboard = () => {
             body: JSON.stringify({ status: newStatus })
         });
         if (res.ok) {
-            setOrders(prev => prev.map(o => o.orderId === orderId ? { ...o, status: newStatus } : o));
+            const updatedData = await res.json();
+            setOrders(prev => prev.map(o => o.orderId === orderId ? updatedData : o));
             if (selectedOrderDetails && selectedOrderDetails.orderId === orderId) {
-                setSelectedOrderDetails(prev => ({ ...prev, status: newStatus }));
+                setSelectedOrderDetails(updatedData);
             }
             
-            // Refresh stats to ensure Total Sales, Pending Orders instantly reflect changes without page reload.
+            // Send WhatsApp notification
+            if (updatedData.phone) {
+                const cleanPhone = updatedData.phone.replace(/\D/g, '');
+                const finalPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
+                const msg = `Hello ${updatedData.firstName || updatedData.customerName || 'Customer'}, your order *${updatedData.orderId}* status has been updated to: *${updatedData.status}*.%0A%0ACheck details here: https://3dpinaka.in/account%0A%0AThank you for choosing 3D Pinaka!`;
+                window.open(`https://wa.me/${finalPhone}?text=${msg}`, '_blank');
+            }
+            
+            // Refresh stats
             try {
                 const statsRes = await fetch(`${BASE_URL}/api/stats`);
                 if (statsRes.ok) setStats(await statsRes.json());
@@ -122,10 +135,19 @@ const AdminDashboard = () => {
   const getOrderBadgeStyle = (status) => {
     switch(status) {
         case 'Pending': return { background: '#fef3c7', color: '#d97706', border: '1px solid #fde68a' };
+        case 'Order Confirmed': 
         case 'Confirmed': return { background: '#dbeafe', color: '#2563eb', border: '1px solid #bfdbfe' };
-        case 'Printing': return { background: '#f3e8ff', color: '#9333ea', border: '1px solid #e9d5ff' };
+        case 'Processing': 
+        case 'Printing': return { background: '#e0f2fe', color: '#0ea5e9', border: '1px solid #bae6fd' };
+        case 'Packed / Ready for Dispatch': return { background: '#fef9c3', color: '#a16207', border: '1px solid #fef08a' };
+        case 'Shipped / Dispatched': return { background: '#fae8ff', color: '#a21caf', border: '1px solid #f5d0fe' };
+        case 'In Transit': return { background: '#e0e7ff', color: '#4338ca', border: '1px solid #c7d2fe' };
+        case 'Out for Delivery': return { background: '#f0f9ff', color: '#0369a1', border: '1px solid #e0f2fe' };
         case 'Delivered': return { background: '#dcfce7', color: '#16a34a', border: '1px solid #bbf7d0' };
-        default: return { background: '#f1f5f9', color: '#475569', border: '1px solid #e2e8f0' };
+        case 'Attempted Delivery': return { background: '#fee2e2', color: '#dc2626', border: '1px solid #fecaca' };
+        case 'Delayed': return { background: '#ffedd5', color: '#c2410c', border: '1px solid #fed7aa' };
+        case 'Completed': return { background: '#f1f5f9', color: '#0f172a', border: '1px solid #e2e8f0' };
+        default: return { background: '#f8fafc', color: '#64748b', border: '1px solid #e2e8f0' };
     }
   };
   // --------------------
@@ -231,6 +253,45 @@ const AdminDashboard = () => {
         newPreviews[index] = null;
         setAdditionalSelectedFiles(newFiles);
         setAdditionalImagePreviews(newPreviews);
+    }
+  };
+
+  const handleDescImageUpload = (e, index, isEdit = false) => {
+    const file = e.target.files[0];
+    if (file) {
+        if (isEdit) {
+            const newFiles = [...editDescSelectedFiles];
+            const newPreviews = [...editDescImagePreviews];
+            newFiles[index] = file;
+            newPreviews[index] = URL.createObjectURL(file);
+            setEditDescSelectedFiles(newFiles);
+            setEditDescImagePreviews(newPreviews);
+        } else {
+            const newFiles = [...descSelectedFiles];
+            const newPreviews = [...descImagePreviews];
+            newFiles[index] = file;
+            newPreviews[index] = URL.createObjectURL(file);
+            setDescSelectedFiles(newFiles);
+            setDescImagePreviews(newPreviews);
+        }
+    }
+  };
+
+  const handleRemoveDescImage = (index, isEdit = false) => {
+    if (isEdit) {
+        const newFiles = [...editDescSelectedFiles];
+        const newPreviews = [...editDescImagePreviews];
+        newFiles[index] = null;
+        newPreviews[index] = null;
+        setEditDescSelectedFiles(newFiles);
+        setEditDescImagePreviews(newPreviews);
+    } else {
+        const newFiles = [...descSelectedFiles];
+        const newPreviews = [...descImagePreviews];
+        newFiles[index] = null;
+        newPreviews[index] = null;
+        setDescSelectedFiles(newFiles);
+        setDescImagePreviews(newPreviews);
     }
   };
 
@@ -534,9 +595,16 @@ const AdminDashboard = () => {
                               }}
                             >
                               <option value="Pending" style={{ background: 'white', color: '#d97706' }}>Pending</option>
-                              <option value="Confirmed" style={{ background: 'white', color: '#2563eb' }}>Confirmed</option>
-                              <option value="Printing" style={{ background: 'white', color: '#9333ea' }}>Printing</option>
+                              <option value="Order Confirmed" style={{ background: 'white', color: '#2563eb' }}>Order Confirmed</option>
+                              <option value="Processing" style={{ background: 'white', color: '#0ea5e9' }}>Processing</option>
+                              <option value="Packed / Ready for Dispatch" style={{ background: 'white', color: '#a16207' }}>Packed / Ready for Dispatch</option>
+                              <option value="Shipped / Dispatched" style={{ background: 'white', color: '#a21caf' }}>Shipped / Dispatched</option>
+                              <option value="In Transit" style={{ background: 'white', color: '#4338ca' }}>In Transit</option>
+                              <option value="Out for Delivery" style={{ background: 'white', color: '#0369a1' }}>Out for Delivery</option>
                               <option value="Delivered" style={{ background: 'white', color: '#16a34a' }}>Delivered</option>
+                              <option value="Attempted Delivery" style={{ background: 'white', color: '#dc2626' }}>Attempted Delivery</option>
+                              <option value="Delayed" style={{ background: 'white', color: '#c2410c' }}>Delayed</option>
+                              <option value="Completed" style={{ background: 'white', color: '#0f172a' }}>Completed</option>
                             </select>
                           </td>
                           <td style={{ padding: '16px' }}>
@@ -655,6 +723,16 @@ const AdminDashboard = () => {
                                         }
                                         setEditAdditionalImagePreviews(initialPreviews);
                                         setEditAdditionalSelectedFiles([null, null, null, null, null]);
+
+                                        const initialDescPreviews = [null, null, null, null];
+                                        if (product.descriptionImages) {
+                                            product.descriptionImages.slice(0, 4).forEach((img, i) => {
+                                                initialDescPreviews[i] = img;
+                                            });
+                                        }
+                                        setEditDescImagePreviews(initialDescPreviews);
+                                        setEditDescSelectedFiles([null, null, null, null]);
+
                                         setIsEditModalOpen(true);
                                     }}
                                     style={{ background: 'white', border: 'none', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', color: '#3b82f6', transition: 'all 0.2s' }}
@@ -770,7 +848,12 @@ const AdminDashboard = () => {
             <div className="orders-mgmt-header">
               <h2 className="orders-mgmt-title">Orders Management</h2>
               <div className="status-filter-scroll">
-                {['All Orders', 'Pending', 'Confirmed', 'Printing', 'Delivered'].map(status => (
+                {[
+                  'All Orders', 'Pending', 'Order Confirmed', 'Processing', 
+                  'Packed / Ready for Dispatch', 'Shipped / Dispatched', 
+                  'In Transit', 'Out for Delivery', 'Delivered', 
+                  'Attempted Delivery', 'Delayed', 'Completed'
+                ].map(status => (
                   <button 
                     key={status}
                     onClick={() => setOrderFilter(status)}
@@ -828,9 +911,16 @@ const AdminDashboard = () => {
                             }}
                           >
                             <option value="Pending" style={{ background: 'white', color: '#d97706' }}>Pending</option>
-                            <option value="Confirmed" style={{ background: 'white', color: '#2563eb' }}>Confirmed</option>
-                            <option value="Printing" style={{ background: 'white', color: '#9333ea' }}>Printing</option>
+                            <option value="Order Confirmed" style={{ background: 'white', color: '#2563eb' }}>Order Confirmed</option>
+                            <option value="Processing" style={{ background: 'white', color: '#0ea5e9' }}>Processing</option>
+                            <option value="Packed / Ready for Dispatch" style={{ background: 'white', color: '#a16207' }}>Packed / Ready for Dispatch</option>
+                            <option value="Shipped / Dispatched" style={{ background: 'white', color: '#a21caf' }}>Shipped / Dispatched</option>
+                            <option value="In Transit" style={{ background: 'white', color: '#4338ca' }}>In Transit</option>
+                            <option value="Out for Delivery" style={{ background: 'white', color: '#0369a1' }}>Out for Delivery</option>
                             <option value="Delivered" style={{ background: 'white', color: '#16a34a' }}>Delivered</option>
+                            <option value="Attempted Delivery" style={{ background: 'white', color: '#dc2626' }}>Attempted Delivery</option>
+                            <option value="Delayed" style={{ background: 'white', color: '#c2410c' }}>Delayed</option>
+                            <option value="Completed" style={{ background: 'white', color: '#0f172a' }}>Completed</option>
                           </select>
                         </td>
                         <td style={{ padding: '16px', textAlign: 'center' }}>
@@ -1310,6 +1400,35 @@ const AdminDashboard = () => {
                    />
                 </div>
 
+                <div style={{ marginTop: '0.5rem' }}>
+                   <label style={{ display: 'block', marginBottom: '0.8rem', fontWeight: 600, color: '#334155', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.5rem' }}>Description Images (Optional for Content)</label>
+                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }}>
+                       {descImagePreviews.map((src, i) => (
+                           <div key={i}>
+                               <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '2px dashed #cbd5e1', borderRadius: '8px', padding: '1rem', cursor: 'pointer', background: '#f8fafc', height: '100px', position: 'relative', transition: 'all 0.2s' }}>
+                                   {src ? (
+                                       <>
+                                           <img src={getImageUrl(src)} alt={`Desc ${i+1}`} style={{ height: '100%', width: '100%', objectFit: 'contain' }} />
+                                           <button 
+                                               type="button"
+                                               onClick={(e) => { e.stopPropagation(); handleRemoveDescImage(i, false); }} 
+                                               style={{ position: 'absolute', top: '5px', right: '5px', background: 'white', borderRadius: '50%', width: '22px', height: '22px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ef4444', border: '1px solid #fee2e2', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+                                               <X size={12} weight="bold" />
+                                           </button>
+                                       </>
+                                   ) : (
+                                       <>
+                                          <UploadSimple size={20} color="#94a3b8" />
+                                          <span style={{ fontSize: '10px', color: '#94a3b8', marginTop: '4px' }}>Image {i+1}</span>
+                                       </>
+                                   )}
+                                   <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleDescImageUpload(e, i, false)} />
+                               </label>
+                           </div>
+                       ))}
+                   </div>
+                </div>
+
                 <div>
                    <label style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem', fontWeight: 600, color: '#334155' }}>
                       Specifications
@@ -1406,6 +1525,9 @@ const AdminDashboard = () => {
                                 additionalSelectedFiles.forEach(file => {
                                     if (file) formData.append('images', file);
                                 });
+                                descSelectedFiles.forEach(file => {
+                                    if (file) formData.append('descriptionImages', file);
+                                });
 
                                 const res = await fetch(`${BASE_URL}/api/products`, {
                                     method: 'POST',
@@ -1428,6 +1550,8 @@ const AdminDashboard = () => {
                                     setSelectedFile(null);
                                     setAdditionalSelectedFiles([null, null, null, null, null]);
                                     setAdditionalImagePreviews([null, null, null, null, null]);
+                                    setDescSelectedFiles([null, null, null, null]);
+                                    setDescImagePreviews([null, null, null, null]);
                                     showToast('Success: Product added to catalog!', 'success');
                                 } else {
                                     showToast(data.message || 'Server Error: Could not add product', 'error');
@@ -1639,6 +1763,35 @@ const AdminDashboard = () => {
                    />
                 </div>
 
+                <div style={{ marginTop: '0.5rem' }}>
+                   <label style={{ display: 'block', marginBottom: '0.8rem', fontWeight: 600, color: '#334155', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.5rem' }}>Description Images (Optional for Content)</label>
+                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }}>
+                       {editDescImagePreviews.map((src, i) => (
+                           <div key={i}>
+                               <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '2px dashed #cbd5e1', borderRadius: '8px', padding: '1rem', cursor: 'pointer', background: '#f8fafc', height: '100px', position: 'relative', transition: 'all 0.2s' }}>
+                                   {src ? (
+                                       <>
+                                           <img src={getImageUrl(src)} alt={`Desc ${i+1}`} style={{ height: '100%', width: '100%', objectFit: 'contain' }} />
+                                           <button 
+                                               type="button"
+                                               onClick={(e) => { e.stopPropagation(); handleRemoveDescImage(i, true); }} 
+                                               style={{ position: 'absolute', top: '5px', right: '5px', background: 'white', borderRadius: '50%', width: '22px', height: '22px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ef4444', border: '1px solid #fee2e2', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+                                               <X size={12} weight="bold" />
+                                           </button>
+                                       </>
+                                   ) : (
+                                       <>
+                                          <UploadSimple size={20} color="#94a3b8" />
+                                          <span style={{ fontSize: '10px', color: '#94a3b8', marginTop: '4px' }}>Image {i+1}</span>
+                                       </>
+                                   )}
+                                   <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleDescImageUpload(e, i, true)} />
+                               </label>
+                           </div>
+                       ))}
+                   </div>
+                </div>
+
                 <div>
                    <label style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem', fontWeight: 600, color: '#334155' }}>
                       Specifications
@@ -1731,8 +1884,15 @@ const AdminDashboard = () => {
                                 const existingToKeep = editAdditionalImagePreviews.filter(src => src && !src.startsWith('blob:'));
                                 formData.append('existingImages', JSON.stringify(existingToKeep));
 
+                                const existingDescToKeep = editDescImagePreviews.filter(src => src && !src.startsWith('blob:'));
+                                formData.append('existingDescImages', JSON.stringify(existingDescToKeep));
+
                                 editAdditionalSelectedFiles.forEach(file => {
                                     if (file) formData.append('images', file);
+                                });
+
+                                editDescSelectedFiles.forEach(file => {
+                                    if (file) formData.append('descriptionImages', file);
                                 });
 
                                 const res = await fetch(`${BASE_URL}/api/products/${editProductState._id}`, {
@@ -1825,9 +1985,16 @@ const AdminDashboard = () => {
                    style={{ padding: '8px 12px', borderRadius: '20px', outline: 'none', fontWeight: 600, cursor: 'pointer', ...getOrderBadgeStyle(selectedOrderDetails.status), transition: 'all 0.3s ease', appearance: 'none', textAlign: 'center' }}
                  >
                     <option value="Pending" style={{ background: 'white', color: '#d97706' }}>Pending</option>
-                    <option value="Confirmed" style={{ background: 'white', color: '#2563eb' }}>Confirmed</option>
-                    <option value="Printing" style={{ background: 'white', color: '#9333ea' }}>Printing</option>
+                    <option value="Order Confirmed" style={{ background: 'white', color: '#2563eb' }}>Order Confirmed</option>
+                    <option value="Processing" style={{ background: 'white', color: '#0ea5e9' }}>Processing</option>
+                    <option value="Packed / Ready for Dispatch" style={{ background: 'white', color: '#a16207' }}>Packed / Ready for Dispatch</option>
+                    <option value="Shipped / Dispatched" style={{ background: 'white', color: '#a21caf' }}>Shipped / Dispatched</option>
+                    <option value="In Transit" style={{ background: 'white', color: '#4338ca' }}>In Transit</option>
+                    <option value="Out for Delivery" style={{ background: 'white', color: '#0369a1' }}>Out for Delivery</option>
                     <option value="Delivered" style={{ background: 'white', color: '#16a34a' }}>Delivered</option>
+                    <option value="Attempted Delivery" style={{ background: 'white', color: '#dc2626' }}>Attempted Delivery</option>
+                    <option value="Delayed" style={{ background: 'white', color: '#c2410c' }}>Delayed</option>
+                    <option value="Completed" style={{ background: 'white', color: '#0f172a' }}>Completed</option>
                  </select>
                </div>
              </div>
@@ -1868,7 +2035,7 @@ const AdminDashboard = () => {
                 </div>
              </div>
 
-             <div style={{ display: 'flex', gap: '2rem' }}>
+             <div style={{ display: 'flex', gap: '2rem', marginBottom: '1.5rem' }}>
                  <div>
                     <span style={{ display: 'block', fontSize: '0.85rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>Payment Method</span>
                     <div style={{ color: '#334155', fontWeight: 500, marginTop: '4px' }}>{selectedOrderDetails.paymentMethod}</div>
@@ -1877,6 +2044,42 @@ const AdminDashboard = () => {
                     <span style={{ display: 'block', fontSize: '0.85rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>Payment Status</span>
                     <div style={{ color: selectedOrderDetails.paymentStatus === 'Paid' ? '#16a34a' : '#d97706', fontWeight: 600, marginTop: '4px' }}>{selectedOrderDetails.paymentStatus}</div>
                  </div>
+             </div>
+
+             <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '1.5rem' }}>
+                <span style={{ display: 'block', fontSize: '0.85rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase', marginBottom: '10px' }}>Tracking Details</span>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <input 
+                    type="text" 
+                    placeholder="Enter tracking ID, carrier, etc."
+                    value={selectedOrderDetails.trackingDetails || ''}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setSelectedOrderDetails(prev => ({ ...prev, trackingDetails: val }));
+                    }}
+                    style={{ flex: 1, padding: '8px 12px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.9rem', outline: 'none' }}
+                  />
+                  <button 
+                    onClick={async () => {
+                      try {
+                        const res = await fetch(`${BASE_URL}/api/orders/${selectedOrderDetails.orderId}`, {
+                          method: 'PUT',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ trackingDetails: selectedOrderDetails.trackingDetails })
+                        });
+                        if (res.ok) {
+                          setOrders(prev => prev.map(o => o.orderId === selectedOrderDetails.orderId ? { ...o, trackingDetails: selectedOrderDetails.trackingDetails } : o));
+                          showToast('Tracking details updated successfully', 'success');
+                        }
+                      } catch (err) {
+                        showToast('Failed to update tracking details', 'error');
+                      }
+                    }}
+                    style={{ padding: '8px 16px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', fontSize: '0.85rem' }}
+                  >
+                    Save
+                  </button>
+                </div>
              </div>
           </div>
         </div>

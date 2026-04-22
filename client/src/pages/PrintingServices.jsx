@@ -471,7 +471,7 @@ const PrintingServices = () => {
                                 <li>▢ Transit damage not covered</li>
                             </ul>
                             <p style={{ fontSize: '0.85rem', color: '#ef4444', lineHeight: '1.6', marginTop: 'auto' }}>
-                                3Idea Technology Ltd. is not responsible for transit-related damages in these cases.
+                                3D Pinaka Technology Ltd. is not responsible for transit-related damages in these cases.
                             </p>
                         </div>
 

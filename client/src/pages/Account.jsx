@@ -54,9 +54,11 @@ const Account = () => {
 
     const getStatusIcon = (status) => {
         switch (status) {
-            case 'Confirmed': return <CheckCircle size={20} color="#16a34a" />;
-            case 'Printing': return <Printer size={20} color="#2563eb" />;
+            case 'Order Confirmed': return <CheckCircle size={20} color="#16a34a" />;
+            case 'Shipped / Dispatched': return <Truck size={20} color="#2563eb" />;
+            case 'In Transit': return <Truck size={20} color="#4338ca" />;
             case 'Delivered': return <Package size={20} color="#059669" />;
+            case 'Completed': return <CheckCircle size={20} color="#0f172a" />;
             default: return <Clock size={20} color="#f59e0b" />;
         }
     };
@@ -211,10 +213,10 @@ const Account = () => {
                                                         gap: '6px', 
                                                         fontSize: '0.85rem', 
                                                         fontWeight: 600,
-                                                        color: order.status === 'Delivered' ? '#059669' : order.status === 'Printing' ? '#2563eb' : '#f59e0b',
+                                                        color: order.status === 'Delivered' || order.status === 'Completed' ? '#059669' : (order.status?.includes('Shipped') || order.status?.includes('Transit')) ? '#2563eb' : '#f59e0b',
                                                         padding: '4px 10px',
                                                         borderRadius: '20px',
-                                                        background: order.status === 'Delivered' ? '#f0fdf4' : order.status === 'Printing' ? '#eff6ff' : '#fffbeb'
+                                                        background: order.status === 'Delivered' || order.status === 'Completed' ? '#f0fdf4' : (order.status?.includes('Shipped') || order.status?.includes('Transit')) ? '#eff6ff' : '#fffbeb'
                                                     }}>
                                                         {getStatusIcon(order.status)} {order.status}
                                                     </div>
@@ -237,13 +239,29 @@ const Account = () => {
                                                             <h5 style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>Contact</h5>
                                                             <p style={{ fontSize: '0.9rem' }}>{order.customerName}</p>
                                                             <p style={{ fontSize: '0.9rem' }}>{order.phone}</p>
+                                                            {order.companyName && <p style={{ fontSize: '0.85rem', color: 'var(--primary)', fontWeight: 600 }}>{order.companyName}</p>}
+                                                            {order.gstNumber && <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>GST: {order.gstNumber}</p>}
                                                         </div>
                                                     </div>
+                                                    
+                                                    {order.trackingDetails && (
+                                                        <div style={{ marginTop: '1.5rem', padding: '1rem', background: '#eff6ff', borderRadius: '8px', border: '1px solid #bfdbfe' }}>
+                                                            <h5 style={{ fontSize: '0.85rem', marginBottom: '8px', color: '#1e40af', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                                <Truck size={20} /> Tracking Information
+                                                            </h5>
+                                                            <p style={{ fontSize: '0.95rem', fontWeight: 600, color: '#1e3a8a', margin: 0 }}>{order.trackingDetails}</p>
+                                                        </div>
+                                                    )}
+                                                    
                                                     <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
                                                         <h5 style={{ fontSize: '0.85rem', marginBottom: '10px' }}>Order Status Timeline</h5>
                                                         <div style={{ display: 'flex', justifyContent: 'space-between', position: 'relative', padding: '0 10px' }}>
-                                                            {['Pending', 'Confirmed', 'Printing', 'Delivered'].map((step, idx) => {
-                                                                const isCompleted = ['Pending', 'Confirmed', 'Printing', 'Delivered'].indexOf(order.status) >= idx;
+                                                            {['Pending', 'Order Confirmed', 'Shipped / Dispatched', 'Delivered'].map((step, idx) => {
+                                                                const statusOrder = ['Pending', 'Order Confirmed', 'Processing', 'Packed / Ready for Dispatch', 'Shipped / Dispatched', 'In Transit', 'Out for Delivery', 'Delivered', 'Attempted Delivery', 'Delayed', 'Completed'];
+                                                                const currentStatusIdx = statusOrder.indexOf(order.status);
+                                                                const stepIdxInOrder = statusOrder.indexOf(step);
+                                                                const isCompleted = currentStatusIdx >= stepIdxInOrder;
+                                                                
                                                                 return (
                                                                     <div key={step} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', zIndex: 1 }}>
                                                                         <div style={{ 
@@ -259,7 +277,7 @@ const Account = () => {
                                                                         }}>
                                                                             {isCompleted ? <CheckCircle size={14} weight="fill" /> : idx + 1}
                                                                         </div>
-                                                                        <span style={{ fontSize: '0.7rem', fontWeight: isCompleted ? 700 : 500, color: isCompleted ? 'var(--text-dark)' : 'var(--text-muted)' }}>{step}</span>
+                                                                        <span style={{ fontSize: '0.7rem', fontWeight: isCompleted ? 700 : 500, color: isCompleted ? 'var(--text-dark)' : 'var(--text-muted)', textAlign: 'center' }}>{step}</span>
                                                                     </div>
                                                                 )
                                                             })}
@@ -275,7 +293,10 @@ const Account = () => {
                                                                 <div style={{ 
                                                                     height: '100%', 
                                                                     background: 'var(--primary)', 
-                                                                    width: `${(['Pending', 'Confirmed', 'Printing', 'Delivered'].indexOf(order.status) / 3) * 100}%`,
+                                                                    width: `${Math.min(100, Math.max(0, (['Pending', 'Order Confirmed', 'Shipped / Dispatched', 'Delivered'].indexOf(['Pending', 'Order Confirmed', 'Shipped / Dispatched', 'Delivered'].findLast((s, i) => {
+                                                                        const statusOrder = ['Pending', 'Order Confirmed', 'Processing', 'Packed / Ready for Dispatch', 'Shipped / Dispatched', 'In Transit', 'Out for Delivery', 'Delivered', 'Attempted Delivery', 'Delayed', 'Completed'];
+                                                                        return statusOrder.indexOf(order.status) >= statusOrder.indexOf(s);
+                                                                    })) / 3) * 100))}%`,
                                                                     transition: 'width 0.5s ease-in-out'
                                                                 }}></div>
                                                             </div>

@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
     const pendingOrders = await Order.countDocuments({ status: { $regex: /^pending$/i } });
     
     const salesResult = await Order.aggregate([
-      { $match: { status: { $regex: /^delivered$/i } } },
+      { $match: { status: { $in: ["Delivered", "Completed"] } } },
       { $group: { _id: null, totalSales: { $sum: '$totalPrice' } } }
     ]);
     

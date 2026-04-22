@@ -2,10 +2,18 @@ import mongoose from 'mongoose';
 
 const orderSchema = new mongoose.Schema({
   orderId: { type: String, unique: true },
-  customerName: { type: String },
-  customerEmail: { type: String }, // Added for linking with user account
+  firstName: { type: String },
+  lastName: { type: String },
+  customerEmail: { type: String },
   phone: { type: String },
-  address: { type: String },
+  companyName: { type: String, default: "" },
+  gstNumber: { type: String, default: "" },
+  streetAddress: { type: String },
+  streetAddress2: { type: String, default: "" },
+  city: { type: String },
+  state: { type: String },
+  postcode: { type: String },
+  address: { type: String }, // Keep for backward compatibility
   productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
   productName: { type: String },
   quantity: { type: Number },
@@ -18,8 +26,24 @@ const orderSchema = new mongoose.Schema({
   totalPrice: { type: Number },
   status: {
     type: String,
-    enum: ["Pending", "Confirmed", "Printing", "Delivered"],
+    enum: [
+      "Pending", 
+      "Order Confirmed", 
+      "Processing", 
+      "Packed / Ready for Dispatch", 
+      "Shipped / Dispatched", 
+      "In Transit", 
+      "Out for Delivery", 
+      "Delivered", 
+      "Attempted Delivery", 
+      "Delayed", 
+      "Completed"
+    ],
     default: "Pending"
+  },
+  trackingDetails: {
+    type: String,
+    default: ""
   },
   paymentMethod: {
     type: String,

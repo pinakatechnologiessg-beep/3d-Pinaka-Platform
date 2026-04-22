@@ -117,7 +117,10 @@ router.get('/', async (req, res) => {
         badgeStyle: p.badgeStyle,
         badge: p.badge || (p.tags === 'Sale' ? 'sale' : p.tags === 'Best Seller' ? 'best-seller' : null),
         featured: p.featured || false,
-        images: p.images || []
+        images: p.images || [],
+        descriptionImages: p.descriptionImages || [],
+        description: p.description || "",
+        specifications: p.specifications || []
     }));
     
     console.log("Fetching all products...");
@@ -129,7 +132,7 @@ router.get('/', async (req, res) => {
 });
 
 // Add a single product
-router.post('/', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'images', maxCount: 6 }]), async (req, res) => {
+router.post('/', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'images', maxCount: 6 }, { name: 'descriptionImages', maxCount: 6 }]), async (req, res) => {
   console.log("POST /api/products request received");
   console.log("Form Body:", req.body);
   console.log("Files Uploaded:", req.files ? "YES" : "NO");
@@ -184,12 +187,20 @@ router.post('/', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'images'
       productData.images = req.files['images'].map(file => file.path);
     }
     
+    if (req.files && req.files['descriptionImages']) {
+      productData.descriptionImages = req.files['descriptionImages'].map(file => file.path);
+    }
+    
     if (productData.image && !productData.image.startsWith("http")) {
       throw new Error("Only Cloudinary URLs allowed");
     }
     
     if (productData.images && productData.images.some(img => !img.startsWith("http"))) {
         throw new Error("Only Cloudinary URLs allowed for additional images");
+    }
+
+    if (productData.descriptionImages && productData.descriptionImages.some(img => !img.startsWith("http"))) {
+        throw new Error("Only Cloudinary URLs allowed for description images");
     }
     
     console.log("Saving product to MongoDB...");
@@ -226,7 +237,7 @@ router.post('/seed', async (req, res) => {
   }
 });
 // Update product via PUT
-router.put('/:id', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'images', maxCount: 6 }]), async (req, res) => {
+router.put('/:id', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'images', maxCount: 6 }, { name: 'descriptionImages', maxCount: 6 }]), async (req, res) => {
   try {
     const { name, brand, category, price, mrp, discount, inStock, stockQuantity, rating, tags, description, specifications, badgeStyle, condition } = req.body;
     const updateData = {
@@ -270,12 +281,34 @@ router.put('/:id', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'image
         updateData.images = galleryImages;
     }
     
+    let descImages = [];
+    if (req.body.existingDescImages) {
+        descImages = JSON.parse(req.body.existingDescImages).filter(img => img && typeof img === 'string' && img.startsWith('http'));
+    }
+
+    if (req.files && req.files['descriptionImages']) {
+        const newDescImages = req.files['descriptionImages'].map(file => file.path);
+        descImages = [...descImages, ...newDescImages];
+    }
+
+    if (descImages.length > 0) {
+        updateData.descriptionImages = descImages;
+    }
+    else if (req.body.existingDescImages !== undefined && descImages.length === 0) {
+       // if they cleared everything 
+       updateData.descriptionImages = []; 
+    }
+    
     if (updateData.image && !updateData.image.startsWith("http")) {
       throw new Error("Only Cloudinary URLs allowed");
     }
 
     if (updateData.images && updateData.images.some(img => !img.startsWith("http"))) {
         throw new Error("Only Cloudinary URLs allowed for additional images");
+    }
+
+    if (updateData.descriptionImages && updateData.descriptionImages.some(img => !img.startsWith("http"))) {
+        throw new Error("Only Cloudinary URLs allowed for description images");
     }
     
     const product = await Product.findByIdAndUpdate(req.params.id, updateData, { new: true });
@@ -310,7 +343,10 @@ router.get('/featured', async (req, res) => {
         badgeStyle: p.badgeStyle,
         badge: p.badge || (p.tags === 'Sale' ? 'sale' : p.tags === 'Best Seller' ? 'best-seller' : null),
         featured: p.featured || false,
-        images: p.images || []
+        images: p.images || [],
+        descriptionImages: p.descriptionImages || [],
+        description: p.description || "",
+        specifications: p.specifications || []
     }));
     
     console.log("Fetching featured products...");

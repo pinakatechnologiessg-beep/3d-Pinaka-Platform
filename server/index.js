@@ -83,10 +83,10 @@ app.post('/api/webhook', express.json(), async (req, res) => {
                 
                 if (order && order.paymentStatus !== 'Paid') {
                     order.paymentStatus = 'Paid';
-                    order.status = 'Confirmed';
+                    order.status = 'Order Confirmed';
                     order.razorpay_payment_id = razorpayPaymentId;
                     await order.save();
-                    console.log(`Order ${order.orderId} marked as Paid via Webhook`);
+                    console.log(`Order ${order.orderId} marked as Order Confirmed via Webhook`);
                     
                     // Trigger email notification to admin and customer
                     await sendOrderEmailNotification(order);
@@ -102,6 +102,27 @@ app.post('/api/webhook', express.json(), async (req, res) => {
         return res.status(500).send('Webhook Processing Failed');
     }
 });
+
+/**
+ * Cleanup Task: Delete "Pending" orders older than 36 hours
+ * Runs every hour
+ */
+setInterval(async () => {
+    try {
+        const thirtySixHoursAgo = new Date(Date.now() - 36 * 60 * 60 * 1000);
+        // Using dynamic import or referencing from the routes if needed, 
+        // but here we can just use the Order model directly if we import it
+        const result = await Order.deleteMany({
+            status: "Pending",
+            createdAt: { $lt: thirtySixHoursAgo }
+        });
+        if (result.deletedCount > 0) {
+            console.log(`Cleanup: Deleted ${result.deletedCount} pending orders older than 36 hours.`);
+        }
+    } catch (err) {
+        console.error("Cleanup Error:", err);
+    }
+}, 3600000); // 1 hour interval
 
 app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes);

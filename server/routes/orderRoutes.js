@@ -30,7 +30,7 @@ const transporter = nodemailer.createTransport({
 export const sendOrderEmailNotification = async (order) => {
   try {
     const isPaid = order.paymentStatus === 'Paid';
-    const statusText = isPaid ? 'CONFIRMED' : 'PLACED';
+    const statusText = isPaid ? 'Order Confirmed' : 'PLACED';
     
     await transporter.sendMail({
       from: `"3D Pinaka Notifications" <${process.env.EMAIL_USER}>`,
@@ -49,6 +49,8 @@ export const sendOrderEmailNotification = async (order) => {
           <p><strong>Name:</strong> ${order.customerName}</p>
           <p><strong>Email:</strong> ${order.customerEmail}</p>
           <p><strong>Phone:</strong> ${order.phone}</p>
+          ${order.companyName ? `<p><strong>Company Name:</strong> ${order.companyName}</p>` : ''}
+          ${order.gstNumber ? `<p><strong>GST Number:</strong> ${order.gstNumber}</p>` : ''}
           <p><strong>Address:</strong> ${order.address}</p>
           <hr />
           <h3>Order Items</h3>
@@ -206,7 +208,7 @@ router.post('/verify', async (req, res) => {
           paymentStatus: "Paid",
           razorpay_payment_id,
           razorpay_signature,
-          status: "Confirmed"
+          status: "Order Confirmed"
         },
         { new: true }
       );
@@ -228,13 +230,16 @@ router.post('/verify', async (req, res) => {
 // PUT /api/orders/:id
 router.put('/:id', async (req, res) => {
   try {
-    const { status } = req.body;
+    const { status, trackingDetails } = req.body;
+    const updateData = {};
+    if (status) updateData.status = status;
+    if (trackingDetails !== undefined) updateData.trackingDetails = trackingDetails;
     
     let order;
     if (req.params.id.startsWith('ORD-')) {
-        order = await Order.findOneAndUpdate({ orderId: req.params.id }, { status }, { new: true, runValidators: true });
+        order = await Order.findOneAndUpdate({ orderId: req.params.id }, updateData, { new: true, runValidators: true });
     } else {
-        order = await Order.findByIdAndUpdate(req.params.id, { status }, { new: true, runValidators: true });
+        order = await Order.findByIdAndUpdate(req.params.id, updateData, { new: true, runValidators: true });
     }
 
     if (!order) return res.status(404).json({ message: 'Order not found' });

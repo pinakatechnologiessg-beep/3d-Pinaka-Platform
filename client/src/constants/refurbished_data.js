@@ -61,7 +61,7 @@ export const REFURBISHED_PRODUCTS = [
   },
   {
     id: 'ref-7',
-    title: 'Refurbished Anycubic Kobra 3 Combo 3D Printer With 4 Color 3Idea PLA Filaments (Green,Purple,Sky Blue,Skin)',
+    title: 'Refurbished Anycubic Kobra 3 Combo 3D Printer With 4 Color 3D Pinaka PLA Filaments (Green,Purple,Sky Blue,Skin)',
     price: '₹49,999.00',
     category: 'FDM',
     image: '/images/Refurbished Anycubic Kobra 3 Combo 3D Printer with 4 Color 3Idea PLA Filaments (Green,Purple,Sky Blue,Skin).png',
@@ -390,7 +390,7 @@ export const REFURBISHED_PRODUCTS = [
   },
   {
     id: 'ref-42',
-    title: 'Refurbished 3IDEA 3D Pen Yellow with screen',
+    title: 'Refurbished 3D Pinaka 3D Pen Yellow with screen',
     price: '₹524.00',
     oldPrice: '₹669.00',
     category: '3D Pens',
@@ -401,7 +401,7 @@ export const REFURBISHED_PRODUCTS = [
   },
   {
     id: 'ref-43',
-    title: 'Refurbished 3IDEA 3D Pen Purple with screen',
+    title: 'Refurbished 3D Pinaka 3D Pen Purple with screen',
     price: '₹524.00',
     oldPrice: '₹669.00',
     category: '3D Pens',
@@ -412,7 +412,7 @@ export const REFURBISHED_PRODUCTS = [
   },
   {
     id: 'ref-44',
-    title: 'Refurbished 3IDEA 3D Pen Pink with screen',
+    title: 'Refurbished 3D Pinaka 3D Pen Pink with screen',
     price: '₹517.00',
     oldPrice: '₹669.00',
     category: '3D Pens',
@@ -423,7 +423,7 @@ export const REFURBISHED_PRODUCTS = [
   },
   {
     id: 'ref-45',
-    title: 'Refurbished 3IDEA 3D Pen (Yellow)',
+    title: 'Refurbished 3D Pinaka 3D Pen (Yellow)',
     price: '₹749.00',
     oldPrice: '₹987.00',
     category: '3D Pens',
@@ -434,7 +434,7 @@ export const REFURBISHED_PRODUCTS = [
   },
   {
     id: 'ref-46',
-    title: 'Refurbished 3IDEA 3D Pen Blue with screen',
+    title: 'Refurbished 3D Pinaka 3D Pen Blue with screen',
     price: '₹524.00',
     oldPrice: '₹669.00',
     category: '3D Pens',
