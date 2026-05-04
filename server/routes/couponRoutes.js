@@ -7,7 +7,11 @@ router.get('/', async (req, res) => {
     try {
         const coupons = await Coupon.find({ 
             isActive: true, 
-            expiryDate: { $gte: new Date() } 
+            expiryDate: { $gte: new Date() },
+            $or: [
+                { usageLimit: null },
+                { $expr: { $lt: ["$usedCount", "$usageLimit"] } }
+            ]
         });
         res.json(coupons);
     } catch (err) {
