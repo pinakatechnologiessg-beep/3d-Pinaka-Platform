@@ -4,6 +4,7 @@ import { Cube, Stack, Wrench, Sparkle, ShieldCheck, Truck, Headphones, Medal, Cl
 import { PRODUCTS, BRANDS } from '../constants/data';
 import { cartService } from '../services/cartService';
 import { getImageUrl, parsePriceLocal, PLACEHOLDER_SVG } from '../utils/imageUtils';
+import PopupModal from '../components/PopupModal';
 
 import { API_BASE_URL } from '../api/config';
 
@@ -20,7 +21,9 @@ const Home = () => {
     return Number(price.toString().replace(/[^0-9.-]+/g, ""));
   };
 
-  const slides = [
+
+
+  const staticSlides = [
     {
       img: getImageUrl("/images/hero-printer-1-1774867967898.png"),
       brand: "Bambu Lab",
@@ -57,6 +60,8 @@ const Home = () => {
       features: ["CNC & LASER INCLUDED", "ALL-METAL DESIGN", "LINEAR RAILS & MODULES", "POWER-LOSS RECOVERY"]
     }
   ];
+
+  const [slides, setSlides] = useState(staticSlides);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -132,9 +137,10 @@ const Home = () => {
     cartService.toggleWishlist(product);
   };
 
-  return (
-    <main>
-      {/* Hero Section */}
+    return (
+        <main>
+            <PopupModal />
+            {/* Hero Section */}
       <section className="hero">
         <div className="hero-slider">
           {slides.map((slide, index) => (

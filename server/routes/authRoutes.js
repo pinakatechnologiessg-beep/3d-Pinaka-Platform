@@ -71,7 +71,8 @@ router.post('/login', async (req, res) => {
         lastName: isRoleAdmin ? '' : user.lastName, 
         email: user.email, 
         mobile: isRoleAdmin ? '0000000000' : user.mobile, 
-        role: role 
+        role: role,
+        points: user.points || 0
       } 
     });
   } catch (err) {
@@ -84,6 +85,17 @@ router.get('/users', async (req, res) => {
   try {
     const users = await User.find({}, '-password'); // exclude password
     res.json(users);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// GET /api/auth/profile/:email
+router.get('/profile/:email', async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.params.email }, '-password');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json(user);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
