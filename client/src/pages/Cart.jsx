@@ -408,11 +408,12 @@ const Cart = () => {
                                                         key={coupon._id}
                                                         onClick={() => { setCouponCode(coupon.code); applyCoupon(coupon.code); }}
                                                         style={{ 
-                                                            padding: '6px 12px', background: 'white', border: '1.5px dashed #3b82f6', borderRadius: '6px', 
-                                                            color: '#3b82f6', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap' 
+                                                            padding: '8px 12px', background: '#f0f7ff', border: '1.5px dashed #3b82f6', borderRadius: '8px', 
+                                                            color: '#3b82f6', cursor: 'pointer', minWidth: '120px', flexShrink: 0
                                                         }}
                                                     >
-                                                        {coupon.code}
+                                                        <div style={{ fontSize: '0.8rem', fontWeight: 800, marginBottom: '2px' }}>{coupon.code}</div>
+                                                        <div style={{ fontSize: '0.65rem', color: '#64748b', fontWeight: 500, whiteSpace: 'normal', lineHeight: '1.2' }}>{coupon.description}</div>
                                                     </div>
                                                 ))}
                                             </div>
