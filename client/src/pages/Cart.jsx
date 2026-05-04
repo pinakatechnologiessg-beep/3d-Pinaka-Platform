@@ -345,7 +345,7 @@ const Cart = () => {
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
                                     <label style={{ display: 'flex', gap: '10px', fontSize: '0.85rem', color: '#64748b', cursor: 'pointer' }}>
                                         <input type="checkbox" required />
-                                        <span>I have read and agree to the website <Link to="/terms" style={{ color: 'var(--primary)' }}>Terms of Conditions*</Link></span>
+                                        <span>I have read and agree to the website <Link to="/terms-and-conditions" style={{ color: 'var(--primary)' }}>Terms and Conditions*</Link></span>
                                     </label>
                                     <label style={{ display: 'flex', gap: '10px', fontSize: '0.85rem', color: '#64748b', cursor: 'pointer', alignItems: 'center' }}>
                                         <input type="checkbox" />
