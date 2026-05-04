@@ -87,7 +87,11 @@ const Cart = () => {
             const res = await fetch(`${API_BASE_URL}/api/coupons/validate`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ code: codeToApply, cartTotal: total })
+                body: JSON.stringify({ 
+                    code: codeToApply, 
+                    cartTotal: total,
+                    cartItemCount: cartItems.reduce((acc, i) => acc + (i.quantity || 1), 0)
+                })
             });
             const data = await res.json();
             if (res.ok) {

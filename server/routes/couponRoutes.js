@@ -48,7 +48,7 @@ router.delete('/:id', async (req, res) => {
 
 // Validate a coupon (For users at checkout)
 router.post('/validate', async (req, res) => {
-    const { code, cartTotal } = req.body;
+    const { code, cartTotal, cartItemCount } = req.body;
     try {
         const coupon = await Coupon.findOne({ 
             code: code.toUpperCase(), 
@@ -63,6 +63,12 @@ router.post('/validate', async (req, res) => {
         if (cartTotal < coupon.minOrderValue) {
             return res.status(400).json({ 
                 message: `Minimum order value of ₹${coupon.minOrderValue} required for this coupon` 
+            });
+        }
+
+        if (cartItemCount && cartItemCount < coupon.minItems) {
+            return res.status(400).json({ 
+                message: `Minimum of ${coupon.minItems} items required in cart for this coupon` 
             });
         }
 

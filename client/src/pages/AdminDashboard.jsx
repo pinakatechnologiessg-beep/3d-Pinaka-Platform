@@ -124,9 +124,11 @@ const AdminDashboard = () => {
       discountType: 'percentage',
       discountValue: '',
       minOrderValue: 0,
+      minItems: 1,
       expiryDate: '',
       description: '',
-      isActive: true
+      isActive: true,
+      usageLimit: null
   });
 
   const colorOptions = [
@@ -551,9 +553,11 @@ const AdminDashboard = () => {
                 discountType: 'percentage',
                 discountValue: '',
                 minOrderValue: 0,
+                minItems: 1,
                 expiryDate: '',
                 description: '',
-                isActive: true
+                isActive: true,
+                usageLimit: null
             });
             showToast('Coupon created successfully');
         } else {
@@ -1541,6 +1545,8 @@ const AdminDashboard = () => {
                                 <p style={{ fontSize: '0.9rem', color: '#475569', marginBottom: '15px', fontWeight: 500 }}>{coupon.description}</p>
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', fontSize: '0.8rem', color: '#64748b' }}>
                                     <div>Min Order: ₹{coupon.minOrderValue}</div>
+                                    <div>Min Items: {coupon.minItems || 1}</div>
+                                    <div>Usage: {coupon.usageLimit ? `${coupon.usedCount}/${coupon.usageLimit}` : 'Unlimited'}</div>
                                     <div>Expires: {new Date(coupon.expiryDate).toLocaleDateString()}</div>
                                 </div>
                                 <div style={{ marginTop: '15px', paddingTop: '15px', borderTop: '1px dotted #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -2856,6 +2862,28 @@ const AdminDashboard = () => {
                             type="number" 
                             value={newCoupon.minOrderValue} 
                             onChange={e => setNewCoupon({...newCoupon, minOrderValue: e.target.value})} 
+                            style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1.5px solid #e2e8f0', outline: 'none' }} 
+                        />
+                    </div>
+                    <div>
+                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 700, color: '#334155', fontSize: '0.9rem' }}>Min Items</label>
+                        <input 
+                            type="number" 
+                            value={newCoupon.minItems} 
+                            onChange={e => setNewCoupon({...newCoupon, minItems: e.target.value})} 
+                            style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1.5px solid #e2e8f0', outline: 'none' }} 
+                        />
+                    </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <div>
+                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 700, color: '#334155', fontSize: '0.9rem' }}>Usage Limit</label>
+                        <input 
+                            type="number" 
+                            placeholder="Unlimited"
+                            value={newCoupon.usageLimit || ''} 
+                            onChange={e => setNewCoupon({...newCoupon, usageLimit: e.target.value ? parseInt(e.target.value) : null})} 
                             style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1.5px solid #e2e8f0', outline: 'none' }} 
                         />
                     </div>
