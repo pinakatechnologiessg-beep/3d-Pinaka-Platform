@@ -10,6 +10,8 @@ import statsRoutes from './routes/statsRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import popupRoutes from './routes/popupRoutes.js';
+
 import path from 'path';
 import { fileURLToPath } from 'url';
 import crypto from 'crypto';
@@ -132,8 +134,8 @@ app.use('/api/stats', statsRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/popup', popupRoutes);
 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Global Error Handler to avoid returning HTML for 500 errors
 app.use((err, req, res, next) => {

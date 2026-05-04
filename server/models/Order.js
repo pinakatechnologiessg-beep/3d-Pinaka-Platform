@@ -56,6 +56,8 @@ const orderSchema = new mongoose.Schema({
   razorpay_order_id: { type: String },
   razorpay_payment_id: { type: String },
   razorpay_signature: { type: String },
+  pointsUsed: { type: Number, default: 0 },
+  pointsEarned: { type: Number, default: 0 },
   createdAt: { type: Date, default: Date.now }
 });
 

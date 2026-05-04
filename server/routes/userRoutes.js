@@ -18,6 +18,7 @@ router.get('/', async (req, res) => {
             phone: u.mobile || u.phone,
             totalOrders: u.totalOrders,
             totalSpending: u.totalSpending,
+            points: u.points || 0,
             status: u.status,
             address: 'Not available currently', // Can be enhanced later
             joinedDate: new Date(u.createdAt).toISOString().split('T')[0]
@@ -47,6 +48,7 @@ router.get('/:id', async (req, res) => {
             phone: user.mobile || user.phone,
             totalOrders: user.totalOrders,
             totalSpending: user.totalSpending,
+            points: user.points || 0,
             status: user.status,
             address: 'Not available currently',
             joinedDate: new Date(user.createdAt).toISOString().split('T')[0],
@@ -58,7 +60,18 @@ router.get('/:id', async (req, res) => {
                 createdAt: o.createdAt,
                 customerName: o.customerName,
                 phone: o.phone,
-                address: o.address, // Optional
+                address: o.address,
+                firstName: o.firstName,
+                lastName: o.lastName,
+                customerEmail: o.customerEmail,
+                phone: o.phone,
+                streetAddress: o.streetAddress,
+                streetAddress2: o.streetAddress2,
+                city: o.city,
+                state: o.state,
+                postcode: o.postcode,
+                companyName: o.companyName,
+                gstNumber: o.gstNumber,
                 quantity: o.quantity || 1,
                 paymentMethod: o.paymentMethod || 'COD',
                 paymentStatus: o.paymentStatus || 'Pending'

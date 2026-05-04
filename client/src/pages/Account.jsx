@@ -18,6 +18,7 @@ const Account = () => {
             try { 
                 const userData = JSON.parse(storedUser);
                 setUser(userData);
+                fetchProfile(userData.email);
                 fetchOrders(userData.email);
             } catch (e) { setUser(null); }
         } else {
@@ -30,6 +31,19 @@ const Account = () => {
         window.addEventListener('wishlistUpdated', handleWishlist);
         return () => window.removeEventListener('wishlistUpdated', handleWishlist);
     }, [navigate]);
+
+    const fetchProfile = async (email) => {
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/auth/profile/${email}`);
+            if (res.ok) {
+                const data = await res.json();
+                setUser(prev => ({ ...prev, ...data }));
+                localStorage.setItem('user', JSON.stringify({ ...JSON.parse(localStorage.getItem('user')), ...data }));
+            }
+        } catch (error) {
+            console.error("Error fetching profile:", error);
+        }
+    };
 
     const fetchOrders = async (email) => {
         try {
@@ -148,7 +162,12 @@ const Account = () => {
                             </h3>
 
                             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
-                                <div className="activity-card" style={{ padding: '1.5rem', background: '#f8fafc', borderRadius: '10px', border: '1px solid var(--border-color)', transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)', cursor: 'default' }}>
+                                <div className="activity-card" style={{ padding: '1.5rem', background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)', borderRadius: '10px', border: 'none', transition: 'all 0.2s', color: 'white' }}>
+                                    <h4 style={{ fontSize: '1.75rem', color: 'white', marginBottom: '0.25rem' }}>{user.points || 0}</h4>
+                                    <div style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.9)', fontWeight: 500 }}>Reward Points</div>
+                                    <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.7)', marginTop: '4px' }}>1 point = ₹1</div>
+                                </div>
+                                <div className="activity-card" style={{ padding: '1.5rem', background: '#f8fafc', borderRadius: '10px', border: '1px solid var(--border-color)', transition: 'all 0.2s', cursor: 'default' }}>
                                     <h4 style={{ fontSize: '1.75rem', color: 'var(--primary)', marginBottom: '0.25rem' }}>{orders.length}</h4>
                                     <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: 500 }}>Total Orders</div>
                                 </div>
@@ -158,7 +177,7 @@ const Account = () => {
                                         <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: 500 }}>My Wishlist</div>
                                     </div>
                                 </Link>
-                                <Link to="/my-tickets" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                <Link to="/my-tickets" style={{ textDecoration: 'none', color: 'inherit', gridColumn: 'span 1' }}>
                                     <div className="activity-card" style={{ padding: '1.5rem', background: '#f8fafc', borderRadius: '10px', border: '1px solid var(--border-color)', transition: 'all 0.2s' }}>
                                         <ChatCircleText size={28} color="var(--primary)" style={{ marginBottom: '8px' }} />
                                         <div style={{ fontSize: '0.9rem', color: 'var(--text-dark)', fontWeight: 600 }}>Get Support</div>
@@ -228,7 +247,17 @@ const Account = () => {
                                                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
                                                         <div>
                                                             <h5 style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>Shipping Address</h5>
-                                                            <p style={{ fontSize: '0.9rem', lineHeight: '1.5' }}>{order.address}</p>
+                                                            <p style={{ fontSize: '0.9rem', lineHeight: '1.5' }}>
+                                                                {order.streetAddress ? (
+                                                                    <>
+                                                                        {order.streetAddress}<br />
+                                                                        {order.streetAddress2 && <>{order.streetAddress2}<br /></>}
+                                                                        {order.city}, {order.state} - {order.postcode}
+                                                                    </>
+                                                                ) : (
+                                                                    order.address
+                                                                )}
+                                                            </p>
                                                         </div>
                                                         <div>
                                                             <h5 style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>Payment Details</h5>
@@ -237,7 +266,7 @@ const Account = () => {
                                                         </div>
                                                         <div>
                                                             <h5 style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>Contact</h5>
-                                                            <p style={{ fontSize: '0.9rem' }}>{order.customerName}</p>
+                                                            <p style={{ fontSize: '0.9rem' }}>{order.firstName ? `${order.firstName} ${order.lastName || ''}` : order.customerName}</p>
                                                             <p style={{ fontSize: '0.9rem' }}>{order.phone}</p>
                                                             {order.companyName && <p style={{ fontSize: '0.85rem', color: 'var(--primary)', fontWeight: 600 }}>{order.companyName}</p>}
                                                             {order.gstNumber && <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>GST: {order.gstNumber}</p>}

@@ -16,15 +16,16 @@ const userSchema = new mongoose.Schema({
     product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
     quantity: { type: Number, default: 1 }
   }],
-  role: { type: String, default: 'user' }
+  role: { type: String, default: 'user' },
+  points: { type: Number, default: 0 }
 }, { timestamps: true });
 
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function() {
   if (this.isNew && !this.userId) {
     const count = await mongoose.model('User').countDocuments();
     this.userId = `USR-${(count + 1).toString().padStart(3, '0')}`;
   }
-  if (!this.isModified('password')) return next();
+  if (!this.isModified('password')) return;
   this.password = await bcrypt.hash(this.password, 10);
 });
 
