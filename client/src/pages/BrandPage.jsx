@@ -4,6 +4,8 @@ import { ArrowLeft, WhatsappLogo, Heart, ShoppingCart, FunnelSimple, CaretDown, 
 import { BRANDS } from '../constants/data';
 import { cartService } from '../services/cartService';
 import { getImageUrl } from '../utils/imageUtils';
+import SEO from '../components/SEO';
+
 
 const BrandProductCard = ({ product, revealRef }) => {
     const [isInWishlist, setIsInWishlist] = useState(cartService.isInWishlist(product.name || product.title));
@@ -229,7 +231,13 @@ const BrandPage = () => {
 
     return (
         <main>
+            <SEO 
+                title={`${brand.name} Printers`}
+                description={`Shop the latest ${brand.name} 3D printers and materials at 3D Pinaka. Premium quality and best prices for ${brand.name} products in India.`}
+                keywords={`${brand.name}, ${brand.name} 3D printer, ${brand.name} India, buy ${brand.name} online, 3D Pinaka`}
+            />
             <div style={{ background: 'var(--dark-bg)', padding: '4rem 0', textAlign: 'center', color: 'white' }}>
+
                 <Link to="/" className="back-home-btn"><ArrowLeft /> Back to Home</Link>
                 <h1>{brand.name} Printers</h1>
                 <p style={{ color: '#94a3b8', marginTop: '1rem' }}>Professional 3D Printing solutions by {brand.name}</p>

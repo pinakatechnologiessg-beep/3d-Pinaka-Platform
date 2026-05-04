@@ -4,6 +4,8 @@ import { ArrowLeft, WhatsappLogo, Heart } from '@phosphor-icons/react';
 import { MATERIALS } from '../constants/data';
 import { cartService } from '../services/cartService';
 import { getImageUrl } from '../utils/imageUtils';
+import SEO from '../components/SEO';
+
 
 const Materials = () => {
     const revealRefs = useRef([]);
@@ -67,7 +69,13 @@ const Materials = () => {
 
     return (
         <main>
+            <SEO 
+                title="Filaments & Resins"
+                description="Explore our high-quality range of 3D printing filaments and resins. PLA, ABS, PETG, TPU, and more from top brands at 3D Pinaka."
+                keywords="3D printer filament, 3D printing resin, PLA filament India, ABS filament, PETG, TPU, UV resin, 3D Pinaka"
+            />
             <div style={{ background: 'var(--secondary)', padding: '4rem 0', textAlign: 'center', color: 'white' }}>
+
                 <Link to="/" className="back-home-btn"><ArrowLeft /> Back to Home</Link>
                 <h1>Filaments & Resins</h1>
                 <p style={{ color: '#dbeafe', marginTop: '1rem' }}>Premium quality materials in all colors and types</p>

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://3dpinaka.com/sitemap.xml

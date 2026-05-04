@@ -8,7 +8,10 @@ import PopupModal from '../components/PopupModal';
 
 import { API_BASE_URL } from '../api/config';
 
+import SEO from '../components/SEO';
+
 const Home = () => {
+
     const [currentSlide, setCurrentSlide] = useState(0);
     const navigate = useNavigate();
     const revealRefs = useRef([]);
@@ -139,7 +142,13 @@ const Home = () => {
 
     return (
         <main>
+            <SEO 
+                title="Home" 
+                description="3D Pinaka is India's leading destination for premium 3D printers, filaments, resins, and 3D printing services. Explore top brands like Bambu Lab, Anycubic, and Creality."
+                keywords="3D Pinaka, 3D printer India, Buy 3D printer, 3D printing services, filaments, resins, industrial 3D printers"
+            />
             <PopupModal />
+
             {/* Hero Section */}
       <section className="hero">
         <div className="hero-slider">

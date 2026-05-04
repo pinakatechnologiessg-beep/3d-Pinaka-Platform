@@ -5,7 +5,9 @@ import ProductImageZoom from '../components/ProductImageZoom';
 import { cartService, SHOW_TOAST, WISHLIST_UPDATED } from '../services/cartService';
 import { getImageUrl, PLACEHOLDER_SVG } from '../utils/imageUtils';
 import { API_BASE_URL } from '../api/config';
+import SEO from '../components/SEO';
 import './ProductDetail.css';
+
 
 const BASE_URL = API_BASE_URL;
 
@@ -127,7 +129,15 @@ const ProductDetail = () => {
 
     return (
         <main className="product-detail-page">
+            <SEO 
+                title={product.name} 
+                description={product.description?.substring(0, 160) || `Buy ${product.name} at 3D Pinaka. High-quality 3D printer and materials.`}
+                keywords={`${product.name}, ${product.brand}, ${product.category}, 3D Pinaka, buy 3D printer India`}
+                image={imageUrl}
+                type="product"
+            />
             <div className="container">
+
                 <nav className="breadcrumb">
                     <Link to="/"><ArrowLeft size={16} /> Home</Link>
                     <span>/</span>

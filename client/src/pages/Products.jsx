@@ -4,6 +4,8 @@ import { ArrowLeft, WhatsappLogo, FunnelSimple, CaretDown, X } from '@phosphor-i
 import { cartService } from '../services/cartService';
 import { getImageUrl } from '../utils/imageUtils';
 import { API_BASE_URL } from '../api/config';
+import SEO from '../components/SEO';
+
 
 const parsePriceLocal = (price) => {
   if (!price) return 0;
@@ -153,7 +155,13 @@ const Products = () => {
 
     return (
         <main>
+            <SEO 
+                title={searchParams.get('condition') === 'Refurbished' ? 'Refurbished 3D Printer Store' : 'All 3D Printers'}
+                description="Browse our extensive collection of professional and hobbyist 3D printers. Top brands, best prices, and expert support in India."
+                keywords="3D printers, buy 3D printer India, professional 3D printers, refurbished 3D printers, 3D Pinaka"
+            />
             {/* Header */}
+
             <div style={{ background: 'var(--dark-bg)', padding: isMobile ? '2.5rem 1rem' : '4rem 0', textAlign: 'center', color: 'white' }}>
                 <Link to="/" className="back-home-btn" style={{ textDecoration: 'none', color: '#94a3b8', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                     <ArrowLeft size={18} /> Back to Home
