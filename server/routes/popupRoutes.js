@@ -60,4 +60,21 @@ router.put('/', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'template
   }
 });
 
+// PUT /api/popup/status (Simple toggle)
+router.put('/status', async (req, res) => {
+  try {
+    const { isActive } = req.body;
+    let popup = await Popup.findOne();
+    if (!popup) {
+      popup = await Popup.create({ title: 'Promo', isActive });
+    } else {
+      popup.isActive = isActive;
+      await popup.save();
+    }
+    res.json(popup);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 export default router;

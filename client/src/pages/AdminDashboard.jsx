@@ -1147,8 +1147,64 @@ const AdminDashboard = () => {
             <div className="admin-section-header" style={{ marginBottom: '30px', textAlign: 'center' }}>
               <div style={{ display: 'inline-block', padding: '4px 12px', background: '#eff6ff', color: '#3b82f6', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 700, marginBottom: '10px' }}>MARKETING v1.2</div>
               <h2 style={{ fontSize: '1.8rem', color: '#1e293b', margin: 0, fontWeight: 800 }}>Marketing Center</h2>
+            {/* Simplified Status Toggle */}
+            <div style={{ 
+                maxWidth: '900px', margin: '0 auto 30px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', 
+                background: popupConfig.isActive ? '#f0fdf4' : '#fff1f2', padding: '1.2rem 2rem', borderRadius: '20px', 
+                border: `1px solid ${popupConfig.isActive ? '#bbf7d0' : '#fecaca'}`,
+                boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)'
+            }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                    <div style={{ 
+                        width: '45px', height: '45px', borderRadius: '12px', background: popupConfig.isActive ? '#16a34a' : '#ef4444',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white'
+                    }}>
+                        {popupConfig.isActive ? <Bell size={24} weight="fill" /> : <Bell size={24} weight="light" />}
+                    </div>
+                    <div>
+                        <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800, color: popupConfig.isActive ? '#15803d' : '#991b1b' }}>
+                            {popupConfig.isActive ? 'POPUP IS ACTIVE' : 'POPUP IS INACTIVE'}
+                        </h4>
+                        <p style={{ margin: 0, fontSize: '0.85rem', color: popupConfig.isActive ? '#16a34a' : '#ef4444', fontWeight: 500 }}>
+                            {popupConfig.isActive ? 'Currently visible to all website visitors.' : 'Hidden from website visitors.'}
+                        </p>
+                    </div>
+                </div>
+                <button 
+                    onClick={async () => {
+                        const newStatus = !popupConfig.isActive;
+                        setIsSubmitting(true);
+                        try {
+                            const res = await fetch(`${BASE_URL}/api/popup/status`, {
+                                method: 'PUT',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ isActive: newStatus })
+                            });
+                            if (res.ok) {
+                                const updated = await res.json();
+                                setPopupConfig(prev => ({ ...prev, isActive: updated.isActive }));
+                                showToast(`Popup ${updated.isActive ? 'activated' : 'deactivated'} successfully`);
+                            } else {
+                                showToast('Failed to update status', 'error');
+                            }
+                        } catch (e) {
+                            showToast('Network error', 'error');
+                        } finally {
+                            setIsSubmitting(false);
+                        }
+                    }}
+                    disabled={isSubmitting || (!popupConfig.useTemplate && !popupConfig.image)}
+                    style={{ 
+                        padding: '10px 24px', borderRadius: '10px', border: 'none', cursor: 'pointer', fontWeight: 800, fontSize: '0.9rem',
+                        background: popupConfig.isActive ? '#ef4444' : '#16a34a', color: 'white',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)', transition: 'all 0.2s',
+                        opacity: isSubmitting || (!popupConfig.useTemplate && !popupConfig.image) ? 0.6 : 1
+                    }}
+                >
+                    {isSubmitting ? '...' : (popupConfig.isActive ? 'DEACTIVATE NOW' : 'ACTIVATE NOW')}
+                </button>
             </div>
-            
+
             <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginBottom: '30px' }}>
                 <button 
                     onClick={() => setPopupConfig({ ...popupConfig, useTemplate: false })}
@@ -1347,36 +1403,22 @@ const AdminDashboard = () => {
                         </>
                     )}
 
-                    <div style={{ marginTop: '2.5rem', display: 'grid', gap: '10px' }}>
+                    <div style={{ marginTop: '2.5rem' }}>
                         <button 
                             onClick={handleSavePopup}
                             disabled={isSubmitting || (!popupConfig.useTemplate && !popupSelectedFile && !popupConfig.image)}
                             className="btn btn-primary" 
-                            style={{ width: '100%', padding: '16px', borderRadius: '12px', fontWeight: 700, background: '#2563eb', border: 'none' }}
+                            style={{ 
+                                width: '100%', padding: '18px', borderRadius: '15px', fontWeight: 800, fontSize: '1rem',
+                                background: '#2563eb', border: 'none', color: 'white', cursor: 'pointer',
+                                boxShadow: '0 10px 15px -3px rgba(37,99,235,0.4)', transition: 'all 0.2s'
+                            }}
                         >
-                            {isSubmitting ? 'Saving...' : 'Activate & Save Popup'}
+                            {isSubmitting ? 'Saving Changes...' : 'SAVE POPUP SETTINGS'}
                         </button>
-                        
-                        {popupConfig.isActive && (
-                            <button 
-                                onClick={async () => {
-                                    setIsSubmitting(true);
-                                    try {
-                                        const res = await fetch(`${BASE_URL}/api/popup`, {
-                                            method: 'PUT',
-                                            headers: { 'Content-Type': 'application/json' },
-                                            body: JSON.stringify({ ...popupConfig, isActive: false })
-                                        });
-                                        if (res.ok) setPopupConfig(await res.json());
-                                        showToast('Popup deactivated');
-                                    } catch (e) { showToast('Failed to deactivate', 'error'); }
-                                    finally { setIsSubmitting(false); }
-                                }}
-                                style={{ width: '100%', padding: '12px', borderRadius: '12px', background: '#f1f5f9', color: '#475569', border: 'none', cursor: 'pointer' }}
-                            >
-                                Deactivate Popup
-                            </button>
-                        )}
+                        <p style={{ textAlign: 'center', fontSize: '0.8rem', color: '#64748b', marginTop: '12px', fontWeight: 500 }}>
+                            Your changes will take effect immediately after saving.
+                        </p>
                     </div>
                 </div>
 
