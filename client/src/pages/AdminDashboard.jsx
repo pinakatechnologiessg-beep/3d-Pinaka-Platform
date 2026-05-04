@@ -1561,8 +1561,6 @@ const AdminDashboard = () => {
             )}
           </div>
         )}
-          </div>
-        )}
 
 
         {activeTab === 'Support' && (
@@ -2807,8 +2805,6 @@ const AdminDashboard = () => {
           <span style={{ fontWeight: 600 }}>{toast.message}</span>
         </div>
       )}
-
-       )}
 
       {/* Coupon Creation Modal */}
       {isCouponModalOpen && (
