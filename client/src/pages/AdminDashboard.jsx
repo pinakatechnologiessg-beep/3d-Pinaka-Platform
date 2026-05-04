@@ -1147,6 +1147,7 @@ const AdminDashboard = () => {
             <div className="admin-section-header" style={{ marginBottom: '30px', textAlign: 'center' }}>
               <div style={{ display: 'inline-block', padding: '4px 12px', background: '#eff6ff', color: '#3b82f6', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 700, marginBottom: '10px' }}>MARKETING v1.2</div>
               <h2 style={{ fontSize: '1.8rem', color: '#1e293b', margin: 0, fontWeight: 800 }}>Marketing Center</h2>
+            </div>
             {/* Simplified Status Toggle */}
             <div style={{ 
                 maxWidth: '900px', margin: '0 auto 30px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', 

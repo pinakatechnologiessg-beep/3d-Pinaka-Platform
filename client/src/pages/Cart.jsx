@@ -137,7 +137,6 @@ const Cart = () => {
                 quantity: i.quantity || 1,
                 price: i.price
             })),
-            totalPrice: total,
             status: 'Pending',
             paymentStatus: paymentMethod === 'Online' ? 'Unpaid' : 'Pending',
             paymentMethod: paymentMethod === 'Online' ? 'Razorpay' : 'Cash on Delivery',
