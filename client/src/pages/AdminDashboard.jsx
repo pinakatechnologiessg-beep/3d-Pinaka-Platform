@@ -1274,14 +1274,38 @@ const AdminDashboard = () => {
                             </div>
                         </div>
                         <button 
-                            onClick={() => setPopupConfig({ ...popupConfig, isActive: !popupConfig.isActive })}
+                            onClick={async () => {
+                                const newStatus = !popupConfig.isActive;
+                                setIsSubmitting(true);
+                                try {
+                                    // Use JSON for simple status toggle
+                                    const res = await fetch(`${BASE_URL}/api/popup/status`, {
+                                        method: 'PUT',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ isActive: newStatus })
+                                    });
+                                    if (res.ok) {
+                                        const updated = await res.json();
+                                        setPopupConfig(prev => ({ ...prev, isActive: updated.isActive }));
+                                        showToast(`Popup ${updated.isActive ? 'activated' : 'deactivated'} successfully`);
+                                    } else {
+                                        showToast('Failed to update status', 'error');
+                                    }
+                                } catch (e) {
+                                    showToast('Network error', 'error');
+                                } finally {
+                                    setIsSubmitting(false);
+                                }
+                            }}
+                            disabled={isSubmitting || (!popupConfig.useTemplate && !popupConfig.image)}
                             style={{ 
                                 padding: '10px 24px', borderRadius: '10px', border: 'none', cursor: 'pointer', fontWeight: 800, fontSize: '0.9rem',
                                 background: popupConfig.isActive ? '#ef4444' : '#16a34a', color: 'white',
-                                boxShadow: '0 4px 12px rgba(0,0,0,0.1)', transition: 'all 0.2s'
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.1)', transition: 'all 0.2s',
+                                opacity: isSubmitting || (!popupConfig.useTemplate && !popupConfig.image) ? 0.6 : 1
                             }}
                         >
-                            {popupConfig.isActive ? 'DEACTIVATE NOW' : 'ACTIVATE NOW'}
+                            {isSubmitting ? '...' : (popupConfig.isActive ? 'DEACTIVATE NOW' : 'ACTIVATE NOW')}
                         </button>
                     </div>
 

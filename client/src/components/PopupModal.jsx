@@ -12,7 +12,7 @@ const PopupModal = () => {
                 const res = await fetch(`${API_BASE_URL}/api/popup`);
                 if (res.ok) {
                     const data = await res.json();
-                    if (data.isActive && data.image) {
+                    if (data.isActive && (data.image || data.useTemplate)) {
                         setPopup(data);
                         // Show after a small delay
                         setTimeout(() => setIsVisible(true), 1200);
