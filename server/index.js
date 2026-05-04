@@ -11,6 +11,7 @@ import orderRoutes from './routes/orderRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import popupRoutes from './routes/popupRoutes.js';
+import couponRoutes from './routes/couponRoutes.js';
 
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -135,6 +136,8 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/popup', popupRoutes);
+app.use('/api/coupons', couponRoutes);
+
 
 
 // Global Error Handler to avoid returning HTML for 500 errors

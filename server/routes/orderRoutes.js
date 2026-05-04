@@ -2,6 +2,7 @@ import express from 'express';
 import Order from '../models/Order.js';
 import Product from '../models/Product.js';
 import User from '../models/User.js';
+import Coupon from '../models/Coupon.js';
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
@@ -166,6 +167,18 @@ router.post('/', async (req, res) => {
       if (user) {
         user.points = Math.max(0, (user.points || 0) - req.body.pointsUsed);
         await user.save();
+      }
+    }
+
+    // Increment coupon usage if used
+    if (req.body.couponCode) {
+      try {
+        await Coupon.findOneAndUpdate(
+          { code: req.body.couponCode },
+          { $inc: { usedCount: 1 } }
+        );
+      } catch (err) {
+        console.error("Error updating coupon usage:", err);
       }
     }
 

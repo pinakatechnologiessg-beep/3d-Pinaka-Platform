@@ -31,6 +31,11 @@ const Cart = () => {
     const [pointsToUse, setPointsToUse] = useState(0);
     const [appliedPoints, setAppliedPoints] = useState(0);
 
+    const [availableCoupons, setAvailableCoupons] = useState([]);
+    const [couponCode, setCouponCode] = useState('');
+    const [appliedCoupon, setAppliedCoupon] = useState(null);
+    const [couponDiscount, setCouponDiscount] = useState(0);
+
     
 
 
@@ -49,18 +54,60 @@ const Cart = () => {
                 setAvailablePoints(user.points || 0);
             } catch (e) { /* ignore */ }
         }
+
+        const fetchCoupons = async () => {
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/coupons`);
+                if (res.ok) setAvailableCoupons(await res.json());
+            } catch (err) {}
+        };
+        fetchCoupons();
     }, []);
 
     const applyPoints = (amount) => {
         const pts = Math.min(availablePoints, amount, total);
         setAppliedPoints(pts);
         setPointsToUse(pts);
+        setAppliedCoupon(null); // Clear coupon if points applied
+        setCouponDiscount(0);
     };
 
     const useAllPoints = () => {
         const pts = Math.min(availablePoints, total);
         setAppliedPoints(pts);
         setPointsToUse(pts);
+        setAppliedCoupon(null); // Clear coupon if points applied
+        setCouponDiscount(0);
+    };
+
+    const applyCoupon = async (codeOverride) => {
+        const codeToApply = codeOverride || couponCode;
+        if (!codeToApply) return;
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/coupons/validate`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: codeToApply, cartTotal: total })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                setAppliedCoupon(data.coupon);
+                setCouponDiscount(data.discountAmount);
+                setAppliedPoints(0); // Clear points if coupon applied
+                setPointsToUse(0);
+                window.dispatchEvent(new CustomEvent(SHOW_TOAST, { 
+                    detail: { message: 'Coupon applied successfully!', type: 'success' } 
+                }));
+            } else {
+                window.dispatchEvent(new CustomEvent(SHOW_TOAST, { 
+                    detail: { message: data.message, type: 'error' } 
+                }));
+            }
+        } catch (err) {
+            window.dispatchEvent(new CustomEvent(SHOW_TOAST, { 
+                detail: { message: 'Failed to validate coupon', type: 'error' } 
+            }));
+        }
     };
 
     const updateCart = () => {
@@ -142,7 +189,9 @@ const Cart = () => {
             paymentStatus: paymentMethod === 'Online' ? 'Unpaid' : 'Pending',
             paymentMethod: paymentMethod === 'Online' ? 'Razorpay' : 'Cash on Delivery',
             pointsUsed: appliedPoints,
-            totalPrice: total - appliedPoints
+            couponCode: appliedCoupon?.code || null,
+            couponDiscount: couponDiscount,
+            totalPrice: total - appliedPoints - couponDiscount
         };
 
         try {
@@ -158,7 +207,7 @@ const Cart = () => {
                     // Initialize Razorpay
                     const options = {
                         key: data.razorpayKeyId,
-                        amount: (total - appliedPoints) * 100,
+                        amount: (total - appliedPoints - couponDiscount) * 100,
                         currency: "INR",
                         name: "3D Pinaka",
                         description: "Purchase from 3D Pinaka",
@@ -313,9 +362,64 @@ const Cart = () => {
                                     )}
                                 </div>
 
-                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px dotted #e2e8f0' }}>
+                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px dotted #e2e8f0' }}>
                                     <span style={{ color: '#64748b' }}>Points Discount</span>
                                     <span style={{ fontWeight: 600, color: '#059669' }}>-₹{appliedPoints.toLocaleString('en-IN')}</span>
+                                </div>
+
+                                {/* Coupon Section */}
+                                <div style={{ marginBottom: '20px' }}>
+                                    <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '12px', color: '#1e293b' }}>Apply Coupon</h3>
+                                    <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                                        <input 
+                                            type="text" 
+                                            value={couponCode} 
+                                            onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                                            placeholder="Enter Coupon Code"
+                                            style={{ flex: 1, padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #e2e8f0', outline: 'none', fontWeight: 600 }}
+                                        />
+                                        <button 
+                                            onClick={() => applyCoupon()}
+                                            style={{ background: '#1e293b', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}
+                                        >
+                                            Apply
+                                        </button>
+                                    </div>
+
+                                    {appliedCoupon && (
+                                        <div style={{ background: '#ecfdf5', padding: '10px 15px', borderRadius: '10px', border: '1px solid #10b981', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+                                            <div>
+                                                <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#047857' }}>CODE: {appliedCoupon.code}</div>
+                                                <div style={{ fontSize: '0.75rem', color: '#059669' }}>{appliedCoupon.description}</div>
+                                            </div>
+                                            <button onClick={() => { setAppliedCoupon(null); setCouponDiscount(0); }} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 700 }}>Remove</button>
+                                        </div>
+                                    )}
+
+                                    {availableCoupons.length > 0 && !appliedCoupon && (
+                                        <div style={{ marginTop: '10px' }}>
+                                            <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '8px', fontWeight: 600 }}>Available Coupons:</p>
+                                            <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '8px' }}>
+                                                {availableCoupons.map(coupon => (
+                                                    <div 
+                                                        key={coupon._id}
+                                                        onClick={() => { setCouponCode(coupon.code); applyCoupon(coupon.code); }}
+                                                        style={{ 
+                                                            padding: '6px 12px', background: 'white', border: '1.5px dashed #3b82f6', borderRadius: '6px', 
+                                                            color: '#3b82f6', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap' 
+                                                        }}
+                                                    >
+                                                        {coupon.code}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px dotted #e2e8f0' }}>
+                                    <span style={{ color: '#64748b' }}>Coupon Discount</span>
+                                    <span style={{ fontWeight: 600, color: '#059669' }}>-₹{couponDiscount.toLocaleString('en-IN')}</span>
                                 </div>
 
                                 <p style={{ fontSize: '0.75rem', color: '#ef4444', margin: '12px 0', fontStyle: 'italic' }}>
@@ -325,20 +429,20 @@ const Cart = () => {
                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
                                     <span style={{ color: '#64748b' }}>Total with GST</span>
                                     <div style={{ textAlign: 'right' }}>
-                                        <div style={{ fontWeight: 700, color: '#334155' }}>₹{(total - appliedPoints).toLocaleString('en-IN')}</div>
+                                        <div style={{ fontWeight: 700, color: '#334155' }}>₹{(total - appliedPoints - couponDiscount).toLocaleString('en-IN')}</div>
                                         <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>(Incl. GST)</div>
                                     </div>
                                 </div>
 
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', paddingTop: '12px', borderTop: '1px solid #f1f5f9' }}>
                                     <span style={{ fontSize: '1.25rem', fontWeight: 700, color: '#16a34a' }}>Grand Total</span>
-                                    <span style={{ fontSize: '1.25rem', fontWeight: 800, color: '#16a34a' }}>₹{(total - appliedPoints).toLocaleString('en-IN')}</span>
+                                    <span style={{ fontSize: '1.25rem', fontWeight: 800, color: '#16a34a' }}>₹{(total - appliedPoints - couponDiscount).toLocaleString('en-IN')}</span>
                                 </div>
 
                                 <div style={{ background: '#4338ca', borderRadius: '8px', padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                                     <span style={{ color: 'white', fontSize: '0.9rem', fontWeight: 600 }}>Points Earned</span>
                                     <div style={{ background: 'white', color: '#4338ca', padding: '4px 12px', borderRadius: '20px', fontWeight: 700, fontSize: '0.9rem' }}>
-                                        {Math.floor((total - appliedPoints)/500)} points
+                                        {Math.floor((total - appliedPoints - couponDiscount)/500)} points
                                     </div>
                                 </div>
 
@@ -514,7 +618,7 @@ const Cart = () => {
                                 <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '12px', marginBottom: '1.5rem', border: '1px dashed #cbd5e1' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.1rem', fontWeight: 800 }}>
                                         <span>Grand Total:</span>
-                                        <span style={{ color: 'var(--primary)' }}>₹{(total - appliedPoints).toLocaleString('en-IN')}</span>
+                                        <span style={{ color: 'var(--primary)' }}>₹{(total - appliedPoints - couponDiscount).toLocaleString('en-IN')}</span>
                                     </div>
                                 </div>
                                 <button type="submit" disabled={loading} className="btn btn-primary" style={{ width: '100%', padding: '14px', borderRadius: '12px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>

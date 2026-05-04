@@ -114,7 +114,20 @@ const AdminDashboard = () => {
   const [popupSelectedFile, setPopupSelectedFile] = useState(null);
   const [templateImagePreview, setTemplateImagePreview] = useState(null);
   const [templateSelectedFile, setTemplateSelectedFile] = useState(null);
-  const [marketingTab, setMarketingTab] = useState('popup');
+  const [marketingTab, setMarketingTab] = useState('popup'); // 'popup' or 'coupons'
+
+  // --- Coupons State ---
+  const [coupons, setCoupons] = useState([]);
+  const [isCouponModalOpen, setIsCouponModalOpen] = useState(false);
+  const [newCoupon, setNewCoupon] = useState({
+      code: '',
+      discountType: 'percentage',
+      discountValue: '',
+      minOrderValue: 0,
+      expiryDate: '',
+      description: '',
+      isActive: true
+  });
 
   const colorOptions = [
     { name: 'White', value: '#ffffff' },
@@ -438,6 +451,11 @@ const AdminDashboard = () => {
                 setTemplateImagePreview(popupData.templateImage.startsWith('http') ? popupData.templateImage : `${BASE_URL}${popupData.templateImage}`);
             }
         }
+
+        const couponRes = await fetch(`${BASE_URL}/api/coupons/admin`);
+        if (couponRes.ok) {
+            setCoupons(await couponRes.json());
+        }
       } catch (error) {
         console.error("Failed to fetch dashboard data", error);
       } finally {
@@ -509,6 +527,56 @@ const AdminDashboard = () => {
         showToast('Error saving popup settings', 'error');
     } finally {
         setIsSubmitting(false);
+    }
+  };
+
+  const handleSaveCoupon = async () => {
+    if (!newCoupon.code || !newCoupon.discountValue || !newCoupon.expiryDate || !newCoupon.description) {
+        showToast('Please fill all required coupon fields', 'error');
+        return;
+    }
+    setIsSubmitting(true);
+    try {
+        const res = await fetch(`${BASE_URL}/api/coupons`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newCoupon)
+        });
+        if (res.ok) {
+            const data = await res.json();
+            setCoupons([data, ...coupons]);
+            setIsCouponModalOpen(false);
+            setNewCoupon({
+                code: '',
+                discountType: 'percentage',
+                discountValue: '',
+                minOrderValue: 0,
+                expiryDate: '',
+                description: '',
+                isActive: true
+            });
+            showToast('Coupon created successfully');
+        } else {
+            const err = await res.json();
+            showToast(err.message || 'Failed to create coupon', 'error');
+        }
+    } catch (err) {
+        showToast('Network error saving coupon', 'error');
+    } finally {
+        setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteCoupon = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this coupon?')) return;
+    try {
+        const res = await fetch(`${BASE_URL}/api/coupons/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+            setCoupons(coupons.filter(c => c._id !== id));
+            showToast('Coupon deleted');
+        }
+    } catch (err) {
+        showToast('Failed to delete coupon', 'error');
     }
   };
 
@@ -1151,268 +1219,348 @@ const AdminDashboard = () => {
             
             <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginBottom: '30px' }}>
                 <button 
-                    onClick={() => setPopupConfig({ ...popupConfig, useTemplate: false })}
+                    onClick={() => setMarketingTab('popup')}
                     style={{ 
                         padding: '12px 24px', borderRadius: '12px', fontWeight: 600, cursor: 'pointer',
-                        background: !popupConfig.useTemplate ? '#3b82f6' : 'white',
-                        color: !popupConfig.useTemplate ? 'white' : '#64748b',
-                        border: !popupConfig.useTemplate ? 'none' : '1px solid #e2e8f0',
-                        boxShadow: !popupConfig.useTemplate ? '0 4px 12px rgba(59,130,246,0.3)' : 'none'
+                        background: marketingTab === 'popup' ? '#3b82f6' : 'white',
+                        color: marketingTab === 'popup' ? 'white' : '#64748b',
+                        border: marketingTab === 'popup' ? 'none' : '1px solid #e2e8f0',
+                        boxShadow: marketingTab === 'popup' ? '0 4px 12px rgba(59,130,246,0.3)' : 'none'
                     }}
                 >
-                    Upload Poster
+                    Popups & Banners
                 </button>
                 <button 
-                    onClick={() => setPopupConfig({ ...popupConfig, useTemplate: true })}
+                    onClick={() => setMarketingTab('coupons')}
                     style={{ 
                         padding: '12px 24px', borderRadius: '12px', fontWeight: 600, cursor: 'pointer',
-                        background: popupConfig.useTemplate ? '#3b82f6' : 'white',
-                        color: popupConfig.useTemplate ? 'white' : '#64748b',
-                        border: popupConfig.useTemplate ? 'none' : '1px solid #e2e8f0',
-                        boxShadow: popupConfig.useTemplate ? '0 4px 12px rgba(59,130,246,0.3)' : 'none'
+                        background: marketingTab === 'coupons' ? '#3b82f6' : 'white',
+                        color: marketingTab === 'coupons' ? 'white' : '#64748b',
+                        border: marketingTab === 'coupons' ? 'none' : '1px solid #e2e8f0',
+                        boxShadow: marketingTab === 'coupons' ? '0 4px 12px rgba(59,130,246,0.3)' : 'none'
                     }}
                 >
-                    Create from Template
+                    Coupons & Offers
                 </button>
             </div>
 
-            <div style={{ maxWidth: '900px', margin: '0 auto', display: 'grid', gridTemplateColumns: popupConfig.useTemplate ? '1fr 1fr' : '1fr', gap: '30px' }}>
-                {/* --- Input / Selection Side --- */}
-                <div style={{ background: 'white', padding: '2rem', borderRadius: '24px', border: '1px solid var(--admin-border-color)', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.05)' }}>
-                    {!popupConfig.useTemplate ? (
-                        <>
-                            <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '20px' }}>Custom Upload</h3>
-                            <div 
-                                style={{ 
-                                    width: '100%', aspectRatio: '1', background: '#f8fafc', borderRadius: '20px', border: '3px dashed #cbd5e1', 
-                                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                                    overflow: 'hidden', position: 'relative', cursor: 'pointer'
-                                }}
-                                onClick={() => document.getElementById('popup-image-upload').click()}
-                            >
-                                {popupImagePreview ? (
-                                    <img src={popupImagePreview} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-                                ) : (
-                                    <>
-                                        <UploadSimple size={48} color="#3b82f6" weight="duotone" />
-                                        <p style={{ fontSize: '1rem', color: '#1e293b', fontWeight: 700, marginTop: '10px' }}>Select Image</p>
-                                    </>
-                                )}
-                                <input id="popup-image-upload" type="file" hidden accept="image/*" onChange={(e) => {
-                                    const file = e.target.files[0];
-                                    if (file) {
-                                        setPopupSelectedFile(file);
-                                        setPopupImagePreview(URL.createObjectURL(file));
-                                        setPopupConfig(prev => ({ ...prev, isActive: true }));
-                                    }
-                                }} />
-                            </div>
-                        </>
-                    ) : (
-                        <>
-                            <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '20px' }}>Choose Template</h3>
-                            <div style={{ display: 'grid', gap: '10px', marginBottom: '25px' }}>
-                                {[
-                                    { id: 'sale', name: 'Flash Sale', color: '#ef4444' },
-                                    { id: 'arrival', name: 'New Arrival', color: '#1e293b' },
-                                    { id: 'clearance', name: 'Clearance', color: '#f59e0b' }
-                                ].map(t => (
-                                    <div 
-                                        key={t.id}
-                                        onClick={() => setPopupConfig({ ...popupConfig, templateType: t.id, templateData: { ...popupConfig.templateData, color: t.color }, isActive: true })}
-                                        style={{ 
-                                            padding: '12px 16px', borderRadius: '12px', border: `2px solid ${popupConfig.templateType === t.id ? '#3b82f6' : '#e2e8f0'}`,
-                                            cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px', background: popupConfig.templateType === t.id ? '#eff6ff' : 'white'
-                                        }}
-                                    >
-                                        <div style={{ width: '20px', height: '20px', borderRadius: '4px', background: t.color }}></div>
-                                        <span style={{ fontWeight: 600 }}>{t.name}</span>
-                                    </div>
-                                ))}
-                            </div>
+            {marketingTab === 'popup' ? (
+                <>
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginBottom: '30px' }}>
+                        <button 
+                            onClick={() => setPopupConfig({ ...popupConfig, useTemplate: false })}
+                            style={{ 
+                                padding: '12px 24px', borderRadius: '12px', fontWeight: 600, cursor: 'pointer',
+                                background: !popupConfig.useTemplate ? '#3b82f6' : 'white',
+                                color: !popupConfig.useTemplate ? 'white' : '#64748b',
+                                border: !popupConfig.useTemplate ? 'none' : '1px solid #e2e8f0',
+                                boxShadow: !popupConfig.useTemplate ? '0 4px 12px rgba(59,130,246,0.3)' : 'none'
+                            }}
+                        >
+                            Upload Poster
+                        </button>
+                        <button 
+                            onClick={() => setPopupConfig({ ...popupConfig, useTemplate: true })}
+                            style={{ 
+                                padding: '12px 24px', borderRadius: '12px', fontWeight: 600, cursor: 'pointer',
+                                background: popupConfig.useTemplate ? '#3b82f6' : 'white',
+                                color: popupConfig.useTemplate ? 'white' : '#64748b',
+                                border: popupConfig.useTemplate ? 'none' : '1px solid #e2e8f0',
+                                boxShadow: popupConfig.useTemplate ? '0 4px 12px rgba(59,130,246,0.3)' : 'none'
+                            }}
+                        >
+                            Create from Template
+                        </button>
+                    </div>
 
-                            <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '15px' }}>Edit Content</h3>
-                            <div style={{ display: 'grid', gap: '15px' }}>
-                                <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-end' }}>
-                                    <div style={{ flex: 1 }}>
-                                        <label style={{ fontSize: '0.85rem', color: '#64748b', display: 'block', marginBottom: '5px' }}>Main Title</label>
-                                        <input 
-                                            type="text" 
-                                            value={popupConfig.templateData?.title || ''}
-                                            onChange={(e) => setPopupConfig({ ...popupConfig, templateData: { ...(popupConfig.templateData || {}), title: e.target.value.toUpperCase() }})}
-                                            style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-                                        />
-                                    </div>
-                                    <select 
-                                        value={popupConfig.templateData?.titleColor || '#ffffff'}
-                                        onChange={(e) => setPopupConfig({ ...popupConfig, templateData: { ...(popupConfig.templateData || {}), titleColor: e.target.value }})}
-                                        style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', cursor: 'pointer' }}
+                    <div style={{ maxWidth: '900px', margin: '0 auto', display: 'grid', gridTemplateColumns: popupConfig.useTemplate ? '1fr 1fr' : '1fr', gap: '30px' }}>
+                        {/* --- Input / Selection Side --- */}
+                        <div style={{ background: 'white', padding: '2rem', borderRadius: '24px', border: '1px solid var(--admin-border-color)', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.05)' }}>
+                            {!popupConfig.useTemplate ? (
+                                <>
+                                    <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '20px' }}>Custom Upload</h3>
+                                    <div 
+                                        style={{ 
+                                            width: '100%', aspectRatio: '1', background: '#f8fafc', borderRadius: '20px', border: '3px dashed #cbd5e1', 
+                                            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                                            overflow: 'hidden', position: 'relative', cursor: 'pointer'
+                                        }}
+                                        onClick={() => document.getElementById('popup-image-upload').click()}
                                     >
-                                        {colorOptions.map(c => <option key={c.value} value={c.value}>{c.name}</option>)}
-                                    </select>
-                                </div>
-                                <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-end' }}>
-                                    <div style={{ flex: 1 }}>
-                                        <label style={{ fontSize: '0.85rem', color: '#64748b', display: 'block', marginBottom: '5px' }}>Subtitle</label>
-                                        <input 
-                                            type="text" 
-                                            value={popupConfig.templateData?.subtitle || ''}
-                                            onChange={(e) => setPopupConfig({ ...popupConfig, templateData: { ...(popupConfig.templateData || {}), subtitle: e.target.value }})}
-                                            style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-                                        />
+                                        {popupImagePreview ? (
+                                            <img src={popupImagePreview} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                                        ) : (
+                                            <>
+                                                <UploadSimple size={48} color="#3b82f6" weight="duotone" />
+                                                <p style={{ fontSize: '1rem', color: '#1e293b', fontWeight: 700, marginTop: '10px' }}>Select Image</p>
+                                            </>
+                                        )}
+                                        <input id="popup-image-upload" type="file" hidden accept="image/*" onChange={(e) => {
+                                            const file = e.target.files[0];
+                                            if (file) {
+                                                setPopupSelectedFile(file);
+                                                setPopupImagePreview(URL.createObjectURL(file));
+                                                setPopupConfig(prev => ({ ...prev, isActive: true }));
+                                            }
+                                        }} />
                                     </div>
-                                    <select 
-                                        value={popupConfig.templateData?.subtitleColor || '#ffffff'}
-                                        onChange={(e) => setPopupConfig({ ...popupConfig, templateData: { ...(popupConfig.templateData || {}), subtitleColor: e.target.value }})}
-                                        style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', cursor: 'pointer' }}
-                                    >
-                                        {colorOptions.map(c => <option key={c.value} value={c.value}>{c.name}</option>)}
-                                    </select>
-                                </div>
-                                <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-end' }}>
-                                    <div style={{ flex: 1 }}>
-                                        <label style={{ fontSize: '0.85rem', color: '#64748b', display: 'block', marginBottom: '5px' }}>Event Dates / Info</label>
-                                        <input 
-                                            type="text" 
-                                            value={popupConfig.templateData?.code || ''}
-                                            onChange={(e) => setPopupConfig({ ...popupConfig, templateData: { ...(popupConfig.templateData || {}), code: e.target.value.toUpperCase() }})}
-                                            style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-                                            placeholder="e.g. FROM 15-30 APRIL"
-                                        />
+                                </>
+                            ) : (
+                                <>
+                                    <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '20px' }}>Choose Template</h3>
+                                    <div style={{ display: 'grid', gap: '10px', marginBottom: '25px' }}>
+                                        {[
+                                            { id: 'sale', name: 'Flash Sale', color: '#ef4444' },
+                                            { id: 'arrival', name: 'New Arrival', color: '#1e293b' },
+                                            { id: 'clearance', name: 'Clearance', color: '#f59e0b' }
+                                        ].map(t => (
+                                            <div 
+                                                key={t.id}
+                                                onClick={() => setPopupConfig({ ...popupConfig, templateType: t.id, templateData: { ...popupConfig.templateData, color: t.color }, isActive: true })}
+                                                style={{ 
+                                                    padding: '12px 16px', borderRadius: '12px', border: `2px solid ${popupConfig.templateType === t.id ? '#3b82f6' : '#e2e8f0'}`,
+                                                    cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px', background: popupConfig.templateType === t.id ? '#eff6ff' : 'white'
+                                                }}
+                                            >
+                                                <div style={{ width: '20px', height: '20px', borderRadius: '4px', background: t.color }}></div>
+                                                <span style={{ fontWeight: 600 }}>{t.name}</span>
+                                            </div>
+                                        ))}
                                     </div>
-                                    <div style={{ display: 'flex', gap: '5px', flexDirection: 'column' }}>
-                                        <label style={{ fontSize: '0.7rem', color: '#64748b' }}>Text / Bg</label>
-                                        <div style={{ display: 'flex', gap: '5px' }}>
+
+                                    <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '15px' }}>Edit Content</h3>
+                                    <div style={{ display: 'grid', gap: '15px' }}>
+                                        <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-end' }}>
+                                            <div style={{ flex: 1 }}>
+                                                <label style={{ fontSize: '0.85rem', color: '#64748b', display: 'block', marginBottom: '5px' }}>Main Title</label>
+                                                <input 
+                                                    type="text" 
+                                                    value={popupConfig.templateData?.title || ''}
+                                                    onChange={(e) => setPopupConfig({ ...popupConfig, templateData: { ...(popupConfig.templateData || {}), title: e.target.value.toUpperCase() }})}
+                                                    style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                                                />
+                                            </div>
                                             <select 
-                                                value={popupConfig.templateData?.codeColor || '#ffffff'}
-                                                onChange={(e) => setPopupConfig({ ...popupConfig, templateData: { ...(popupConfig.templateData || {}), codeColor: e.target.value }})}
-                                                style={{ padding: '8px', borderRadius: '8px', border: '1px solid #cbd5e1', cursor: 'pointer', fontSize: '0.8rem' }}
+                                                value={popupConfig.templateData?.titleColor || '#ffffff'}
+                                                onChange={(e) => setPopupConfig({ ...popupConfig, templateData: { ...(popupConfig.templateData || {}), titleColor: e.target.value }})}
+                                                style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', cursor: 'pointer' }}
                                             >
-                                                {colorOptions.map(c => <option key={c.value} value={c.value}>{c.name}</option>)}
-                                            </select>
-                                            <select 
-                                                value={popupConfig.templateData?.codeBgColor || '#f97316'}
-                                                onChange={(e) => setPopupConfig({ ...popupConfig, templateData: { ...(popupConfig.templateData || {}), codeBgColor: e.target.value }})}
-                                                style={{ padding: '8px', borderRadius: '8px', border: '1px solid #cbd5e1', cursor: 'pointer', fontSize: '0.8rem' }}
-                                            >
-                                                <option value="transparent">No Bg</option>
                                                 {colorOptions.map(c => <option key={c.value} value={c.value}>{c.name}</option>)}
                                             </select>
                                         </div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label style={{ fontSize: '0.85rem', color: '#64748b', display: 'block', marginBottom: '10px' }}>Background Image (Optional)</label>
-                                    <div 
-                                        style={{ 
-                                            width: '100%', height: '80px', borderRadius: '12px', border: '2px dashed #cbd5e1',
-                                            display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', overflow: 'hidden',
-                                            background: templateImagePreview ? 'none' : '#f8fafc'
-                                        }}
-                                        onClick={() => document.getElementById('template-image-upload').click()}
-                                    >
-                                        {templateImagePreview ? (
-                                            <img src={templateImagePreview} alt="Bg" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                        ) : (
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b' }}>
-                                                <UploadSimple size={20} />
-                                                <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>Click to upload background</span>
+                                        <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-end' }}>
+                                            <div style={{ flex: 1 }}>
+                                                <label style={{ fontSize: '0.85rem', color: '#64748b', display: 'block', marginBottom: '5px' }}>Subtitle</label>
+                                                <input 
+                                                    type="text" 
+                                                    value={popupConfig.templateData?.subtitle || ''}
+                                                    onChange={(e) => setPopupConfig({ ...popupConfig, templateData: { ...(popupConfig.templateData || {}), subtitle: e.target.value }})}
+                                                    style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                                                />
                                             </div>
-                                        )}
-                                        <input 
-                                            id="template-image-upload" type="file" hidden accept="image/*" 
-                                            onChange={(e) => {
-                                                const file = e.target.files[0];
-                                                if (file) {
-                                                    setTemplateSelectedFile(file);
-                                                    setTemplateImagePreview(URL.createObjectURL(file));
-                                                }
-                                            }}
-                                        />
+                                            <select 
+                                                value={popupConfig.templateData?.subtitleColor || '#ffffff'}
+                                                onChange={(e) => setPopupConfig({ ...popupConfig, templateData: { ...(popupConfig.templateData || {}), subtitleColor: e.target.value }})}
+                                                style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', cursor: 'pointer' }}
+                                            >
+                                                {colorOptions.map(c => <option key={c.value} value={c.value}>{c.name}</option>)}
+                                            </select>
+                                        </div>
+                                        <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-end' }}>
+                                            <div style={{ flex: 1 }}>
+                                                <label style={{ fontSize: '0.85rem', color: '#64748b', display: 'block', marginBottom: '5px' }}>Event Dates / Info</label>
+                                                <input 
+                                                    type="text" 
+                                                    value={popupConfig.templateData?.code || ''}
+                                                    onChange={(e) => setPopupConfig({ ...popupConfig, templateData: { ...(popupConfig.templateData || {}), code: e.target.value.toUpperCase() }})}
+                                                    style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                                                    placeholder="e.g. FROM 15-30 APRIL"
+                                                />
+                                            </div>
+                                            <div style={{ display: 'flex', gap: '5px', flexDirection: 'column' }}>
+                                                <label style={{ fontSize: '0.7rem', color: '#64748b' }}>Text / Bg</label>
+                                                <div style={{ display: 'flex', gap: '5px' }}>
+                                                    <select 
+                                                        value={popupConfig.templateData?.codeColor || '#ffffff'}
+                                                        onChange={(e) => setPopupConfig({ ...popupConfig, templateData: { ...(popupConfig.templateData || {}), codeColor: e.target.value }})}
+                                                        style={{ padding: '8px', borderRadius: '8px', border: '1px solid #cbd5e1', cursor: 'pointer', fontSize: '0.8rem' }}
+                                                    >
+                                                        {colorOptions.map(c => <option key={c.value} value={c.value}>{c.name}</option>)}
+                                                    </select>
+                                                    <select 
+                                                        value={popupConfig.templateData?.codeBgColor || '#f97316'}
+                                                        onChange={(e) => setPopupConfig({ ...popupConfig, templateData: { ...(popupConfig.templateData || {}), codeBgColor: e.target.value }})}
+                                                        style={{ padding: '8px', borderRadius: '8px', border: '1px solid #cbd5e1', cursor: 'pointer', fontSize: '0.8rem' }}
+                                                    >
+                                                        <option value="transparent">No Bg</option>
+                                                        {colorOptions.map(c => <option key={c.value} value={c.value}>{c.name}</option>)}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label style={{ fontSize: '0.85rem', color: '#64748b', display: 'block', marginBottom: '10px' }}>Background Image (Optional)</label>
+                                            <div 
+                                                style={{ 
+                                                    width: '100%', height: '80px', borderRadius: '12px', border: '2px dashed #cbd5e1',
+                                                    display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', overflow: 'hidden',
+                                                    background: templateImagePreview ? 'none' : '#f8fafc'
+                                                }}
+                                                onClick={() => document.getElementById('template-image-upload').click()}
+                                            >
+                                                {templateImagePreview ? (
+                                                    <img src={templateImagePreview} alt="Bg" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                ) : (
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b' }}>
+                                                        <UploadSimple size={20} />
+                                                        <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>Click to upload background</span>
+                                                    </div>
+                                                )}
+                                                <input 
+                                                    id="template-image-upload" type="file" hidden accept="image/*" 
+                                                    onChange={(e) => {
+                                                        const file = e.target.files[0];
+                                                        if (file) {
+                                                            setTemplateSelectedFile(file);
+                                                            setTemplateImagePreview(URL.createObjectURL(file));
+                                                        }
+                                                    }}
+                                                />
+                                            </div>
+                                            {templateImagePreview && (
+                                                <button 
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setTemplateSelectedFile(null);
+                                                        setTemplateImagePreview(null);
+                                                    }}
+                                                    style={{ marginTop: '8px', color: '#ef4444', fontSize: '0.75rem', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer' }}
+                                                >
+                                                    Remove Background
+                                                </button>
+                                            )}
+                                        </div>
                                     </div>
-                                    {templateImagePreview && (
-                                        <button 
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                setTemplateSelectedFile(null);
-                                                setTemplateImagePreview(null);
-                                            }}
-                                            style={{ marginTop: '8px', color: '#ef4444', fontSize: '0.75rem', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer' }}
-                                        >
-                                            Remove Background
-                                        </button>
+                                </>
+                            )}
+
+                            <div style={{ marginTop: '2.5rem', display: 'grid', gap: '10px' }}>
+                                <button 
+                                    onClick={handleSavePopup}
+                                    disabled={isSubmitting || (!popupConfig.useTemplate && !popupSelectedFile && !popupConfig.image)}
+                                    className="btn btn-primary" 
+                                    style={{ width: '100%', padding: '16px', borderRadius: '12px', fontWeight: 700, background: '#2563eb', border: 'none' }}
+                                >
+                                    {isSubmitting ? 'Saving...' : 'Activate & Save Popup'}
+                                </button>
+                                
+                                {popupConfig.isActive && (
+                                    <button 
+                                        onClick={async () => {
+                                            setIsSubmitting(true);
+                                            try {
+                                                const res = await fetch(`${BASE_URL}/api/popup`, {
+                                                    method: 'PUT',
+                                                    headers: { 'Content-Type': 'application/json' },
+                                                    body: JSON.stringify({ ...popupConfig, isActive: false })
+                                                });
+                                                if (res.ok) setPopupConfig(await res.json());
+                                                showToast('Popup deactivated');
+                                            } catch (e) { showToast('Failed to deactivate', 'error'); }
+                                            finally { setIsSubmitting(false); }
+                                        }}
+                                        style={{ width: '100%', padding: '12px', borderRadius: '12px', background: '#f1f5f9', color: '#475569', border: 'none', cursor: 'pointer' }}
+                                    >
+                                        Deactivate Popup
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* --- Preview Side (Always shown if template) --- */}
+                        {popupConfig.useTemplate && (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                                <h3 style={{ fontSize: '1.2rem', fontWeight: 700 }}>Live Preview</h3>
+                                <div style={{ 
+                                    background: popupConfig.templateData?.color || '#ef4444', 
+                                    backgroundImage: templateImagePreview ? `linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.25)), url(${templateImagePreview})` : 'none',
+                                    backgroundSize: 'cover', backgroundPosition: 'center',
+                                    color: 'white', padding: '3rem 2rem', borderRadius: '24px', textAlign: 'center',
+                                    width: '100%', minHeight: '550px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                                    boxShadow: '0 20px 25px -5px rgba(0,0,0,0.2)', position: 'relative'
+                                }}>
+                                    <div style={{ fontSize: '1rem', fontWeight: 600, letterSpacing: '4px', marginBottom: '15px', opacity: 0.9, textShadow: '0 2px 4px rgba(0,0,0,0.3)', color: popupConfig.templateData?.subtitleColor || 'white' }}>{popupConfig.templateType === 'sale' ? 'FLASH SALE' : popupConfig.templateType === 'arrival' ? 'NEW IN' : 'CLEARANCE'}</div>
+                                    <h2 style={{ fontSize: '2.5rem', fontWeight: 900, marginBottom: '20px', lineHeight: 1.1, textShadow: '0 2px 10px rgba(0,0,0,0.3)', color: popupConfig.templateData?.titleColor || 'white' }}>{popupConfig.templateData?.title || 'TITLE'}</h2>
+                                    <p style={{ fontSize: '1.2rem', fontWeight: 500, marginBottom: '30px', opacity: 0.9, textShadow: '0 2px 4px rgba(0,0,0,0.3)', color: popupConfig.templateData?.subtitleColor || 'white' }}>{popupConfig.templateData?.subtitle || 'Subtitle'}</p>
+                                    {popupConfig.templateData?.code && (
+                                        <div style={{ 
+                                            padding: '8px 25px', 
+                                            borderRadius: '4px', 
+                                            fontSize: '1rem', 
+                                            fontWeight: 800, 
+                                            background: popupConfig.templateData?.codeBgColor || '#f97316', 
+                                            color: popupConfig.templateData?.codeColor || 'white',
+                                            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                            letterSpacing: '1px'
+                                        }}>
+                                            {popupConfig.templateData?.code}
+                                        </div>
                                     )}
                                 </div>
                             </div>
-                        </>
-                    )}
-
-                    <div style={{ marginTop: '2.5rem', display: 'grid', gap: '10px' }}>
+                        )}
+                    </div>
+                </>
+            ) : (
+                <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px' }}>
+                        <h3 style={{ fontSize: '1.3rem', fontWeight: 700, margin: 0 }}>Active Coupons ({coupons.length})</h3>
                         <button 
-                            onClick={handleSavePopup}
-                            disabled={isSubmitting || (!popupConfig.useTemplate && !popupSelectedFile && !popupConfig.image)}
-                            className="btn btn-primary" 
-                            style={{ width: '100%', padding: '16px', borderRadius: '12px', fontWeight: 700, background: '#2563eb', border: 'none' }}
+                            onClick={() => setIsCouponModalOpen(true)}
+                            className="add-product-btn-admin"
                         >
-                            {isSubmitting ? 'Saving...' : 'Activate & Save Popup'}
+                            <Plus size={20} weight="bold" /> Create New Coupon
                         </button>
-                        
-                        {popupConfig.isActive && (
-                            <button 
-                                onClick={async () => {
-                                    setIsSubmitting(true);
-                                    try {
-                                        const res = await fetch(`${BASE_URL}/api/popup`, {
-                                            method: 'PUT',
-                                            headers: { 'Content-Type': 'application/json' },
-                                            body: JSON.stringify({ ...popupConfig, isActive: false })
-                                        });
-                                        if (res.ok) setPopupConfig(await res.json());
-                                        showToast('Popup deactivated');
-                                    } catch (e) { showToast('Failed to deactivate', 'error'); }
-                                    finally { setIsSubmitting(false); }
-                                }}
-                                style={{ width: '100%', padding: '12px', borderRadius: '12px', background: '#f1f5f9', color: '#475569', border: 'none', cursor: 'pointer' }}
-                            >
-                                Deactivate Popup
-                            </button>
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
+                        {coupons.map(coupon => (
+                            <div key={coupon._id} style={{ background: 'white', padding: '1.5rem', borderRadius: '16px', border: '1px solid #e2e8f0', position: 'relative', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+                                    <div style={{ background: '#f1f5f9', padding: '6px 12px', borderRadius: '6px', fontWeight: 800, color: '#1e293b', letterSpacing: '1px' }}>{coupon.code}</div>
+                                    <button 
+                                        onClick={() => handleDeleteCoupon(coupon._id)}
+                                        style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer' }}
+                                    >
+                                        <Trash size={20} weight="fill" />
+                                    </button>
+                                </div>
+                                <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#3b82f6', marginBottom: '8px' }}>
+                                    {coupon.discountType === 'percentage' ? `${coupon.discountValue}% OFF` : `₹${coupon.discountValue} OFF`}
+                                </div>
+                                <p style={{ fontSize: '0.9rem', color: '#475569', marginBottom: '15px', fontWeight: 500 }}>{coupon.description}</p>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', fontSize: '0.8rem', color: '#64748b' }}>
+                                    <div>Min Order: ₹{coupon.minOrderValue}</div>
+                                    <div>Expires: {new Date(coupon.expiryDate).toLocaleDateString()}</div>
+                                </div>
+                                <div style={{ marginTop: '15px', paddingTop: '15px', borderTop: '1px dotted #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <span style={{ fontSize: '0.8rem', fontWeight: 600, color: coupon.isActive ? '#10b981' : '#ef4444' }}>
+                                        {coupon.isActive ? '● Active' : '○ Inactive'}
+                                    </span>
+                                    <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Used: {coupon.usedCount} times</span>
+                                </div>
+                            </div>
+                        ))}
+                        {coupons.length === 0 && (
+                            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px', background: 'white', borderRadius: '16px', border: '1px dashed #cbd5e1', color: '#94a3b8' }}>
+                                No active coupons. Create one to start an offer.
+                            </div>
                         )}
                     </div>
                 </div>
-
-                {/* --- Preview Side (Always shown if template) --- */}
-                {popupConfig.useTemplate && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                        <h3 style={{ fontSize: '1.2rem', fontWeight: 700 }}>Live Preview</h3>
-                        <div style={{ 
-                            background: popupConfig.templateData?.color || '#ef4444', 
-                            backgroundImage: templateImagePreview ? `linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.25)), url(${templateImagePreview})` : 'none',
-                            backgroundSize: 'cover', backgroundPosition: 'center',
-                            color: 'white', padding: '3rem 2rem', borderRadius: '24px', textAlign: 'center',
-                            width: '100%', minHeight: '550px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                            boxShadow: '0 20px 25px -5px rgba(0,0,0,0.2)', position: 'relative'
-                        }}>
-                            <div style={{ fontSize: '1rem', fontWeight: 600, letterSpacing: '4px', marginBottom: '15px', opacity: 0.9, textShadow: '0 2px 4px rgba(0,0,0,0.3)', color: popupConfig.templateData?.subtitleColor || 'white' }}>{popupConfig.templateType === 'sale' ? 'FLASH SALE' : popupConfig.templateType === 'arrival' ? 'NEW IN' : 'CLEARANCE'}</div>
-                            <h2 style={{ fontSize: '2.5rem', fontWeight: 900, marginBottom: '20px', lineHeight: 1.1, textShadow: '0 2px 10px rgba(0,0,0,0.3)', color: popupConfig.templateData?.titleColor || 'white' }}>{popupConfig.templateData?.title || 'TITLE'}</h2>
-                            <p style={{ fontSize: '1.2rem', fontWeight: 500, marginBottom: '30px', opacity: 0.9, textShadow: '0 2px 4px rgba(0,0,0,0.3)', color: popupConfig.templateData?.subtitleColor || 'white' }}>{popupConfig.templateData?.subtitle || 'Subtitle'}</p>
-                            {popupConfig.templateData?.code && (
-                                <div style={{ 
-                                    padding: '8px 25px', 
-                                    borderRadius: '4px', 
-                                    fontSize: '1rem', 
-                                    fontWeight: 800, 
-                                    background: popupConfig.templateData?.codeBgColor || '#f97316', 
-                                    color: popupConfig.templateData?.codeColor || 'white',
-                                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                                    letterSpacing: '1px'
-                                }}>
-                                    {popupConfig.templateData?.code}
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                )}
-            </div>
+            )}
+          </div>
+        )}
           </div>
         )}
 
@@ -2657,6 +2805,95 @@ const AdminDashboard = () => {
             <Bell size={20} weight="fill" />
           </div>
           <span style={{ fontWeight: 600 }}>{toast.message}</span>
+        </div>
+      )}
+
+       )}
+
+      {/* Coupon Creation Modal */}
+      {isCouponModalOpen && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, animation: 'fadeIn 0.3s ease' }}>
+          <div style={{ background: 'white', padding: '2.5rem', borderRadius: '24px', width: '90%', maxWidth: '500px', position: 'relative', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}>
+             <button onClick={() => setIsCouponModalOpen(false)} style={{ position: 'absolute', top: '20px', right: '20px', background: '#f1f5f9', border: 'none', cursor: 'pointer', color: '#64748b', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><X size={20} /></button>
+             <h2 style={{ marginBottom: '1.5rem', color: '#0f172a', fontWeight: 800 }}>Create New Coupon</h2>
+             
+             <div style={{ display: 'grid', gap: '1.2rem' }}>
+                <div>
+                   <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 700, color: '#334155', fontSize: '0.9rem' }}>Coupon Code*</label>
+                   <input 
+                        type="text" 
+                        placeholder="e.g. FESTIVE20" 
+                        value={newCoupon.code} 
+                        onChange={e => setNewCoupon({...newCoupon, code: e.target.value.toUpperCase()})} 
+                        style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1.5px solid #e2e8f0', outline: 'none', fontWeight: 600 }} 
+                    />
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <div>
+                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 700, color: '#334155', fontSize: '0.9rem' }}>Discount Type*</label>
+                        <select 
+                            value={newCoupon.discountType} 
+                            onChange={e => setNewCoupon({...newCoupon, discountType: e.target.value})} 
+                            style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1.5px solid #e2e8f0', outline: 'none' }}
+                        >
+                            <option value="percentage">Percentage (%)</option>
+                            <option value="flat">Flat Amount (₹)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 700, color: '#334155', fontSize: '0.9rem' }}>Value*</label>
+                        <input 
+                            type="number" 
+                            placeholder="e.g. 10 or 500" 
+                            value={newCoupon.discountValue} 
+                            onChange={e => setNewCoupon({...newCoupon, discountValue: e.target.value})} 
+                            style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1.5px solid #e2e8f0', outline: 'none' }} 
+                        />
+                    </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <div>
+                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 700, color: '#334155', fontSize: '0.9rem' }}>Min Order (₹)</label>
+                        <input 
+                            type="number" 
+                            value={newCoupon.minOrderValue} 
+                            onChange={e => setNewCoupon({...newCoupon, minOrderValue: e.target.value})} 
+                            style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1.5px solid #e2e8f0', outline: 'none' }} 
+                        />
+                    </div>
+                    <div>
+                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 700, color: '#334155', fontSize: '0.9rem' }}>Expiry Date*</label>
+                        <input 
+                            type="date" 
+                            value={newCoupon.expiryDate} 
+                            onChange={e => setNewCoupon({...newCoupon, expiryDate: e.target.value})} 
+                            style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1.5px solid #e2e8f0', outline: 'none' }} 
+                        />
+                    </div>
+                </div>
+
+                <div>
+                   <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 700, color: '#334155', fontSize: '0.9rem' }}>Short Description*</label>
+                   <input 
+                        type="text" 
+                        placeholder="e.g. Get 20% off on your first order" 
+                        value={newCoupon.description} 
+                        onChange={e => setNewCoupon({...newCoupon, description: e.target.value})} 
+                        style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1.5px solid #e2e8f0', outline: 'none' }} 
+                    />
+                </div>
+
+                <button 
+                    onClick={handleSaveCoupon}
+                    disabled={isSubmitting}
+                    style={{ width: '100%', padding: '1rem', borderRadius: '12px', border: 'none', background: '#3b82f6', color: 'white', fontWeight: 800, cursor: 'pointer', marginTop: '1rem', boxShadow: '0 10px 15px -3px rgba(59,130,246,0.3)' }}
+                >
+                    {isSubmitting ? 'Creating...' : 'CREATE COUPON'}
+                </button>
+             </div>
+          </div>
         </div>
       )}
 
