@@ -4,7 +4,6 @@ import { Cube, Stack, Wrench, Sparkle, ShieldCheck, Truck, Headphones, Medal, Cl
 import { PRODUCTS, BRANDS } from '../constants/data';
 import { cartService } from '../services/cartService';
 import { getImageUrl, parsePriceLocal, PLACEHOLDER_SVG } from '../utils/imageUtils';
-import PopupModal from '../components/PopupModal';
 
 import { API_BASE_URL } from '../api/config';
 
@@ -12,13 +11,6 @@ const Home = () => {
     const [currentSlide, setCurrentSlide] = useState(0);
     const navigate = useNavigate();
     const revealRefs = useRef([]);
-    const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
-
-    useEffect(() => {
-        const handleResize = () => setIsMobile(window.innerWidth <= 1024);
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
     
     const BASE_URL = API_BASE_URL;
   
@@ -28,9 +20,7 @@ const Home = () => {
     return Number(price.toString().replace(/[^0-9.-]+/g, ""));
   };
 
-
-
-  const staticSlides = [
+  const slides = [
     {
       img: getImageUrl("/images/hero-printer-1-1774867967898.png"),
       brand: "Bambu Lab",
@@ -67,8 +57,6 @@ const Home = () => {
       features: ["CNC & LASER INCLUDED", "ALL-METAL DESIGN", "LINEAR RAILS & MODULES", "POWER-LOSS RECOVERY"]
     }
   ];
-
-  const [slides, setSlides] = useState(staticSlides);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -144,10 +132,9 @@ const Home = () => {
     cartService.toggleWishlist(product);
   };
 
-    return (
-        <main>
-            <PopupModal />
-            {/* Hero Section */}
+  return (
+    <main>
+      {/* Hero Section */}
       <section className="hero">
         <div className="hero-slider">
           {slides.map((slide, index) => (
@@ -265,91 +252,57 @@ const Home = () => {
                 const discountPercent = product.discount || (hasDiscount ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0);
 
                 return (
-                <div 
-                    key={product._id || product.id} 
-                    className="reveal" 
-                    ref={addToRevealRefs}
-                    style={{ 
-                        background: 'white', 
-                        borderRadius: '12px', 
-                        padding: isMobile ? '12px' : '20px', 
-                        border: '1px solid #f1f5f9', 
-                        boxShadow: '0 4px 15px rgba(0,0,0,0.02)', 
-                        transition: 'transform 0.2s', 
-                        position: 'relative',
-                        display: 'flex',
-                        flexDirection: 'column'
-                    }}
-                >
+                <div key={product._id || product.id} className="product-card reveal" ref={addToRevealRefs}>
                     <button 
                         className={`wishlist-btn ${wishlist.some(item => (item.productId || '').toString() === (product._id || product.id || '').toString()) ? 'active' : ''}`} 
                         onClick={() => handleAddToWishlist(product)}
-                        style={{ zIndex: 10 }}
                         title="Add to Wishlist"
                     >
                         <Heart size={20} weight={wishlist.some(item => (item.productId || '').toString() === (product._id || product.id || '').toString()) ? "fill" : "bold"} />
                     </button>
-                    {product.badge && <div className="badge" style={{ ...product.badgeStyle, zIndex: 5 }}>{product.badge}</div>}
-                    
-                    <Link to={product._id ? `/product/${product._id}` : '/products'} style={{ textDecoration: 'none', display: 'block', flex: 1 }}>
-                        <div className="image-wrapper" style={{ height: isMobile ? '160px' : '220px', marginBottom: '12px', overflow: 'hidden', borderRadius: '8px', background: '#f8fafc' }}>
-                            <img 
-                                src={getImageUrl(product.image)} 
-                                alt={product.name || product.title} 
-                                style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '10px' }} 
-                                onError={(e) => (e.target.src = PLACEHOLDER_SVG)}
-                            />
-                        </div>
-                        <div style={{ fontSize: isMobile ? '0.7rem' : '0.85rem', color: '#64748b', textTransform: 'uppercase', marginBottom: '4px' }}>
-                            {product.category}
-                        </div>
-                        <h3 style={{ 
-                            fontSize: isMobile ? '0.95rem' : '1.1rem', 
-                            color: '#1e293b', 
-                            marginBottom: '8px', 
-                            height: isMobile ? '2.4rem' : '2.8rem', 
-                            overflow: 'hidden',
-                            lineHeight: 1.3,
-                            fontWeight: 600
-                        }}>{product.name || product.title}</h3>
-                        
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', marginTop: 'auto' }}>
-                            <div style={{ fontSize: isMobile ? '1.1rem' : '1.4rem', fontWeight: 800, color: '#2563eb' }}>
-                                ₹{price.toLocaleString('en-IN')}
-                            </div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                {hasDiscount && (
-                                    <div style={{ fontSize: isMobile ? '0.8rem' : '0.95rem', color: '#94a3b8', textDecoration: 'line-through' }}>
-                                        ₹{originalPrice.toLocaleString('en-IN')}
-                                    </div>
-                                )}
-                                {hasDiscount && (
-                                     <div style={{ fontSize: '0.7rem', color: '#10b981', fontWeight: 700, background: '#f0fdf4', padding: '2px 4px', borderRadius: '4px' }}>
-                                        {discountPercent}% OFF
-                                    </div>
-                                )}
-                            </div>
-                        </div>
+                    {product.badge && <div className="badge" style={product.badgeStyle}>{product.badge}</div>}
+                    <Link to={product._id ? `/product/${product._id}` : '/products'} className="product-img-wrapper" style={{ display: 'block' }}>
+                        <img 
+                            src={getImageUrl(product.image)} 
+                            alt={product.name || product.title} 
+                            className="product-img" 
+                            onError={(e) => (e.target.src = PLACEHOLDER_SVG)}
+                        />
                     </Link>
-                    
-                    <button 
-                        className="btn btn-dark" 
-                        onClick={() => handleAddToCart(product)}
-                        style={{ 
-                            width: '100%', 
-                            marginTop: '12px', 
-                            padding: isMobile ? '10px' : '12px', 
-                            borderRadius: '8px', 
-                            border: 'none', 
-                            background: '#111827', 
-                            color: 'white', 
-                            fontWeight: 600, 
-                            cursor: 'pointer',
-                            fontSize: isMobile ? '0.85rem' : '1rem'
-                        }}
-                    >
-                        Add to Cart
-                    </button>
+                    <div className="product-info">
+                        <div className="product-cat">{product.category}</div>
+                        <Link to={product._id ? `/product/${product._id}` : '/products'} style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <div className="product-title">{product.name || product.title}</div>
+                        </Link>
+                        <div className="stars">
+                            {typeof product.rating === 'number' ? 
+                                ('★'.repeat(Math.floor(product.rating)) + '☆'.repeat(5 - Math.floor(product.rating)) + ` (${product.rating.toFixed(1)})`) : 
+                                (product.stars || '★★★★★ (5.0)')
+                            }
+                        </div>
+                        <div className="product-price" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginTop: '5px' }}>
+                            {/* Temporarily less strict to check field visibility as per user request */}
+                            {(product.mrp || product.originalPrice) && (Number(parsePriceLocal(product.mrp || product.originalPrice)) > Number(parsePriceLocal(product.price))) ? (
+                                <span style={{ color: '#94a3b8', textDecoration: 'line-through', fontSize: '0.9rem' }}>
+                                    ₹{Number(parsePriceLocal(product.mrp || product.originalPrice)).toLocaleString('en-IN')}
+                                </span>
+                            ) : null}
+                            <span style={{ fontSize: '1.25rem', fontWeight: 800, color: '#2563eb' }}>
+                                ₹{price.toLocaleString('en-IN')}
+                            </span>
+                            {hasDiscount && (
+                                <span style={{ fontSize: '0.75rem', color: '#10b981', fontWeight: 700, background: '#f0fdf4', padding: '2px 6px', borderRadius: '4px' }}>
+                                    {discountPercent}% OFF
+                                </span>
+                            )}
+                        </div>
+                        <button 
+                            className="btn btn-block" 
+                            onClick={() => handleAddToCart(product)}
+                        >
+                            Add to Cart
+                        </button>
+                    </div>
                 </div>
                 );
             })}

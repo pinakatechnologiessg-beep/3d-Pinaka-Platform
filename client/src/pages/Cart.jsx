@@ -27,12 +27,36 @@ const Cart = () => {
         postcode: ''
     });
     const [paymentMethod, setPaymentMethod] = useState('Online');
-    const [availablePoints, setAvailablePoints] = useState(0);
-    const [pointsToUse, setPointsToUse] = useState(0);
-    const [appliedPoints, setAppliedPoints] = useState(0);
-
+    const [timeLeft, setTimeLeft] = useState(600); // 10 minutes in seconds
     
+    useEffect(() => {
+        if (cartItems.length === 0) {
+            setTimeLeft(600);
+            return;
+        }
 
+        const timer = setInterval(() => {
+            setTimeLeft(prev => {
+                if (prev <= 1) {
+                    clearInterval(timer);
+                    clearCart();
+                    window.dispatchEvent(new CustomEvent(SHOW_TOAST, { 
+                        detail: { message: 'Cart expired! Items have been released.', type: 'error' } 
+                    }));
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [cartItems.length]);
+
+    const formatTime = (seconds) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+    };
 
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
@@ -46,22 +70,9 @@ const Cart = () => {
                     phone: user.mobile || '',
                     customerEmail: user.email || ''
                 }));
-                setAvailablePoints(user.points || 0);
             } catch (e) { /* ignore */ }
         }
     }, []);
-
-    const applyPoints = (amount) => {
-        const pts = Math.min(availablePoints, amount, total);
-        setAppliedPoints(pts);
-        setPointsToUse(pts);
-    };
-
-    const useAllPoints = () => {
-        const pts = Math.min(availablePoints, total);
-        setAppliedPoints(pts);
-        setPointsToUse(pts);
-    };
 
     const updateCart = () => {
         const items = cartService.getCartItems();
@@ -140,9 +151,7 @@ const Cart = () => {
             totalPrice: total,
             status: 'Pending',
             paymentStatus: paymentMethod === 'Online' ? 'Unpaid' : 'Pending',
-            paymentMethod: paymentMethod === 'Online' ? 'Razorpay' : 'Cash on Delivery',
-            pointsUsed: appliedPoints,
-            totalPrice: total - appliedPoints
+            paymentMethod: paymentMethod === 'Online' ? 'Razorpay' : 'Cash on Delivery'
         };
 
         try {
@@ -158,7 +167,7 @@ const Cart = () => {
                     // Initialize Razorpay
                     const options = {
                         key: data.razorpayKeyId,
-                        amount: (total - appliedPoints) * 100,
+                        amount: data.totalPrice * 100,
                         currency: "INR",
                         name: "3D Pinaka",
                         description: "Purchase from 3D Pinaka",
@@ -218,7 +227,25 @@ const Cart = () => {
                 <Link to="/" className="back-home-btn"><ArrowLeft /> Continue Shopping</Link>
                 <h1 style={{ marginBottom: '2.5rem', marginTop: '1rem', fontSize: '2rem', fontWeight: 800 }}>Shopping Cart</h1>
                 
-
+                <div style={{ 
+                    background: timeLeft < 60 ? '#fee2e2' : '#f0fdf4', 
+                    color: timeLeft < 60 ? '#991b1b' : '#166534', 
+                    padding: '10px 15px', 
+                    borderRadius: '8px', 
+                    marginBottom: '20px', 
+                    fontSize: '0.9rem', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '8px', 
+                    border: timeLeft < 60 ? '1px solid #fecaca' : '1px solid #bbf7d0',
+                    transition: 'all 0.3s ease'
+                }}>
+                    <span role="img" aria-label="clock">⏰</span> 
+                    {cartItems.length > 0 
+                        ? `Items reserved for ${formatTime(timeLeft)}` 
+                        : "Cart is empty"
+                    }
+                </div>
                 
                 <div className="cart-layout" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 400px', gap: '2rem', alignItems: 'start' }}>
                     <div id="cart-items-section">
@@ -233,18 +260,16 @@ const Cart = () => {
                                 <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1.5rem', color: '#1e293b' }}>Cart Summary</h2>
                                 {cartItems.map((item, index) => (
                                     <div key={index} className="cart-item-new" style={{ display: 'flex', gap: '15px', padding: '15px 0', borderBottom: index === cartItems.length - 1 ? 'none' : '1px dotted #e2e8f0' }}>
-                                        <Link to={`/product/${item.productId}`} style={{ width: '80px', height: '80px', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '5px', flexShrink: 0, display: 'block' }}>
+                                        <div style={{ width: '80px', height: '80px', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '5px', flexShrink: 0 }}>
                                             <img 
                                                 src={getImageUrl(item.image)} 
                                                 alt={item.title} 
                                                 onError={(e) => (e.target.src = "/placeholder.png")}
                                                 style={{ width: '100%', height: '100%', objectFit: 'contain' }} 
                                             />
-                                        </Link>
+                                        </div>
                                         <div style={{ flex: 1 }}>
-                                            <Link to={`/product/${item.productId}`} style={{ textDecoration: 'none' }}>
-                                                <h4 style={{ fontSize: '0.95rem', fontWeight: 600, color: '#334155', marginBottom: '8px', lineHeight: '1.4' }}>{item.title}</h4>
-                                            </Link>
+                                            <h4 style={{ fontSize: '0.95rem', fontWeight: 600, color: '#334155', marginBottom: '8px', lineHeight: '1.4' }}>{item.title}</h4>
                                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                                 <div style={{ fontSize: '0.9rem', color: '#64748b' }}>
                                                     ₹{item.price} <span style={{ margin: '0 4px' }}>×</span> {item.quantity || 1}
@@ -280,42 +305,13 @@ const Cart = () => {
                                     <span style={{ color: '#64748b' }}>Subtotal</span>
                                     <span style={{ fontWeight: 600, color: '#334155' }}>₹{total.toLocaleString('en-IN')}</span>
                                 </div>
-                                <div style={{ marginBottom: '15px', padding: '15px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                                        <span style={{ fontSize: '0.9rem', fontWeight: 600, color: '#475569' }}>Your Points: <span style={{ color: '#4338ca' }}>{availablePoints}</span></span>
-                                        <button 
-                                            onClick={useAllPoints}
-                                            style={{ background: 'none', border: 'none', color: '#4338ca', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', padding: 0 }}
-                                        >
-                                            USE ALL
-                                        </button>
-                                    </div>
-                                    <div style={{ display: 'flex', gap: '8px' }}>
-                                        <input 
-                                            type="number" 
-                                            value={pointsToUse} 
-                                            onChange={(e) => setPointsToUse(Math.max(0, Math.min(availablePoints, parseInt(e.target.value) || 0)))}
-                                            placeholder="Enter points"
-                                            style={{ flex: 1, padding: '8px 12px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.9rem' }}
-                                        />
-                                        <button 
-                                            onClick={() => applyPoints(pointsToUse)}
-                                            style={{ background: '#4338ca', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '6px', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}
-                                        >
-                                            Apply
-                                        </button>
-                                    </div>
-                                    {appliedPoints > 0 && (
-                                        <div style={{ marginTop: '8px', fontSize: '0.8rem', color: '#059669', fontWeight: 600, display: 'flex', justifyContent: 'space-between' }}>
-                                            <span>✓ {appliedPoints} points applied</span>
-                                            <button onClick={() => { setAppliedPoints(0); setPointsToUse(0); }} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '0.8rem' }}>Remove</button>
-                                        </div>
-                                    )}
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                                    <span style={{ color: '#64748b' }}>Coupon Discount</span>
+                                    <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>No coupon applied</span>
                                 </div>
-
                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px dotted #e2e8f0' }}>
-                                    <span style={{ color: '#64748b' }}>Points Discount</span>
-                                    <span style={{ fontWeight: 600, color: '#059669' }}>-₹{appliedPoints.toLocaleString('en-IN')}</span>
+                                    <span style={{ color: '#64748b' }}>Apply Robu Points</span>
+                                    <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>No points applied</span>
                                 </div>
 
                                 <p style={{ fontSize: '0.75rem', color: '#ef4444', margin: '12px 0', fontStyle: 'italic' }}>
@@ -325,20 +321,20 @@ const Cart = () => {
                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
                                     <span style={{ color: '#64748b' }}>Total with GST</span>
                                     <div style={{ textAlign: 'right' }}>
-                                        <div style={{ fontWeight: 700, color: '#334155' }}>₹{(total - appliedPoints).toLocaleString('en-IN')}</div>
+                                        <div style={{ fontWeight: 700, color: '#334155' }}>₹{total.toLocaleString('en-IN')}</div>
                                         <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>(Incl. GST)</div>
                                     </div>
                                 </div>
 
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', paddingTop: '12px', borderTop: '1px solid #f1f5f9' }}>
                                     <span style={{ fontSize: '1.25rem', fontWeight: 700, color: '#16a34a' }}>Grand Total</span>
-                                    <span style={{ fontSize: '1.25rem', fontWeight: 800, color: '#16a34a' }}>₹{(total - appliedPoints).toLocaleString('en-IN')}</span>
+                                    <span style={{ fontSize: '1.25rem', fontWeight: 800, color: '#16a34a' }}>₹{total.toLocaleString('en-IN')}</span>
                                 </div>
 
                                 <div style={{ background: '#4338ca', borderRadius: '8px', padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                                     <span style={{ color: 'white', fontSize: '0.9rem', fontWeight: 600 }}>Points Earned</span>
                                     <div style={{ background: 'white', color: '#4338ca', padding: '4px 12px', borderRadius: '20px', fontWeight: 700, fontSize: '0.9rem' }}>
-                                        {Math.floor((total - appliedPoints)/500)} points
+                                        {Math.floor(total/100)} points
                                     </div>
                                 </div>
 
@@ -514,7 +510,7 @@ const Cart = () => {
                                 <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '12px', marginBottom: '1.5rem', border: '1px dashed #cbd5e1' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.1rem', fontWeight: 800 }}>
                                         <span>Grand Total:</span>
-                                        <span style={{ color: 'var(--primary)' }}>₹{(total - appliedPoints).toLocaleString('en-IN')}</span>
+                                        <span style={{ color: 'var(--primary)' }}>₹{total.toLocaleString('en-IN')}</span>
                                     </div>
                                 </div>
                                 <button type="submit" disabled={loading} className="btn btn-primary" style={{ width: '100%', padding: '14px', borderRadius: '12px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>

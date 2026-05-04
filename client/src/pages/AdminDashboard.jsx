@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   House, Package, ShoppingCart, Users, Gear, 
-  Bell, MagnifyingGlass, List, CurrencyDollar, TrendUp, Clock, ArrowLeft, Heart, X, UploadSimple, Trash, PencilSimple, Plus, Sparkle
+  Bell, MagnifyingGlass, List, CurrencyDollar, TrendUp, Clock, ArrowLeft, Heart, X, UploadSimple, Trash, PencilSimple, Plus
 } from '@phosphor-icons/react';
 import { getImageUrl } from '../utils/imageUtils';
 import './AdminDashboard.css';
@@ -15,7 +15,6 @@ const parsePriceLocal = (p) => {
 };
 
 const AdminDashboard = () => {
-
   const [activeTab, setActiveTab] = useState('Dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const navigate = useNavigate();
@@ -29,7 +28,6 @@ const AdminDashboard = () => {
     { name: 'Products', icon: <Package size={24} /> },
     { name: 'Orders', icon: <ShoppingCart size={24} /> },
     { name: 'Users', icon: <Users size={24} /> },
-    { name: 'Marketing', icon: <Sparkle size={24} /> },
     { name: 'Support', icon: <Bell size={24} /> },
     { name: 'Settings', icon: <Gear size={24} /> }
   ];
@@ -89,50 +87,6 @@ const AdminDashboard = () => {
   const [supportQueries, setSupportQueries] = useState([]);
   const [supportFilter, setSupportFilter] = useState('All');
   const [selectedSupportQuery, setSelectedSupportQuery] = useState(null);
-
-  // --- Marketing Popup State ---
-  const [popupConfig, setPopupConfig] = useState({
-      title: '',
-      link: '',
-      isActive: false,
-      showOnce: true,
-      image: '',
-      useTemplate: false,
-      templateType: 'sale', // 'sale', 'arrival', 'clearance'
-      templateData: {
-          title: 'SUMMER SALE',
-          subtitle: 'UP TO 50% OFF',
-          code: 'FROM 15-30 APRIL 2026',
-          color: '#ef4444',
-          titleColor: '#ffffff',
-          subtitleColor: '#ffffff',
-          codeColor: '#ffffff',
-          codeBgColor: '#f97316'
-      }
-  });
-  const [popupImagePreview, setPopupImagePreview] = useState(null);
-  const [popupSelectedFile, setPopupSelectedFile] = useState(null);
-  const [templateImagePreview, setTemplateImagePreview] = useState(null);
-  const [templateSelectedFile, setTemplateSelectedFile] = useState(null);
-  const [marketingTab, setMarketingTab] = useState('popup');
-
-  const colorOptions = [
-    { name: 'White', value: '#ffffff' },
-    { name: 'Black', value: '#000000' },
-    { name: 'Red', value: '#ef4444' },
-    { name: 'Blue', value: '#3b82f6' },
-    { name: 'Gold', value: '#f59e0b' },
-    { name: 'Green', value: '#22c55e' },
-    { name: 'Indigo', value: '#6366f1' },
-    { name: 'Pink', value: '#d946ef' },
-    { name: 'Orange', value: '#f97316' },
-    { name: 'Purple', value: '#a855f7' },
-    { name: 'Cyan', value: '#06b6d4' },
-    { name: 'Lime', value: '#84cc16' },
-    { name: 'Silver', value: '#cbd5e1' },
-    { name: 'Gray', value: '#64748b' },
-    { name: 'Brown', value: '#78350f' }
-  ];
 
   const showToast = (message, type = 'success') => {
       setToast({ show: true, message, type });
@@ -196,6 +150,7 @@ const AdminDashboard = () => {
         default: return { background: '#f8fafc', color: '#64748b', border: '1px solid #e2e8f0' };
     }
   };
+  // --------------------
   
   // --- Users State ---
   const [users, setUsers] = useState([]);
@@ -244,6 +199,7 @@ const AdminDashboard = () => {
         console.error('Failed to fetch user details', err);
     }
   };
+  // --------------------
 
   const handleEditImageUpload = (e) => {
       const file = e.target.files[0];
@@ -421,23 +377,6 @@ const AdminDashboard = () => {
         }
         const supportRes = await fetch(`${BASE_URL}/api/support`);
         if (supportRes.ok) setSupportQueries(await supportRes.json());
-
-        const popupRes = await fetch(`${BASE_URL}/api/popup`);
-        if (popupRes.ok) {
-            const popupData = await popupRes.json();
-            // Merge with defaults to prevent crashes on old records
-            setPopupConfig(prev => ({
-                ...prev,
-                ...popupData,
-                templateData: popupData.templateData || prev.templateData
-            }));
-            if (popupData.image && !popupData.useTemplate) {
-                setPopupImagePreview(popupData.image.startsWith('http') ? popupData.image : `${BASE_URL}${popupData.image}`);
-            }
-            if (popupData.templateImage) {
-                setTemplateImagePreview(popupData.templateImage.startsWith('http') ? popupData.templateImage : `${BASE_URL}${popupData.templateImage}`);
-            }
-        }
       } catch (error) {
         console.error("Failed to fetch dashboard data", error);
       } finally {
@@ -466,49 +405,27 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleSavePopup = async () => {
-    setIsSubmitting(true);
+  const handleDeleteSupport = async (queryId) => {
+    if (!window.confirm('Are you sure you want to delete this query?')) return;
     try {
-        const formData = new FormData();
-        formData.append('title', popupConfig.title || 'Promo');
-        formData.append('link', popupConfig.link || '');
-        formData.append('isActive', popupConfig.isActive);
-        formData.append('showOnce', popupConfig.showOnce);
-        formData.append('useTemplate', popupConfig.useTemplate);
-        formData.append('templateType', popupConfig.templateType);
-        formData.append('templateData', JSON.stringify(popupConfig.templateData));
-        
-        if (popupSelectedFile && !popupConfig.useTemplate) {
-            formData.append('image', popupSelectedFile);
-        }
-        if (templateSelectedFile && popupConfig.useTemplate) {
-            formData.append('templateImage', templateSelectedFile);
-        }
-
-        const res = await fetch(`${BASE_URL}/api/popup`, {
-            method: 'PUT',
-            body: formData
-        });
-
+        const res = await fetch(`${BASE_URL}/api/support/${queryId}`, { method: 'DELETE' });
         if (res.ok) {
-            const data = await res.json();
-            setPopupConfig(data);
-            if (data.image && !data.useTemplate) {
-                setPopupImagePreview(data.image.startsWith('http') ? data.image : `${BASE_URL}${data.image}`);
-            }
-            if (data.templateImage) {
-                setTemplateImagePreview(data.templateImage.startsWith('http') ? data.templateImage : `${BASE_URL}${data.templateImage}`);
-            }
-            setPopupSelectedFile(null);
-            setTemplateSelectedFile(null);
-            showToast('Popup settings saved successfully');
-        } else {
-            showToast('Failed to save popup settings', 'error');
+            setSupportQueries(prev => prev.filter(q => q._id !== queryId));
+            setSelectedSupportQuery(null);
+            showToast('Support query deleted', 'success');
         }
     } catch (err) {
-        showToast('Error saving popup settings', 'error');
-    } finally {
-        setIsSubmitting(false);
+        showToast('Failed to delete query', 'error');
+    }
+  };
+
+  const getStatusClass = (status) => {
+    switch (status) {
+      case 'Delivered': return 'status-delivered';
+      case 'Pending': return 'status-pending';
+      case 'Shipped': return 'status-shipped';
+      case 'Cancelled': return 'status-cancelled';
+      default: return '';
     }
   };
 
@@ -662,7 +579,7 @@ const AdminDashboard = () => {
                       {orders.slice(0, 5).length > 0 ? orders.slice(0, 5).map((order, index) => (
                         <tr key={index} style={{ borderBottom: '1px solid #f1f5f9', transition: 'background 0.2s' }} onMouseOver={e => e.currentTarget.style.background = '#fefce8'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
                           <td className="adm-order-id" style={{ padding: '16px', fontWeight: 500, color: '#3b82f6' }}>{order.orderId}</td>
-                          <td style={{ padding: '16px', color: '#334155', fontWeight: 500 }}>{order.firstName ? `${order.firstName} ${order.lastName || ''}` : order.customerName}</td>
+                          <td style={{ padding: '16px', color: '#334155', fontWeight: 500 }}>{order.customerName}</td>
                           <td className="adm-order-amount" style={{ padding: '16px', fontWeight: 600, color: '#0f172a' }}>{order.totalPrice ? `₹${order.totalPrice.toLocaleString('en-IN')}` : '₹0'}</td>
                           <td style={{ padding: '16px' }}>
                             <select 
@@ -1141,281 +1058,6 @@ const AdminDashboard = () => {
             </div>
           </div>
         )}
-
-        {activeTab === 'Marketing' && (
-          <div className="dashboard-content" style={{ padding: '24px' }}>
-            <div className="admin-section-header" style={{ marginBottom: '30px', textAlign: 'center' }}>
-              <div style={{ display: 'inline-block', padding: '4px 12px', background: '#eff6ff', color: '#3b82f6', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 700, marginBottom: '10px' }}>MARKETING v1.2</div>
-              <h2 style={{ fontSize: '1.8rem', color: '#1e293b', margin: 0, fontWeight: 800 }}>Marketing Center</h2>
-            </div>
-            
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginBottom: '30px' }}>
-                <button 
-                    onClick={() => setPopupConfig({ ...popupConfig, useTemplate: false })}
-                    style={{ 
-                        padding: '12px 24px', borderRadius: '12px', fontWeight: 600, cursor: 'pointer',
-                        background: !popupConfig.useTemplate ? '#3b82f6' : 'white',
-                        color: !popupConfig.useTemplate ? 'white' : '#64748b',
-                        border: !popupConfig.useTemplate ? 'none' : '1px solid #e2e8f0',
-                        boxShadow: !popupConfig.useTemplate ? '0 4px 12px rgba(59,130,246,0.3)' : 'none'
-                    }}
-                >
-                    Upload Poster
-                </button>
-                <button 
-                    onClick={() => setPopupConfig({ ...popupConfig, useTemplate: true })}
-                    style={{ 
-                        padding: '12px 24px', borderRadius: '12px', fontWeight: 600, cursor: 'pointer',
-                        background: popupConfig.useTemplate ? '#3b82f6' : 'white',
-                        color: popupConfig.useTemplate ? 'white' : '#64748b',
-                        border: popupConfig.useTemplate ? 'none' : '1px solid #e2e8f0',
-                        boxShadow: popupConfig.useTemplate ? '0 4px 12px rgba(59,130,246,0.3)' : 'none'
-                    }}
-                >
-                    Create from Template
-                </button>
-            </div>
-
-            <div style={{ maxWidth: '900px', margin: '0 auto', display: 'grid', gridTemplateColumns: popupConfig.useTemplate ? '1fr 1fr' : '1fr', gap: '30px' }}>
-                {/* --- Input / Selection Side --- */}
-                <div style={{ background: 'white', padding: '2rem', borderRadius: '24px', border: '1px solid var(--admin-border-color)', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.05)' }}>
-                    {!popupConfig.useTemplate ? (
-                        <>
-                            <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '20px' }}>Custom Upload</h3>
-                            <div 
-                                style={{ 
-                                    width: '100%', aspectRatio: '1', background: '#f8fafc', borderRadius: '20px', border: '3px dashed #cbd5e1', 
-                                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                                    overflow: 'hidden', position: 'relative', cursor: 'pointer'
-                                }}
-                                onClick={() => document.getElementById('popup-image-upload').click()}
-                            >
-                                {popupImagePreview ? (
-                                    <img src={popupImagePreview} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-                                ) : (
-                                    <>
-                                        <UploadSimple size={48} color="#3b82f6" weight="duotone" />
-                                        <p style={{ fontSize: '1rem', color: '#1e293b', fontWeight: 700, marginTop: '10px' }}>Select Image</p>
-                                    </>
-                                )}
-                                <input id="popup-image-upload" type="file" hidden accept="image/*" onChange={(e) => {
-                                    const file = e.target.files[0];
-                                    if (file) {
-                                        setPopupSelectedFile(file);
-                                        setPopupImagePreview(URL.createObjectURL(file));
-                                        setPopupConfig(prev => ({ ...prev, isActive: true }));
-                                    }
-                                }} />
-                            </div>
-                        </>
-                    ) : (
-                        <>
-                            <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '20px' }}>Choose Template</h3>
-                            <div style={{ display: 'grid', gap: '10px', marginBottom: '25px' }}>
-                                {[
-                                    { id: 'sale', name: 'Flash Sale', color: '#ef4444' },
-                                    { id: 'arrival', name: 'New Arrival', color: '#1e293b' },
-                                    { id: 'clearance', name: 'Clearance', color: '#f59e0b' }
-                                ].map(t => (
-                                    <div 
-                                        key={t.id}
-                                        onClick={() => setPopupConfig({ ...popupConfig, templateType: t.id, templateData: { ...popupConfig.templateData, color: t.color }, isActive: true })}
-                                        style={{ 
-                                            padding: '12px 16px', borderRadius: '12px', border: `2px solid ${popupConfig.templateType === t.id ? '#3b82f6' : '#e2e8f0'}`,
-                                            cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px', background: popupConfig.templateType === t.id ? '#eff6ff' : 'white'
-                                        }}
-                                    >
-                                        <div style={{ width: '20px', height: '20px', borderRadius: '4px', background: t.color }}></div>
-                                        <span style={{ fontWeight: 600 }}>{t.name}</span>
-                                    </div>
-                                ))}
-                            </div>
-
-                            <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '15px' }}>Edit Content</h3>
-                            <div style={{ display: 'grid', gap: '15px' }}>
-                                <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-end' }}>
-                                    <div style={{ flex: 1 }}>
-                                        <label style={{ fontSize: '0.85rem', color: '#64748b', display: 'block', marginBottom: '5px' }}>Main Title</label>
-                                        <input 
-                                            type="text" 
-                                            value={popupConfig.templateData?.title || ''}
-                                            onChange={(e) => setPopupConfig({ ...popupConfig, templateData: { ...(popupConfig.templateData || {}), title: e.target.value.toUpperCase() }})}
-                                            style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-                                        />
-                                    </div>
-                                    <select 
-                                        value={popupConfig.templateData?.titleColor || '#ffffff'}
-                                        onChange={(e) => setPopupConfig({ ...popupConfig, templateData: { ...(popupConfig.templateData || {}), titleColor: e.target.value }})}
-                                        style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', cursor: 'pointer' }}
-                                    >
-                                        {colorOptions.map(c => <option key={c.value} value={c.value}>{c.name}</option>)}
-                                    </select>
-                                </div>
-                                <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-end' }}>
-                                    <div style={{ flex: 1 }}>
-                                        <label style={{ fontSize: '0.85rem', color: '#64748b', display: 'block', marginBottom: '5px' }}>Subtitle</label>
-                                        <input 
-                                            type="text" 
-                                            value={popupConfig.templateData?.subtitle || ''}
-                                            onChange={(e) => setPopupConfig({ ...popupConfig, templateData: { ...(popupConfig.templateData || {}), subtitle: e.target.value }})}
-                                            style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-                                        />
-                                    </div>
-                                    <select 
-                                        value={popupConfig.templateData?.subtitleColor || '#ffffff'}
-                                        onChange={(e) => setPopupConfig({ ...popupConfig, templateData: { ...(popupConfig.templateData || {}), subtitleColor: e.target.value }})}
-                                        style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', cursor: 'pointer' }}
-                                    >
-                                        {colorOptions.map(c => <option key={c.value} value={c.value}>{c.name}</option>)}
-                                    </select>
-                                </div>
-                                <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-end' }}>
-                                    <div style={{ flex: 1 }}>
-                                        <label style={{ fontSize: '0.85rem', color: '#64748b', display: 'block', marginBottom: '5px' }}>Event Dates / Info</label>
-                                        <input 
-                                            type="text" 
-                                            value={popupConfig.templateData?.code || ''}
-                                            onChange={(e) => setPopupConfig({ ...popupConfig, templateData: { ...(popupConfig.templateData || {}), code: e.target.value.toUpperCase() }})}
-                                            style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-                                            placeholder="e.g. FROM 15-30 APRIL"
-                                        />
-                                    </div>
-                                    <div style={{ display: 'flex', gap: '5px', flexDirection: 'column' }}>
-                                        <label style={{ fontSize: '0.7rem', color: '#64748b' }}>Text / Bg</label>
-                                        <div style={{ display: 'flex', gap: '5px' }}>
-                                            <select 
-                                                value={popupConfig.templateData?.codeColor || '#ffffff'}
-                                                onChange={(e) => setPopupConfig({ ...popupConfig, templateData: { ...(popupConfig.templateData || {}), codeColor: e.target.value }})}
-                                                style={{ padding: '8px', borderRadius: '8px', border: '1px solid #cbd5e1', cursor: 'pointer', fontSize: '0.8rem' }}
-                                            >
-                                                {colorOptions.map(c => <option key={c.value} value={c.value}>{c.name}</option>)}
-                                            </select>
-                                            <select 
-                                                value={popupConfig.templateData?.codeBgColor || '#f97316'}
-                                                onChange={(e) => setPopupConfig({ ...popupConfig, templateData: { ...(popupConfig.templateData || {}), codeBgColor: e.target.value }})}
-                                                style={{ padding: '8px', borderRadius: '8px', border: '1px solid #cbd5e1', cursor: 'pointer', fontSize: '0.8rem' }}
-                                            >
-                                                <option value="transparent">No Bg</option>
-                                                {colorOptions.map(c => <option key={c.value} value={c.value}>{c.name}</option>)}
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label style={{ fontSize: '0.85rem', color: '#64748b', display: 'block', marginBottom: '10px' }}>Background Image (Optional)</label>
-                                    <div 
-                                        style={{ 
-                                            width: '100%', height: '80px', borderRadius: '12px', border: '2px dashed #cbd5e1',
-                                            display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', overflow: 'hidden',
-                                            background: templateImagePreview ? 'none' : '#f8fafc'
-                                        }}
-                                        onClick={() => document.getElementById('template-image-upload').click()}
-                                    >
-                                        {templateImagePreview ? (
-                                            <img src={templateImagePreview} alt="Bg" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                        ) : (
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b' }}>
-                                                <UploadSimple size={20} />
-                                                <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>Click to upload background</span>
-                                            </div>
-                                        )}
-                                        <input 
-                                            id="template-image-upload" type="file" hidden accept="image/*" 
-                                            onChange={(e) => {
-                                                const file = e.target.files[0];
-                                                if (file) {
-                                                    setTemplateSelectedFile(file);
-                                                    setTemplateImagePreview(URL.createObjectURL(file));
-                                                }
-                                            }}
-                                        />
-                                    </div>
-                                    {templateImagePreview && (
-                                        <button 
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                setTemplateSelectedFile(null);
-                                                setTemplateImagePreview(null);
-                                            }}
-                                            style={{ marginTop: '8px', color: '#ef4444', fontSize: '0.75rem', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer' }}
-                                        >
-                                            Remove Background
-                                        </button>
-                                    )}
-                                </div>
-                            </div>
-                        </>
-                    )}
-
-                    <div style={{ marginTop: '2.5rem', display: 'grid', gap: '10px' }}>
-                        <button 
-                            onClick={handleSavePopup}
-                            disabled={isSubmitting || (!popupConfig.useTemplate && !popupSelectedFile && !popupConfig.image)}
-                            className="btn btn-primary" 
-                            style={{ width: '100%', padding: '16px', borderRadius: '12px', fontWeight: 700, background: '#2563eb', border: 'none' }}
-                        >
-                            {isSubmitting ? 'Saving...' : 'Activate & Save Popup'}
-                        </button>
-                        
-                        {popupConfig.isActive && (
-                            <button 
-                                onClick={async () => {
-                                    setIsSubmitting(true);
-                                    try {
-                                        const res = await fetch(`${BASE_URL}/api/popup`, {
-                                            method: 'PUT',
-                                            headers: { 'Content-Type': 'application/json' },
-                                            body: JSON.stringify({ ...popupConfig, isActive: false })
-                                        });
-                                        if (res.ok) setPopupConfig(await res.json());
-                                        showToast('Popup deactivated');
-                                    } catch (e) { showToast('Failed to deactivate', 'error'); }
-                                    finally { setIsSubmitting(false); }
-                                }}
-                                style={{ width: '100%', padding: '12px', borderRadius: '12px', background: '#f1f5f9', color: '#475569', border: 'none', cursor: 'pointer' }}
-                            >
-                                Deactivate Popup
-                            </button>
-                        )}
-                    </div>
-                </div>
-
-                {/* --- Preview Side (Always shown if template) --- */}
-                {popupConfig.useTemplate && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                        <h3 style={{ fontSize: '1.2rem', fontWeight: 700 }}>Live Preview</h3>
-                        <div style={{ 
-                            background: popupConfig.templateData?.color || '#ef4444', 
-                            backgroundImage: templateImagePreview ? `linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.25)), url(${templateImagePreview})` : 'none',
-                            backgroundSize: 'cover', backgroundPosition: 'center',
-                            color: 'white', padding: '3rem 2rem', borderRadius: '24px', textAlign: 'center',
-                            width: '100%', minHeight: '550px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                            boxShadow: '0 20px 25px -5px rgba(0,0,0,0.2)', position: 'relative'
-                        }}>
-                            <div style={{ fontSize: '1rem', fontWeight: 600, letterSpacing: '4px', marginBottom: '15px', opacity: 0.9, textShadow: '0 2px 4px rgba(0,0,0,0.3)', color: popupConfig.templateData?.subtitleColor || 'white' }}>{popupConfig.templateType === 'sale' ? 'FLASH SALE' : popupConfig.templateType === 'arrival' ? 'NEW IN' : 'CLEARANCE'}</div>
-                            <h2 style={{ fontSize: '2.5rem', fontWeight: 900, marginBottom: '20px', lineHeight: 1.1, textShadow: '0 2px 10px rgba(0,0,0,0.3)', color: popupConfig.templateData?.titleColor || 'white' }}>{popupConfig.templateData?.title || 'TITLE'}</h2>
-                            <p style={{ fontSize: '1.2rem', fontWeight: 500, marginBottom: '30px', opacity: 0.9, textShadow: '0 2px 4px rgba(0,0,0,0.3)', color: popupConfig.templateData?.subtitleColor || 'white' }}>{popupConfig.templateData?.subtitle || 'Subtitle'}</p>
-                            {popupConfig.templateData?.code && (
-                                <div style={{ 
-                                    padding: '8px 25px', 
-                                    borderRadius: '4px', 
-                                    fontSize: '1rem', 
-                                    fontWeight: 800, 
-                                    background: popupConfig.templateData?.codeBgColor || '#f97316', 
-                                    color: popupConfig.templateData?.codeColor || 'white',
-                                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                                    letterSpacing: '1px'
-                                }}>
-                                    {popupConfig.templateData?.code}
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                )}
-            </div>
-          </div>
-        )}
-
 
         {activeTab === 'Support' && (
           <div className="dashboard-content" style={{ padding: '24px' }}>
@@ -2360,27 +2002,12 @@ const AdminDashboard = () => {
              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
                 <div>
                    <span style={{ display: 'block', fontSize: '0.85rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>Customer Info</span>
-                   <div style={{ color: '#1e293b', fontWeight: 500, marginTop: '4px' }}>
-                      {selectedOrderDetails.firstName ? `${selectedOrderDetails.firstName} ${selectedOrderDetails.lastName || ''}` : selectedOrderDetails.customerName}
-                   </div>
-                   <div style={{ color: '#64748b', fontSize: '0.9rem' }}>{selectedOrderDetails.customerEmail}</div>
+                   <div style={{ color: '#1e293b', fontWeight: 500, marginTop: '4px' }}>{selectedOrderDetails.customerName}</div>
                    <div style={{ color: '#64748b', fontSize: '0.9rem' }}>{selectedOrderDetails.phone}</div>
                 </div>
                 <div>
                   <span style={{ display: 'block', fontSize: '0.85rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>Shipping Address</span>
-                  <div style={{ color: '#334155', fontSize: '0.9rem', marginTop: '4px', lineHeight: '1.4' }}>
-                     {selectedOrderDetails.streetAddress ? (
-                       <>
-                         <div>{selectedOrderDetails.streetAddress}</div>
-                         {selectedOrderDetails.streetAddress2 && <div>{selectedOrderDetails.streetAddress2}</div>}
-                         <div>{selectedOrderDetails.city}, {selectedOrderDetails.state} - {selectedOrderDetails.postcode}</div>
-                         {selectedOrderDetails.companyName && <div style={{ marginTop: '5px', color: '#64748b', fontSize: '0.85rem' }}>Co: {selectedOrderDetails.companyName}</div>}
-                         {selectedOrderDetails.gstNumber && <div style={{ color: '#64748b', fontSize: '0.85rem' }}>GST: {selectedOrderDetails.gstNumber}</div>}
-                       </>
-                     ) : (
-                       selectedOrderDetails.address
-                     )}
-                  </div>
+                  <div style={{ color: '#334155', fontSize: '0.9rem', marginTop: '4px', lineHeight: '1.4' }}>{selectedOrderDetails.address}</div>
                 </div>
              </div>
 

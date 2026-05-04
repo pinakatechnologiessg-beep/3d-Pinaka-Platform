@@ -1,7 +1,6 @@
 import express from 'express';
 import Order from '../models/Order.js';
 import Product from '../models/Product.js';
-import User from '../models/User.js';
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
@@ -47,16 +46,12 @@ export const sendOrderEmailNotification = async (order) => {
           <p><strong>Payment Status:</strong> ${order.paymentStatus}</p>
           <hr />
           <h3>Customer Details</h3>
-          <p><strong>Name:</strong> ${order.firstName ? `${order.firstName} ${order.lastName || ''}` : (order.customerName || 'N/A')}</p>
+          <p><strong>Name:</strong> ${order.customerName}</p>
           <p><strong>Email:</strong> ${order.customerEmail}</p>
           <p><strong>Phone:</strong> ${order.phone}</p>
           ${order.companyName ? `<p><strong>Company Name:</strong> ${order.companyName}</p>` : ''}
           ${order.gstNumber ? `<p><strong>GST Number:</strong> ${order.gstNumber}</p>` : ''}
-          <p><strong>Address:</strong><br />
-            ${order.streetAddress || ''}<br />
-            ${order.streetAddress2 ? order.streetAddress2 + '<br />' : ''}
-            ${order.city || ''}, ${order.state || ''} - ${order.postcode || ''}
-          </p>
+          <p><strong>Address:</strong> ${order.address}</p>
           <hr />
           <h3>Order Items</h3>
           <p><strong>Product:</strong> ${order.productName}</p>
@@ -78,7 +73,7 @@ export const sendOrderEmailNotification = async (order) => {
       html: `
         <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
           <h2 style="color: #16a34a; text-align: center;">Thank You for Your Order!</h2>
-          <p>Hi ${order.firstName || order.customerName || 'Customer'},</p>
+          <p>Hi ${order.customerName},</p>
           <p>Your order has been successfully ${statusText.toLowerCase()}. We'll start processing it right away!</p>
           <hr style="border: none; border-top: 1px solid #eee;" />
           <p><strong>Order ID:</strong> ${order.orderId}</p>
@@ -160,28 +155,8 @@ router.post('/', async (req, res) => {
 
     const savedOrder = await newOrder.save();
 
-    // Deduct points if used
-    if (req.body.pointsUsed && req.body.pointsUsed > 0) {
-      const user = await User.findOne({ email: req.body.customerEmail });
-      if (user) {
-        user.points = Math.max(0, (user.points || 0) - req.body.pointsUsed);
-        await user.save();
-      }
-    }
-
-    // If it's COD, send notification and award points immediately (assuming COD is trusted or points added on placement)
+    // If it's COD, send notification immediately
     if (req.body.paymentMethod === 'COD') {
-        // Award points for COD
-        const pointsEarned = Math.floor(savedOrder.totalPrice / 500);
-        if (pointsEarned > 0) {
-          const user = await User.findOne({ email: savedOrder.customerEmail });
-          if (user) {
-            user.points = (user.points || 0) + pointsEarned;
-            await user.save();
-            savedOrder.pointsEarned = pointsEarned;
-            await savedOrder.save();
-          }
-        }
         sendOrderEmailNotification(savedOrder);
     }
 
@@ -240,17 +215,6 @@ router.post('/verify', async (req, res) => {
       
       // Email Notification after verification
       if (updatedOrder) {
-          // Award points upon successful payment verification
-          const pointsEarned = Math.floor(updatedOrder.totalPrice / 500);
-          if (pointsEarned > 0) {
-            const user = await User.findOne({ email: updatedOrder.customerEmail });
-            if (user) {
-              user.points = (user.points || 0) + pointsEarned;
-              await user.save();
-              updatedOrder.pointsEarned = pointsEarned;
-              await updatedOrder.save();
-            }
-          }
           sendOrderEmailNotification(updatedOrder);
       }
 
