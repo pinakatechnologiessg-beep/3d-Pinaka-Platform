@@ -95,4 +95,79 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+// Seed slides (Reset to defaults)
+router.get('/seed', async (req, res) => {
+  try {
+    const defaultSlides = [
+      {
+        title: "X1 CARBON",
+        subtitle: "Global Flagship Performance",
+        brand: "Bambu Lab",
+        brandColor: "#2D3436",
+        price: "₹1,49,999/-",
+        features: ["LIDAR ERROR DETECTION", "600MM/S MAX SPEED", "DUAL AUTO BED LEVELING", "AMS MULTI-MATERIAL CAPABLE"],
+        btnText: "Explore Now",
+        btnLink: "/products",
+        order: 0,
+        active: true,
+        image: "/images/hero-printer-1-1774867967898.png"
+      },
+      {
+        title: "PHOTON M3",
+        subtitle: "Ultra-Precision MSLA",
+        brand: "Anycubic",
+        brandColor: "#f97316",
+        price: "₹45,999/-",
+        features: ["8K RESOLUTION SCREEN", "SMART RESIN FILL", "LIGHMAKER UV MATRIX", "WIFI & APP CONNECTIVITY"],
+        btnText: "Explore Now",
+        btnLink: "/products",
+        order: 1,
+        active: true,
+        image: "/images/hero-printer-2-1774868029567.png"
+      },
+      {
+        title: "K1C 3D PRINTER",
+        subtitle: "Professional CoreXY Speed",
+        brand: "Creality",
+        brandColor: "#3b82f6",
+        price: "₹52,999/-",
+        features: ["CARBON-READY NOZZLE", "AI-CAMERA BUILT-IN", "AMS COMPATIBLE", "QUICK-SWAP NOZZLE"],
+        btnText: "Explore Now",
+        btnLink: "/products",
+        order: 2,
+        active: true,
+        image: "/images/hero-printer-3-1774868059995.png"
+      },
+      {
+        title: "A350T 3-IN-1",
+        subtitle: "Industrial 3-in-1 Powerhouse",
+        brand: "Snapmaker",
+        brandColor: "#10b981",
+        price: "₹1,99,000/-",
+        features: ["CNC & LASER INCLUDED", "ALL-METAL DESIGN", "LINEAR RAILS & MODULES", "POWER-LOSS RECOVERY"],
+        btnText: "Explore Now",
+        btnLink: "/products",
+        order: 3,
+        active: true,
+        image: "/images/hero-printer-4-1774868325785.png"
+      }
+    ];
+
+    // Optional: clear existing ones first? The user said "do not disturb anything else"
+    // but they also said "store these in database... soo that issue resolve".
+    // I'll just add them if they don't exist, or just insert them.
+    // Let's check for titles to avoid duplicates.
+    for (const slide of defaultSlides) {
+      const exists = await HeroSlide.findOne({ title: slide.title });
+      if (!exists) {
+        await new HeroSlide(slide).save();
+      }
+    }
+
+    res.json({ message: "Default slides seeded successfully (if missing)" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 export default router;

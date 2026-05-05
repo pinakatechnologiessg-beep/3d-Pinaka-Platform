@@ -758,7 +758,7 @@ const AdminDashboard = () => {
                 <div key={slide._id} className="product-card">
                   <div className="product-image-container" style={{ position: 'relative', height: '180px', background: '#f8fafc', borderRadius: '8px 8px 0 0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     {slide.image ? (
-                        <img src={slide.image.startsWith('http') ? slide.image : `${BASE_URL}/${slide.image}`} alt={slide.title} style={{ height: '100%', objectFit: 'cover', width: '100%' }} />
+                        <img src={getImageUrl(slide.image)} alt={slide.title} style={{ height: '100%', objectFit: 'cover', width: '100%' }} />
                     ) : (
                         <Sparkle size={48} color="#cbd5e1" />
                     )}
@@ -780,7 +780,7 @@ const AdminDashboard = () => {
                                 ...slide,
                                 features: slide.features ? slide.features.join(', ') : ''
                               });
-                              setEditHeroImagePreview(slide.image.startsWith('http') ? slide.image : `${BASE_URL}/${slide.image}`);
+                              setEditHeroImagePreview(getImageUrl(slide.image));
                               setEditHeroSelectedFile(null);
                               setIsHeroEditOpen(true);
                           }}
@@ -3082,7 +3082,7 @@ const AdminDashboard = () => {
 
       {/* Hero Slide Add Modal */}
       {isHeroAddOpen && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 5000, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)' }}>
           <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', width: '90%', maxWidth: '500px', maxHeight: '90vh', overflowY: 'auto', position: 'relative' }}>
              <button onClick={() => setIsHeroAddOpen(false)} style={{ position: 'absolute', top: '15px', right: '15px', background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}><X size={24} /></button>
              <h2 style={{ marginBottom: '1.5rem', color: '#0f172a' }}>Add Hero Slide</h2>
@@ -3192,7 +3192,7 @@ const AdminDashboard = () => {
 
       {/* Hero Slide Edit Modal */}
       {isHeroEditOpen && editHeroSlide && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 5000, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)' }}>
           <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', width: '90%', maxWidth: '500px', maxHeight: '90vh', overflowY: 'auto', position: 'relative' }}>
              <button onClick={() => setIsHeroEditOpen(false)} style={{ position: 'absolute', top: '15px', right: '15px', background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}><X size={24} /></button>
              <h2 style={{ marginBottom: '1.5rem', color: '#0f172a' }}>Edit Hero Slide</h2>
@@ -3299,7 +3299,7 @@ const AdminDashboard = () => {
 
       {/* Delete Hero Slide Modal */}
       {heroDeleteConfirm && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 5000, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)' }}>
           <div style={{ background: 'white', padding: '1.5rem 2rem', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.2)', maxWidth: '400px', width: '90%', textAlign: 'center' }}>
             <h3 style={{ margin: '0 0 1rem 0', color: '#1e293b', fontSize: '18px' }}>Confirm Delete</h3>
             <p style={{ margin: '0 0 1.5rem 0', color: '#475569', fontSize: '15px' }}>Are you sure you want to permanently delete slide <strong>{heroDeleteConfirm.title}</strong>?</p>
@@ -3509,6 +3509,85 @@ const AdminDashboard = () => {
             .spec-row input {
                 width: 100% !important;
             }
+        }
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .product-image-container {
+            height: 200px;
+            background: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .product-info {
+            padding: 1.25rem;
+        }
+        .product-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+        .product-price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .product-brand {
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+        .product-price {
+            font-weight: 700;
+            color: #3b82f6;
+        }
+        .action-btn-custom {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .edit-btn {
+            background: #f0f9ff;
+            color: #0369a1;
+            border-color: #bae6fd;
+        }
+        .edit-btn:hover {
+            background: #e0f2fe;
+        }
+        .delete-btn {
+            background: #fef2f2;
+            color: #b91c1c;
+            border-color: #fecaca;
+        }
+        .delete-btn:hover {
+            background: #fee2e2;
         }
       `}</style>
     </div>
