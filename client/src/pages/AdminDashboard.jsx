@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { 
   House, Package, ShoppingCart, Users, Gear, 
   Bell, MagnifyingGlass, List, CurrencyDollar, TrendUp, Clock, ArrowLeft, Heart, X, UploadSimple, Trash, PencilSimple, Plus, Sparkle, Eye
 } from '@phosphor-icons/react';
-import { getImageUrl } from '../utils/imageUtils';
+import { getImageUrl, PLACEHOLDER_SVG } from '../utils/imageUtils';
 import './AdminDashboard.css';
 
 const BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/$/, "");
@@ -38,18 +38,12 @@ const AdminDashboard = () => {
   const [stats, setStats] = useState({
     totalProducts: 0,
     totalOrders: 0,
-    pendingOrders: 0,
-    totalSales: 0,
-    recentOrders: []
+    totalUsers: 0,
+    totalSales: 0
   });
+
   const [adminProducts, setAdminProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  // Add Product Modal State
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [imagePreview, setImagePreview] = useState(null);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [newProduct, setNewProduct] = useState({
       name: '', category: 'FDM', price: '', mrp: '', discount: 0,
       inStock: true, stockQuantity: 0, image: '', rating: 5.0, tags: 'None', badgeStyle: null, description: '',
       brand: 'Anycubic', otherBrand: '', otherCategory: '', condition: 'New',
@@ -998,14 +992,15 @@ const AdminDashboard = () => {
                                     <Trash size={18} weight="fill" />
                                 </button>
                             </div>
-                            <div className="product-img-wrapper" style={{ position: 'relative' }}>
-                                <img 
-                                    src={getImageUrl(product.image)} 
-                                    alt={product.name || product.title} 
-                                    className="product-img" 
-                                    onError={(e) => (e.target.src = "/placeholder.png")}
-                                />
-                            </div>
+                             <div className="product-img-wrapper" style={{ position: 'relative', height: '180px', background: '#f8fafc', borderRadius: '8px', overflow: 'hidden', marginBottom: '12px' }}>
+                                 <img 
+                                     src={getImageUrl(product.image)} 
+                                     alt={product.name || product.title} 
+                                     className="product-img" 
+                                     style={{ height: '100%', width: '100%', objectFit: 'contain', padding: '10px' }} 
+                                     onError={(e) => (e.target.src = PLACEHOLDER_SVG)}
+                                 />
+                             </div>
                             <div className="product-info">
                                 <div className="product-cat">{(product.category || 'Category')} {product.brand && `| ${product.brand}`}</div>
                                 <div className="product-title" style={{ minHeight: '45px' }}>{product.name || product.title || "Unnamed Product"}</div>
