@@ -2725,7 +2725,7 @@ const AdminDashboard = () => {
                                 formData.append('btnLink', newHeroSlide.btnLink);
                                 formData.append('order', newHeroSlide.order);
                                 formData.append('active', newHeroSlide.active);
-                                formData.append('image', heroSelectedFile);
+                                formData.append('img', heroSelectedFile);
 
                                 const res = await fetch(`${BASE_URL}/api/hero`, { method: 'POST', body: formData });
                                 if (res.ok) {
@@ -2831,7 +2831,7 @@ const AdminDashboard = () => {
                                 formData.append('btnLink', editHeroSlide.btnLink);
                                 formData.append('order', editHeroSlide.order);
                                 formData.append('active', editHeroSlide.active);
-                                if (editHeroSelectedFile) formData.append('image', editHeroSelectedFile);
+                                if (editHeroSelectedFile) formData.append('img', editHeroSelectedFile);
 
                                 const res = await fetch(`${BASE_URL}/api/hero/${editHeroSlide._id}`, { method: 'PUT', body: formData });
                                 if (res.ok) {
