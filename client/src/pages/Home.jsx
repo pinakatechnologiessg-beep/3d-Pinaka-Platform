@@ -67,6 +67,34 @@ const Home = () => {
   const [slides, setSlides] = useState(staticSlides);
 
   useEffect(() => {
+    const fetchSlides = async () => {
+      try {
+        const res = await fetch(`${BASE_URL}/api/hero`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.length > 0) {
+            // Map the data to the format expected by the frontend
+            const mappedSlides = data.map(slide => ({
+              _id: slide._id,
+              img: slide.image.startsWith('http') ? slide.image : getImageUrl(slide.image),
+              brand: slide.brand || '',
+              brandColor: slide.brandColor || '#3b82f6',
+              title: slide.title,
+              subtitle: slide.subtitle,
+              price: slide.price,
+              features: slide.features || []
+            }));
+            setSlides(mappedSlides);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch hero slides", err);
+      }
+    };
+    fetchSlides();
+  }, [BASE_URL]);
+
+  useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, 5000);
