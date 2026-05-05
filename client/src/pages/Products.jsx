@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, WhatsappLogo, FunnelSimple, CaretDown, X } from '@phosphor-icons/react';
 import { cartService } from '../services/cartService';
-import { getImageUrl } from '../utils/imageUtils';
+import { getImageUrl, PLACEHOLDER_SVG } from '../utils/imageUtils';
 import { API_BASE_URL } from '../api/config';
 import SEO from '../components/SEO';
 
@@ -406,7 +406,7 @@ const Products = () => {
                                                 flexDirection: 'column'
                                             }}>
                                                 <Link to={`/product/${product._id}`} style={{ textDecoration: 'none', display: 'block', flex: 1 }}>
-                                                    <div className="image-wrapper" style={{ height: isMobile ? '160px' : '220px', marginBottom: '12px', overflow: 'hidden', borderRadius: '8px' }}>
+                                                    <div className="image-wrapper" style={{ height: isMobile ? '160px' : '220px', marginBottom: '12px', overflow: 'hidden', borderRadius: '8px', background: '#f8fafc' }}>
                                                         <img 
                                                             src={
                                                                 product.name === "Refurbished Bambu Lab A1 Mini 3D Printer" 
@@ -414,8 +414,8 @@ const Products = () => {
                                                                 : getImageUrl(product.image)
                                                             }
                                                             alt={product.name}
-                                                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                                            onError={(e) => (e.target.src = "/placeholder.png")}
+                                                            style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '10px' }}
+                                                            onError={(e) => (e.target.src = PLACEHOLDER_SVG)}
                                                         />
                                                         {!product.inStock && (
                                                             <div className="stock-badge" style={{ fontSize: '0.7rem', padding: '4px 8px' }}>

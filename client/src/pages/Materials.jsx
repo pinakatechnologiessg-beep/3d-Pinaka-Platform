@@ -92,12 +92,15 @@ const Materials = () => {
                             >
                                 <Heart size={20} weight={wishlist.some(w => w.title === (item.name || item.title)) ? "fill" : "bold"} />
                             </button>
-                            <img 
-                                src={getImageUrl(item.image)} 
-                                alt={item.name || item.title} 
-                                className="product-img" 
-                                onError={(e) => (e.target.src = "/placeholder.png")}
-                            />
+                            <div className="product-img-wrapper" style={{ height: '200px', background: '#f8fafc', borderRadius: '8px', overflow: 'hidden', marginBottom: '12px' }}>
+                                <img 
+                                    src={getImageUrl(item.image)} 
+                                    alt={item.name || item.title} 
+                                    className="product-img" 
+                                    style={{ height: '100%', width: '100%', objectFit: 'contain', padding: '10px' }} 
+                                    onError={(e) => (e.target.src = "/placeholder.png")}
+                                />
+                            </div>
                             <div className="product-info">
                                 <div className="product-cat">{item.category} {item.brand && `| ${item.brand}`}</div>
                                 <div className="product-title">{item.name || item.title}</div>

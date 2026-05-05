@@ -58,12 +58,12 @@ const Wishlist = () => {
                                 <button className="wishlist-btn active" onClick={() => removeItem(item.id)}>
                                     <Trash size={18} weight="bold" />
                                 </button>
-                                <div className="product-img-wrapper" style={{ height: '200px' }}>
+                                <div className="product-img-wrapper" style={{ height: '200px', background: '#f8fafc', borderRadius: '8px', overflow: 'hidden', marginBottom: '12px' }}>
                                     <img 
                                         src={getImageUrl(item.image)} 
                                         alt={item.title} 
                                         className="product-img" 
-                                        style={{ height: '100%', width: '100%', objectFit: 'contain' }} 
+                                        style={{ height: '100%', width: '100%', objectFit: 'contain', padding: '10px' }} 
                                         onError={(e) => (e.target.src = "/placeholder.png")}
                                     />
                                 </div>
