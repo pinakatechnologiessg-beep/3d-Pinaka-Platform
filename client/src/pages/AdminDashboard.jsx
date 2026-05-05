@@ -132,6 +132,7 @@ const AdminDashboard = () => {
   // --- Coupons State ---
   const [coupons, setCoupons] = useState([]);
   const [isCouponModalOpen, setIsCouponModalOpen] = useState(false);
+  const [deleteCouponConfirm, setDeleteCouponConfirm] = useState(null);
   const [newCoupon, setNewCoupon] = useState({
       code: '',
       discountType: 'percentage',
@@ -588,17 +589,22 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleDeleteCoupon = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this coupon?')) return;
+  const handleDeleteCoupon = (coupon) => {
+    setDeleteCouponConfirm(coupon);
+  };
+
+  const confirmDeleteCoupon = async () => {
+    if (!deleteCouponConfirm) return;
     try {
-        const res = await fetch(`${BASE_URL}/api/coupons/${id}`, { method: 'DELETE' });
+        const res = await fetch(`${BASE_URL}/api/coupons/${deleteCouponConfirm._id}`, { method: 'DELETE' });
         if (res.ok) {
-            setCoupons(coupons.filter(c => c._id !== id));
+            setCoupons(prev => prev.filter(c => c._id !== deleteCouponConfirm._id));
             showToast('Coupon deleted');
         }
     } catch (err) {
         showToast('Failed to delete coupon', 'error');
     }
+    setDeleteCouponConfirm(null);
   };
 
   return (
@@ -1668,7 +1674,7 @@ const AdminDashboard = () => {
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
                                     <div style={{ background: '#f1f5f9', padding: '6px 12px', borderRadius: '6px', fontWeight: 800, color: '#1e293b', letterSpacing: '1px' }}>{coupon.code}</div>
                                     <button 
-                                        onClick={() => handleDeleteCoupon(coupon._id)}
+                                        onClick={() => handleDeleteCoupon(coupon)}
                                         style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer' }}
                                     >
                                         <Trash size={20} weight="fill" />
@@ -2602,6 +2608,29 @@ const AdminDashboard = () => {
                   }
                   setDeleteConfirmState(null);
                 }} 
+                style={{ padding: '0.6rem 1.2rem', borderRadius: '6px', border: 'none', background: '#ef4444', color: 'white', cursor: 'pointer', fontWeight: 600 }}
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {deleteCouponConfirm && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ background: 'white', padding: '1.5rem 2rem', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.2)', maxWidth: '400px', width: '90%', textAlign: 'center', animation: 'fadeIn 0.2s ease' }}>
+            <h3 style={{ margin: '0 0 1rem 0', color: '#1e293b', fontSize: '18px' }}>Confirm Delete</h3>
+            <p style={{ margin: '0 0 1.5rem 0', color: '#475569', fontSize: '15px' }}>Are you sure you want to permanently delete coupon <strong>{deleteCouponConfirm.code}</strong>?</p>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem' }}>
+              <button 
+                onClick={() => setDeleteCouponConfirm(null)} 
+                style={{ padding: '0.6rem 1.2rem', borderRadius: '6px', border: '1px solid #cbd5e1', background: 'white', cursor: 'pointer', fontWeight: 600, color: '#334155' }}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={confirmDeleteCoupon} 
                 style={{ padding: '0.6rem 1.2rem', borderRadius: '6px', border: 'none', background: '#ef4444', color: 'white', cursor: 'pointer', fontWeight: 600 }}
               >
                 OK
