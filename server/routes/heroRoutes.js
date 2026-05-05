@@ -25,7 +25,7 @@ router.get('/all', async (req, res) => {
 });
 
 // Add a slide
-router.post('/', upload.single('image'), async (req, res) => {
+router.post('/', upload.single('img'), async (req, res) => {
   try {
     const { title, subtitle, brand, brandColor, price, features, btnText, btnLink, order, active } = req.body;
     
@@ -56,7 +56,7 @@ router.post('/', upload.single('image'), async (req, res) => {
 });
 
 // Update a slide
-router.put('/:id', upload.single('image'), async (req, res) => {
+router.put('/:id', upload.single('img'), async (req, res) => {
   try {
     const { title, subtitle, brand, brandColor, price, features, btnText, btnLink, order, active } = req.body;
     
