@@ -44,6 +44,12 @@ const AdminDashboard = () => {
 
   const [adminProducts, setAdminProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Add Product Modal State
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [newProduct, setNewProduct] = useState({
       name: '', category: 'FDM', price: '', mrp: '', discount: 0,
       inStock: true, stockQuantity: 0, image: '', rating: 5.0, tags: 'None', badgeStyle: null, description: '',
       brand: 'Anycubic', otherBrand: '', otherCategory: '', condition: 'New',
