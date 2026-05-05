@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   House, Package, ShoppingCart, Users, Gear, 
-  Bell, MagnifyingGlass, List, CurrencyDollar, TrendUp, Clock, ArrowLeft, Heart, X, UploadSimple, Trash, PencilSimple, Plus, Sparkle
+  Bell, MagnifyingGlass, List, CurrencyDollar, TrendUp, Clock, ArrowLeft, Heart, X, UploadSimple, Trash, PencilSimple, Plus, Sparkle, Eye
 } from '@phosphor-icons/react';
 import { getImageUrl } from '../utils/imageUtils';
 import './AdminDashboard.css';
