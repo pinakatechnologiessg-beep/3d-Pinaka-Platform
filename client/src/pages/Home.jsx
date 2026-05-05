@@ -76,7 +76,7 @@ const Home = () => {
             // Map the data to the format expected by the frontend
             const mappedSlides = data.map(slide => ({
               _id: slide._id,
-              img: slide.image.startsWith('http') ? slide.image : getImageUrl(slide.image),
+              img: slide.img ? (slide.img.startsWith('http') ? slide.img : getImageUrl(slide.img)) : getImageUrl(""),
               brand: slide.brand || '',
               brandColor: slide.brandColor || '#3b82f6',
               title: slide.title,

@@ -44,7 +44,7 @@ router.post('/', upload.single('image'), async (req, res) => {
       btnLink: btnLink || '/products',
       order: order ? Number(order) : 0,
       active: String(active) !== 'false',
-      image: req.file.path
+      img: req.file.path
     };
 
     const newSlide = new HeroSlide(slideData);
@@ -73,7 +73,7 @@ router.put('/:id', upload.single('image'), async (req, res) => {
     if (active !== undefined) updateData.active = String(active) !== 'false';
 
     if (req.file) {
-      updateData.image = req.file.path;
+      updateData.img = req.file.path;
     }
 
     const updatedSlide = await HeroSlide.findByIdAndUpdate(req.params.id, updateData, { new: true });
@@ -110,7 +110,7 @@ router.get('/seed', async (req, res) => {
         btnLink: "/products",
         order: 0,
         active: true,
-        image: "/images/hero-printer-1-1774867967898.png"
+        img: "/images/hero-printer-1-1774867967898.png"
       },
       {
         title: "PHOTON M3",
@@ -123,7 +123,7 @@ router.get('/seed', async (req, res) => {
         btnLink: "/products",
         order: 1,
         active: true,
-        image: "/images/hero-printer-2-1774868029567.png"
+        img: "/images/hero-printer-2-1774868029567.png"
       },
       {
         title: "K1C 3D PRINTER",
@@ -136,7 +136,7 @@ router.get('/seed', async (req, res) => {
         btnLink: "/products",
         order: 2,
         active: true,
-        image: "/images/hero-printer-3-1774868059995.png"
+        img: "/images/hero-printer-3-1774868059995.png"
       },
       {
         title: "A350T 3-IN-1",
@@ -149,7 +149,7 @@ router.get('/seed', async (req, res) => {
         btnLink: "/products",
         order: 3,
         active: true,
-        image: "/images/hero-printer-4-1774868325785.png"
+        img: "/images/hero-printer-4-1774868325785.png"
       }
     ];
 

@@ -757,8 +757,8 @@ const AdminDashboard = () => {
               {heroSlides.length > 0 ? heroSlides.map(slide => (
                 <div key={slide._id} className="product-card">
                   <div className="product-image-container" style={{ position: 'relative', height: '180px', background: '#f8fafc', borderRadius: '8px 8px 0 0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    {slide.image ? (
-                        <img src={getImageUrl(slide.image)} alt={slide.title} style={{ height: '100%', objectFit: 'cover', width: '100%' }} />
+                    {slide.img ? (
+                        <img src={getImageUrl(slide.img)} alt={slide.title} style={{ height: '100%', objectFit: 'cover', width: '100%' }} />
                     ) : (
                         <Sparkle size={48} color="#cbd5e1" />
                     )}
@@ -780,7 +780,7 @@ const AdminDashboard = () => {
                                 ...slide,
                                 features: slide.features ? slide.features.join(', ') : ''
                               });
-                              setEditHeroImagePreview(getImageUrl(slide.image));
+                              setEditHeroImagePreview(getImageUrl(slide.img));
                               setEditHeroSelectedFile(null);
                               setIsHeroEditOpen(true);
                           }}
@@ -3164,7 +3164,7 @@ const AdminDashboard = () => {
                                 formData.append('btnLink', newHeroSlide.btnLink);
                                 formData.append('order', newHeroSlide.order);
                                 formData.append('active', newHeroSlide.active);
-                                formData.append('image', heroSelectedFile);
+                                formData.append('img', heroSelectedFile);
 
                                 const res = await fetch(`${BASE_URL}/api/hero`, { method: 'POST', body: formData });
                                 if (res.ok) {
@@ -3271,7 +3271,7 @@ const AdminDashboard = () => {
                                 formData.append('btnLink', editHeroSlide.btnLink);
                                 formData.append('order', editHeroSlide.order);
                                 formData.append('active', editHeroSlide.active);
-                                if (editHeroSelectedFile) formData.append('image', editHeroSelectedFile);
+                                if (editHeroSelectedFile) formData.append('img', editHeroSelectedFile);
 
                                 const res = await fetch(`${BASE_URL}/api/hero/${editHeroSlide._id}`, { method: 'PUT', body: formData });
                                 if (res.ok) {
