@@ -84,7 +84,7 @@ const Home = () => {
               price: slide.price,
               features: slide.features || []
             }));
-            // setSlides(mappedSlides); // Commented out to revert to static hero slides for now
+            setSlides(mappedSlides);
           }
         }
       } catch (err) {
