@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   House, Package, ShoppingCart, Users, Gear, 
-  Bell, MagnifyingGlass, List, CurrencyDollar, TrendUp, Clock, ArrowLeft, Heart, X, UploadSimple, Trash, PencilSimple, Plus, Sparkle
+  Bell, MagnifyingGlass, List, CurrencyDollar, TrendUp, Clock, ArrowLeft, Heart, X, UploadSimple, Trash, PencilSimple, Plus, Sparkle, Eye
 } from '@phosphor-icons/react';
 import { getImageUrl } from '../utils/imageUtils';
 import './AdminDashboard.css';
@@ -26,6 +26,7 @@ const AdminDashboard = () => {
 
   const navItems = [
     { name: 'Dashboard', icon: <House size={24} /> },
+    { name: 'Hero', icon: <Eye size={24} /> },
     { name: 'Products', icon: <Package size={24} /> },
     { name: 'Orders', icon: <ShoppingCart size={24} /> },
     { name: 'Users', icon: <Users size={24} /> },
@@ -70,6 +71,18 @@ const AdminDashboard = () => {
   const [descImagePreviews, setDescImagePreviews] = useState([null, null, null, null]);
   const [editDescSelectedFiles, setEditDescSelectedFiles] = useState([null, null, null, null]);
   const [editDescImagePreviews, setEditDescImagePreviews] = useState([null, null, null, null]);
+
+  // --- Hero Slides State ---
+  const [heroSlides, setHeroSlides] = useState([]);
+  const [isHeroAddOpen, setIsHeroAddOpen] = useState(false);
+  const [isHeroEditOpen, setIsHeroEditOpen] = useState(false);
+  const [newHeroSlide, setNewHeroSlide] = useState({ title: '', subtitle: '', brand: '', brandColor: '#3b82f6', price: '', features: '', btnText: '', btnLink: '', order: 0, active: true });
+  const [heroSelectedFile, setHeroSelectedFile] = useState(null);
+  const [heroImagePreview, setHeroImagePreview] = useState(null);
+  const [editHeroSlide, setEditHeroSlide] = useState(null);
+  const [editHeroSelectedFile, setEditHeroSelectedFile] = useState(null);
+  const [editHeroImagePreview, setEditHeroImagePreview] = useState(null);
+  const [heroDeleteConfirm, setHeroDeleteConfirm] = useState(null);
 
   // --- Orders State ---
   const [orders, setOrders] = useState([]);
@@ -453,11 +466,15 @@ const AdminDashboard = () => {
                 setTemplateImagePreview(popupData.templateImage.startsWith('http') ? popupData.templateImage : `${BASE_URL}${popupData.templateImage}`);
             }
         }
-
+        
         const couponRes = await fetch(`${BASE_URL}/api/coupons/admin`);
         if (couponRes.ok) {
             setCoupons(await couponRes.json());
         }
+        
+        const heroRes = await fetch(`${BASE_URL}/api/hero/all`);
+        if (heroRes.ok) setHeroSlides(await heroRes.json());
+
       } catch (error) {
         console.error("Failed to fetch dashboard data", error);
       } finally {
@@ -787,6 +804,77 @@ const AdminDashboard = () => {
               </div>
             </>
           )}
+          </div>
+        )}
+
+        {activeTab === 'Hero' && (
+          <div className="dashboard-content" style={{ padding: '24px' }}>
+            <div className="products-mgmt-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '25px' }}>
+              <h2 className="products-mgmt-title">Hero Slider ({heroSlides.length} slides)</h2>
+              <button 
+                onClick={() => {
+                  setNewHeroSlide({ title: '', subtitle: '', brand: '', brandColor: '#3b82f6', price: '', features: '', btnText: 'Explore Now', btnLink: '/products', order: 0, active: true });
+                  setHeroSelectedFile(null);
+                  setHeroImagePreview(null);
+                  setIsHeroAddOpen(true);
+                }}
+                className="add-product-btn" 
+                style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#3b82f6', color: 'white', padding: '10px 20px', borderRadius: '8px', border: 'none', fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 6px rgba(59, 130, 246, 0.2)' }}
+              >
+                <Plus size={20} weight="bold" /> Add Slide
+              </button>
+            </div>
+            
+            <div className="products-grid">
+              {heroSlides.length > 0 ? heroSlides.map(slide => (
+                <div key={slide._id} className="product-card">
+                  <div className="product-image-container" style={{ position: 'relative', height: '180px', background: '#f8fafc', borderRadius: '8px 8px 0 0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {slide.img ? (
+                        <img src={getImageUrl(slide.img)} alt={slide.title} style={{ height: '100%', objectFit: 'cover', width: '100%' }} />
+                    ) : (
+                        <Sparkle size={48} color="#cbd5e1" />
+                    )}
+                    {!slide.active && <div style={{ position: 'absolute', top: '10px', left: '10px', background: '#ef4444', color: 'white', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: 600 }}>Inactive</div>}
+                  </div>
+                  <div className="product-info">
+                    <div className="product-title" style={{ minHeight: '45px' }}>{slide.title || 'Untitled Slide'}</div>
+                    <div className="product-price-row">
+                      <div className="product-brand">{slide.brand || 'No Brand'}</div>
+                      <div className="product-price">{slide.price || 'No Price'}</div>
+                    </div>
+                    <div className="product-stock" style={{ color: '#64748b', fontSize: '13px', marginTop: '10px' }}>Order: {slide.order}</div>
+                    
+                    <div className="product-actions" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: '15px' }}>
+                      <button 
+                          className="action-btn-custom edit-btn"
+                          onClick={() => {
+                              setEditHeroSlide({
+                                ...slide,
+                                features: slide.features ? slide.features.join(', ') : ''
+                              });
+                              setEditHeroImagePreview(getImageUrl(slide.img));
+                              setEditHeroSelectedFile(null);
+                              setIsHeroEditOpen(true);
+                          }}
+                      >
+                          <PencilSimple size={18} /> Edit
+                      </button>
+                      <button 
+                          className="action-btn-custom delete-btn"
+                          onClick={() => setHeroDeleteConfirm(slide)}
+                      >
+                          <Trash size={18} /> Delete
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )) : (
+                <div style={{ padding: '40px', textAlign: 'center', background: 'white', borderRadius: '12px', color: 'var(--admin-text-muted)', border: '1px dashed var(--admin-border-color)' }}>
+                  <Sparkle size={48} style={{ marginBottom: '16px', opacity: 0.5 }} />
+                  <p>No hero slides found. Add some to get started!</p>
+                </div>
+              )}
+            </div>
           </div>
         )}
 
@@ -1220,7 +1308,64 @@ const AdminDashboard = () => {
               <div style={{ display: 'inline-block', padding: '4px 12px', background: '#eff6ff', color: '#3b82f6', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 700, marginBottom: '10px' }}>MARKETING v1.2</div>
               <h2 style={{ fontSize: '1.8rem', color: '#1e293b', margin: 0, fontWeight: 800 }}>Marketing Center</h2>
             </div>
-            
+            {/* Simplified Status Toggle */}
+            <div style={{ 
+                maxWidth: '900px', margin: '0 auto 30px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', 
+                background: popupConfig.isActive ? '#f0fdf4' : '#fff1f2', padding: '1.2rem 2rem', borderRadius: '20px', 
+                border: `1px solid ${popupConfig.isActive ? '#bbf7d0' : '#fecaca'}`,
+                boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)'
+            }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                    <div style={{ 
+                        width: '45px', height: '45px', borderRadius: '12px', background: popupConfig.isActive ? '#16a34a' : '#ef4444',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white'
+                    }}>
+                        {popupConfig.isActive ? <Bell size={24} weight="fill" /> : <Bell size={24} weight="light" />}
+                    </div>
+                    <div>
+                        <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800, color: popupConfig.isActive ? '#15803d' : '#991b1b' }}>
+                            {popupConfig.isActive ? 'POPUP IS ACTIVE' : 'POPUP IS INACTIVE'}
+                        </h4>
+                        <p style={{ margin: 0, fontSize: '0.85rem', color: popupConfig.isActive ? '#16a34a' : '#ef4444', fontWeight: 500 }}>
+                            {popupConfig.isActive ? 'Currently visible to all website visitors.' : 'Hidden from website visitors.'}
+                        </p>
+                    </div>
+                </div>
+                <button 
+                    onClick={async () => {
+                        const newStatus = !popupConfig.isActive;
+                        setIsSubmitting(true);
+                        try {
+                            const res = await fetch(`${BASE_URL}/api/popup/status`, {
+                                method: 'PUT',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ isActive: newStatus })
+                            });
+                            if (res.ok) {
+                                const updated = await res.json();
+                                setPopupConfig(prev => ({ ...prev, isActive: updated.isActive }));
+                                showToast(`Popup ${updated.isActive ? 'activated' : 'deactivated'} successfully`);
+                            } else {
+                                showToast('Failed to update status', 'error');
+                            }
+                        } catch (e) {
+                            showToast('Network error', 'error');
+                        } finally {
+                            setIsSubmitting(false);
+                        }
+                    }}
+                    disabled={isSubmitting || (!popupConfig.useTemplate && !popupConfig.image)}
+                    style={{ 
+                        padding: '10px 24px', borderRadius: '10px', border: 'none', cursor: 'pointer', fontWeight: 800, fontSize: '0.9rem',
+                        background: popupConfig.isActive ? '#ef4444' : '#16a34a', color: 'white',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)', transition: 'all 0.2s',
+                        opacity: isSubmitting || (!popupConfig.useTemplate && !popupConfig.image) ? 0.6 : 1
+                    }}
+                >
+                    {isSubmitting ? '...' : (popupConfig.isActive ? 'DEACTIVATE NOW' : 'ACTIVATE NOW')}
+                </button>
+            </div>
+
             <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginBottom: '30px' }}>
                 <button 
                     onClick={() => setMarketingTab('popup')}
@@ -2485,7 +2630,7 @@ const AdminDashboard = () => {
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ background: 'white', padding: '1.5rem 2rem', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.2)', maxWidth: '400px', width: '90%', textAlign: 'center', animation: 'fadeIn 0.2s ease' }}>
             <h3 style={{ margin: '0 0 1rem 0', color: '#1e293b', fontSize: '18px' }}>Confirm Delete</h3>
-            <p style={{ margin: '0 0 1.5rem 0', color: '#475569', fontSize: '15px' }}>Are you sure you want to permanently delete <strong>{deleteConfirmState.title}</strong>?</p>
+            <p style={{ margin: '0 0 1.5rem 0', color: '#475569', fontSize: '15px' }}>Are you sure you want to permanently delete <strong>{deleteConfirmState.name || deleteConfirmState.title || "this item"}</strong>?</p>
             <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem' }}>
               <button 
                 onClick={() => setDeleteConfirmState(null)} 
@@ -2551,6 +2696,58 @@ const AdminDashboard = () => {
                     <option value="Delayed" style={{ background: 'white', color: '#c2410c' }}>Delayed</option>
                     <option value="Completed" style={{ background: 'white', color: '#0f172a' }}>Completed</option>
                  </select>
+               </div>
+             </div>
+             
+             {/* Order Details Body */}
+             <div style={{ maxHeight: '60vh', overflowY: 'auto', paddingRight: '10px' }}>
+               <h3 style={{ fontSize: '1.05rem', color: '#1e293b', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '8px' }}><Package size={20} color="#3b82f6" /> Items</h3>
+               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem', background: '#f8fafc', padding: '1rem', borderRadius: '8px' }}>
+                 {selectedOrderDetails.items && selectedOrderDetails.items.map((item, idx) => (
+                   <div key={idx} style={{ display: 'flex', gap: '15px', alignItems: 'center', borderBottom: idx !== selectedOrderDetails.items.length - 1 ? '1px solid #e2e8f0' : 'none', paddingBottom: idx !== selectedOrderDetails.items.length - 1 ? '1rem' : '0' }}>
+                     <div style={{ width: '60px', height: '60px', background: 'white', borderRadius: '6px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                       {item.image ? <img src={getImageUrl(item.image)} alt={item.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} /> : <Package size={24} color="#cbd5e1" />}
+                     </div>
+                     <div style={{ flex: 1 }}>
+                       <strong style={{ display: 'block', color: '#334155', fontSize: '0.95rem' }}>{item.name}</strong>
+                       <span style={{ fontSize: '0.85rem', color: '#64748b' }}>Qty: {item.quantity} × ₹{item.price?.toLocaleString('en-IN') || 0}</span>
+                     </div>
+                     <strong style={{ color: '#0f172a' }}>₹{((item.price || 0) * (item.quantity || 1)).toLocaleString('en-IN')}</strong>
+                   </div>
+                 ))}
+               </div>
+
+               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
+                 <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px' }}>
+                   <h3 style={{ fontSize: '0.9rem', color: '#64748b', textTransform: 'uppercase', marginBottom: '10px' }}>Customer Info</h3>
+                   <p style={{ margin: '0 0 5px 0', color: '#334155', fontWeight: 600 }}>{selectedOrderDetails.firstName} {selectedOrderDetails.lastName}</p>
+                   <p style={{ margin: '0 0 5px 0', color: '#475569', fontSize: '0.9rem' }}>{selectedOrderDetails.email}</p>
+                   <p style={{ margin: '0 0 5px 0', color: '#475569', fontSize: '0.9rem' }}>{selectedOrderDetails.phone}</p>
+                 </div>
+                 <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px' }}>
+                   <h3 style={{ fontSize: '0.9rem', color: '#64748b', textTransform: 'uppercase', marginBottom: '10px' }}>Shipping Address</h3>
+                   <p style={{ margin: '0 0 5px 0', color: '#334155', fontSize: '0.9rem' }}>{selectedOrderDetails.address}</p>
+                   <p style={{ margin: '0 0 5px 0', color: '#334155', fontSize: '0.9rem' }}>{selectedOrderDetails.city}, {selectedOrderDetails.state} {selectedOrderDetails.pincode}</p>
+                 </div>
+               </div>
+
+               <div style={{ background: '#eff6ff', padding: '1.2rem', borderRadius: '8px', border: '1px solid #bfdbfe' }}>
+                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', color: '#334155' }}>
+                   <span>Subtotal</span>
+                   <span>₹{(selectedOrderDetails.totalPrice - (selectedOrderDetails.shippingCost || 0)).toLocaleString('en-IN')}</span>
+                 </div>
+                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', color: '#334155' }}>
+                   <span>Shipping</span>
+                   <span>{selectedOrderDetails.shippingCost ? `₹${selectedOrderDetails.shippingCost.toLocaleString('en-IN')}` : 'Free'}</span>
+                 </div>
+                 <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '12px', borderTop: '1px solid #bfdbfe', fontWeight: 700, color: '#1e3a8a', fontSize: '1.1rem' }}>
+                   <span>Total Paid</span>
+                   <span>₹{selectedOrderDetails.totalPrice?.toLocaleString('en-IN')}</span>
+                 </div>
+                 <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px', fontSize: '0.85rem' }}>
+                   <span style={{ color: '#64748b' }}>Payment Method:</span>
+                   <strong style={{ color: '#334155' }}>{selectedOrderDetails.paymentMethod}</strong>
+                 </div>
                </div>
              </div>
 
@@ -2654,6 +2851,253 @@ const AdminDashboard = () => {
           </div>
         </div>
       )}
+
+      {/* Hero Slide Modals */}
+      {isHeroAddOpen && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', width: '90%', maxWidth: '500px', maxHeight: '90vh', overflowY: 'auto', position: 'relative' }}>
+             <button onClick={() => setIsHeroAddOpen(false)} style={{ position: 'absolute', top: '15px', right: '15px', background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}><X size={24} /></button>
+             <h2 style={{ marginBottom: '1.5rem', color: '#0f172a' }}>Add Hero Slide</h2>
+             
+             <div style={{ display: 'grid', gap: '1rem' }}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Title</label>
+                  <input type="text" value={newHeroSlide.title} onChange={e => setNewHeroSlide({...newHeroSlide, title: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Subtitle</label>
+                  <input type="text" value={newHeroSlide.subtitle} onChange={e => setNewHeroSlide({...newHeroSlide, subtitle: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Brand</label>
+                    <input type="text" value={newHeroSlide.brand} onChange={e => setNewHeroSlide({...newHeroSlide, brand: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Brand Color</label>
+                    <input type="color" value={newHeroSlide.brandColor} onChange={e => setNewHeroSlide({...newHeroSlide, brandColor: e.target.value})} style={{ width: '100%', padding: '0.4rem', borderRadius: '6px', border: '1px solid #cbd5e1', height: '42px' }} />
+                  </div>
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Price</label>
+                  <input type="text" value={newHeroSlide.price} onChange={e => setNewHeroSlide({...newHeroSlide, price: e.target.value})} placeholder="e.g. ₹1,49,999/-" style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Features (comma separated)</label>
+                  <textarea value={newHeroSlide.features} onChange={e => setNewHeroSlide({...newHeroSlide, features: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', minHeight: '60px' }} />
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Order</label>
+                    <input type="number" value={newHeroSlide.order} onChange={e => setNewHeroSlide({...newHeroSlide, order: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Active</label>
+                    <div style={{ marginTop: '10px' }}>
+                      <input type="checkbox" checked={newHeroSlide.active} onChange={e => setNewHeroSlide({...newHeroSlide, active: e.target.checked})} style={{ transform: 'scale(1.5)' }} />
+                    </div>
+                  </div>
+                </div>
+                <div>
+                   <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Slide Image</label>
+                   <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '2px dashed #cbd5e1', borderRadius: '8px', padding: '1.5rem', cursor: 'pointer', background: '#f8fafc' }}>
+                       {heroImagePreview ? (
+                           <img src={heroImagePreview} alt="Preview" style={{ height: '120px', objectFit: 'contain' }} />
+                       ) : (
+                           <>
+                              <UploadSimple size={24} color="#64748b" style={{ marginBottom: '8px' }} />
+                              <span style={{ color: '#64748b' }}>Upload Image</span>
+                           </>
+                       )}
+                       <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => {
+                           if (e.target.files && e.target.files[0]) {
+                               setHeroSelectedFile(e.target.files[0]);
+                               setHeroImagePreview(URL.createObjectURL(e.target.files[0]));
+                           }
+                       }} />
+                   </label>
+                </div>
+                <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
+                    <button onClick={() => setIsHeroAddOpen(false)} style={{ padding: '0.8rem 1.5rem', borderRadius: '6px', border: '1px solid #cbd5e1', background: 'white', fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
+                    <button 
+                        disabled={isSubmitting}
+                        onClick={async () => {
+                            if (!newHeroSlide.title || !heroSelectedFile) return showToast('Title and Image are required', 'error');
+                            setIsSubmitting(true);
+                            try {
+                                const formData = new FormData();
+                                formData.append('title', newHeroSlide.title);
+                                formData.append('subtitle', newHeroSlide.subtitle);
+                                formData.append('brand', newHeroSlide.brand);
+                                formData.append('brandColor', newHeroSlide.brandColor);
+                                formData.append('price', newHeroSlide.price);
+                                formData.append('features', JSON.stringify(newHeroSlide.features.split(',').map(s => s.trim()).filter(Boolean)));
+                                formData.append('btnText', newHeroSlide.btnText);
+                                formData.append('btnLink', newHeroSlide.btnLink);
+                                formData.append('order', newHeroSlide.order);
+                                formData.append('active', newHeroSlide.active);
+                                formData.append('img', heroSelectedFile);
+
+                                const res = await fetch(`${BASE_URL}/api/hero`, { method: 'POST', body: formData });
+                                if (res.ok) {
+                                    const data = await res.json();
+                                    setHeroSlides([data, ...heroSlides]);
+                                    setIsHeroAddOpen(false);
+                                    showToast('Slide added successfully');
+                                } else {
+                                    showToast('Failed to add slide', 'error');
+                                }
+                            } catch (e) {
+                                showToast('Network Error', 'error');
+                            } finally {
+                                setIsSubmitting(false);
+                            }
+                        }}
+                        style={{ padding: '0.8rem 1.5rem', borderRadius: '6px', border: 'none', background: '#3b82f6', color: 'white', fontWeight: 600, cursor: 'pointer' }}>
+                        {isSubmitting ? 'Saving...' : 'Save Slide'}
+                    </button>
+                </div>
+             </div>
+          </div>
+        </div>
+      )}
+
+      {isHeroEditOpen && editHeroSlide && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', width: '90%', maxWidth: '500px', maxHeight: '90vh', overflowY: 'auto', position: 'relative' }}>
+             <button onClick={() => setIsHeroEditOpen(false)} style={{ position: 'absolute', top: '15px', right: '15px', background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}><X size={24} /></button>
+             <h2 style={{ marginBottom: '1.5rem', color: '#0f172a' }}>Edit Hero Slide</h2>
+             
+             <div style={{ display: 'grid', gap: '1rem' }}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Title</label>
+                  <input type="text" value={editHeroSlide.title} onChange={e => setEditHeroSlide({...editHeroSlide, title: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Subtitle</label>
+                  <input type="text" value={editHeroSlide.subtitle} onChange={e => setEditHeroSlide({...editHeroSlide, subtitle: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Brand</label>
+                    <input type="text" value={editHeroSlide.brand} onChange={e => setEditHeroSlide({...editHeroSlide, brand: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Brand Color</label>
+                    <input type="color" value={editHeroSlide.brandColor} onChange={e => setEditHeroSlide({...editHeroSlide, brandColor: e.target.value})} style={{ width: '100%', padding: '0.4rem', borderRadius: '6px', border: '1px solid #cbd5e1', height: '42px' }} />
+                  </div>
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Price</label>
+                  <input type="text" value={editHeroSlide.price} onChange={e => setEditHeroSlide({...editHeroSlide, price: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Features (comma separated)</label>
+                  <textarea value={editHeroSlide.features} onChange={e => setEditHeroSlide({...editHeroSlide, features: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', minHeight: '60px' }} />
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Order</label>
+                    <input type="number" value={editHeroSlide.order} onChange={e => setEditHeroSlide({...editHeroSlide, order: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Active</label>
+                    <div style={{ marginTop: '10px' }}>
+                      <input type="checkbox" checked={editHeroSlide.active} onChange={e => setEditHeroSlide({...editHeroSlide, active: e.target.checked})} style={{ transform: 'scale(1.5)' }} />
+                    </div>
+                  </div>
+                </div>
+                <div>
+                   <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Slide Image</label>
+                   <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '2px dashed #cbd5e1', borderRadius: '8px', padding: '1.5rem', cursor: 'pointer', background: '#f8fafc' }}>
+                       {editHeroImagePreview ? (
+                           <img src={editHeroImagePreview} alt="Preview" style={{ height: '120px', objectFit: 'contain' }} />
+                       ) : (
+                           <UploadSimple size={24} color="#64748b" />
+                       )}
+                       <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => {
+                           if (e.target.files && e.target.files[0]) {
+                               setEditHeroSelectedFile(e.target.files[0]);
+                               setEditHeroImagePreview(URL.createObjectURL(e.target.files[0]));
+                           }
+                       }} />
+                   </label>
+                </div>
+                <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
+                    <button onClick={() => setIsHeroEditOpen(false)} style={{ padding: '0.8rem 1.5rem', borderRadius: '6px', border: '1px solid #cbd5e1', background: 'white', fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
+                    <button 
+                        disabled={isSubmitting}
+                        onClick={async () => {
+                            if (!editHeroSlide.title) return showToast('Title is required', 'error');
+                            setIsSubmitting(true);
+                            try {
+                                const formData = new FormData();
+                                formData.append('title', editHeroSlide.title);
+                                formData.append('subtitle', editHeroSlide.subtitle);
+                                formData.append('brand', editHeroSlide.brand);
+                                formData.append('brandColor', editHeroSlide.brandColor);
+                                formData.append('price', editHeroSlide.price);
+                                formData.append('features', JSON.stringify(editHeroSlide.features.split(',').map(s => s.trim()).filter(Boolean)));
+                                formData.append('btnText', editHeroSlide.btnText);
+                                formData.append('btnLink', editHeroSlide.btnLink);
+                                formData.append('order', editHeroSlide.order);
+                                formData.append('active', editHeroSlide.active);
+                                if (editHeroSelectedFile) formData.append('img', editHeroSelectedFile);
+
+                                const res = await fetch(`${BASE_URL}/api/hero/${editHeroSlide._id}`, { method: 'PUT', body: formData });
+                                if (res.ok) {
+                                    const data = await res.json();
+                                    setHeroSlides(prev => prev.map(s => s._id === data._id ? data : s));
+                                    setIsHeroEditOpen(false);
+                                    showToast('Slide updated successfully');
+                                } else {
+                                    showToast('Failed to update slide', 'error');
+                                }
+                            } catch (e) {
+                                showToast('Network Error', 'error');
+                            } finally {
+                                setIsSubmitting(false);
+                            }
+                        }}
+                        style={{ padding: '0.8rem 1.5rem', borderRadius: '6px', border: 'none', background: '#10b981', color: 'white', fontWeight: 600, cursor: 'pointer' }}>
+                        {isSubmitting ? 'Saving...' : 'Save Details'}
+                    </button>
+                </div>
+             </div>
+          </div>
+        </div>
+      )}
+
+      {heroDeleteConfirm && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ background: 'white', padding: '1.5rem 2rem', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.2)', maxWidth: '400px', width: '90%', textAlign: 'center' }}>
+            <h3 style={{ margin: '0 0 1rem 0', color: '#1e293b', fontSize: '18px' }}>Confirm Delete</h3>
+            <p style={{ margin: '0 0 1.5rem 0', color: '#475569', fontSize: '15px' }}>Are you sure you want to permanently delete slide <strong>{heroDeleteConfirm.title}</strong>?</p>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem' }}>
+              <button onClick={() => setHeroDeleteConfirm(null)} style={{ padding: '0.6rem 1.2rem', borderRadius: '6px', border: '1px solid #cbd5e1', background: 'white', cursor: 'pointer', fontWeight: 600 }}>Cancel</button>
+              <button 
+                onClick={async () => {
+                  try {
+                      const res = await fetch(`${BASE_URL}/api/hero/${heroDeleteConfirm._id}`, { method: 'DELETE' });
+                      if (res.ok || res.status === 404) {
+                          setHeroSlides(prev => prev.filter(s => s._id !== heroDeleteConfirm._id));
+                          showToast('Slide deleted', 'success');
+                      } else {
+                          showToast('Failed to delete slide', 'error');
+                      }
+                  } catch(err) {
+                      showToast('Network error while deleting.', 'error');
+                  }
+                  setHeroDeleteConfirm(null);
+                }} 
+                style={{ padding: '0.6rem 1.2rem', borderRadius: '6px', border: 'none', background: '#ef4444', color: 'white', cursor: 'pointer', fontWeight: 600 }}>
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
 
       {/* Custom Status Change Confirmation Modal */}
       {statusConfirmState && (
@@ -2844,6 +3288,254 @@ const AdminDashboard = () => {
                     </button>
                 </div>
             </div>
+        </div>
+      )}
+
+      {/* Hero Slide Add Modal */}
+      {isHeroAddOpen && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 5000, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)' }}>
+          <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', width: '90%', maxWidth: '500px', maxHeight: '90vh', overflowY: 'auto', position: 'relative' }}>
+             <button onClick={() => setIsHeroAddOpen(false)} style={{ position: 'absolute', top: '15px', right: '15px', background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}><X size={24} /></button>
+             <h2 style={{ marginBottom: '1.5rem', color: '#0f172a' }}>Add Hero Slide</h2>
+             
+             <div style={{ display: 'grid', gap: '1rem' }}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Title</label>
+                  <input type="text" value={newHeroSlide.title} onChange={e => setNewHeroSlide({...newHeroSlide, title: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Subtitle</label>
+                  <input type="text" value={newHeroSlide.subtitle} onChange={e => setNewHeroSlide({...newHeroSlide, subtitle: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Brand</label>
+                    <input type="text" value={newHeroSlide.brand} onChange={e => setNewHeroSlide({...newHeroSlide, brand: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Brand Color</label>
+                    <input type="color" value={newHeroSlide.brandColor} onChange={e => setNewHeroSlide({...newHeroSlide, brandColor: e.target.value})} style={{ width: '100%', padding: '0.4rem', borderRadius: '6px', border: '1px solid #cbd5e1', height: '42px' }} />
+                  </div>
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Price</label>
+                  <input type="text" value={newHeroSlide.price} onChange={e => setNewHeroSlide({...newHeroSlide, price: e.target.value})} placeholder="e.g. ₹1,49,999/-" style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Features (comma separated)</label>
+                  <textarea value={newHeroSlide.features} onChange={e => setNewHeroSlide({...newHeroSlide, features: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', minHeight: '60px' }} />
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Order</label>
+                    <input type="number" value={newHeroSlide.order} onChange={e => setNewHeroSlide({...newHeroSlide, order: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Active</label>
+                    <div style={{ marginTop: '10px' }}>
+                      <input type="checkbox" checked={newHeroSlide.active} onChange={e => setNewHeroSlide({...newHeroSlide, active: e.target.checked})} style={{ transform: 'scale(1.5)' }} />
+                    </div>
+                  </div>
+                </div>
+                <div>
+                   <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Slide Image</label>
+                   <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '2px dashed #cbd5e1', borderRadius: '8px', padding: '1.5rem', cursor: 'pointer', background: '#f8fafc' }}>
+                       {heroImagePreview ? (
+                           <img src={heroImagePreview} alt="Preview" style={{ height: '120px', objectFit: 'contain' }} />
+                       ) : (
+                           <>
+                              <UploadSimple size={24} color="#64748b" style={{ marginBottom: '8px' }} />
+                              <span style={{ color: '#64748b' }}>Upload Image</span>
+                           </>
+                       )}
+                       <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => {
+                           if (e.target.files && e.target.files[0]) {
+                               setHeroSelectedFile(e.target.files[0]);
+                               setHeroImagePreview(URL.createObjectURL(e.target.files[0]));
+                           }
+                       }} />
+                   </label>
+                </div>
+                <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
+                    <button onClick={() => setIsHeroAddOpen(false)} style={{ padding: '0.8rem 1.5rem', borderRadius: '6px', border: '1px solid #cbd5e1', background: 'white', fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
+                    <button 
+                        disabled={isSubmitting}
+                        onClick={async () => {
+                            if (!newHeroSlide.title || !heroSelectedFile) return showToast('Title and Image are required', 'error');
+                            setIsSubmitting(true);
+                            try {
+                                const formData = new FormData();
+                                formData.append('title', newHeroSlide.title);
+                                formData.append('subtitle', newHeroSlide.subtitle);
+                                formData.append('brand', newHeroSlide.brand);
+                                formData.append('brandColor', newHeroSlide.brandColor);
+                                formData.append('price', newHeroSlide.price);
+                                formData.append('features', JSON.stringify(newHeroSlide.features.split(',').map(s => s.trim()).filter(Boolean)));
+                                formData.append('btnText', newHeroSlide.btnText);
+                                formData.append('btnLink', newHeroSlide.btnLink);
+                                formData.append('order', newHeroSlide.order);
+                                formData.append('active', newHeroSlide.active);
+                                formData.append('img', heroSelectedFile);
+
+                                const res = await fetch(`${BASE_URL}/api/hero`, { method: 'POST', body: formData });
+                                if (res.ok) {
+                                    const data = await res.json();
+                                    setHeroSlides([data, ...heroSlides]);
+                                    setIsHeroAddOpen(false);
+                                    showToast('Slide added successfully');
+                                } else {
+                                    showToast('Failed to add slide', 'error');
+                                }
+                            } catch (e) {
+                                showToast('Network Error', 'error');
+                            } finally {
+                                setIsSubmitting(false);
+                            }
+                        }}
+                        style={{ padding: '0.8rem 1.5rem', borderRadius: '6px', border: 'none', background: '#3b82f6', color: 'white', fontWeight: 600, cursor: 'pointer' }}>
+                        {isSubmitting ? 'Saving...' : 'Save Slide'}
+                    </button>
+                </div>
+             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Hero Slide Edit Modal */}
+      {isHeroEditOpen && editHeroSlide && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 5000, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)' }}>
+          <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', width: '90%', maxWidth: '500px', maxHeight: '90vh', overflowY: 'auto', position: 'relative' }}>
+             <button onClick={() => setIsHeroEditOpen(false)} style={{ position: 'absolute', top: '15px', right: '15px', background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}><X size={24} /></button>
+             <h2 style={{ marginBottom: '1.5rem', color: '#0f172a' }}>Edit Hero Slide</h2>
+             
+             <div style={{ display: 'grid', gap: '1rem' }}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Title</label>
+                  <input type="text" value={editHeroSlide.title} onChange={e => setEditHeroSlide({...editHeroSlide, title: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Subtitle</label>
+                  <input type="text" value={editHeroSlide.subtitle} onChange={e => setEditHeroSlide({...editHeroSlide, subtitle: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Brand</label>
+                    <input type="text" value={editHeroSlide.brand} onChange={e => setEditHeroSlide({...editHeroSlide, brand: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Brand Color</label>
+                    <input type="color" value={editHeroSlide.brandColor} onChange={e => setEditHeroSlide({...editHeroSlide, brandColor: e.target.value})} style={{ width: '100%', padding: '0.4rem', borderRadius: '6px', border: '1px solid #cbd5e1', height: '42px' }} />
+                  </div>
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Price</label>
+                  <input type="text" value={editHeroSlide.price} onChange={e => setEditHeroSlide({...editHeroSlide, price: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Features (comma separated)</label>
+                  <textarea value={editHeroSlide.features} onChange={e => setEditHeroSlide({...editHeroSlide, features: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', minHeight: '60px' }} />
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Order</label>
+                    <input type="number" value={editHeroSlide.order} onChange={e => setEditHeroSlide({...editHeroSlide, order: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Active</label>
+                    <div style={{ marginTop: '10px' }}>
+                      <input type="checkbox" checked={editHeroSlide.active} onChange={e => setEditHeroSlide({...editHeroSlide, active: e.target.checked})} style={{ transform: 'scale(1.5)' }} />
+                    </div>
+                  </div>
+                </div>
+                <div>
+                   <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Slide Image</label>
+                   <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '2px dashed #cbd5e1', borderRadius: '8px', padding: '1.5rem', cursor: 'pointer', background: '#f8fafc' }}>
+                       {editHeroImagePreview ? (
+                           <img src={editHeroImagePreview} alt="Preview" style={{ height: '120px', objectFit: 'contain' }} />
+                       ) : (
+                           <UploadSimple size={24} color="#64748b" />
+                       )}
+                       <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => {
+                           if (e.target.files && e.target.files[0]) {
+                               setEditHeroSelectedFile(e.target.files[0]);
+                               setEditHeroImagePreview(URL.createObjectURL(e.target.files[0]));
+                           }
+                       }} />
+                   </label>
+                </div>
+                <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
+                    <button onClick={() => setIsHeroEditOpen(false)} style={{ padding: '0.8rem 1.5rem', borderRadius: '6px', border: '1px solid #cbd5e1', background: 'white', fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
+                    <button 
+                        disabled={isSubmitting}
+                        onClick={async () => {
+                            if (!editHeroSlide.title) return showToast('Title is required', 'error');
+                            setIsSubmitting(true);
+                            try {
+                                const formData = new FormData();
+                                formData.append('title', editHeroSlide.title);
+                                formData.append('subtitle', editHeroSlide.subtitle);
+                                formData.append('brand', editHeroSlide.brand);
+                                formData.append('brandColor', editHeroSlide.brandColor);
+                                formData.append('price', editHeroSlide.price);
+                                formData.append('features', JSON.stringify(editHeroSlide.features.split(',').map(s => s.trim()).filter(Boolean)));
+                                formData.append('btnText', editHeroSlide.btnText);
+                                formData.append('btnLink', editHeroSlide.btnLink);
+                                formData.append('order', editHeroSlide.order);
+                                formData.append('active', editHeroSlide.active);
+                                if (editHeroSelectedFile) formData.append('img', editHeroSelectedFile);
+
+                                const res = await fetch(`${BASE_URL}/api/hero/${editHeroSlide._id}`, { method: 'PUT', body: formData });
+                                if (res.ok) {
+                                    const data = await res.json();
+                                    setHeroSlides(prev => prev.map(s => s._id === data._id ? data : s));
+                                    setIsHeroEditOpen(false);
+                                    showToast('Slide updated successfully');
+                                } else {
+                                    showToast('Failed to update slide', 'error');
+                                }
+                            } catch (e) {
+                                showToast('Network Error', 'error');
+                            } finally {
+                                setIsSubmitting(false);
+                            }
+                        }}
+                        style={{ padding: '0.8rem 1.5rem', borderRadius: '6px', border: 'none', background: '#10b981', color: 'white', fontWeight: 600, cursor: 'pointer' }}>
+                        {isSubmitting ? 'Saving...' : 'Save Details'}
+                    </button>
+                </div>
+             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Hero Slide Modal */}
+      {heroDeleteConfirm && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 5000, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)' }}>
+          <div style={{ background: 'white', padding: '1.5rem 2rem', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.2)', maxWidth: '400px', width: '90%', textAlign: 'center' }}>
+            <h3 style={{ margin: '0 0 1rem 0', color: '#1e293b', fontSize: '18px' }}>Confirm Delete</h3>
+            <p style={{ margin: '0 0 1.5rem 0', color: '#475569', fontSize: '15px' }}>Are you sure you want to permanently delete slide <strong>{heroDeleteConfirm.title}</strong>?</p>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem' }}>
+              <button onClick={() => setHeroDeleteConfirm(null)} style={{ padding: '0.6rem 1.2rem', borderRadius: '6px', border: '1px solid #cbd5e1', background: 'white', cursor: 'pointer', fontWeight: 600 }}>Cancel</button>
+              <button 
+                onClick={async () => {
+                  try {
+                      const res = await fetch(`${BASE_URL}/api/hero/${heroDeleteConfirm._id}`, { method: 'DELETE' });
+                      if (res.ok || res.status === 404) {
+                          setHeroSlides(prev => prev.filter(s => s._id !== heroDeleteConfirm._id));
+                          showToast('Slide deleted', 'success');
+                      } else {
+                          showToast('Failed to delete slide', 'error');
+                      }
+                  } catch(err) {
+                      showToast('Network error while deleting.', 'error');
+                  }
+                  setHeroDeleteConfirm(null);
+                }} 
+                style={{ padding: '0.6rem 1.2rem', borderRadius: '6px', border: 'none', background: '#ef4444', color: 'white', cursor: 'pointer', fontWeight: 600 }}>
+                Delete
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
@@ -3137,6 +3829,85 @@ const AdminDashboard = () => {
             .spec-row input {
                 width: 100% !important;
             }
+        }
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .product-image-container {
+            height: 200px;
+            background: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .product-info {
+            padding: 1.25rem;
+        }
+        .product-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+        .product-price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .product-brand {
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+        .product-price {
+            font-weight: 700;
+            color: #3b82f6;
+        }
+        .action-btn-custom {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .edit-btn {
+            background: #f0f9ff;
+            color: #0369a1;
+            border-color: #bae6fd;
+        }
+        .edit-btn:hover {
+            background: #e0f2fe;
+        }
+        .delete-btn {
+            background: #fef2f2;
+            color: #b91c1c;
+            border-color: #fecaca;
+        }
+        .delete-btn:hover {
+            background: #fee2e2;
         }
       `}</style>
     </div>

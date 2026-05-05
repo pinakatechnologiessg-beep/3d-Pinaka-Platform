@@ -465,9 +465,16 @@ header {
 .hero-content {
   position: relative;
   z-index: 2;
-  width: 50%;
-  padding-left: 2rem;
+  width: 100%;
   color: var(--white);
+}
+
+.hero-content h1,
+.hero-content h3,
+.hero-content .price,
+.hero-content .brand-tag,
+.hero-content p {
+  max-width: 50%;
 }
 
 .brand-tag {
