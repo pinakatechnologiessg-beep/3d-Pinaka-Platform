@@ -21,6 +21,8 @@ import MyTickets from './pages/MyTickets';
 import AdminSupport from './pages/AdminSupport';
 import TermsAndConditions from './pages/TermsAndConditions';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import RefundPolicy from './pages/RefundPolicy';
+import ShippingPolicy from './pages/ShippingPolicy';
 import { Navigate } from 'react-router-dom';
 import { cartService, CART_UPDATED, WISHLIST_UPDATED, SHOW_TOAST } from './services/cartService';
 import { API_BASE_URL } from './api/config';
@@ -238,6 +240,10 @@ function App() {
           <Route path="/terms-and-conditions.html" element={<TermsAndConditions />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/privacy-policy.html" element={<PrivacyPolicy />} />
+          <Route path="/refund-policy" element={<RefundPolicy />} />
+          <Route path="/refund-policy.html" element={<RefundPolicy />} />
+          <Route path="/shipping-policy" element={<ShippingPolicy />} />
+          <Route path="/shipping-policy.html" element={<ShippingPolicy />} />
         </Routes>
 
         <Footer />

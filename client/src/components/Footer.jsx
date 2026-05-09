@@ -36,6 +36,8 @@ const Footer = () => {
             <li><Link to="/support.html">Customer Support</Link></li>
             <li><Link to="/terms-and-conditions">Terms and Conditions</Link></li>
             <li><Link to="/privacy-policy">Privacy Policy</Link></li>
+            <li><Link to="/refund-policy">Refund &amp; Return Policy</Link></li>
+            <li><Link to="/shipping-policy">Shipping &amp; Delivery Policy</Link></li>
           </ul>
         </div>
         <div className="footer-col">
