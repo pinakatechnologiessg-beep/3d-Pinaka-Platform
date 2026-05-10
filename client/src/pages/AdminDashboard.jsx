@@ -3301,6 +3301,16 @@ const AdminDashboard = () => {
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                   <div>
+                    <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Button Text</label>
+                    <input type="text" value={newHeroSlide.btnText || ''} onChange={e => setNewHeroSlide({...newHeroSlide, btnText: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} placeholder="e.g. Shop Now" />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Button Link</label>
+                    <input type="text" value={newHeroSlide.btnLink || ''} onChange={e => setNewHeroSlide({...newHeroSlide, btnLink: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} placeholder="e.g. /product/123" />
+                  </div>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div>
                     <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Order</label>
                     <input type="number" value={newHeroSlide.order} onChange={e => setNewHeroSlide({...newHeroSlide, order: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
                   </div>
@@ -3408,6 +3418,16 @@ const AdminDashboard = () => {
                 <div>
                   <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Features (comma separated)</label>
                   <textarea value={editHeroSlide.features} onChange={e => setEditHeroSlide({...editHeroSlide, features: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', minHeight: '60px' }} />
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Button Text</label>
+                    <input type="text" value={editHeroSlide.btnText || ''} onChange={e => setEditHeroSlide({...editHeroSlide, btnText: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} placeholder="e.g. Shop Now" />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Button Link</label>
+                    <input type="text" value={editHeroSlide.btnLink || ''} onChange={e => setEditHeroSlide({...editHeroSlide, btnLink: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} placeholder="e.g. /product/123" />
+                  </div>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                   <div>
