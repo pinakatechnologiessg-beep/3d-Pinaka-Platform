@@ -88,7 +88,7 @@ const PopupModal = () => {
 
                 {popup.useTemplate ? (
                     <div style={{ 
-                        background: popup.templateData?.color || '#ef4444', 
+                        background: popup.templateImage ? 'transparent' : (popup.templateData?.color || '#ef4444'), 
                         backgroundImage: popup.templateImage ? `linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.25)), url(${popup.templateImage.startsWith('http') ? popup.templateImage : API_BASE_URL + popup.templateImage})` : 'none',
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',

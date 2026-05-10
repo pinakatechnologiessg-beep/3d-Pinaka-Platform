@@ -1627,7 +1627,7 @@ const AdminDashboard = () => {
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                                 <h3 style={{ fontSize: '1.2rem', fontWeight: 700 }}>Live Preview</h3>
                                 <div style={{ 
-                                    background: popupConfig.templateData?.color || '#ef4444', 
+                                    background: templateImagePreview ? 'transparent' : (popupConfig.templateData?.color || '#ef4444'), 
                                     backgroundImage: templateImagePreview ? `linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.25)), url(${templateImagePreview})` : 'none',
                                     backgroundSize: 'cover', backgroundPosition: 'center',
                                     color: 'white', padding: '3rem 2rem', borderRadius: '24px', textAlign: 'center',
