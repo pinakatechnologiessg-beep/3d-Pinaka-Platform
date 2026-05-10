@@ -2906,8 +2906,8 @@ const AdminDashboard = () => {
                                 formData.append('brandColor', newHeroSlide.brandColor);
                                 formData.append('price', newHeroSlide.price);
                                 formData.append('features', JSON.stringify(newHeroSlide.features.split(',').map(s => s.trim()).filter(Boolean)));
-                                formData.append('btnText', newHeroSlide.btnText);
-                                formData.append('btnLink', newHeroSlide.btnLink);
+                                formData.append('btnText', (!newHeroSlide.btnText || newHeroSlide.btnText === 'undefined') ? 'Shop Now' : newHeroSlide.btnText);
+                                formData.append('btnLink', (!newHeroSlide.btnLink || newHeroSlide.btnLink === 'undefined') ? '/products' : newHeroSlide.btnLink);
                                 formData.append('order', newHeroSlide.order);
                                 formData.append('active', newHeroSlide.active);
                                 formData.append('img', heroSelectedFile);
@@ -3012,8 +3012,8 @@ const AdminDashboard = () => {
                                 formData.append('brandColor', editHeroSlide.brandColor);
                                 formData.append('price', editHeroSlide.price);
                                 formData.append('features', JSON.stringify(editHeroSlide.features.split(',').map(s => s.trim()).filter(Boolean)));
-                                formData.append('btnText', editHeroSlide.btnText);
-                                formData.append('btnLink', editHeroSlide.btnLink);
+                                formData.append('btnText', (!editHeroSlide.btnText || editHeroSlide.btnText === 'undefined') ? 'Shop Now' : editHeroSlide.btnText);
+                                formData.append('btnLink', (!editHeroSlide.btnLink || editHeroSlide.btnLink === 'undefined') ? '/products' : editHeroSlide.btnLink);
                                 formData.append('order', editHeroSlide.order);
                                 formData.append('active', editHeroSlide.active);
                                 if (editHeroSelectedFile) formData.append('img', editHeroSelectedFile);
@@ -3345,8 +3345,8 @@ const AdminDashboard = () => {
                                 formData.append('brandColor', newHeroSlide.brandColor);
                                 formData.append('price', newHeroSlide.price);
                                 formData.append('features', JSON.stringify(newHeroSlide.features.split(',').map(s => s.trim()).filter(Boolean)));
-                                formData.append('btnText', newHeroSlide.btnText);
-                                formData.append('btnLink', newHeroSlide.btnLink);
+                                formData.append('btnText', (!newHeroSlide.btnText || newHeroSlide.btnText === 'undefined') ? 'Shop Now' : newHeroSlide.btnText);
+                                formData.append('btnLink', (!newHeroSlide.btnLink || newHeroSlide.btnLink === 'undefined') ? '/products' : newHeroSlide.btnLink);
                                 formData.append('order', newHeroSlide.order);
                                 formData.append('active', newHeroSlide.active);
                                 formData.append('img', heroSelectedFile);
@@ -3452,8 +3452,8 @@ const AdminDashboard = () => {
                                 formData.append('brandColor', editHeroSlide.brandColor);
                                 formData.append('price', editHeroSlide.price);
                                 formData.append('features', JSON.stringify(editHeroSlide.features.split(',').map(s => s.trim()).filter(Boolean)));
-                                formData.append('btnText', editHeroSlide.btnText);
-                                formData.append('btnLink', editHeroSlide.btnLink);
+                                formData.append('btnText', (!editHeroSlide.btnText || editHeroSlide.btnText === 'undefined') ? 'Shop Now' : editHeroSlide.btnText);
+                                formData.append('btnLink', (!editHeroSlide.btnLink || editHeroSlide.btnLink === 'undefined') ? '/products' : editHeroSlide.btnLink);
                                 formData.append('order', editHeroSlide.order);
                                 formData.append('active', editHeroSlide.active);
                                 if (editHeroSelectedFile) formData.append('img', editHeroSelectedFile);

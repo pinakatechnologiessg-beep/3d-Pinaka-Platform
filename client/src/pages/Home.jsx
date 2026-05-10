@@ -204,8 +204,8 @@ const Home = () => {
                 <h1>{slide.title}</h1>
                 <h3>{slide.subtitle}</h3>
                 <div className="price">{slide.price}</div>
-                <button className="btn btn-primary" onClick={() => navigate(slide.btnLink || '/products')}>
-                  {slide.btnText || 'Shop Now'}
+                <button className="btn btn-primary" onClick={() => navigate((slide.btnLink && slide.btnLink !== 'undefined') ? slide.btnLink : '/products')}>
+                  {(slide.btnText && slide.btnText !== 'undefined') ? slide.btnText : 'Shop Now'}
                 </button>
                 
                 <div className="hero-features">
