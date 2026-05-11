@@ -253,6 +253,21 @@ const Home = () => {
             ></div>
           ))}
         </div>
+
+        <button 
+          className="hero-nav prev" 
+          onClick={() => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)}
+          style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '50%', width: '50px', height: '50px', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', backdropFilter: 'blur(5px)', zIndex: 10 }}
+        >
+          <Lightning size={24} weight="bold" style={{ transform: 'rotate(180deg)' }} />
+        </button>
+        <button 
+          className="hero-nav next" 
+          onClick={() => setCurrentSlide((prev) => (prev + 1) % slides.length)}
+          style={{ position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '50%', width: '50px', height: '50px', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', backdropFilter: 'blur(5px)', zIndex: 10 }}
+        >
+          <Lightning size={24} weight="bold" />
+        </button>
       </section>
 
       {/* Shop by Brand */}
