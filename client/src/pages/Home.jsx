@@ -270,6 +270,28 @@ const Home = () => {
         </button>
       </section>
 
+      {/* Promo Banner */}
+      <div className="promo-banner">
+        <div className="marquee">
+          <div className="marquee-content">
+            <span>✦ Best Deals</span>
+            <span>✦ Safe Transactions</span>
+            <span>✦ Fast Shipping</span>
+            <span>✦ 7 Days Return Policy</span>
+            <span>✦ Affordable Pricing</span>
+            <span>✦ 24/7 Support</span>
+          </div>
+          <div className="marquee-content">
+            <span>✦ Best Deals</span>
+            <span>✦ Safe Transactions</span>
+            <span>✦ Fast Shipping</span>
+            <span>✦ 7 Days Return Policy</span>
+            <span>✦ Affordable Pricing</span>
+            <span>✦ 24/7 Support</span>
+          </div>
+        </div>
+      </div>
+
       {/* Shop by Brand */}
       <section className="section container">
         <div className="section-header reveal" ref={addToRevealRefs}>
@@ -546,28 +568,6 @@ const Home = () => {
           </div>
         </section>
       )}
-
-      {/* Promo Banner */}
-      <div className="promo-banner">
-        <div className="marquee">
-          <div className="marquee-content">
-            <span>✦ Best Deals</span>
-            <span>✦ Safe Transactions</span>
-            <span>✦ Fast Shipping</span>
-            <span>✦ 7 Days Return Policy</span>
-            <span>✦ Affordable Pricing</span>
-            <span>✦ 24/7 Support</span>
-          </div>
-          <div className="marquee-content">
-            <span>✦ Best Deals</span>
-            <span>✦ Safe Transactions</span>
-            <span>✦ Fast Shipping</span>
-            <span>✦ 7 Days Return Policy</span>
-            <span>✦ Affordable Pricing</span>
-            <span>✦ 24/7 Support</span>
-          </div>
-        </div>
-      </div>
 
       {/* Explore Collection */}
       <section className="section container">
