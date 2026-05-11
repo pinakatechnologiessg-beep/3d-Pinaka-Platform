@@ -141,6 +141,7 @@ const Home = () => {
   const [wishlist, setWishlist] = useState([]);
   const [dbFeaturedProducts, setDbFeaturedProducts] = useState([]);
   const [dbNewArrivals, setDbNewArrivals] = useState([]);
+  const arrivalSliderRef = useRef(null);
 
   useEffect(() => {
     const fetchFeatured = async () => {
@@ -190,8 +191,16 @@ const Home = () => {
     cartService.addToCart(product);
   };
 
-  const handleAddToWishlist = (product) => {
+    const handleAddToWishlist = (product) => {
     cartService.toggleWishlist(product);
+  };
+
+  const scrollArrivals = (direction) => {
+    if (arrivalSliderRef.current) {
+        const { scrollLeft, clientWidth } = arrivalSliderRef.current;
+        const scrollAmount = direction === 'left' ? -clientWidth : clientWidth;
+        arrivalSliderRef.current.scrollTo({ left: scrollLeft + scrollAmount, behavior: 'smooth' });
+    }
   };
 
     return (
@@ -305,18 +314,43 @@ const Home = () => {
 
       {/* New Arrivals Section */}
       {dbNewArrivals.length > 0 && (
-        <section className="section container" style={{ marginTop: '-2rem' }}>
-          <div className="products-header reveal" ref={addToRevealRefs}>
+        <section className="section container" style={{ marginTop: '2rem', position: 'relative' }}>
+          <div className="products-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
               <div>
-                  <h2 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <h2 style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '2rem', fontWeight: 800, color: '#0f172a' }}>
                     New Arrivals <Sparkle size={32} color="#f59e0b" weight="fill" />
                   </h2>
-                  <p style={{ color: 'var(--text-muted)' }}>The latest and greatest in 3D printing technology</p>
+                  <p style={{ color: '#64748b', fontSize: '1.1rem' }}>The latest and greatest in 3D printing technology</p>
               </div>
-              <button className="btn btn-dark" onClick={() => navigate('/products')}>Explore More</button>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                  <button 
+                    onClick={() => scrollArrivals('left')}
+                    style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '50%', width: '45px', height: '45px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}
+                  >
+                    <Lightning size={24} weight="bold" style={{ transform: 'rotate(180deg)' }} />
+                  </button>
+                  <button 
+                    onClick={() => scrollArrivals('right')}
+                    style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '50%', width: '45px', height: '45px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}
+                  >
+                    <Lightning size={24} weight="bold" />
+                  </button>
+              </div>
           </div>
 
-          <div className="products-grid">
+          <div 
+            ref={arrivalSliderRef}
+            className="arrivals-slider"
+            style={{ 
+                display: 'flex', 
+                gap: '20px', 
+                overflowX: 'auto', 
+                scrollSnapType: 'x mandatory',
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none',
+                padding: '10px 5px'
+            }}
+          >
               {dbNewArrivals.map((product) => {
                   const price = Number(parsePriceLocal(product.price));
                   const originalPrice = Number(parsePriceLocal(product.mrp || product.originalPrice));
@@ -326,15 +360,15 @@ const Home = () => {
                   return (
                   <div 
                       key={product._id || product.id} 
-                      className="reveal" 
-                      ref={addToRevealRefs}
                       style={{ 
+                          minWidth: isMobile ? '280px' : '320px',
+                          scrollSnapAlign: 'start',
                           background: 'white', 
-                          borderRadius: '12px', 
-                          padding: isMobile ? '12px' : '20px', 
+                          borderRadius: '16px', 
+                          padding: isMobile ? '16px' : '24px', 
                           border: '1px solid #f1f5f9', 
-                          boxShadow: '0 4px 15px rgba(0,0,0,0.02)', 
-                          transition: 'transform 0.2s', 
+                          boxShadow: '0 10px 25px -5px rgba(0,0,0,0.05)', 
+                          transition: 'all 0.3s ease', 
                           position: 'relative',
                           display: 'flex',
                           flexDirection: 'column'
@@ -343,47 +377,47 @@ const Home = () => {
                       <button 
                           className={`wishlist-btn ${wishlist.some(item => (item.productId || '').toString() === (product._id || product.id || '').toString()) ? 'active' : ''}`} 
                           onClick={() => handleAddToWishlist(product)}
-                          style={{ zIndex: 10 }}
+                          style={{ zIndex: 10, position: 'absolute', top: '15px', right: '15px' }}
                           title="Add to Wishlist"
                       >
                           <Heart size={20} weight={wishlist.some(item => (item.productId || '').toString() === (product._id || product.id || '').toString()) ? "fill" : "bold"} />
                       </button>
-                      <div className="badge" style={{ background: '#3b82f6', color: 'white', zIndex: 5 }}>{product.badge || 'NEW'}</div>
+                      <div className="badge" style={{ background: '#3b82f6', color: 'white', zIndex: 5, borderRadius: '6px', padding: '4px 8px', fontSize: '0.75rem', fontWeight: 700 }}>{product.badge || 'NEW'}</div>
                       
                       <Link to={product._id ? `/product/${product._id}` : '/products'} style={{ textDecoration: 'none', display: 'block', flex: 1 }}>
-                          <div className="image-wrapper" style={{ height: isMobile ? '160px' : '220px', marginBottom: '12px', overflow: 'hidden', borderRadius: '8px', background: '#f8fafc' }}>
+                          <div className="image-wrapper" style={{ height: isMobile ? '180px' : '240px', marginBottom: '15px', overflow: 'hidden', borderRadius: '12px', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                               <img 
                                   src={getImageUrl(product.image)} 
                                   alt={product.name || product.title} 
-                                  style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '10px' }} 
+                                  style={{ maxWidth: '90%', maxHeight: '90%', objectFit: 'contain' }} 
                                   onError={(e) => (e.target.src = PLACEHOLDER_SVG)}
                               />
                           </div>
-                          <div style={{ fontSize: isMobile ? '0.7rem' : '0.85rem', color: '#64748b', textTransform: 'uppercase', marginBottom: '4px' }}>
+                          <div style={{ fontSize: '0.75rem', color: '#64748b', textTransform: 'uppercase', marginBottom: '6px', fontWeight: 600, letterSpacing: '0.05em' }}>
                               {product.category}
                           </div>
                           <h3 style={{ 
-                              fontSize: isMobile ? '0.95rem' : '1.1rem', 
+                              fontSize: isMobile ? '1.1rem' : '1.25rem', 
                               color: '#1e293b', 
-                              marginBottom: '8px', 
-                              height: isMobile ? '2.4rem' : '2.8rem', 
+                              marginBottom: '12px', 
+                              height: '3rem', 
                               overflow: 'hidden',
                               lineHeight: 1.3,
-                              fontWeight: 600
+                              fontWeight: 700
                           }}>{product.name || product.title}</h3>
                           
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', marginTop: 'auto' }}>
-                              <div style={{ fontSize: isMobile ? '1.1rem' : '1.4rem', fontWeight: 800, color: '#2563eb' }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: 'auto' }}>
+                              <div style={{ fontSize: isMobile ? '1.25rem' : '1.5rem', fontWeight: 800, color: '#2563eb' }}>
                                   ₹{price.toLocaleString('en-IN')}
                               </div>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                   {hasDiscount && (
-                                      <div style={{ fontSize: isMobile ? '0.8rem' : '0.95rem', color: '#94a3b8', textDecoration: 'line-through' }}>
+                                      <div style={{ fontSize: '0.9rem', color: '#94a3b8', textDecoration: 'line-through' }}>
                                           ₹{originalPrice.toLocaleString('en-IN')}
                                       </div>
                                   )}
                                   {hasDiscount && (
-                                       <div style={{ fontSize: '0.7rem', color: '#10b981', fontWeight: 700, background: '#f0fdf4', padding: '2px 4px', borderRadius: '4px' }}>
+                                       <div style={{ fontSize: '0.75rem', color: '#10b981', fontWeight: 700, background: '#f0fdf4', padding: '2px 8px', borderRadius: '6px' }}>
                                           {discountPercent}% OFF
                                       </div>
                                   )}
@@ -396,15 +430,16 @@ const Home = () => {
                           onClick={() => handleAddToCart(product)}
                           style={{ 
                               width: '100%', 
-                              marginTop: '12px', 
-                              padding: isMobile ? '10px' : '12px', 
-                              borderRadius: '8px', 
+                              marginTop: '20px', 
+                              padding: '14px', 
+                              borderRadius: '10px', 
                               border: 'none', 
-                              background: '#111827', 
+                              background: '#0f172a', 
                               color: 'white', 
                               fontWeight: 600, 
                               cursor: 'pointer',
-                              fontSize: isMobile ? '0.85rem' : '1rem'
+                              fontSize: '1rem',
+                              transition: 'background 0.2s'
                           }}
                       >
                           Add to Cart
