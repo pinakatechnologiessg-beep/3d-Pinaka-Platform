@@ -141,7 +141,42 @@ const Home = () => {
   const [wishlist, setWishlist] = useState([]);
   const [dbFeaturedProducts, setDbFeaturedProducts] = useState([]);
   const [dbNewArrivals, setDbNewArrivals] = useState([]);
+  const heroSliderRef = useRef(null);
   const arrivalSliderRef = useRef(null);
+  const isScrollingHero = useRef(false);
+
+  useEffect(() => {
+    const handleHeroScroll = () => {
+        if (!heroSliderRef.current || isScrollingHero.current) return;
+        const { scrollLeft, clientWidth } = heroSliderRef.current;
+        const index = Math.round(scrollLeft / clientWidth);
+        if (index !== currentSlide) {
+            setCurrentSlide(index);
+        }
+    };
+
+    const slider = heroSliderRef.current;
+    if (slider) {
+        slider.addEventListener('scroll', handleHeroScroll);
+    }
+    return () => {
+        if (slider) slider.removeEventListener('scroll', handleHeroScroll);
+    };
+  }, [currentSlide]);
+
+  const goToSlide = (index) => {
+    if (heroSliderRef.current) {
+        isScrollingHero.current = true;
+        setCurrentSlide(index);
+        heroSliderRef.current.scrollTo({
+            left: index * heroSliderRef.current.clientWidth,
+            behavior: 'smooth'
+        });
+        setTimeout(() => {
+            isScrollingHero.current = false;
+        }, 500);
+    }
+  };
 
   useEffect(() => {
     const fetchFeatured = async () => {
@@ -214,12 +249,23 @@ const Home = () => {
 
             {/* Hero Section */}
       <section className="hero">
-        <div className="hero-slider">
+        <div 
+          className="hero-slider" 
+          ref={heroSliderRef}
+          style={{ 
+            display: 'flex', 
+            overflowX: 'auto', 
+            scrollSnapType: 'x mandatory', 
+            scrollbarWidth: 'none', 
+            msOverflowStyle: 'none',
+            height: '100%'
+          }}
+        >
           {slides.map((slide, index) => (
             <div 
               key={index} 
               className="hero-slide" 
-              style={{ display: currentSlide === index ? 'flex' : 'none' }}
+              style={{ minWidth: '100%', scrollSnapAlign: 'start', position: 'relative' }}
             >
               <img src={slide.img} alt={slide.title} className="hero-bg" />
               <div className="container hero-content">
@@ -249,24 +295,24 @@ const Home = () => {
             <div 
               key={index} 
               className={`dot ${currentSlide === index ? 'active' : ''}`}
-              onClick={() => setCurrentSlide(index)}
+              onClick={() => goToSlide(index)}
             ></div>
           ))}
         </div>
 
         <button 
           className="hero-nav prev" 
-          onClick={() => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)}
-          style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '50%', width: '50px', height: '50px', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', backdropFilter: 'blur(5px)', zIndex: 10 }}
+          onClick={() => goToSlide((currentSlide - 1 + slides.length) % slides.length)}
+          style={{ position: 'absolute', left: '30px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '50%', width: '56px', height: '56px', color: 'white', display: isMobile ? 'none' : 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', backdropFilter: 'blur(8px)', zIndex: 10, transition: 'all 0.3s ease' }}
         >
-          <Lightning size={24} weight="bold" style={{ transform: 'rotate(180deg)' }} />
+          <Lightning size={28} weight="fill" style={{ transform: 'rotate(180deg)' }} />
         </button>
         <button 
           className="hero-nav next" 
-          onClick={() => setCurrentSlide((prev) => (prev + 1) % slides.length)}
-          style={{ position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '50%', width: '50px', height: '50px', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', backdropFilter: 'blur(5px)', zIndex: 10 }}
+          onClick={() => goToSlide((currentSlide + 1) % slides.length)}
+          style={{ position: 'absolute', right: '30px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '50%', width: '56px', height: '56px', color: 'white', display: isMobile ? 'none' : 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', backdropFilter: 'blur(8px)', zIndex: 10, transition: 'all 0.3s ease' }}
         >
-          <Lightning size={24} weight="bold" />
+          <Lightning size={28} weight="fill" />
         </button>
       </section>
 
