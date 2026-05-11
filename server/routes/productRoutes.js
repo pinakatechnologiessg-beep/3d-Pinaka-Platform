@@ -86,6 +86,10 @@ router.get('/', async (req, res) => {
         filter.featured = true;
     }
 
+    if (req.query.newArrival === 'true') {
+        filter.newArrival = true;
+    }
+
     console.log("FILTER:", filter);
     
     let dbQuery = Product.find(filter);
@@ -117,6 +121,7 @@ router.get('/', async (req, res) => {
         badgeStyle: p.badgeStyle,
         badge: p.badge || (p.tags === 'Sale' ? 'sale' : p.tags === 'Best Seller' ? 'best-seller' : null),
         featured: p.featured || false,
+        newArrival: p.newArrival || false,
         images: p.images || [],
         descriptionImages: p.descriptionImages || [],
         description: p.description || "",
@@ -173,7 +178,8 @@ router.post('/', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'images'
       badgeStyle: parsedBadge,
       specifications: parsedSpecs,
       stockQuantity: Number(stockQuantity) || 0,
-      featured: String(req.body.featured) === 'true' || req.body.featured === true
+      featured: String(req.body.featured) === 'true' || req.body.featured === true,
+      newArrival: String(req.body.newArrival) === 'true' || req.body.newArrival === true
     };
 
     if (req.files && req.files['image']) {
@@ -256,6 +262,7 @@ router.put('/:id', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'image
       badgeStyle: badgeStyle ? JSON.parse(badgeStyle) : undefined,
       specifications: specifications ? JSON.parse(specifications) : undefined,
       featured: req.body.featured !== undefined ? (String(req.body.featured) === 'true' || req.body.featured === true) : undefined,
+      newArrival: req.body.newArrival !== undefined ? (String(req.body.newArrival) === 'true' || req.body.newArrival === true) : undefined,
     };
 
     if (req.files && req.files['image']) {
@@ -343,6 +350,7 @@ router.get('/featured', async (req, res) => {
         badgeStyle: p.badgeStyle,
         badge: p.badge || (p.tags === 'Sale' ? 'sale' : p.tags === 'Best Seller' ? 'best-seller' : null),
         featured: p.featured || false,
+        newArrival: p.newArrival || false,
         images: p.images || [],
         descriptionImages: p.descriptionImages || [],
         description: p.description || "",
@@ -353,6 +361,45 @@ router.get('/featured', async (req, res) => {
     res.json(mappedProducts);
   } catch (err) {
     console.error("GET Featured error:", err);
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Get new arrival products
+router.get('/new-arrivals', async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 50;
+    const products = await Product.find({ newArrival: true }).limit(limit);
+    
+    const mappedProducts = products.map(p => ({
+        _id: p._id,
+        name: p.name || p.title || "Unnamed Product",
+        brand: p.brand || "Custom",
+        category: p.category || "Category",
+        price: typeof p.price === 'number' ? p.price : (parseInt(String(p.price || p.sellingPrice || 0).replace(/[^0-9]/g, '')) || 0),
+        mrp: typeof p.mrp === 'number' ? p.mrp : (parseInt(String(p.mrp || p.oldPrice || 0).replace(/[^0-9]/g, '')) || 0),
+        discount: p.discount || 0,
+        originalPrice: typeof p.mrp === 'number' ? p.mrp : (parseInt(String(p.mrp || p.oldPrice || 0).replace(/[^0-9]/g, '')) || 0),
+        rating: p.rating || 5.0,
+        inStock: p.inStock,
+        stockQuantity: p.stockQuantity || 0,
+        condition: p.condition || "New",
+        image: p.image,
+        tags: p.tags || "None",
+        badgeStyle: p.badgeStyle,
+        badge: p.badge || (p.tags === 'Sale' ? 'sale' : p.tags === 'Best Seller' ? 'best-seller' : null),
+        featured: p.featured || false,
+        newArrival: p.newArrival || false,
+        images: p.images || [],
+        descriptionImages: p.descriptionImages || [],
+        description: p.description || "",
+        specifications: p.specifications || []
+    }));
+    
+    console.log("Fetching new arrival products...");
+    res.json(mappedProducts);
+  } catch (err) {
+    console.error("GET New Arrivals error:", err);
     res.status(500).json({ message: err.message });
   }
 });

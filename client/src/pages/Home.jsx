@@ -140,6 +140,7 @@ const Home = () => {
 
   const [wishlist, setWishlist] = useState([]);
   const [dbFeaturedProducts, setDbFeaturedProducts] = useState([]);
+  const [dbNewArrivals, setDbNewArrivals] = useState([]);
 
   useEffect(() => {
     const fetchFeatured = async () => {
@@ -161,7 +162,23 @@ const Home = () => {
             // On error, let it fallback to static PRODUCTS automatically via the conditional render
         }
     };
+
+    const fetchNewArrivals = async () => {
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/products/new-arrivals`);
+            if (res.ok) {
+                const data = await res.json();
+                if (data && data.length > 0) {
+                    setDbNewArrivals(data);
+                }
+            }
+        } catch (err) {
+            console.error("Fetch new arrivals error:", err);
+        }
+    };
+
     fetchFeatured();
+    fetchNewArrivals();
 
     const updateWishlist = () => setWishlist(cartService.getWishlistItems());
     updateWishlist();
@@ -285,6 +302,119 @@ const Home = () => {
             </div>
         </div>
       </section>
+
+      {/* New Arrivals Section */}
+      {dbNewArrivals.length > 0 && (
+        <section className="section container" style={{ marginTop: '-2rem' }}>
+          <div className="products-header reveal" ref={addToRevealRefs}>
+              <div>
+                  <h2 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    New Arrivals <Sparkle size={32} color="#f59e0b" weight="fill" />
+                  </h2>
+                  <p style={{ color: 'var(--text-muted)' }}>The latest and greatest in 3D printing technology</p>
+              </div>
+              <button className="btn btn-dark" onClick={() => navigate('/products')}>Explore More</button>
+          </div>
+
+          <div className="products-grid">
+              {dbNewArrivals.map((product) => {
+                  const price = Number(parsePriceLocal(product.price));
+                  const originalPrice = Number(parsePriceLocal(product.mrp || product.originalPrice));
+                  const hasDiscount = originalPrice > price;
+                  const discountPercent = product.discount || (hasDiscount ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0);
+
+                  return (
+                  <div 
+                      key={product._id || product.id} 
+                      className="reveal" 
+                      ref={addToRevealRefs}
+                      style={{ 
+                          background: 'white', 
+                          borderRadius: '12px', 
+                          padding: isMobile ? '12px' : '20px', 
+                          border: '1px solid #f1f5f9', 
+                          boxShadow: '0 4px 15px rgba(0,0,0,0.02)', 
+                          transition: 'transform 0.2s', 
+                          position: 'relative',
+                          display: 'flex',
+                          flexDirection: 'column'
+                      }}
+                  >
+                      <button 
+                          className={`wishlist-btn ${wishlist.some(item => (item.productId || '').toString() === (product._id || product.id || '').toString()) ? 'active' : ''}`} 
+                          onClick={() => handleAddToWishlist(product)}
+                          style={{ zIndex: 10 }}
+                          title="Add to Wishlist"
+                      >
+                          <Heart size={20} weight={wishlist.some(item => (item.productId || '').toString() === (product._id || product.id || '').toString()) ? "fill" : "bold"} />
+                      </button>
+                      <div className="badge" style={{ background: '#3b82f6', color: 'white', zIndex: 5 }}>{product.badge || 'NEW'}</div>
+                      
+                      <Link to={product._id ? `/product/${product._id}` : '/products'} style={{ textDecoration: 'none', display: 'block', flex: 1 }}>
+                          <div className="image-wrapper" style={{ height: isMobile ? '160px' : '220px', marginBottom: '12px', overflow: 'hidden', borderRadius: '8px', background: '#f8fafc' }}>
+                              <img 
+                                  src={getImageUrl(product.image)} 
+                                  alt={product.name || product.title} 
+                                  style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '10px' }} 
+                                  onError={(e) => (e.target.src = PLACEHOLDER_SVG)}
+                              />
+                          </div>
+                          <div style={{ fontSize: isMobile ? '0.7rem' : '0.85rem', color: '#64748b', textTransform: 'uppercase', marginBottom: '4px' }}>
+                              {product.category}
+                          </div>
+                          <h3 style={{ 
+                              fontSize: isMobile ? '0.95rem' : '1.1rem', 
+                              color: '#1e293b', 
+                              marginBottom: '8px', 
+                              height: isMobile ? '2.4rem' : '2.8rem', 
+                              overflow: 'hidden',
+                              lineHeight: 1.3,
+                              fontWeight: 600
+                          }}>{product.name || product.title}</h3>
+                          
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', marginTop: 'auto' }}>
+                              <div style={{ fontSize: isMobile ? '1.1rem' : '1.4rem', fontWeight: 800, color: '#2563eb' }}>
+                                  ₹{price.toLocaleString('en-IN')}
+                              </div>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                  {hasDiscount && (
+                                      <div style={{ fontSize: isMobile ? '0.8rem' : '0.95rem', color: '#94a3b8', textDecoration: 'line-through' }}>
+                                          ₹{originalPrice.toLocaleString('en-IN')}
+                                      </div>
+                                  )}
+                                  {hasDiscount && (
+                                       <div style={{ fontSize: '0.7rem', color: '#10b981', fontWeight: 700, background: '#f0fdf4', padding: '2px 4px', borderRadius: '4px' }}>
+                                          {discountPercent}% OFF
+                                      </div>
+                                  )}
+                              </div>
+                          </div>
+                      </Link>
+                      
+                      <button 
+                          className="btn btn-dark" 
+                          onClick={() => handleAddToCart(product)}
+                          style={{ 
+                              width: '100%', 
+                              marginTop: '12px', 
+                              padding: isMobile ? '10px' : '12px', 
+                              borderRadius: '8px', 
+                              border: 'none', 
+                              background: '#111827', 
+                              color: 'white', 
+                              fontWeight: 600, 
+                              cursor: 'pointer',
+                              fontSize: isMobile ? '0.85rem' : '1rem'
+                          }}
+                      >
+                          Add to Cart
+                      </button>
+                  </div>
+                  );
+              })}
+          </div>
+        </section>
+      )}
 
       {/* Featured Products */}
       <section className="section container" style={{ marginTop: '-2rem' }}>

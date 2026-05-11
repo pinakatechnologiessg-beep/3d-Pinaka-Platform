@@ -53,6 +53,7 @@ const AdminDashboard = () => {
       name: '', category: 'FDM', price: '', mrp: '', discount: 0,
       inStock: true, stockQuantity: 0, image: '', rating: 5.0, tags: 'None', badgeStyle: null, description: '',
       brand: 'Anycubic', otherBrand: '', otherCategory: '', condition: 'New',
+      featured: false, newArrival: false,
       specifications: [{ key: '', value: '' }]
   });
 
@@ -1063,6 +1064,33 @@ const AdminDashboard = () => {
                                     <button 
                                       className="btn btn-sm" 
                                       style={{ 
+                                          background: product.newArrival ? '#10b981' : '#3b82f6', 
+                                          color: 'white',
+                                          fontSize: '0.8rem', padding: '8px 12px',
+                                          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                                          width: '100%', borderRadius: '6px', border: 'none', cursor: 'pointer'
+                                      }}
+                                      onClick={async (e) => {
+                                          e.stopPropagation();
+                                          const newArrivalStatus = !product.newArrival;
+                                          setAdminProducts(prev => prev.map(p => p._id === product._id ? { ...p, newArrival: newArrivalStatus } : p));
+                                          try {
+                                              await fetch(`${BASE_URL}/api/products/${product._id}`, {
+                                                  method: 'PUT',
+                                                  headers: { 'Content-Type': 'application/json' },
+                                                  body: JSON.stringify({ newArrival: newArrivalStatus })
+                                              });
+                                              showToast(newArrivalStatus ? 'Added to New Arrivals' : 'Removed from New Arrivals');
+                                          } catch(e) {
+                                              showToast('Failed to update new arrival', 'error');
+                                          }
+                                      }}
+                                    >
+                                      {product.newArrival ? '✨ New Arrival' : '🆕 Mark New'}
+                                    </button>
+                                    <button 
+                                      className="btn btn-sm" 
+                                      style={{ 
                                           background: product.inStock ? '#cbd5e1' : '#f43f5e', 
                                           color: product.inStock ? '#334155' : 'white',
                                           fontSize: '0.8rem', padding: '8px 12px',
@@ -2000,10 +2028,13 @@ const AdminDashboard = () => {
                       <input type="number" step="0.1" min="0" max="5" placeholder="e.g. 4.5" value={newProduct.rating} onChange={e => setNewProduct({...newProduct, rating: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} />
                     </div>
                     <div>
-                      <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Featured Product</label>
+                      <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Status</label>
                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', height: '45px' }}>
                            <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', color: '#334155' }}>
-                               <input type="checkbox" checked={newProduct.featured} onChange={e => setNewProduct({...newProduct, featured: e.target.checked})} style={{ width: '18px', height: '18px' }} /> Show on Home Page
+                               <input type="checkbox" checked={newProduct.featured} onChange={e => setNewProduct({...newProduct, featured: e.target.checked})} style={{ width: '18px', height: '18px' }} /> Featured
+                           </label>
+                           <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', color: '#334155' }}>
+                               <input type="checkbox" checked={newProduct.newArrival} onChange={e => setNewProduct({...newProduct, newArrival: e.target.checked})} style={{ width: '18px', height: '18px' }} /> New Arrival
                            </label>
                        </div>
                     </div>
@@ -2160,6 +2191,7 @@ const AdminDashboard = () => {
                                 formData.append('name', newProduct.name);
                                 formData.append('category', newProduct.category === 'Other' ? newProduct.otherCategory : newProduct.category);
                                 formData.append('featured', newProduct.featured || false);
+                                formData.append('newArrival', newProduct.newArrival || false);
                                 formData.append('brand', newProduct.brand === 'Other' ? newProduct.otherBrand : newProduct.brand);
                                 formData.append('price', newProduct.price);
                                 formData.append('mrp', newProduct.mrp);
@@ -2196,7 +2228,7 @@ const AdminDashboard = () => {
                                     window.dispatchEvent(new Event('META_UPDATED'));
                                     
                                     setIsAddModalOpen(false);
-                                    setNewProduct({ name: '', category: 'FDM', price: '', mrp: '', inStock: true, stockQuantity: 0, image: '', rating: 5.0, featured: false, tags: 'None', badgeStyle: null, description: '', brand: 'Anycubic', otherCategory: '', condition: 'New', specifications: [{ key: '', value: '' }] });
+                                    setNewProduct({ name: '', category: 'FDM', price: '', mrp: '', inStock: true, stockQuantity: 0, image: '', rating: 5.0, featured: false, newArrival: false, tags: 'None', badgeStyle: null, description: '', brand: 'Anycubic', otherCategory: '', condition: 'New', specifications: [{ key: '', value: '' }] });
                                     setImagePreview(null);
                                     setSelectedFile(null);
                                     setAdditionalSelectedFiles([null, null, null, null, null]);
@@ -2358,8 +2390,16 @@ const AdminDashboard = () => {
                       <input type="number" step="0.1" min="0" max="5" placeholder="e.g. 4.5" value={editProductState.rating ?? ''} onChange={e => setEditProductState({...editProductState, rating: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} />
                     </div>
                     <div>
-                      <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Tags / Badge</label>
-                       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', height: '45px' }}>
+                      <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Status & Badge</label>
+                       <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '1rem', marginBottom: '10px' }}>
+                           <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', color: '#334155' }}>
+                               <input type="checkbox" checked={editProductState.featured} onChange={e => setEditProductState({...editProductState, featured: e.target.checked})} style={{ width: '18px', height: '18px' }} /> Featured
+                           </label>
+                           <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', color: '#334155' }}>
+                               <input type="checkbox" checked={editProductState.newArrival} onChange={e => setEditProductState({...editProductState, newArrival: e.target.checked})} style={{ width: '18px', height: '18px' }} /> New Arrival
+                           </label>
+                       </div>
+                       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', height: '35px' }}>
                            <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', color: '#334155' }}>
                                <input type="radio" name="editbadge" checked={editProductState.tags === 'Sale'} onChange={() => setEditProductState({...editProductState, tags: 'Sale', badgeStyle: { background: '#ef4444', color: 'white' }})} /> Sale
                            </label>
@@ -2525,6 +2565,7 @@ const AdminDashboard = () => {
                                 if (editProductState.rating) formData.append('rating', editProductState.rating);
                                 formData.append('tags', editProductState.tags || 'None');
                                 formData.append('featured', editProductState.featured || false);
+                                formData.append('newArrival', editProductState.newArrival || false);
                                 if (editProductState.badgeStyle) formData.append('badgeStyle', JSON.stringify(editProductState.badgeStyle));
                                 formData.append('condition', editProductState.condition || 'New');
                                 formData.append('description', editProductState.description || '');

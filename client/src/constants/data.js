@@ -7,7 +7,8 @@ export const PRODUCTS = [
     category: "FDM Printer",
     image: "/images/product_fdm_1_1774868367269.png",
     stars: "★★★★★ (4.9)",
-    badge: "Best Seller"
+    badge: "Best Seller",
+    featured: true
   },
   {
     id: 2,
@@ -18,7 +19,8 @@ export const PRODUCTS = [
     image: "/images/product_resin_2_1774868383507.png",
     stars: "★★★★☆ (4.6)",
     badge: "New Arrival",
-    badgeStyle: { background: "var(--secondary)", color: "white" }
+    badgeStyle: { background: "var(--secondary)", color: "white" },
+    newArrival: true
   },
   {
     id: 3,
@@ -29,7 +31,8 @@ export const PRODUCTS = [
     image: "/images/creality-k1c.png",
     stars: "★★★★★ (4.9)",
     badge: "Popular",
-    badgeStyle: { background: "#10b981", color: "white" }
+    badgeStyle: { background: "#10b981", color: "white" },
+    featured: true
   },
   {
     id: 4,
@@ -59,7 +62,8 @@ export const PRODUCTS = [
     image: "/images/bambu-lab-p2s-combo.png",
     stars: "★★★★★ (4.9)",
     badge: "New",
-    badgeStyle: { background: "#6366f1", color: "white" }
+    badgeStyle: { background: "#6366f1", color: "white" },
+    newArrival: true
   },
   {
     id: 7,
@@ -79,7 +83,8 @@ export const PRODUCTS = [
     image: "/images/bambu-lab-h2d-combo.png",
     stars: "★★★★★ (5.0)",
     badge: "New",
-    badgeStyle: { background: "#6366f1", color: "white" }
+    badgeStyle: { background: "#6366f1", color: "white" },
+    newArrival: true
   },
   {
     id: 9,
@@ -89,7 +94,8 @@ export const PRODUCTS = [
     image: "/images/creality-k1-max.png",
     stars: "★★★★★ (4.8)",
     badge: "New",
-    badgeStyle: { background: "#6366f1", color: "white" }
+    badgeStyle: { background: "#6366f1", color: "white" },
+    newArrival: true
   },
   {
     id: 10,
