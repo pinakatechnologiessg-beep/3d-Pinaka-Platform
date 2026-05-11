@@ -314,9 +314,6 @@ const Home = () => {
             ))}
           </div>
         </div>
-        <div style={{ textAlign: 'center', marginTop: '2rem' }}>
-          <button className="btn btn-dark" onClick={() => navigate('/products')}>View All Products</button>
-        </div>
       </section>
 
       {/* Featured Products */}
