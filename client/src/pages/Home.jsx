@@ -255,60 +255,141 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Promo Banner */}
-      <div className="promo-banner">
-        <div className="marquee">
-          <div className="marquee-content">
-            <span>✦ Best Deals</span>
-            <span>✦ Safe Transactions</span>
-            <span>✦ Fast Shipping</span>
-            <span>✦ 7 Days Return Policy</span>
-            <span>✦ Affordable Pricing</span>
-            <span>✦ 24/7 Support</span>
-          </div>
-          <div className="marquee-content">
-            <span>✦ Best Deals</span>
-            <span>✦ Safe Transactions</span>
-            <span>✦ Fast Shipping</span>
-            <span>✦ 7 Days Return Policy</span>
-            <span>✦ Affordable Pricing</span>
-            <span>✦ 24/7 Support</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Explore Collection */}
+      {/* Shop by Brand */}
       <section className="section container">
         <div className="section-header reveal" ref={addToRevealRefs}>
-            <h2>Explore Our Collection</h2>
-            <p>Everything you need for 3D printing excellence</p>
+          <h2>Shop By Brand</h2>
+          <p>Explore top 3D printing brands</p>
         </div>
-        
-        <div className="collections-grid">
-            <div className="collection-card reveal" ref={addToRevealRefs} onClick={() => navigate('/products')}>
-                <div className="collection-icon"><Cube size={24} /></div>
-                <h4>3D Printers</h4>
-                <p>Professional FDM & Resin printers for all needs</p>
-                <div style={{ color: 'var(--primary)', fontSize: '0.8rem', fontWeight: 600 }}>50+ Models →</div>
+        <div className="brand-marquee-wrapper">
+          <div className="brand-marquee-track">
+            {[...BRANDS, ...BRANDS].map((brand, i) => (
+              <div
+                key={i}
+                className="brand-marquee-card"
+                onClick={() => navigate(`/products?brand=${brand.name}`)}
+                style={{ '--brand-color': brand.color }}
+              >
+                <span style={{ color: brand.color, fontStyle: brand.italic ? 'italic' : 'normal' }}>
+                  {brand.name}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+          <button className="btn btn-dark" onClick={() => navigate('/products')}>View All Products</button>
+        </div>
+      </section>
+
+      {/* Featured Products */}
+      <section className="section container" style={{ marginTop: '-2rem' }}>
+        <div className="products-header reveal" ref={addToRevealRefs}>
+            <div>
+                <h2>Featured Products</h2>
+                <p style={{ color: 'var(--text-muted)' }}>Handpicked premium 3D printers for professionals</p>
             </div>
-            <div className="collection-card reveal" ref={addToRevealRefs} onClick={() => navigate('/materials')}>
-                <div className="collection-icon"><Stack size={24} /></div>
-                <h4>Filaments & Resins</h4>
-                <p>Premium quality materials in all colors</p>
-                <div style={{ color: 'var(--primary)', fontSize: '0.8rem', fontWeight: 600 }}>200+ Options →</div>
-            </div>
-            <div className="collection-card reveal" ref={addToRevealRefs} onClick={() => navigate('/products')}>
-                <div className="collection-icon"><Wrench size={24} /></div>
-                <h4>Parts & Accessories</h4>
-                <p>Upgrade and maintain your printer</p>
-                <div style={{ color: 'var(--primary)', fontSize: '0.8rem', fontWeight: 600 }}>500+ Items →</div>
-            </div>
-            <div className="collection-card reveal" ref={addToRevealRefs} onClick={() => navigate('/support')}>
-                <div className="collection-icon"><Sparkle size={24} /></div>
-                <h4>Custom Solutions</h4>
-                <p>Enterprise-grade printing solutions</p>
-                <div style={{ color: 'var(--primary)', fontSize: '0.8rem', fontWeight: 600 }}>On Demand →</div>
-            </div>
+            <button className="btn btn-dark" onClick={() => navigate('/products')}>View All Products</button>
+        </div>
+
+        <div className="products-grid">
+            {(dbFeaturedProducts.length > 0 ? dbFeaturedProducts : PRODUCTS.filter(p => p.featured)).map((product, index) => {
+                console.log("Featured Product Item:", product); // Debug Step: Console log individual product
+                
+                const price = Number(parsePriceLocal(product.price));
+                const originalPrice = Number(parsePriceLocal(product.mrp || product.originalPrice));
+                const hasDiscount = originalPrice > price;
+                const discountPercent = product.discount || (hasDiscount ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0);
+
+                return (
+                <div 
+                    key={product._id || product.id} 
+                    className="reveal" 
+                    ref={addToRevealRefs}
+                    style={{ 
+                        background: 'white', 
+                        borderRadius: '12px', 
+                        padding: isMobile ? '12px' : '20px', 
+                        border: '1px solid #f1f5f9', 
+                        boxShadow: '0 4px 15px rgba(0,0,0,0.02)', 
+                        transition: 'transform 0.2s', 
+                        position: 'relative',
+                        display: 'flex',
+                        flexDirection: 'column'
+                    }}
+                >
+                    <button 
+                        className={`wishlist-btn ${wishlist.some(item => (item.productId || '').toString() === (product._id || product.id || '').toString()) ? 'active' : ''}`} 
+                        onClick={() => handleAddToWishlist(product)}
+                        style={{ zIndex: 10 }}
+                        title="Add to Wishlist"
+                    >
+                        <Heart size={20} weight={wishlist.some(item => (item.productId || '').toString() === (product._id || product.id || '').toString()) ? "fill" : "bold"} />
+                    </button>
+                    {product.badge && <div className="badge" style={{ ...product.badgeStyle, zIndex: 5 }}>{product.badge}</div>}
+                    
+                    <Link to={product._id ? `/product/${product._id}` : '/products'} style={{ textDecoration: 'none', display: 'block', flex: 1 }}>
+                        <div className="image-wrapper" style={{ height: isMobile ? '160px' : '220px', marginBottom: '12px', overflow: 'hidden', borderRadius: '8px', background: '#f8fafc' }}>
+                            <img 
+                                src={getImageUrl(product.image)} 
+                                alt={product.name || product.title} 
+                                style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '10px' }} 
+                                onError={(e) => (e.target.src = PLACEHOLDER_SVG)}
+                            />
+                        </div>
+                        <div style={{ fontSize: isMobile ? '0.7rem' : '0.85rem', color: '#64748b', textTransform: 'uppercase', marginBottom: '4px' }}>
+                            {product.category}
+                        </div>
+                        <h3 style={{ 
+                            fontSize: isMobile ? '0.95rem' : '1.1rem', 
+                            color: '#1e293b', 
+                            marginBottom: '8px', 
+                            height: isMobile ? '2.4rem' : '2.8rem', 
+                            overflow: 'hidden',
+                            lineHeight: 1.3,
+                            fontWeight: 600
+                        }}>{product.name || product.title}</h3>
+                        
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', marginTop: 'auto' }}>
+                            <div style={{ fontSize: isMobile ? '1.1rem' : '1.4rem', fontWeight: 800, color: '#2563eb' }}>
+                                ₹{price.toLocaleString('en-IN')}
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                {hasDiscount && (
+                                    <div style={{ fontSize: isMobile ? '0.8rem' : '0.95rem', color: '#94a3b8', textDecoration: 'line-through' }}>
+                                        ₹{originalPrice.toLocaleString('en-IN')}
+                                    </div>
+                                )}
+                                {hasDiscount && (
+                                     <div style={{ fontSize: '0.7rem', color: '#10b981', fontWeight: 700, background: '#f0fdf4', padding: '2px 4px', borderRadius: '4px' }}>
+                                        {discountPercent}% OFF
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </Link>
+                    
+                    <button 
+                        className="btn btn-dark" 
+                        onClick={() => handleAddToCart(product)}
+                        style={{ 
+                            width: '100%', 
+                            marginTop: '12px', 
+                            padding: isMobile ? '10px' : '12px', 
+                            borderRadius: '8px', 
+                            border: 'none', 
+                            background: '#111827', 
+                            color: 'white', 
+                            fontWeight: 600, 
+                            cursor: 'pointer',
+                            fontSize: isMobile ? '0.85rem' : '1rem'
+                        }}
+                    >
+                        Add to Cart
+                    </button>
+                </div>
+                );
+            })}
         </div>
       </section>
 
@@ -451,141 +532,60 @@ const Home = () => {
         </section>
       )}
 
-      {/* Featured Products */}
-      <section className="section container" style={{ marginTop: '-2rem' }}>
-        <div className="products-header reveal" ref={addToRevealRefs}>
-            <div>
-                <h2>Featured Products</h2>
-                <p style={{ color: 'var(--text-muted)' }}>Handpicked premium 3D printers for professionals</p>
-            </div>
-            <button className="btn btn-dark" onClick={() => navigate('/products')}>View All Products</button>
-        </div>
-
-        <div className="products-grid">
-            {(dbFeaturedProducts.length > 0 ? dbFeaturedProducts : PRODUCTS.filter(p => p.featured)).map((product, index) => {
-                console.log("Featured Product Item:", product); // Debug Step: Console log individual product
-                
-                const price = Number(parsePriceLocal(product.price));
-                const originalPrice = Number(parsePriceLocal(product.mrp || product.originalPrice));
-                const hasDiscount = originalPrice > price;
-                const discountPercent = product.discount || (hasDiscount ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0);
-
-                return (
-                <div 
-                    key={product._id || product.id} 
-                    className="reveal" 
-                    ref={addToRevealRefs}
-                    style={{ 
-                        background: 'white', 
-                        borderRadius: '12px', 
-                        padding: isMobile ? '12px' : '20px', 
-                        border: '1px solid #f1f5f9', 
-                        boxShadow: '0 4px 15px rgba(0,0,0,0.02)', 
-                        transition: 'transform 0.2s', 
-                        position: 'relative',
-                        display: 'flex',
-                        flexDirection: 'column'
-                    }}
-                >
-                    <button 
-                        className={`wishlist-btn ${wishlist.some(item => (item.productId || '').toString() === (product._id || product.id || '').toString()) ? 'active' : ''}`} 
-                        onClick={() => handleAddToWishlist(product)}
-                        style={{ zIndex: 10 }}
-                        title="Add to Wishlist"
-                    >
-                        <Heart size={20} weight={wishlist.some(item => (item.productId || '').toString() === (product._id || product.id || '').toString()) ? "fill" : "bold"} />
-                    </button>
-                    {product.badge && <div className="badge" style={{ ...product.badgeStyle, zIndex: 5 }}>{product.badge}</div>}
-                    
-                    <Link to={product._id ? `/product/${product._id}` : '/products'} style={{ textDecoration: 'none', display: 'block', flex: 1 }}>
-                        <div className="image-wrapper" style={{ height: isMobile ? '160px' : '220px', marginBottom: '12px', overflow: 'hidden', borderRadius: '8px', background: '#f8fafc' }}>
-                            <img 
-                                src={getImageUrl(product.image)} 
-                                alt={product.name || product.title} 
-                                style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '10px' }} 
-                                onError={(e) => (e.target.src = PLACEHOLDER_SVG)}
-                            />
-                        </div>
-                        <div style={{ fontSize: isMobile ? '0.7rem' : '0.85rem', color: '#64748b', textTransform: 'uppercase', marginBottom: '4px' }}>
-                            {product.category}
-                        </div>
-                        <h3 style={{ 
-                            fontSize: isMobile ? '0.95rem' : '1.1rem', 
-                            color: '#1e293b', 
-                            marginBottom: '8px', 
-                            height: isMobile ? '2.4rem' : '2.8rem', 
-                            overflow: 'hidden',
-                            lineHeight: 1.3,
-                            fontWeight: 600
-                        }}>{product.name || product.title}</h3>
-                        
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', marginTop: 'auto' }}>
-                            <div style={{ fontSize: isMobile ? '1.1rem' : '1.4rem', fontWeight: 800, color: '#2563eb' }}>
-                                ₹{price.toLocaleString('en-IN')}
-                            </div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                {hasDiscount && (
-                                    <div style={{ fontSize: isMobile ? '0.8rem' : '0.95rem', color: '#94a3b8', textDecoration: 'line-through' }}>
-                                        ₹{originalPrice.toLocaleString('en-IN')}
-                                    </div>
-                                )}
-                                {hasDiscount && (
-                                     <div style={{ fontSize: '0.7rem', color: '#10b981', fontWeight: 700, background: '#f0fdf4', padding: '2px 4px', borderRadius: '4px' }}>
-                                        {discountPercent}% OFF
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </Link>
-                    
-                    <button 
-                        className="btn btn-dark" 
-                        onClick={() => handleAddToCart(product)}
-                        style={{ 
-                            width: '100%', 
-                            marginTop: '12px', 
-                            padding: isMobile ? '10px' : '12px', 
-                            borderRadius: '8px', 
-                            border: 'none', 
-                            background: '#111827', 
-                            color: 'white', 
-                            fontWeight: 600, 
-                            cursor: 'pointer',
-                            fontSize: isMobile ? '0.85rem' : '1rem'
-                        }}
-                    >
-                        Add to Cart
-                    </button>
-                </div>
-                );
-            })}
-        </div>
-      </section>
-
-      {/* Shop by Brand */}
-      <section className="section container">
-        <div className="section-header reveal" ref={addToRevealRefs}>
-          <h2>Shop By Brand</h2>
-          <p>Explore top 3D printing brands</p>
-        </div>
-        <div className="brand-marquee-wrapper">
-          <div className="brand-marquee-track">
-            {[...BRANDS, ...BRANDS].map((brand, i) => (
-              <div
-                key={i}
-                className="brand-marquee-card"
-                onClick={() => navigate(`/products?brand=${brand.name}`)}
-                style={{ '--brand-color': brand.color }}
-              >
-                <span style={{ color: brand.color, fontStyle: brand.italic ? 'italic' : 'normal' }}>
-                  {brand.name}
-                </span>
-              </div>
-            ))}
+      {/* Promo Banner */}
+      <div className="promo-banner">
+        <div className="marquee">
+          <div className="marquee-content">
+            <span>✦ Best Deals</span>
+            <span>✦ Safe Transactions</span>
+            <span>✦ Fast Shipping</span>
+            <span>✦ 7 Days Return Policy</span>
+            <span>✦ Affordable Pricing</span>
+            <span>✦ 24/7 Support</span>
+          </div>
+          <div className="marquee-content">
+            <span>✦ Best Deals</span>
+            <span>✦ Safe Transactions</span>
+            <span>✦ Fast Shipping</span>
+            <span>✦ 7 Days Return Policy</span>
+            <span>✦ Affordable Pricing</span>
+            <span>✦ 24/7 Support</span>
           </div>
         </div>
-        <div style={{ textAlign: 'center', marginTop: '2rem' }}>
-          <button className="btn btn-dark" onClick={() => navigate('/products')}>View All Products</button>
+      </div>
+
+      {/* Explore Collection */}
+      <section className="section container">
+        <div className="section-header reveal" ref={addToRevealRefs}>
+            <h2>Explore Our Collection</h2>
+            <p>Everything you need for 3D printing excellence</p>
+        </div>
+        
+        <div className="collections-grid">
+            <div className="collection-card reveal" ref={addToRevealRefs} onClick={() => navigate('/products')}>
+                <div className="collection-icon"><Cube size={24} /></div>
+                <h4>3D Printers</h4>
+                <p>Professional FDM & Resin printers for all needs</p>
+                <div style={{ color: 'var(--primary)', fontSize: '0.8rem', fontWeight: 600 }}>50+ Models →</div>
+            </div>
+            <div className="collection-card reveal" ref={addToRevealRefs} onClick={() => navigate('/materials')}>
+                <div className="collection-icon"><Stack size={24} /></div>
+                <h4>Filaments & Resins</h4>
+                <p>Premium quality materials in all colors</p>
+                <div style={{ color: 'var(--primary)', fontSize: '0.8rem', fontWeight: 600 }}>200+ Options →</div>
+            </div>
+            <div className="collection-card reveal" ref={addToRevealRefs} onClick={() => navigate('/products')}>
+                <div className="collection-icon"><Wrench size={24} /></div>
+                <h4>Parts & Accessories</h4>
+                <p>Upgrade and maintain your printer</p>
+                <div style={{ color: 'var(--primary)', fontSize: '0.8rem', fontWeight: 600 }}>500+ Items →</div>
+            </div>
+            <div className="collection-card reveal" ref={addToRevealRefs} onClick={() => navigate('/support')}>
+                <div className="collection-icon"><Sparkle size={24} /></div>
+                <h4>Custom Solutions</h4>
+                <p>Enterprise-grade printing solutions</p>
+                <div style={{ color: 'var(--primary)', fontSize: '0.8rem', fontWeight: 600 }}>On Demand →</div>
+            </div>
         </div>
       </section>
 
