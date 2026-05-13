@@ -64,6 +64,15 @@ const AdminDashboard = () => {
   const [deleteConfirmState, setDeleteConfirmState] = useState(null);
   const [productSearchQuery, setProductSearchQuery] = useState('');
   const [stockFilter, setStockFilter] = useState('All Status');
+  const [meta, setMeta] = useState({ brands: [], categories: [] });
+  const [adminFilters, setAdminFilters] = useState({
+    brand: [],
+    category: [],
+    condition: 'All',
+    minPrice: '',
+    maxPrice: ''
+  });
+  const [showAdminFilters, setShowAdminFilters] = useState(false);
   const [additionalSelectedFiles, setAdditionalSelectedFiles] = useState([null, null, null, null, null]);
   const [additionalImagePreviews, setAdditionalImagePreviews] = useState([null, null, null, null, null]);
   const [editAdditionalSelectedFiles, setEditAdditionalSelectedFiles] = useState([null, null, null, null, null]);
@@ -476,6 +485,9 @@ const AdminDashboard = () => {
         
         const heroRes = await fetch(`${BASE_URL}/api/hero/all`);
         if (heroRes.ok) setHeroSlides(await heroRes.json());
+
+        const metaRes = await fetch(`${BASE_URL}/api/products/meta`);
+        if (metaRes.ok) setMeta(await metaRes.json());
 
       } catch (error) {
         console.error("Failed to fetch dashboard data", error);
@@ -916,6 +928,25 @@ const AdminDashboard = () => {
               </div>
 
               <button 
+                onClick={() => setShowAdminFilters(!showAdminFilters)}
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '8px', 
+                  padding: '10px 15px', 
+                  border: '1px solid var(--admin-border-color)', 
+                  borderRadius: '8px', 
+                  background: showAdminFilters ? 'var(--admin-primary-light)' : 'white', 
+                  fontWeight: 600, 
+                  cursor: 'pointer',
+                  color: showAdminFilters ? 'var(--admin-primary)' : '#1e293b'
+                }}
+              >
+                <FunnelSimple size={18} weight="bold" />
+                {showAdminFilters ? 'Hide Filters' : 'Filters'}
+              </button>
+
+              <button 
                 onClick={() => {
                     setAdditionalSelectedFiles([null, null, null, null, null]);
                     setAdditionalImagePreviews([null, null, null, null, null]);
@@ -926,6 +957,106 @@ const AdminDashboard = () => {
                 <Plus size={20} weight="bold" /> Add New Product
               </button>
             </div>
+
+            {/* Admin Filter Panel */}
+            {showAdminFilters && (
+              <div style={{ 
+                background: 'white', 
+                padding: '20px', 
+                borderRadius: '12px', 
+                border: '1px solid var(--admin-border-color)', 
+                marginBottom: '25px',
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: '20px',
+                boxShadow: 'var(--admin-shadow-sm)'
+              }}>
+                {/* Categories */}
+                <div>
+                  <h4 style={{ marginBottom: '12px', fontSize: '0.9rem', color: '#64748b' }}>Categories</h4>
+                  <div style={{ maxHeight: '150px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    {(meta.categories || []).map(cat => (
+                      <label key={cat} style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.9rem' }}>
+                        <input 
+                          type="checkbox" 
+                          checked={adminFilters.category.includes(cat)} 
+                          onChange={() => {
+                            const updated = adminFilters.category.includes(cat)
+                              ? adminFilters.category.filter(v => v !== cat)
+                              : [...adminFilters.category, cat];
+                            setAdminFilters({ ...adminFilters, category: updated });
+                          }}
+                        />
+                        <span>{cat}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Brands */}
+                <div>
+                  <h4 style={{ marginBottom: '12px', fontSize: '0.9rem', color: '#64748b' }}>Brands</h4>
+                  <div style={{ maxHeight: '150px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    {(meta.brands || []).map(brand => (
+                      <label key={brand} style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.9rem' }}>
+                        <input 
+                          type="checkbox" 
+                          checked={adminFilters.brand.includes(brand)} 
+                          onChange={() => {
+                            const updated = adminFilters.brand.includes(brand)
+                              ? adminFilters.brand.filter(v => v !== brand)
+                              : [...adminFilters.brand, brand];
+                            setAdminFilters({ ...adminFilters, brand: updated });
+                          }}
+                        />
+                        <span>{brand}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Condition */}
+                <div>
+                  <h4 style={{ marginBottom: '12px', fontSize: '0.9rem', color: '#64748b' }}>Condition</h4>
+                  <select 
+                    value={adminFilters.condition}
+                    onChange={(e) => setAdminFilters({ ...adminFilters, condition: e.target.value })}
+                    style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid #e2e8f0', outline: 'none' }}
+                  >
+                    <option value="All">All Conditions</option>
+                    <option value="New">New</option>
+                    <option value="Refurbished">Refurbished</option>
+                  </select>
+                </div>
+
+                {/* Price Range */}
+                <div>
+                  <h4 style={{ marginBottom: '12px', fontSize: '0.9rem', color: '#64748b' }}>Price Range</h4>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <input 
+                      type="number" 
+                      placeholder="Min" 
+                      value={adminFilters.minPrice}
+                      onChange={(e) => setAdminFilters({ ...adminFilters, minPrice: e.target.value })}
+                      style={{ width: '50%', padding: '8px', borderRadius: '6px', border: '1px solid #e2e8f0', outline: 'none' }}
+                    />
+                    <input 
+                      type="number" 
+                      placeholder="Max" 
+                      value={adminFilters.maxPrice}
+                      onChange={(e) => setAdminFilters({ ...adminFilters, maxPrice: e.target.value })}
+                      style={{ width: '50%', padding: '8px', borderRadius: '6px', border: '1px solid #e2e8f0', outline: 'none' }}
+                    />
+                  </div>
+                  <button 
+                    onClick={() => setAdminFilters({ brand: [], category: [], condition: 'All', minPrice: '', maxPrice: '' })}
+                    style={{ marginTop: '15px', width: '100%', padding: '8px', border: 'none', borderRadius: '6px', background: '#f1f5f9', color: '#475569', fontWeight: 600, cursor: 'pointer', fontSize: '0.85rem' }}
+                  >
+                    Reset Filters
+                  </button>
+                </div>
+              </div>
+            )}
             {adminProducts.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '40px', color: 'var(--admin-text-muted)' }}>Loading products...</div>
             ) : (
@@ -939,7 +1070,14 @@ const AdminDashboard = () => {
                                              (stockFilter === 'In Stock' && (p.inStock && (p.stockQuantity == null || p.stockQuantity > 0))) || 
                                              (stockFilter === 'Out of Stock' && (!p.inStock || (p.stockQuantity != null && p.stockQuantity <= 0)));
                                              
-                        return matchesSearch && matchesStock;
+                        const matchesBrand = adminFilters.brand.length === 0 || adminFilters.brand.includes(p.brand);
+                        const matchesCategory = adminFilters.category.length === 0 || adminFilters.category.includes(p.category);
+                        const matchesCondition = adminFilters.condition === 'All' || p.condition === adminFilters.condition;
+                        const price = parsePriceLocal(p.price || 0);
+                        const matchesPrice = (!adminFilters.minPrice || price >= Number(adminFilters.minPrice)) &&
+                                             (!adminFilters.maxPrice || price <= Number(adminFilters.maxPrice));
+
+                        return matchesSearch && matchesStock && matchesBrand && matchesCategory && matchesCondition && matchesPrice;
                     }).map(product => (
                         <div key={product._id || Math.random()} className={`product-card ${!product.inStock ? 'sold-out' : ''}`}>
                             <div style={{ position: 'absolute', top: '10px', right: '10px', display: 'flex', gap: '8px', zIndex: 10 }}>
