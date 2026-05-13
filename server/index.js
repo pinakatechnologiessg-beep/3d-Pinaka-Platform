@@ -151,15 +151,44 @@ app.use((err, req, res, next) => {
   });
 });
 
-// MongoDB Connection
-if (process.env.MONGODB_URI) {
-  // Forced IPv4 network resolution to bypass Windows DNS connection blocking on Atlas
-  mongoose.connect(process.env.MONGODB_URI)
-    .then(() => console.log('Connected to MongoDB: 3D Print Hub Database'))
-    .catch(err => console.error('MongoDB connection error:', err));
-} else {
-  console.log('MongoDB connection skipped: MONGODB_URI is missing in .env');
-}
+// MongoDB Connection with Retry Logic
+const connectDB = async (retryCount = 0) => {
+    const maxRetries = 5;
+    const retryInterval = 5000; // 5 seconds
+
+    if (!process.env.MONGODB_URI) {
+        console.log('MongoDB connection skipped: MONGODB_URI is missing in .env');
+        return;
+    }
+
+    try {
+        await mongoose.connect(process.env.MONGODB_URI, {
+            serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+            socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
+        });
+        console.log('✅ Connected to MongoDB: 3D Print Hub Database');
+    } catch (err) {
+        console.error(`❌ MongoDB connection error (Attempt ${retryCount + 1}/${maxRetries}):`, err.message);
+        
+        if (retryCount < maxRetries) {
+            console.log(`Retrying in ${retryInterval/1000}s...`);
+            setTimeout(() => connectDB(retryCount + 1), retryInterval);
+        } else {
+            console.error('CRITICAL: Failed to connect to MongoDB after maximum retries.');
+        }
+    }
+};
+
+// Monitor connection events
+mongoose.connection.on('disconnected', () => {
+    console.warn('⚠️ MongoDB disconnected. Attempting to reconnect...');
+});
+
+mongoose.connection.on('error', (err) => {
+    console.error('❌ MongoDB Connection Error:', err);
+});
+
+connectDB();
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

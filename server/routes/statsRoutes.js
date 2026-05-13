@@ -21,10 +21,9 @@ router.get('/', async (req, res) => {
     const recentOrdersDb = await Order.find().sort({ createdAt: -1 }).limit(5);
     const recentOrders = recentOrdersDb.map(ord => ({
       id: ord.orderId,
-      customer: ord.customerName,
+      customer: `${ord.firstName || ''} ${ord.lastName || ''}`.trim() || 'Guest',
       status: ord.status,
-      // Prefixing with $ and fixing 2 decimals for aesthetic
-      amount: `$${Number(ord.amount).toFixed(2)}`
+      amount: `₹${Number(ord.totalPrice || 0).toLocaleString('en-IN')}`
     }));
 
     res.json({

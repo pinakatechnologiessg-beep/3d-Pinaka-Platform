@@ -612,40 +612,7 @@ const Home = () => {
         </section>
       )}
 
-      {/* Explore Collection */}
-      <section className="section container">
-        <div className="section-header reveal" ref={addToRevealRefs}>
-            <h2>Explore Our Collection</h2>
-            <p>Everything you need for 3D printing excellence</p>
-        </div>
-        
-        <div className="collections-grid">
-            <div className="collection-card reveal" ref={addToRevealRefs} onClick={() => navigate('/products')}>
-                <div className="collection-icon"><Cube size={24} /></div>
-                <h4>3D Printers</h4>
-                <p>Professional FDM & Resin printers for all needs</p>
-                <div style={{ color: 'var(--primary)', fontSize: '0.8rem', fontWeight: 600 }}>50+ Models →</div>
-            </div>
-            <div className="collection-card reveal" ref={addToRevealRefs} onClick={() => navigate('/materials')}>
-                <div className="collection-icon"><Stack size={24} /></div>
-                <h4>Filaments & Resins</h4>
-                <p>Premium quality materials in all colors</p>
-                <div style={{ color: 'var(--primary)', fontSize: '0.8rem', fontWeight: 600 }}>200+ Options →</div>
-            </div>
-            <div className="collection-card reveal" ref={addToRevealRefs} onClick={() => navigate('/products')}>
-                <div className="collection-icon"><Wrench size={24} /></div>
-                <h4>Parts & Accessories</h4>
-                <p>Upgrade and maintain your printer</p>
-                <div style={{ color: 'var(--primary)', fontSize: '0.8rem', fontWeight: 600 }}>500+ Items →</div>
-            </div>
-            <div className="collection-card reveal" ref={addToRevealRefs} onClick={() => navigate('/support')}>
-                <div className="collection-icon"><Sparkle size={24} /></div>
-                <h4>Custom Solutions</h4>
-                <p>Enterprise-grade printing solutions</p>
-                <div style={{ color: 'var(--primary)', fontSize: '0.8rem', fontWeight: 600 }}>On Demand →</div>
-            </div>
-        </div>
-      </section>
+
 
       {/* Why Choose Us */}
       <section className="dark-section">

@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { 
   House, Package, ShoppingCart, Users, Gear, 
-  Bell, MagnifyingGlass, List, CurrencyDollar, TrendUp, Clock, ArrowLeft, Heart, X, UploadSimple, Trash, PencilSimple, Plus, Sparkle, Eye
+  Bell, MagnifyingGlass, List, CurrencyDollar, TrendUp, Clock, ArrowLeft, Heart, X, UploadSimple, Trash, PencilSimple, Plus, Sparkle, Eye, Funnel
 } from '@phosphor-icons/react';
 import { getImageUrl, PLACEHOLDER_SVG } from '../utils/imageUtils';
 import './AdminDashboard.css';
@@ -216,6 +216,36 @@ const AdminDashboard = () => {
   };
 
   const filteredOrders = orderFilter === 'All Orders' ? orders : orders.filter(o => o.status === orderFilter);
+
+  const filteredProducts = useMemo(() => {
+    return adminProducts.filter(p => {
+      const name = (p.name || p.title || "").toLowerCase();
+      const brand = (p.brand || "").toLowerCase();
+      const category = (p.category || "").toLowerCase();
+      const search = productSearchQuery.toLowerCase();
+      
+      const matchesSearch = name.includes(search) || brand.includes(search) || category.includes(search);
+      
+      const matchesStock = stockFilter === 'All Status' || 
+                           (stockFilter === 'In Stock' && (p.inStock && (p.stockQuantity == null || p.stockQuantity > 0))) || 
+                           (stockFilter === 'Out of Stock' && (!p.inStock || (p.stockQuantity != null && p.stockQuantity <= 0)));
+                           
+      const matchesBrand = adminFilters.brand.length === 0 || 
+                           adminFilters.brand.some(b => b.toLowerCase() === brand);
+      
+      const matchesCategory = adminFilters.category.length === 0 || 
+                              adminFilters.category.some(c => c.toLowerCase() === category);
+                              
+      const matchesCondition = adminFilters.condition === 'All' || 
+                               (p.condition && p.condition.toLowerCase() === adminFilters.condition.toLowerCase());
+      
+      const price = parsePriceLocal(p.price || 0);
+      const matchesPrice = (!adminFilters.minPrice || price >= Number(adminFilters.minPrice)) &&
+                           (!adminFilters.maxPrice || price <= Number(adminFilters.maxPrice));
+
+      return matchesSearch && matchesStock && matchesBrand && matchesCategory && matchesCondition && matchesPrice;
+    });
+  }, [adminProducts, productSearchQuery, stockFilter, adminFilters]);
 
   const getOrderBadgeStyle = (status) => {
     switch(status) {
@@ -435,62 +465,57 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     const fetchDashData = async () => {
+      // Individual fetch helper to prevent cascading failures
+      const safeFetch = async (url, setter, options = {}) => {
+        try {
+          const res = await fetch(url);
+          if (res.ok) {
+            const data = await res.json();
+            if (options.transform) {
+              setter(options.transform(data));
+            } else {
+              setter(data);
+            }
+          }
+        } catch (err) {
+          console.error(`Fetch failed for ${url}:`, err);
+        }
+      };
+
       try {
-        const statsRes = await fetch(`${BASE_URL}/api/stats`);
-        if (statsRes.ok) setStats(await statsRes.json());
-        
-        const prodsRes = await fetch(`${BASE_URL}/api/products`);
-        if (prodsRes.ok) setAdminProducts(await prodsRes.json());
-
-        const ordersRes = await fetch(`${BASE_URL}/api/orders`);
-        if (ordersRes.ok) {
-            const ordersData = await ordersRes.json();
-            console.log("Fetched orders:", ordersData);
-            setOrders(ordersData);
-        }
-
-        const usersRes = await fetch(`${BASE_URL}/api/users`);
-        if (usersRes.ok) {
-            setUsers(await usersRes.json());
-        }
-
-        const adminRes = await fetch(`${BASE_URL}/api/admin`);
-        if (adminRes.ok) {
-            setAdminProfile(await adminRes.json());
-        }
-        const supportRes = await fetch(`${BASE_URL}/api/support`);
-        if (supportRes.ok) setSupportQueries(await supportRes.json());
-
-        const popupRes = await fetch(`${BASE_URL}/api/popup`);
-        if (popupRes.ok) {
-            const popupData = await popupRes.json();
-            // Merge with defaults to prevent crashes on old records
-            setPopupConfig(prev => ({
-                ...prev,
-                ...popupData,
-                templateData: popupData.templateData || prev.templateData
-            }));
-            if (popupData.image && !popupData.useTemplate) {
-                setPopupImagePreview(popupData.image.startsWith('http') ? popupData.image : `${BASE_URL}${popupData.image}`);
-            }
-            if (popupData.templateImage) {
-                setTemplateImagePreview(popupData.templateImage.startsWith('http') ? popupData.templateImage : `${BASE_URL}${popupData.templateImage}`);
-            }
-        }
-        
-        const couponRes = await fetch(`${BASE_URL}/api/coupons/admin`);
-        if (couponRes.ok) {
-            setCoupons(await couponRes.json());
-        }
-        
-        const heroRes = await fetch(`${BASE_URL}/api/hero/all`);
-        if (heroRes.ok) setHeroSlides(await heroRes.json());
-
-        const metaRes = await fetch(`${BASE_URL}/api/products/meta`);
-        if (metaRes.ok) setMeta(await metaRes.json());
-
+        await Promise.all([
+          safeFetch(`${BASE_URL}/api/stats`, setStats),
+          safeFetch(`${BASE_URL}/api/products`, setAdminProducts),
+          safeFetch(`${BASE_URL}/api/orders`, setOrders),
+          safeFetch(`${BASE_URL}/api/users`, setUsers),
+          safeFetch(`${BASE_URL}/api/admin`, setAdminProfile),
+          safeFetch(`${BASE_URL}/api/support`, setSupportQueries),
+          safeFetch(`${BASE_URL}/api/coupons/admin`, setCoupons),
+          safeFetch(`${BASE_URL}/api/hero/all`, setHeroSlides),
+          safeFetch(`${BASE_URL}/api/products/meta`, setMeta),
+          // Specialized fetch for popup
+          (async () => {
+            try {
+              const res = await fetch(`${BASE_URL}/api/popup`);
+              if (res.ok) {
+                const data = await res.json();
+                setPopupConfig(prev => ({
+                    ...prev,
+                    ...data,
+                    templateData: data.templateData || prev.templateData
+                }));
+                if (data.image && !data.useTemplate) {
+                    setPopupImagePreview(data.image.startsWith('http') ? data.image : `${BASE_URL}${data.image}`);
+                }
+                if (data.templateImage) {
+                    setTemplateImagePreview(data.templateImage.startsWith('http') ? data.templateImage : `${BASE_URL}${data.templateImage}`);
+                }
+              }
+            } catch(e) { console.error("Popup fetch failed", e); }
+          })()
+        ]);
       } catch (error) {
-        console.error("Failed to fetch dashboard data", error);
+        console.error("Critical error during dashboard initialization", error);
       } finally {
         setLoading(false);
       }
@@ -619,6 +644,18 @@ const AdminDashboard = () => {
     }
     setDeleteCouponConfirm(null);
   };
+
+  if (loading) {
+      return (
+          <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', fontFamily: 'Inter, sans-serif' }}>
+              <div style={{ width: '40px', height: '40px', border: '3px solid #e2e8f0', borderTopColor: '#6366f1', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: '16px' }}></div>
+              <p style={{ color: '#64748b', fontWeight: 500 }}>Initializing Admin Dashboard...</p>
+              <style>{`
+                  @keyframes spin { to { transform: rotate(360deg); } }
+              `}</style>
+          </div>
+      );
+  }
 
   return (
     <div className="admin-layout">
@@ -900,7 +937,7 @@ const AdminDashboard = () => {
         {activeTab === 'Products' && (
           <div className="dashboard-content" style={{ padding: '24px' }}>
             <div className="products-mgmt-header" style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '25px', flexWrap: 'wrap' }}>
-              <h2 className="products-mgmt-title">Products Management ({adminProducts.length} items)</h2>
+              <h2 className="products-mgmt-title">Products Management ({filteredProducts.length} items)</h2>
               
               <div className="search-bar-wrapper">
                 <MagnifyingGlass size={20} style={{ color: 'var(--admin-text-muted)', marginRight: '10px' }} />
@@ -942,7 +979,7 @@ const AdminDashboard = () => {
                   color: showAdminFilters ? 'var(--admin-primary)' : '#1e293b'
                 }}
               >
-                <FunnelSimple size={18} weight="bold" />
+                <Funnel size={18} weight="bold" />
                 {showAdminFilters ? 'Hide Filters' : 'Filters'}
               </button>
 
@@ -1061,24 +1098,7 @@ const AdminDashboard = () => {
                 <div style={{ textAlign: 'center', padding: '40px', color: 'var(--admin-text-muted)' }}>Loading products...</div>
             ) : (
                 <div className="products-grid admin-products-grid">
-                    {adminProducts.filter(p => {
-                        const matchesSearch = (p.name || p.title || "").toLowerCase().includes(productSearchQuery.toLowerCase()) ||
-                                              (p.brand || "").toLowerCase().includes(productSearchQuery.toLowerCase()) ||
-                                              (p.category || "").toLowerCase().includes(productSearchQuery.toLowerCase());
-                        
-                        const matchesStock = stockFilter === 'All Status' || 
-                                             (stockFilter === 'In Stock' && (p.inStock && (p.stockQuantity == null || p.stockQuantity > 0))) || 
-                                             (stockFilter === 'Out of Stock' && (!p.inStock || (p.stockQuantity != null && p.stockQuantity <= 0)));
-                                             
-                        const matchesBrand = adminFilters.brand.length === 0 || adminFilters.brand.includes(p.brand);
-                        const matchesCategory = adminFilters.category.length === 0 || adminFilters.category.includes(p.category);
-                        const matchesCondition = adminFilters.condition === 'All' || p.condition === adminFilters.condition;
-                        const price = parsePriceLocal(p.price || 0);
-                        const matchesPrice = (!adminFilters.minPrice || price >= Number(adminFilters.minPrice)) &&
-                                             (!adminFilters.maxPrice || price <= Number(adminFilters.maxPrice));
-
-                        return matchesSearch && matchesStock && matchesBrand && matchesCategory && matchesCondition && matchesPrice;
-                    }).map(product => (
+                    {filteredProducts.map(product => (
                         <div key={product._id || Math.random()} className={`product-card ${!product.inStock ? 'sold-out' : ''}`}>
                             <div style={{ position: 'absolute', top: '10px', right: '10px', display: 'flex', gap: '8px', zIndex: 10 }}>
                                 <button 
@@ -1416,9 +1436,15 @@ const AdminDashboard = () => {
                   </thead>
                   <tbody>
                     {(() => {
-                        const filteredUsers = users
+                        const filteredUsers = (users || [])
                           .filter(u => userFilter === 'All Users' ? true : u.status === userFilter)
-                          .filter(u => u.name.toLowerCase().includes(userSearchQuery.toLowerCase()) || u.email.toLowerCase().includes(userSearchQuery.toLowerCase()));
+                          .filter(u => {
+                              const search = userSearchQuery.toLowerCase();
+                              const firstName = (u.firstName || '').toLowerCase();
+                              const lastName = (u.lastName || '').toLowerCase();
+                              const email = (u.email || '').toLowerCase();
+                              return firstName.includes(search) || lastName.includes(search) || email.includes(search);
+                          });
                           
                         if (filteredUsers.length === 0) {
                             return (
@@ -2819,165 +2845,139 @@ const AdminDashboard = () => {
         </div>
       )}
 
-      {/* Order Details Modal */}
       {selectedOrderDetails && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'fadeIn 0.2s ease', backdropFilter: 'blur(2px)' }}>
-          <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', boxShadow: '0 20px 40px rgba(0,0,0,0.2)', maxWidth: '540px', width: '90%', position: 'relative' }}>
-             <button onClick={() => setSelectedOrderDetails(null)} style={{ position: 'absolute', top: '15px', right: '15px', background: 'none', border: 'none', cursor: 'pointer', color: '#64748b', transition: 'color 0.2s' }} onMouseOver={e => e.currentTarget.style.color = '#0f172a'} onMouseOut={e => e.currentTarget.style.color = '#64748b'}><X size={24} /></button>
-             <h2 style={{ marginBottom: '1.5rem', color: '#0f172a', borderBottom: '1px solid #e2e8f0', paddingBottom: '10px' }}>Order Details</h2>
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'fadeIn 0.2s ease', backdropFilter: 'blur(4px)' }}>
+          <div style={{ background: 'white', padding: '2rem', borderRadius: '16px', boxShadow: '0 20px 40px rgba(0,0,0,0.2)', maxWidth: '600px', width: '95%', maxHeight: '90vh', overflowY: 'auto', position: 'relative' }}>
+             <button onClick={() => setSelectedOrderDetails(null)} style={{ position: 'absolute', top: '20px', right: '20px', background: '#f1f5f9', border: 'none', cursor: 'pointer', color: '#64748b', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.background = '#e2e8f0'} onMouseOut={e => e.currentTarget.style.background = '#f1f5f9'}><X size={20} /></button>
+             <h2 style={{ marginBottom: '1.5rem', color: '#0f172a', fontWeight: 800, borderBottom: '1px solid #f1f5f9', paddingBottom: '15px' }}>Order Detail</h2>
              
-             <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+             <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
                <div>
-                  <span style={{ display: 'block', fontSize: '0.85rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>Order ID</span>
-                  <strong style={{ color: '#3b82f6', fontSize: '1.1rem' }}>{selectedOrderDetails.orderId}</strong>
+                  <span style={{ display: 'block', fontSize: '0.75rem', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Order ID</span>
+                  <strong style={{ color: '#3b82f6', fontSize: '1.2rem', fontWeight: 800 }}>#{selectedOrderDetails.orderId}</strong>
                </div>
                <div>
-                 <select 
-                   value={selectedOrderDetails.status} 
-                   onChange={(e) => setStatusConfirmState({ orderId: selectedOrderDetails.orderId, newStatus: e.target.value })}
-                   style={{ padding: '8px 12px', borderRadius: '20px', outline: 'none', fontWeight: 600, cursor: 'pointer', ...getOrderBadgeStyle(selectedOrderDetails.status), transition: 'all 0.3s ease', appearance: 'none', textAlign: 'center' }}
-                 >
-                    <option value="Pending" style={{ background: 'white', color: '#d97706' }}>Pending</option>
-                    <option value="Order Confirmed" style={{ background: 'white', color: '#2563eb' }}>Order Confirmed</option>
-                    <option value="Processing" style={{ background: 'white', color: '#0ea5e9' }}>Processing</option>
-                    <option value="Packed / Ready for Dispatch" style={{ background: 'white', color: '#a16207' }}>Packed / Ready for Dispatch</option>
-                    <option value="Shipped / Dispatched" style={{ background: 'white', color: '#a21caf' }}>Shipped / Dispatched</option>
-                    <option value="In Transit" style={{ background: 'white', color: '#4338ca' }}>In Transit</option>
-                    <option value="Out for Delivery" style={{ background: 'white', color: '#0369a1' }}>Out for Delivery</option>
-                    <option value="Delivered" style={{ background: 'white', color: '#16a34a' }}>Delivered</option>
-                    <option value="Attempted Delivery" style={{ background: 'white', color: '#dc2626' }}>Attempted Delivery</option>
-                    <option value="Delayed" style={{ background: 'white', color: '#c2410c' }}>Delayed</option>
-                    <option value="Completed" style={{ background: 'white', color: '#0f172a' }}>Completed</option>
-                 </select>
-               </div>
-             </div>
-             
-             {/* Order Details Body */}
-             <div style={{ maxHeight: '60vh', overflowY: 'auto', paddingRight: '10px' }}>
-               <h3 style={{ fontSize: '1.05rem', color: '#1e293b', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '8px' }}><Package size={20} color="#3b82f6" /> Items</h3>
-               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem', background: '#f8fafc', padding: '1rem', borderRadius: '8px' }}>
-                 {selectedOrderDetails.items && selectedOrderDetails.items.map((item, idx) => (
-                   <div key={idx} style={{ display: 'flex', gap: '15px', alignItems: 'center', borderBottom: idx !== selectedOrderDetails.items.length - 1 ? '1px solid #e2e8f0' : 'none', paddingBottom: idx !== selectedOrderDetails.items.length - 1 ? '1rem' : '0' }}>
-                     <div style={{ width: '60px', height: '60px', background: 'white', borderRadius: '6px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-                       {item.image ? <img src={getImageUrl(item.image)} alt={item.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} /> : <Package size={24} color="#cbd5e1" />}
-                     </div>
-                     <div style={{ flex: 1 }}>
-                       <strong style={{ display: 'block', color: '#334155', fontSize: '0.95rem' }}>{item.name}</strong>
-                       <span style={{ fontSize: '0.85rem', color: '#64748b' }}>Qty: {item.quantity} × ₹{item.price?.toLocaleString('en-IN') || 0}</span>
-                     </div>
-                     <strong style={{ color: '#0f172a' }}>₹{((item.price || 0) * (item.quantity || 1)).toLocaleString('en-IN')}</strong>
-                   </div>
-                 ))}
-               </div>
-
-               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
-                 <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px' }}>
-                   <h3 style={{ fontSize: '0.9rem', color: '#64748b', textTransform: 'uppercase', marginBottom: '10px' }}>Customer Info</h3>
-                   <p style={{ margin: '0 0 5px 0', color: '#334155', fontWeight: 600 }}>{selectedOrderDetails.firstName} {selectedOrderDetails.lastName}</p>
-                   <p style={{ margin: '0 0 5px 0', color: '#475569', fontSize: '0.9rem' }}>{selectedOrderDetails.email}</p>
-                   <p style={{ margin: '0 0 5px 0', color: '#475569', fontSize: '0.9rem' }}>{selectedOrderDetails.phone}</p>
-                 </div>
-                 <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px' }}>
-                   <h3 style={{ fontSize: '0.9rem', color: '#64748b', textTransform: 'uppercase', marginBottom: '10px' }}>Shipping Address</h3>
-                   <p style={{ margin: '0 0 5px 0', color: '#334155', fontSize: '0.9rem' }}>{selectedOrderDetails.address}</p>
-                   <p style={{ margin: '0 0 5px 0', color: '#334155', fontSize: '0.9rem' }}>{selectedOrderDetails.city}, {selectedOrderDetails.state} {selectedOrderDetails.pincode}</p>
-                 </div>
-               </div>
-
-               <div style={{ background: '#eff6ff', padding: '1.2rem', borderRadius: '8px', border: '1px solid #bfdbfe' }}>
-                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', color: '#334155' }}>
-                   <span>Subtotal</span>
-                   <span>₹{(selectedOrderDetails.totalPrice - (selectedOrderDetails.shippingCost || 0)).toLocaleString('en-IN')}</span>
-                 </div>
-                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', color: '#334155' }}>
-                   <span>Shipping</span>
-                   <span>{selectedOrderDetails.shippingCost ? `₹${selectedOrderDetails.shippingCost.toLocaleString('en-IN')}` : 'Free'}</span>
-                 </div>
-                 <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '12px', borderTop: '1px solid #bfdbfe', fontWeight: 700, color: '#1e3a8a', fontSize: '1.1rem' }}>
-                   <span>Total Paid</span>
-                   <span>₹{selectedOrderDetails.totalPrice?.toLocaleString('en-IN')}</span>
-                 </div>
-                 <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px', fontSize: '0.85rem' }}>
-                   <span style={{ color: '#64748b' }}>Payment Method:</span>
-                   <strong style={{ color: '#334155' }}>{selectedOrderDetails.paymentMethod}</strong>
-                 </div>
+                  <span style={{ display: 'block', fontSize: '0.75rem', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>Status</span>
+                  <select 
+                    value={selectedOrderDetails.status} 
+                    onChange={(e) => setStatusConfirmState({ orderId: selectedOrderDetails.orderId, newStatus: e.target.value })}
+                    style={{ padding: '6px 16px', borderRadius: '20px', outline: 'none', fontWeight: 700, cursor: 'pointer', ...getOrderBadgeStyle(selectedOrderDetails.status), transition: 'all 0.3s ease', appearance: 'none', textAlign: 'center', border: '1px solid transparent' }}
+                  >
+                     {[
+                        'Pending', 'Order Confirmed', 'Processing', 'Packed / Ready for Dispatch', 
+                        'Shipped / Dispatched', 'In Transit', 'Out for Delivery', 'Delivered', 
+                        'Attempted Delivery', 'Delayed', 'Completed'
+                     ].map(opt => (
+                        <option key={opt} value={opt} style={{ background: 'white', color: '#334155' }}>{opt}</option>
+                     ))}
+                  </select>
                </div>
              </div>
 
-             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
-                <div>
-                   <span style={{ display: 'block', fontSize: '0.85rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>Customer Info</span>
-                   <div style={{ color: '#1e293b', fontWeight: 500, marginTop: '4px' }}>
-                      {selectedOrderDetails.firstName ? `${selectedOrderDetails.firstName} ${selectedOrderDetails.lastName || ''}` : selectedOrderDetails.customerName}
+             {/* Customer & Shipping Info */}
+             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+                <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '12px', border: '1px solid #f1f5f9' }}>
+                   <h3 style={{ fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase', marginBottom: '12px', fontWeight: 700, letterSpacing: '0.05em', display: 'flex', alignItems: 'center', gap: '6px' }}><Users size={16} /> Customer</h3>
+                   <div style={{ color: '#1e293b', fontWeight: 700, marginBottom: '4px' }}>
+                      {selectedOrderDetails.firstName ? `${selectedOrderDetails.firstName} ${selectedOrderDetails.lastName || ''}` : (selectedOrderDetails.customerName || 'N/A')}
                    </div>
-                   <div style={{ color: '#64748b', fontSize: '0.9rem' }}>{selectedOrderDetails.customerEmail}</div>
+                   <div style={{ color: '#64748b', fontSize: '0.9rem', marginBottom: '2px' }}>{selectedOrderDetails.email || selectedOrderDetails.customerEmail}</div>
                    <div style={{ color: '#64748b', fontSize: '0.9rem' }}>{selectedOrderDetails.phone}</div>
                 </div>
-                <div>
-                  <span style={{ display: 'block', fontSize: '0.85rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>Shipping Address</span>
-                  <div style={{ color: '#334155', fontSize: '0.9rem', marginTop: '4px', lineHeight: '1.4' }}>
-                     {selectedOrderDetails.streetAddress ? (
-                       <>
-                         <div>{selectedOrderDetails.streetAddress}</div>
-                         {selectedOrderDetails.streetAddress2 && <div>{selectedOrderDetails.streetAddress2}</div>}
-                         <div>{selectedOrderDetails.city}, {selectedOrderDetails.state} - {selectedOrderDetails.postcode}</div>
-                         {selectedOrderDetails.companyName && <div style={{ marginTop: '5px', color: '#64748b', fontSize: '0.85rem' }}>Co: {selectedOrderDetails.companyName}</div>}
-                         {selectedOrderDetails.gstNumber && <div style={{ color: '#64748b', fontSize: '0.85rem' }}>GST: {selectedOrderDetails.gstNumber}</div>}
-                       </>
-                     ) : (
-                       selectedOrderDetails.address
-                     )}
+                <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '12px', border: '1px solid #f1f5f9' }}>
+                   <h3 style={{ fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase', marginBottom: '12px', fontWeight: 700, letterSpacing: '0.05em', display: 'flex', alignItems: 'center', gap: '6px' }}><House size={16} /> Shipping</h3>
+                   <div style={{ color: '#334155', fontSize: '0.9rem', lineHeight: '1.5' }}>
+                      {selectedOrderDetails.streetAddress ? (
+                        <>
+                          <div style={{ fontWeight: 600 }}>{selectedOrderDetails.streetAddress}</div>
+                          {selectedOrderDetails.streetAddress2 && <div>{selectedOrderDetails.streetAddress2}</div>}
+                          <div>{selectedOrderDetails.city}, {selectedOrderDetails.state} - {selectedOrderDetails.postcode}</div>
+                          {selectedOrderDetails.companyName && <div style={{ marginTop: '4px', color: '#64748b', fontSize: '0.8rem' }}>Co: {selectedOrderDetails.companyName}</div>}
+                        </>
+                      ) : (
+                        <div style={{ fontWeight: 600 }}>{selectedOrderDetails.address || 'No address provided'}</div>
+                      )}
+                   </div>
+                </div>
+             </div>
+
+             {/* Items List */}
+             <div style={{ marginBottom: '2rem' }}>
+                <h3 style={{ fontSize: '0.85rem', color: '#64748b', textTransform: 'uppercase', marginBottom: '12px', fontWeight: 700, letterSpacing: '0.05em', display: 'flex', alignItems: 'center', gap: '8px' }}><Package size={18} /> Order Items</h3>
+                <div style={{ background: 'white', borderRadius: '12px', border: '1px solid #f1f5f9', overflow: 'hidden' }}>
+                  {(selectedOrderDetails.items || []).length > 0 ? (
+                    selectedOrderDetails.items.map((item, idx) => (
+                      <div key={idx} style={{ display: 'flex', gap: '15px', alignItems: 'center', padding: '12px 15px', borderBottom: idx !== selectedOrderDetails.items.length - 1 ? '1px solid #f1f5f9' : 'none' }}>
+                         <div style={{ width: '50px', height: '50px', background: '#f8fafc', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                           {item.image ? <img src={getImageUrl(item.image)} alt={item.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} /> : <Package size={20} color="#cbd5e1" />}
+                         </div>
+                         <div style={{ flex: 1 }}>
+                           <strong style={{ display: 'block', color: '#1e293b', fontSize: '0.9rem', fontWeight: 600 }}>{item.name}</strong>
+                           <span style={{ fontSize: '0.8rem', color: '#64748b' }}>Qty: {item.quantity} × ₹{(item.price || 0).toLocaleString('en-IN')}</span>
+                         </div>
+                         <strong style={{ color: '#0f172a' }}>₹{((item.price || 0) * (item.quantity || 1)).toLocaleString('en-IN')}</strong>
+                      </div>
+                    ))
+                  ) : (
+                    <div style={{ padding: '15px', color: '#64748b', fontSize: '0.9rem' }}>
+                       {selectedOrderDetails.productName ? (
+                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div>
+                               <strong style={{ display: 'block', color: '#1e293b' }}>{selectedOrderDetails.productName}</strong>
+                               <span style={{ fontSize: '0.8rem', color: '#64748b' }}>Qty: {selectedOrderDetails.quantity || 1}</span>
+                            </div>
+                            <strong style={{ color: '#0f172a' }}>₹{(selectedOrderDetails.totalPrice || 0).toLocaleString('en-IN')}</strong>
+                         </div>
+                       ) : 'No items found'}
+                    </div>
+                  )}
+                </div>
+             </div>
+
+             {/* Payment Summary */}
+             <div style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: '12px', border: '1px solid #f1f5f9', marginBottom: '2rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', color: '#64748b', fontSize: '0.95rem' }}>
+                  <span>Subtotal</span>
+                  <span style={{ fontWeight: 600, color: '#334155' }}>₹{((selectedOrderDetails.totalPrice || 0) - (selectedOrderDetails.shippingCost || 0)).toLocaleString('en-IN')}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', color: '#64748b', fontSize: '0.95rem' }}>
+                  <span>Shipping</span>
+                  <span style={{ fontWeight: 600, color: '#334155' }}>{selectedOrderDetails.shippingCost ? `₹${selectedOrderDetails.shippingCost.toLocaleString('en-IN')}` : 'Free'}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '12px', borderTop: '2px solid #e2e8f0', marginBottom: '15px' }}>
+                  <span style={{ fontWeight: 800, color: '#0f172a', fontSize: '1.1rem' }}>Total Amount</span>
+                  <span style={{ fontWeight: 900, color: '#2563eb', fontSize: '1.3rem' }}>₹{(selectedOrderDetails.totalPrice || 0).toLocaleString('en-IN')}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                     <CurrencyDollar size={16} color="#64748b" />
+                     <span style={{ color: '#64748b', fontWeight: 600 }}>{selectedOrderDetails.paymentMethod || 'Online'}</span>
+                  </div>
+                  <div style={{ 
+                     background: selectedOrderDetails.paymentStatus === 'Paid' ? '#dcfce7' : '#fee2e2', 
+                     color: selectedOrderDetails.paymentStatus === 'Paid' ? '#16a34a' : '#ef4444',
+                     padding: '2px 10px', borderRadius: '12px', fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase'
+                  }}>
+                     {selectedOrderDetails.paymentStatus || 'Unpaid'}
                   </div>
                 </div>
              </div>
 
-             <div style={{ background: '#f8fafc', padding: '1.2rem', borderRadius: '8px', border: '1px solid #e2e8f0', marginBottom: '1.5rem' }}>
-                <span style={{ display: 'block', fontSize: '0.85rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase', marginBottom: '12px' }}>Product Details</span>
-                
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                   <span style={{ color: '#64748b', fontSize: '0.9rem' }}>Product Name:</span>
-                   <span style={{ color: '#334155', fontWeight: 500 }}>{selectedOrderDetails.productName}</span>
-                </div>
-                
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                   <span style={{ color: '#64748b', fontSize: '0.9rem' }}>Quantity:</span>
-                   <span style={{ color: '#334155', fontWeight: 500 }}>{selectedOrderDetails.quantity}</span>
-                </div>
-
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                   <span style={{ color: '#64748b', fontSize: '0.9rem' }}>Price per item:</span>
-                   <span style={{ color: '#334155', fontWeight: 500 }}>₹{(selectedOrderDetails.totalPrice / selectedOrderDetails.quantity).toLocaleString('en-IN')}</span>
-                </div>
-
-                <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px dashed #cbd5e1', paddingTop: '12px' }}>
-                   <span style={{ color: '#334155', fontWeight: 600 }}>Total Amount:</span>
-                   <span style={{ color: '#0f172a', fontWeight: 700, fontSize: '1.1rem' }}>₹{selectedOrderDetails.totalPrice.toLocaleString('en-IN')}</span>
-                </div>
-             </div>
-
-             <div style={{ display: 'flex', gap: '2rem', marginBottom: '1.5rem' }}>
-                 <div>
-                    <span style={{ display: 'block', fontSize: '0.85rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>Payment Method</span>
-                    <div style={{ color: '#334155', fontWeight: 500, marginTop: '4px' }}>{selectedOrderDetails.paymentMethod}</div>
-                 </div>
-                 <div>
-                    <span style={{ display: 'block', fontSize: '0.85rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>Payment Status</span>
-                    <div style={{ color: selectedOrderDetails.paymentStatus === 'Paid' ? '#16a34a' : '#d97706', fontWeight: 600, marginTop: '4px' }}>{selectedOrderDetails.paymentStatus}</div>
-                 </div>
-             </div>
-
-             <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '1.5rem' }}>
-                <span style={{ display: 'block', fontSize: '0.85rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase', marginBottom: '10px' }}>Tracking Details</span>
+             {/* Tracking Details */}
+             <div>
+                <label style={{ display: 'block', fontSize: '0.8rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '10px' }}>Tracking Details</label>
                 <div style={{ display: 'flex', gap: '10px' }}>
                   <input 
                     type="text" 
-                    placeholder="Enter tracking ID, carrier, etc."
+                    placeholder="Enter tracking ID, carrier info..."
                     value={selectedOrderDetails.trackingDetails || ''}
                     onChange={(e) => {
                       const val = e.target.value;
                       setSelectedOrderDetails(prev => ({ ...prev, trackingDetails: val }));
                     }}
-                    style={{ flex: 1, padding: '8px 12px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.9rem', outline: 'none' }}
+                    style={{ flex: 1, padding: '12px 15px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '0.95rem', outline: 'none', transition: 'border-color 0.2s' }}
+                    onFocus={e => e.target.style.borderColor = '#3b82f6'}
+                    onBlur={e => e.target.style.borderColor = '#e2e8f0'}
                   />
                   <button 
                     onClick={async () => {
@@ -2995,7 +2995,9 @@ const AdminDashboard = () => {
                         showToast('Failed to update tracking details', 'error');
                       }
                     }}
-                    style={{ padding: '8px 16px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', fontSize: '0.85rem' }}
+                    style={{ padding: '0 20px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, cursor: 'pointer', fontSize: '0.9rem', transition: 'all 0.2s' }}
+                    onMouseOver={e => e.target.style.background = '#2563eb'}
+                    onMouseOut={e => e.target.style.background = '#3b82f6'}
                   >
                     Save
                   </button>
@@ -3004,253 +3006,6 @@ const AdminDashboard = () => {
           </div>
         </div>
       )}
-
-      {/* Hero Slide Modals */}
-      {isHeroAddOpen && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', width: '90%', maxWidth: '500px', maxHeight: '90vh', overflowY: 'auto', position: 'relative' }}>
-             <button onClick={() => setIsHeroAddOpen(false)} style={{ position: 'absolute', top: '15px', right: '15px', background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}><X size={24} /></button>
-             <h2 style={{ marginBottom: '1.5rem', color: '#0f172a' }}>Add Hero Slide</h2>
-             
-             <div style={{ display: 'grid', gap: '1rem' }}>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Title</label>
-                  <input type="text" value={newHeroSlide.title} onChange={e => setNewHeroSlide({...newHeroSlide, title: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
-                </div>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Subtitle</label>
-                  <input type="text" value={newHeroSlide.subtitle} onChange={e => setNewHeroSlide({...newHeroSlide, subtitle: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                  <div>
-                    <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Brand</label>
-                    <input type="text" value={newHeroSlide.brand} onChange={e => setNewHeroSlide({...newHeroSlide, brand: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Brand Color</label>
-                    <input type="color" value={newHeroSlide.brandColor} onChange={e => setNewHeroSlide({...newHeroSlide, brandColor: e.target.value})} style={{ width: '100%', padding: '0.4rem', borderRadius: '6px', border: '1px solid #cbd5e1', height: '42px' }} />
-                  </div>
-                </div>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Price</label>
-                  <input type="text" value={newHeroSlide.price} onChange={e => setNewHeroSlide({...newHeroSlide, price: e.target.value})} placeholder="e.g. ₹1,49,999/-" style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
-                </div>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Features (comma separated)</label>
-                  <textarea value={newHeroSlide.features} onChange={e => setNewHeroSlide({...newHeroSlide, features: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', minHeight: '60px' }} />
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                  <div>
-                    <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Order</label>
-                    <input type="number" value={newHeroSlide.order} onChange={e => setNewHeroSlide({...newHeroSlide, order: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Active</label>
-                    <div style={{ marginTop: '10px' }}>
-                      <input type="checkbox" checked={newHeroSlide.active} onChange={e => setNewHeroSlide({...newHeroSlide, active: e.target.checked})} style={{ transform: 'scale(1.5)' }} />
-                    </div>
-                  </div>
-                </div>
-                <div>
-                   <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Slide Image</label>
-                   <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '2px dashed #cbd5e1', borderRadius: '8px', padding: '1.5rem', cursor: 'pointer', background: '#f8fafc' }}>
-                       {heroImagePreview ? (
-                           <img src={heroImagePreview} alt="Preview" style={{ height: '120px', objectFit: 'contain' }} />
-                       ) : (
-                           <>
-                              <UploadSimple size={24} color="#64748b" style={{ marginBottom: '8px' }} />
-                              <span style={{ color: '#64748b' }}>Upload Image</span>
-                           </>
-                       )}
-                       <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => {
-                           if (e.target.files && e.target.files[0]) {
-                               setHeroSelectedFile(e.target.files[0]);
-                               setHeroImagePreview(URL.createObjectURL(e.target.files[0]));
-                           }
-                       }} />
-                   </label>
-                </div>
-                <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
-                    <button onClick={() => setIsHeroAddOpen(false)} style={{ padding: '0.8rem 1.5rem', borderRadius: '6px', border: '1px solid #cbd5e1', background: 'white', fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
-                    <button 
-                        disabled={isSubmitting}
-                        onClick={async () => {
-                            if (!newHeroSlide.title || !heroSelectedFile) return showToast('Title and Image are required', 'error');
-                            setIsSubmitting(true);
-                            try {
-                                const formData = new FormData();
-                                formData.append('title', newHeroSlide.title);
-                                formData.append('subtitle', newHeroSlide.subtitle);
-                                formData.append('brand', newHeroSlide.brand);
-                                formData.append('brandColor', newHeroSlide.brandColor);
-                                formData.append('price', newHeroSlide.price);
-                                formData.append('features', JSON.stringify(newHeroSlide.features.split(',').map(s => s.trim()).filter(Boolean)));
-                                formData.append('btnText', (!newHeroSlide.btnText || newHeroSlide.btnText === 'undefined') ? 'Shop Now' : newHeroSlide.btnText);
-                                formData.append('btnLink', (!newHeroSlide.btnLink || newHeroSlide.btnLink === 'undefined') ? '/products' : newHeroSlide.btnLink);
-                                formData.append('order', newHeroSlide.order);
-                                formData.append('active', newHeroSlide.active);
-                                formData.append('img', heroSelectedFile);
-
-                                const res = await fetch(`${BASE_URL}/api/hero`, { method: 'POST', body: formData });
-                                if (res.ok) {
-                                    const data = await res.json();
-                                    setHeroSlides([data, ...heroSlides]);
-                                    setIsHeroAddOpen(false);
-                                    showToast('Slide added successfully');
-                                } else {
-                                    showToast('Failed to add slide', 'error');
-                                }
-                            } catch (e) {
-                                showToast('Network Error', 'error');
-                            } finally {
-                                setIsSubmitting(false);
-                            }
-                        }}
-                        style={{ padding: '0.8rem 1.5rem', borderRadius: '6px', border: 'none', background: '#3b82f6', color: 'white', fontWeight: 600, cursor: 'pointer' }}>
-                        {isSubmitting ? 'Saving...' : 'Save Slide'}
-                    </button>
-                </div>
-             </div>
-          </div>
-        </div>
-      )}
-
-      {isHeroEditOpen && editHeroSlide && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', width: '90%', maxWidth: '500px', maxHeight: '90vh', overflowY: 'auto', position: 'relative' }}>
-             <button onClick={() => setIsHeroEditOpen(false)} style={{ position: 'absolute', top: '15px', right: '15px', background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}><X size={24} /></button>
-             <h2 style={{ marginBottom: '1.5rem', color: '#0f172a' }}>Edit Hero Slide</h2>
-             
-             <div style={{ display: 'grid', gap: '1rem' }}>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Title</label>
-                  <input type="text" value={editHeroSlide.title} onChange={e => setEditHeroSlide({...editHeroSlide, title: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
-                </div>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Subtitle</label>
-                  <input type="text" value={editHeroSlide.subtitle} onChange={e => setEditHeroSlide({...editHeroSlide, subtitle: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                  <div>
-                    <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Brand</label>
-                    <input type="text" value={editHeroSlide.brand} onChange={e => setEditHeroSlide({...editHeroSlide, brand: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Brand Color</label>
-                    <input type="color" value={editHeroSlide.brandColor} onChange={e => setEditHeroSlide({...editHeroSlide, brandColor: e.target.value})} style={{ width: '100%', padding: '0.4rem', borderRadius: '6px', border: '1px solid #cbd5e1', height: '42px' }} />
-                  </div>
-                </div>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Price</label>
-                  <input type="text" value={editHeroSlide.price} onChange={e => setEditHeroSlide({...editHeroSlide, price: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
-                </div>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Features (comma separated)</label>
-                  <textarea value={editHeroSlide.features} onChange={e => setEditHeroSlide({...editHeroSlide, features: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', minHeight: '60px' }} />
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                  <div>
-                    <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Order</label>
-                    <input type="number" value={editHeroSlide.order} onChange={e => setEditHeroSlide({...editHeroSlide, order: e.target.value})} style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Active</label>
-                    <div style={{ marginTop: '10px' }}>
-                      <input type="checkbox" checked={editHeroSlide.active} onChange={e => setEditHeroSlide({...editHeroSlide, active: e.target.checked})} style={{ transform: 'scale(1.5)' }} />
-                    </div>
-                  </div>
-                </div>
-                <div>
-                   <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Slide Image</label>
-                   <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '2px dashed #cbd5e1', borderRadius: '8px', padding: '1.5rem', cursor: 'pointer', background: '#f8fafc' }}>
-                       {editHeroImagePreview ? (
-                           <img src={editHeroImagePreview} alt="Preview" style={{ height: '120px', objectFit: 'contain' }} />
-                       ) : (
-                           <UploadSimple size={24} color="#64748b" />
-                       )}
-                       <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => {
-                           if (e.target.files && e.target.files[0]) {
-                               setEditHeroSelectedFile(e.target.files[0]);
-                               setEditHeroImagePreview(URL.createObjectURL(e.target.files[0]));
-                           }
-                       }} />
-                   </label>
-                </div>
-                <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
-                    <button onClick={() => setIsHeroEditOpen(false)} style={{ padding: '0.8rem 1.5rem', borderRadius: '6px', border: '1px solid #cbd5e1', background: 'white', fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
-                    <button 
-                        disabled={isSubmitting}
-                        onClick={async () => {
-                            if (!editHeroSlide.title) return showToast('Title is required', 'error');
-                            setIsSubmitting(true);
-                            try {
-                                const formData = new FormData();
-                                formData.append('title', editHeroSlide.title);
-                                formData.append('subtitle', editHeroSlide.subtitle);
-                                formData.append('brand', editHeroSlide.brand);
-                                formData.append('brandColor', editHeroSlide.brandColor);
-                                formData.append('price', editHeroSlide.price);
-                                formData.append('features', JSON.stringify(editHeroSlide.features.split(',').map(s => s.trim()).filter(Boolean)));
-                                formData.append('btnText', (!editHeroSlide.btnText || editHeroSlide.btnText === 'undefined') ? 'Shop Now' : editHeroSlide.btnText);
-                                formData.append('btnLink', (!editHeroSlide.btnLink || editHeroSlide.btnLink === 'undefined') ? '/products' : editHeroSlide.btnLink);
-                                formData.append('order', editHeroSlide.order);
-                                formData.append('active', editHeroSlide.active);
-                                if (editHeroSelectedFile) formData.append('img', editHeroSelectedFile);
-
-                                const res = await fetch(`${BASE_URL}/api/hero/${editHeroSlide._id}`, { method: 'PUT', body: formData });
-                                if (res.ok) {
-                                    const data = await res.json();
-                                    setHeroSlides(prev => prev.map(s => s._id === data._id ? data : s));
-                                    setIsHeroEditOpen(false);
-                                    showToast('Slide updated successfully');
-                                } else {
-                                    showToast('Failed to update slide', 'error');
-                                }
-                            } catch (e) {
-                                showToast('Network Error', 'error');
-                            } finally {
-                                setIsSubmitting(false);
-                            }
-                        }}
-                        style={{ padding: '0.8rem 1.5rem', borderRadius: '6px', border: 'none', background: '#10b981', color: 'white', fontWeight: 600, cursor: 'pointer' }}>
-                        {isSubmitting ? 'Saving...' : 'Save Details'}
-                    </button>
-                </div>
-             </div>
-          </div>
-        </div>
-      )}
-
-      {heroDeleteConfirm && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ background: 'white', padding: '1.5rem 2rem', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.2)', maxWidth: '400px', width: '90%', textAlign: 'center' }}>
-            <h3 style={{ margin: '0 0 1rem 0', color: '#1e293b', fontSize: '18px' }}>Confirm Delete</h3>
-            <p style={{ margin: '0 0 1.5rem 0', color: '#475569', fontSize: '15px' }}>Are you sure you want to permanently delete slide <strong>{heroDeleteConfirm.title}</strong>?</p>
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem' }}>
-              <button onClick={() => setHeroDeleteConfirm(null)} style={{ padding: '0.6rem 1.2rem', borderRadius: '6px', border: '1px solid #cbd5e1', background: 'white', cursor: 'pointer', fontWeight: 600 }}>Cancel</button>
-              <button 
-                onClick={async () => {
-                  try {
-                      const res = await fetch(`${BASE_URL}/api/hero/${heroDeleteConfirm._id}`, { method: 'DELETE' });
-                      if (res.ok || res.status === 404) {
-                          setHeroSlides(prev => prev.filter(s => s._id !== heroDeleteConfirm._id));
-                          showToast('Slide deleted', 'success');
-                      } else {
-                          showToast('Failed to delete slide', 'error');
-                      }
-                  } catch(err) {
-                      showToast('Network error while deleting.', 'error');
-                  }
-                  setHeroDeleteConfirm(null);
-                }} 
-                style={{ padding: '0.6rem 1.2rem', borderRadius: '6px', border: 'none', background: '#ef4444', color: 'white', cursor: 'pointer', fontWeight: 600 }}>
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
 
       {/* Custom Status Change Confirmation Modal */}
       {statusConfirmState && (
@@ -3328,7 +3083,7 @@ const AdminDashboard = () => {
                 
                 <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px dashed #cbd5e1', paddingTop: '8px' }}>
                    <span style={{ color: '#334155', fontWeight: 600 }}>Total Spending:</span>
-                   <span style={{ color: '#10b981', fontWeight: 700, fontSize: '1.1rem' }}>₹{selectedUserDetails.totalSpending.toLocaleString('en-IN')}</span>
+                   <span style={{ color: '#10b981', fontWeight: 700, fontSize: '1.1rem' }}>₹{(selectedUserDetails.totalSpending || 0).toLocaleString('en-IN')}</span>
                 </div>
              </div>
 
@@ -3349,7 +3104,7 @@ const AdminDashboard = () => {
                            <div>
                              <strong style={{ display: 'block', color: '#1e293b', fontSize: '1rem', marginBottom: '4px' }}>{order.productName}</strong>
                              <div style={{ color: '#64748b', fontSize: '0.85rem', display: 'flex', gap: '6px', alignItems: 'center' }}>
-                                <span style={{ color: '#0f172a', fontWeight: 600 }}>₹{order.totalPrice.toLocaleString('en-IN')}</span>
+                                <span style={{ color: '#0f172a', fontWeight: 600 }}>₹{(order.totalPrice || 0).toLocaleString('en-IN')}</span>
                                 <span>&bull;</span>
                                 <span>{new Date(order.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}</span>
                              </div>
@@ -3533,7 +3288,7 @@ const AdminDashboard = () => {
                                 formData.append('brand', newHeroSlide.brand);
                                 formData.append('brandColor', newHeroSlide.brandColor);
                                 formData.append('price', newHeroSlide.price);
-                                formData.append('features', JSON.stringify(newHeroSlide.features.split(',').map(s => s.trim()).filter(Boolean)));
+                                formData.append('features', JSON.stringify((newHeroSlide.features || '').split(',').map(s => s.trim()).filter(Boolean)));
                                 formData.append('btnText', (!newHeroSlide.btnText || newHeroSlide.btnText === 'undefined') ? 'Shop Now' : newHeroSlide.btnText);
                                 formData.append('btnLink', (!newHeroSlide.btnLink || newHeroSlide.btnLink === 'undefined') ? '/products' : newHeroSlide.btnLink);
                                 formData.append('order', newHeroSlide.order);
@@ -3650,7 +3405,7 @@ const AdminDashboard = () => {
                                 formData.append('brand', editHeroSlide.brand);
                                 formData.append('brandColor', editHeroSlide.brandColor);
                                 formData.append('price', editHeroSlide.price);
-                                formData.append('features', JSON.stringify(editHeroSlide.features.split(',').map(s => s.trim()).filter(Boolean)));
+                                formData.append('features', JSON.stringify((editHeroSlide.features || '').split(',').map(s => s.trim()).filter(Boolean)));
                                 formData.append('btnText', (!editHeroSlide.btnText || editHeroSlide.btnText === 'undefined') ? 'Shop Now' : editHeroSlide.btnText);
                                 formData.append('btnLink', (!editHeroSlide.btnLink || editHeroSlide.btnLink === 'undefined') ? '/products' : editHeroSlide.btnLink);
                                 formData.append('order', editHeroSlide.order);
