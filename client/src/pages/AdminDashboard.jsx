@@ -1543,9 +1543,10 @@ const AdminDashboard = () => {
                     {/* Simplified Status Toggle */}
                     <div style={{ 
                         maxWidth: '900px', margin: '0 auto 30px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', 
-                        background: popupConfig.isActive ? '#f0fdf4' : '#fff1f2', padding: '1.2rem 2rem', borderRadius: '20px', 
+                        background: popupConfig.isActive ? '#f0fdf4' : '#fff1f2', padding: '1.2rem 1.5rem', borderRadius: '20px', 
                         border: `1px solid ${popupConfig.isActive ? '#bbf7d0' : '#fecaca'}`,
-                        boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)'
+                        boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)',
+                        flexWrap: 'wrap', gap: '15px'
                     }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
                             <div style={{ 
@@ -3864,6 +3865,33 @@ const AdminDashboard = () => {
         }
         .delete-btn:hover {
             background: #fee2e2;
+        }
+        @media (max-width: 768px) {
+            .product-price-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+            .product-title {
+                font-size: 0.9rem;
+                min-height: auto !important;
+            }
+            .product-info {
+                padding: 0.75rem;
+            }
+            .action-btn-custom {
+                padding: 6px 8px;
+                font-size: 0.75rem;
+                gap: 4px;
+            }
+            .products-mgmt-header {
+                flex-direction: column;
+                align-items: flex-start !important;
+                gap: 12px;
+            }
+            .products-mgmt-title {
+                font-size: 1.2rem !important;
+            }
         }
       `}</style>
     </div>
