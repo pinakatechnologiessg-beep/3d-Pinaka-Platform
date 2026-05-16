@@ -194,6 +194,13 @@
   border-radius: 8px;
 }
 
+.btn-primary.add-to-cart-btn:disabled,
+.quantity-selector button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 .wishlist-btn-secondary {
   background-color: white;
   border: 1px solid #e2e8f0;

@@ -269,21 +269,22 @@ const ProductDetail = () => {
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     gap: '0.75rem',
-                                    backgroundColor: '#10b981',
+                                    backgroundColor: (!product.inStock || product.stockQuantity <= 0) ? '#94a3b8' : '#10b981',
                                     color: 'white',
                                     padding: '1.1rem',
                                     borderRadius: '12px',
                                     border: 'none',
                                     outline: 'none',
-                                    cursor: 'pointer',
+                                    cursor: (!product.inStock || product.stockQuantity <= 0) ? 'not-allowed' : 'pointer',
                                     fontWeight: 800,
                                     fontSize: '1.2rem',
                                     transition: 'all 0.3s ease',
-                                    boxShadow: '0 10px 20px -5px rgba(16, 185, 129, 0.3)',
+                                    boxShadow: (!product.inStock || product.stockQuantity <= 0) ? 'none' : '0 10px 20px -5px rgba(16, 185, 129, 0.3)',
                                     textTransform: 'uppercase',
-                                    letterSpacing: '0.05em'
+                                    letterSpacing: '0.05em',
+                                    opacity: (!product.inStock || product.stockQuantity <= 0) ? 0.6 : 1
                                 }}
-                                disabled={!product.inStock}
+                                disabled={!product.inStock || product.stockQuantity <= 0}
                             >
                                 <CheckCircle size={24} weight="bold" /> Buy Now
                             </button>
