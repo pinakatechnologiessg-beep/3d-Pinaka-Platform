@@ -1,7 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 
-const SEO = ({ title, description, keywords, image, url, type = 'website' }) => {
+const SEO = ({ title, description, keywords, image, url, type = 'website', productData = null }) => {
   const siteName = '3D Pinaka';
   const fullTitle = title ? `${title} | ${siteName}` : `${siteName} | Premium 3D Printers & Materials`;
   const defaultDescription = 'Explore 3D Pinaka\'s premium collection of 3D printers, filaments, and parts. High-quality 3D printing solutions for professionals and hobbyists.';
@@ -9,6 +9,51 @@ const SEO = ({ title, description, keywords, image, url, type = 'website' }) => 
   const siteUrl = window.location.origin;
   const canonicalUrl = url ? `${siteUrl}${url}` : window.location.href;
   const metaKeywords = keywords || '3D Pinaka, 3D Printer, 3D Printing, 3D Printer Filament, Industrial 3D Printers, 3D Printer Materials, 3D Printer Parts';
+
+  // Base Schema for Organization
+  const orgSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": siteName,
+    "url": siteUrl,
+    "logo": `${siteUrl}/logo.png`,
+    "sameAs": [
+      "https://wa.me/918299475268"
+    ]
+  };
+
+  // Product Schema (if type is product and productData is provided)
+  const productSchema = type === 'product' ? {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    "name": title,
+    "image": [image],
+    "description": metaDescription,
+    "sku": productData?.sku || productData?._id || '',
+    "brand": {
+      "@type": "Brand",
+      "name": productData?.brand || siteName
+    },
+    "offers": {
+      "@type": "Offer",
+      "url": canonicalUrl,
+      "priceCurrency": "INR",
+      "price": productData?.price || 0,
+      "availability": productData?.inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      "itemCondition": "https://schema.org/NewCondition",
+      "seller": {
+        "@type": "Organization",
+        "name": siteName
+      }
+    },
+    ...(productData?.rating && {
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": productData.rating.toFixed(1),
+        "reviewCount": productData.reviews?.length || 1
+      }
+    })
+  } : null;
 
   return (
     <Helmet>
@@ -25,6 +70,8 @@ const SEO = ({ title, description, keywords, image, url, type = 'website' }) => 
       <meta property="og:image" content={image || `${siteUrl}/logo.png`} />
       <meta property="og:url" content={canonicalUrl} />
       <meta property="og:site_name" content={siteName} />
+      {productData?.price && <meta property="product:price:amount" content={productData.price} />}
+      {productData?.price && <meta property="product:price:currency" content="INR" />}
 
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
@@ -33,44 +80,11 @@ const SEO = ({ title, description, keywords, image, url, type = 'website' }) => 
       <meta name="twitter:image" content={image || `${siteUrl}/logo.png`} />
 
       {/* Structured Data (JSON-LD) */}
-      {type === 'product' ? (
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org/",
-            "@type": "Product",
-            "name": title,
-            "image": [image],
-            "description": metaDescription,
-            "brand": {
-              "@type": "Brand",
-              "name": siteName
-            },
-            "offers": {
-              "@type": "Offer",
-              "url": canonicalUrl,
-              "priceCurrency": "INR",
-              "availability": "https://schema.org/InStock",
-              "itemCondition": "https://schema.org/NewCondition"
-            }
-          })}
-        </script>
-      ) : (
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Organization",
-            "name": siteName,
-            "url": siteUrl,
-            "logo": `${siteUrl}/logo.png`,
-            "sameAs": [
-              "https://wa.me/918299475268"
-            ]
-          })}
-        </script>
-      )}
+      <script type="application/ld+json">
+        {JSON.stringify(type === 'product' && productSchema ? productSchema : orgSchema)}
+      </script>
     </Helmet>
   );
 };
-
 
 export default SEO;

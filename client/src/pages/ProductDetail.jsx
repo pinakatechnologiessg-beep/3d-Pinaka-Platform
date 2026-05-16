@@ -135,6 +135,7 @@ const ProductDetail = () => {
                 keywords={`${product.name}, ${product.brand}, ${product.category}, 3D Pinaka, buy 3D printer India`}
                 image={imageUrl}
                 type="product"
+                productData={product}
             />
             <div className="container">
 
