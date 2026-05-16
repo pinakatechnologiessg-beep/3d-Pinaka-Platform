@@ -152,7 +152,8 @@ const AdminDashboard = () => {
       expiryDate: '',
       description: '',
       isActive: true,
-      usageLimit: null
+      usageLimit: null,
+      isPublic: true
   });
 
   const colorOptions = [
@@ -613,7 +614,8 @@ const AdminDashboard = () => {
                 expiryDate: '',
                 description: '',
                 isActive: true,
-                usageLimit: null
+                usageLimit: null,
+                isPublic: true
             });
             showToast('Coupon created successfully');
         } else {
@@ -1851,7 +1853,9 @@ const AdminDashboard = () => {
             ) : (
                 <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px' }}>
-                        <h3 style={{ fontSize: '1.3rem', fontWeight: 700, margin: 0 }}>Active Coupons ({coupons.length})</h3>
+                        <h3 style={{ fontSize: '1.3rem', fontWeight: 700, margin: 0 }}>
+                            Active Coupons ({coupons.filter(c => c.isActive && new Date(c.expiryDate) >= new Date()).length})
+                        </h3>
                         <button 
                             onClick={() => setIsCouponModalOpen(true)}
                             className="add-product-btn-admin"
@@ -1883,9 +1887,20 @@ const AdminDashboard = () => {
                                     <div>Expires: {new Date(coupon.expiryDate).toLocaleDateString()}</div>
                                 </div>
                                 <div style={{ marginTop: '15px', paddingTop: '15px', borderTop: '1px dotted #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <span style={{ fontSize: '0.8rem', fontWeight: 600, color: coupon.isActive ? '#10b981' : '#ef4444' }}>
-                                        {coupon.isActive ? '● Active' : '○ Inactive'}
-                                    </span>
+                                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                        {(() => {
+                                            const isExpired = new Date(coupon.expiryDate) < new Date();
+                                            const isActive = coupon.isActive && !isExpired;
+                                            return (
+                                                <span style={{ fontSize: '0.8rem', fontWeight: 600, color: isActive ? '#10b981' : '#ef4444' }}>
+                                                    {isActive ? '● Active' : isExpired ? '○ Expired' : '○ Inactive'}
+                                                </span>
+                                            );
+                                        })()}
+                                        <span style={{ fontSize: '0.7rem', fontWeight: 700, color: coupon.isPublic !== false ? '#3b82f6' : '#64748b', background: coupon.isPublic !== false ? '#eff6ff' : '#f1f5f9', padding: '2px 8px', borderRadius: '4px', textTransform: 'uppercase' }}>
+                                            {coupon.isPublic !== false ? 'Public' : 'Private'}
+                                        </span>
+                                    </div>
                                     <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Used: {coupon.usedCount} times</span>
                                 </div>
                             </div>
@@ -3572,6 +3587,19 @@ const AdminDashboard = () => {
                         onChange={e => setNewCoupon({...newCoupon, description: e.target.value})} 
                         style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1.5px solid #e2e8f0', outline: 'none' }} 
                     />
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#f8fafc', padding: '12px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                    <input 
+                        type="checkbox" 
+                        id="isPublic"
+                        checked={newCoupon.isPublic !== false}
+                        onChange={e => setNewCoupon({...newCoupon, isPublic: e.target.checked})} 
+                        style={{ width: '20px', height: '20px', cursor: 'pointer' }} 
+                    />
+                    <label htmlFor="isPublic" style={{ fontWeight: 600, color: '#334155', cursor: 'pointer', fontSize: '0.9rem' }}>
+                        Show this coupon to all users (Public)
+                    </label>
                 </div>
 
                 <button 

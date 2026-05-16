@@ -7,7 +7,8 @@ router.get('/', async (req, res) => {
     try {
         const coupons = await Coupon.find({ 
             isActive: true, 
-            expiryDate: { $gte: new Date() },
+            isPublic: true,
+            expiryDate: { $gte: new Date(new Date().setHours(0,0,0,0)) },
             $or: [
                 { usageLimit: null },
                 { $expr: { $lt: ["$usedCount", "$usageLimit"] } }
@@ -55,9 +56,9 @@ router.post('/validate', async (req, res) => {
     const { code, cartTotal, cartItemCount } = req.body;
     try {
         const coupon = await Coupon.findOne({ 
-            code: code.toUpperCase(), 
+            code: code.trim().toUpperCase(), 
             isActive: true,
-            expiryDate: { $gte: new Date() }
+            expiryDate: { $gte: new Date(new Date().setHours(0,0,0,0)) }
         });
 
         if (!coupon) {
