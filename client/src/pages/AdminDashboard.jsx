@@ -883,7 +883,7 @@ const AdminDashboard = () => {
               </button>
             </div>
             
-            <div className="products-grid">
+            <div className="admin-products-grid">
               {heroSlides.length > 0 ? heroSlides.map(slide => (
                 <div key={slide._id} className="product-card">
                   <div className="product-image-container" style={{ position: 'relative', height: '180px', background: '#f8fafc', borderRadius: '8px 8px 0 0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -1511,7 +1511,7 @@ const AdminDashboard = () => {
             </div>
 
 
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginBottom: '30px' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginBottom: '30px', flexWrap: 'wrap' }}>
                 <button 
                     onClick={() => setMarketingTab('popup')}
                     style={{ 
@@ -1599,7 +1599,7 @@ const AdminDashboard = () => {
                         </button>
                     </div>
 
-                    <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginBottom: '30px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginBottom: '30px', flexWrap: 'wrap' }}>
                         <button 
                             onClick={() => setPopupConfig({ ...popupConfig, useTemplate: false })}
                             style={{ 
@@ -1626,7 +1626,7 @@ const AdminDashboard = () => {
                         </button>
                     </div>
 
-                    <div style={{ maxWidth: '900px', margin: '0 auto', display: 'grid', gridTemplateColumns: popupConfig.useTemplate ? '1fr 1fr' : '1fr', gap: '30px' }}>
+                    <div className={`marketing-template-grid ${popupConfig.useTemplate ? 'two-cols' : ''}`}>
                         {/* --- Input / Selection Side --- */}
                         <div style={{ background: 'white', padding: '2rem', borderRadius: '24px', border: '1px solid var(--admin-border-color)', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.05)' }}>
                             {!popupConfig.useTemplate ? (

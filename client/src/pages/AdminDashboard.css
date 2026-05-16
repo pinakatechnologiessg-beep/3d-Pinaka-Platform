@@ -696,3 +696,20 @@
   color: white;
   border-color: var(--admin-primary);
 }
+
+.marketing-template-grid {
+  max-width: 900px;
+  margin: 0 auto;
+  display: grid;
+  gap: 30px;
+}
+
+.marketing-template-grid.two-cols {
+  grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 768px) {
+  .marketing-template-grid.two-cols {
+    grid-template-columns: 1fr;
+  }
+}
