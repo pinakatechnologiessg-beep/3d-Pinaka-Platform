@@ -614,86 +614,11 @@ const Home = () => {
 
 
 
-      {/* Why Choose Us */}
-      <section className="dark-section">
-        <div className="container">
-            <div className="section-header reveal" ref={addToRevealRefs}>
-                <h2>Why Choose Us</h2>
-                <p>Your trusted partner in 3D printing excellence</p>
-            </div>
 
-            <div className="features-grid">
-                {[
-                  { icon: ShieldCheck, title: "Authentic Products", desc: "100% genuine products" },
-                  { icon: Truck, title: "Fast Delivery", desc: "Free shipping above ₹50k" },
-                  { icon: Headphones, title: "24/7 Support", desc: "Expert technical support" },
-                  { icon: Medal, title: "Warranty Coverage", desc: "Extended warranty" },
-                  { icon: ClockCounterClockwise, title: "Easy Returns", desc: "7-day return policy" },
-                  { icon: CreditCard, title: "Secure Payment", desc: "Multiple options with EMI" }
-                ].map((feat, i) => (
-                  <div key={i} className="feature-box reveal" ref={addToRevealRefs}>
-                    <div className="feat-icon"><feat.icon size={32} /></div>
-                    <h4>{feat.title}</h4>
-                    <p>{feat.desc}</p>
-                  </div>
-                ))}
-            </div>
-
-            <div className="stats-grid">
-                {[
-                  { val: "10K+", label: "Happy Customers" },
-                  { val: "500+", label: "Products" },
-                  { val: "50+", label: "Brands" },
-                  { val: "24/7", label: "Support" }
-                ].map((stat, i) => (
-                  <div key={i} className="stat-item reveal" ref={addToRevealRefs}>
-                    <h3>{stat.val}</h3>
-                    <p>{stat.label}</p>
-                  </div>
-                ))}
-            </div>
-        </div>
-      </section>
 
       {/* Dynamic Brand Marquee logic is in Header or global CSS */}
 
-      {/* Technology */}
-      <section className="section container">
-        <div className="tech-section">
-            <div className="tech-info reveal" ref={addToRevealRefs}>
-                <h2>Cutting-Edge Technology</h2>
-                <p>Experience the future of 3D printing with our advanced printer technology.</p>
-                
-                <div className="tech-list">
-                    {[
-                      { icon: Lightning, color: "blue", title: "Lightning Fast Speed", desc: "Print up to 600mm/s" },
-                      { icon: Cpu, color: "purple", title: "AI-Powered Intelligence", desc: "Smart sensors and auto-detection" },
-                      { icon: Eye, color: "orange", title: "Real-Time Monitoring", desc: "1080p HD camera" },
-                      { icon: Thermometer, color: "green", title: "Adaptive Cooling", desc: "Advanced thermal management" }
-                    ].map((tech, i) => (
-                      <div key={i} className="tech-item reveal" ref={addToRevealRefs}>
-                        <div className={`tech-icon ${tech.color}`}><tech.icon size={24} /></div>
-                        <div>
-                            <h5>{tech.title}</h5>
-                            <p>{tech.desc}</p>
-                        </div>
-                      </div>
-                    ))}
-                </div>
-                <button className="btn btn-primary" onClick={() => navigate('/products')}>Explore Technology</button>
-            </div>
-            
-            <div className="tech-images reveal" ref={addToRevealRefs}>
-                <div className="tech-main-card">
-                    <img src={getImageUrl("/images/pinaka-office.png")} alt="Pinaka Technologies Office" className="tech-featured-img" />
-                    <div className="tech-card-overlay">
-                        <h4>Expert Consultation</h4>
-                        <p>Visit our state-of-the-art facility for a live demo</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-      </section>
+
 
       {/* Testimonials */}
       <section className="section container" style={{ backgroundColor: 'var(--light-bg)', borderRadius: '20px', padding: '4rem 2rem' }}>
