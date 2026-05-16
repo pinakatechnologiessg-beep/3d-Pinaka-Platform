@@ -364,12 +364,12 @@ const Home = () => {
 
       {/* Featured Products */}
       <section className="section container" style={{ marginTop: '-2rem' }}>
-        <div className="products-header reveal" ref={addToRevealRefs} style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'flex-start' : 'center', gap: isMobile ? '15px' : '0' }}>
-            <div>
+        <div className="products-header reveal" ref={addToRevealRefs} style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '15px' }}>
+            <div style={{ flex: '1 1 200px' }}>
                 <h2>Featured Products</h2>
                 <p style={{ color: 'var(--text-muted)', fontSize: isMobile ? '0.9rem' : '1rem' }}>Handpicked premium 3D printers for professionals</p>
             </div>
-            <button className="btn btn-dark" onClick={() => navigate('/products')} style={{ width: isMobile ? '100%' : 'auto' }}>View All Products</button>
+            <button className="btn btn-dark" onClick={() => navigate('/products')} style={{ whiteSpace: 'nowrap', padding: isMobile ? '8px 16px' : '12px 24px', fontSize: isMobile ? '0.85rem' : '1rem' }}>View All</button>
         </div>
 
         <div className="products-grid">
@@ -476,14 +476,14 @@ const Home = () => {
       {/* New Arrivals Section */}
       {dbNewArrivals.length > 0 && (
         <section className="section container" style={{ marginTop: '2rem', position: 'relative' }}>
-          <div className="products-header" style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', marginBottom: '2rem', gap: isMobile ? '15px' : '0' }}>
-              <div>
+          <div className="products-header" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', gap: '15px' }}>
+              <div style={{ flex: '1 1 200px' }}>
                   <h2 style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: isMobile ? '1.5rem' : '2rem', fontWeight: 800, color: '#0f172a' }}>
                     New Arrivals <Sparkle size={isMobile ? 24 : 32} color="#f59e0b" weight="fill" />
                   </h2>
                   <p style={{ color: '#64748b', fontSize: isMobile ? '0.9rem' : '1.1rem' }}>The latest and greatest in 3D printing technology</p>
               </div>
-              <div style={{ display: 'flex', gap: '10px', alignSelf: isMobile ? 'flex-end' : 'auto', width: isMobile ? '100%' : 'auto', justifyContent: isMobile ? 'flex-end' : 'flex-start' }}>
+              <div style={{ display: 'flex', gap: '10px' }}>
                   <button 
                     onClick={() => scrollArrivals('left')}
                     style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '50%', width: '45px', height: '45px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}
