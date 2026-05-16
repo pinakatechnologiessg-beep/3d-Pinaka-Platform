@@ -99,7 +99,7 @@ const AdminSupport = ({ toggleMobileMenu }) => {
     return (
         <main className="admin-support-page" style={{ background: '#f4f7fa', padding: '0 0 2rem 0', minHeight: '100vh' }}>
             <div className="mobile-admin-header" style={{ 
-                display: 'none', 
+                display: 'flex', 
                 background: 'white', 
                 padding: '12px 20px', 
                 alignItems: 'center', 
@@ -110,10 +110,10 @@ const AdminSupport = ({ toggleMobileMenu }) => {
                 zIndex: 50
             }}>
                 <button 
-                    onClick={toggleMobileMenu}
-                    style={{ background: 'none', border: 'none', padding: '5px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                    onClick={() => navigate('/admin')}
+                    style={{ background: 'none', border: 'none', padding: '5px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', color: '#6366f1', fontWeight: 600, fontSize: '0.9rem' }}
                 >
-                    <List size={28} color="#1e293b" />
+                    <ArrowLeft size={22} weight="bold" /> Back to Admin
                 </button>
                 <h2 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0 }}>Admin<span style={{ color: '#6366f1' }}>Pro</span></h2>
                 <div style={{ width: '38px' }}></div> {/* Balanced invisible spacer */}
@@ -299,7 +299,6 @@ const AdminSupport = ({ toggleMobileMenu }) => {
                     .ticket-detail-content { height: auto !important; }
                 }
                 @media (max-width: 768px) {
-                    .mobile-admin-header { display: flex !important; }
                     .admin-support-page .container-fluid { padding: 0 !important; width: 100vw !important; overflow-x: hidden !important; }
                     .admin-support-page h1 { font-size: 1.4rem !important; margin: 15px 10px !important; }
                     .ticket-detail-content { padding: 0 !important; width: 100% !important; max-width: 100vw !important; overflow-x: hidden !important; }
