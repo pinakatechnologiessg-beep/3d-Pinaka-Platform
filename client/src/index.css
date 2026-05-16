@@ -3426,3 +3426,18 @@ footer {
     font-size: 0.95rem;
   }
 }
+
+/* Cart Layout */
+.cart-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 400px;
+  gap: 2rem;
+  align-items: start;
+}
+
+@media (max-width: 991px) {
+  .cart-layout {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}

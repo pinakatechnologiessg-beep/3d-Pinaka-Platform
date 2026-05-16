@@ -272,7 +272,7 @@ const Cart = () => {
                 
 
                 
-                <div className="cart-layout" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 400px', gap: '2rem', alignItems: 'start' }}>
+                <div className="cart-layout">
                     <div id="cart-items-section">
                         {cartItems.length === 0 ? (
                             <div className="cart-empty" style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-muted)', background: 'white', borderRadius: '16px', border: '1px solid var(--border-color)' }}>
