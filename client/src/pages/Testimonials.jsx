@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Quotes, WhatsappLogo } from '@phosphor-icons/react';
+import SEO from '../components/SEO';
 
 const Testimonials = () => {
     const revealRefs = useRef([]);
@@ -41,6 +42,11 @@ const Testimonials = () => {
 
     return (
         <main>
+            <SEO 
+                title="Customer Testimonials" 
+                description="Hear from our community of over 10,000+ satisfied innovators and creators who use 3D Pinaka products."
+                url="/testimonials"
+            />
             <div style={{ background: 'var(--dark-bg)', padding: '5rem 0', color: 'white', textAlign: 'center' }}>
                 <div className="container">
                     <div style={{ position: 'relative', display: 'inline-block' }}>

@@ -1,11 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, WhatsappLogo } from '@phosphor-icons/react';
+import SEO from '../components/SEO';
 
 const TermsAndConditions = () => {
 
     return (
         <main>
+            <SEO 
+                title="Terms & Conditions" 
+                description="Read the terms and conditions for using 3D Pinaka's 3D printing services and purchasing our products."
+                url="/terms-and-conditions"
+            />
             {/* Header Section */}
             <div className="policy-header" style={{ background: 'var(--dark-bg)', padding: '5rem 0', color: 'white', textAlign: 'center' }}>
                 <div className="container">

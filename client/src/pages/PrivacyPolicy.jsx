@@ -1,11 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, WhatsappLogo } from '@phosphor-icons/react';
+import SEO from '../components/SEO';
 
 const PrivacyPolicy = () => {
 
     return (
         <main>
+            <SEO 
+                title="Privacy Policy" 
+                description="Learn about how 3D Pinaka collects, uses, and protects your personal information."
+                url="/privacy-policy"
+            />
             {/* Header Section */}
             <div className="policy-header" style={{ background: 'var(--dark-bg)', padding: '5rem 0', color: 'white', textAlign: 'center' }}>
                 <div className="container">

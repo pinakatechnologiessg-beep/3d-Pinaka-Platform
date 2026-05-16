@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { getImageUrl } from '../utils/imageUtils';
 import { ArrowLeft, RocketLaunch, Cpu, Users, Globe, WhatsappLogo } from '@phosphor-icons/react';
+import SEO from '../components/SEO';
 
 const About = () => {
     const revealRefs = useRef([]);
@@ -27,6 +28,11 @@ const About = () => {
 
     return (
         <main>
+            <SEO 
+                title="About Us" 
+                description="Learn about 3D Pinaka, India's premier destination for cutting-edge additive manufacturing solutions, 3D printers, and premium materials."
+                url="/about"
+            />
             {/* Hero Section */}
             <div style={{ position: 'relative', height: '400px', overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'white', textAlign: 'center', backgroundColor: '#000' }}>
                 <img src={getImageUrl("/images/about-hero.png")} alt="About Us Hero" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0, filter: 'brightness(0.35)' }} onError={(e) => (e.target.src = "/placeholder.png")} />

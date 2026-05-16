@@ -368,34 +368,42 @@ const Cart = () => {
                                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px dotted #e2e8f0' }}>
                                     <span style={{ color: '#64748b' }}>Points Discount</span>
                                     <span style={{ fontWeight: 600, color: '#059669' }}>-₹{appliedPoints.toLocaleString('en-IN')}</span>
-                                </div>
-
-                                {/* Coupon Section */}
+                                                               {/* Coupon Section */}
                                 <div style={{ marginBottom: '20px' }}>
                                     <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '12px', color: '#1e293b' }}>Apply Coupon</h3>
-                                    <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
-                                        <input 
-                                            type="text" 
-                                            value={couponCode} 
-                                            onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                                            placeholder="Enter Coupon Code"
-                                            style={{ flex: 1, padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #e2e8f0', outline: 'none', fontWeight: 600 }}
-                                        />
-                                        <button 
-                                            onClick={() => applyCoupon()}
-                                            style={{ background: '#1e293b', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}
-                                        >
-                                            Apply
-                                        </button>
-                                    </div>
-
-                                    {appliedCoupon && (
-                                        <div style={{ background: '#ecfdf5', padding: '10px 15px', borderRadius: '10px', border: '1px solid #10b981', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
-                                            <div>
-                                                <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#047857' }}>CODE: {appliedCoupon.code}</div>
-                                                <div style={{ fontSize: '0.75rem', color: '#059669' }}>{appliedCoupon.description}</div>
+                                    
+                                    {!appliedCoupon ? (
+                                        <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                                            <input 
+                                                type="text" 
+                                                value={couponCode} 
+                                                onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                                                placeholder="Enter Coupon Code"
+                                                style={{ flex: 1, padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #e2e8f0', outline: 'none', fontWeight: 600 }}
+                                            />
+                                            <button 
+                                                onClick={() => applyCoupon()}
+                                                style={{ background: '#1e293b', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}
+                                            >
+                                                Apply
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <div style={{ background: '#ecfdf5', padding: '12px 15px', borderRadius: '12px', border: '1px solid #10b981', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                                <div style={{ background: '#10b981', color: 'white', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800 }}>{appliedCoupon.code}</div>
+                                                <div style={{ fontSize: '0.85rem', color: '#047857', fontWeight: 600 }}>Applied Successfully!</div>
                                             </div>
-                                            <button onClick={() => { setAppliedCoupon(null); setCouponDiscount(0); }} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 700 }}>Remove</button>
+                                            <button 
+                                                onClick={() => { 
+                                                    setAppliedCoupon(null); 
+                                                    setCouponDiscount(0); 
+                                                    setCouponCode(''); 
+                                                }} 
+                                                style={{ background: '#fee2e2', border: 'none', color: '#ef4444', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 700 }}
+                                            >
+                                                Remove
+                                            </button>
                                         </div>
                                     )}
 

@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { UploadSimple, Cube, CheckCircle, Warning, Clock, CurrencyInr, Info, WhatsappLogo } from '@phosphor-icons/react';
 import axios from 'axios';
 import { API_BASE_URL } from '../api/config';
+import SEO from '../components/SEO';
 
 const PrintingServices = () => {
     const [file, setFile] = useState(null);
@@ -92,6 +93,11 @@ const PrintingServices = () => {
 
     return (
         <main className="printing-services-page" style={{ padding: '4rem 0', background: 'var(--light-bg)', minHeight: '100vh' }}>
+            <SEO 
+                title="3D Printing Services" 
+                description="Instant pricing for professional 3D printing services. Upload your STL or OBJ files to get started."
+                url="/printing-services"
+            />
             <div className="container">
                 <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
                     <h1 style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-dark)', marginBottom: '10px' }}>Let's Print Something Amazing For You</h1>

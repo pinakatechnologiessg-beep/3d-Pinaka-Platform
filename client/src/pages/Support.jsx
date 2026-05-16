@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { API_BASE_URL } from '../api/config';
 import { Envelope, User, ChatCircleText, PaperPlaneTilt, CheckCircle, Info, ArrowLeft } from '@phosphor-icons/react';
+import SEO from '../components/SEO';
 
 const Support = () => {
     const navigate = useNavigate();
@@ -68,6 +69,11 @@ const Support = () => {
 
     return (
         <main className="support-page" style={{ background: 'var(--light-bg)', padding: '5rem 0', minHeight: 'calc(100vh - 400px)' }}>
+            <SEO 
+                title="Support Center" 
+                description="Contact 3D Pinaka support for any queries, technical assistance, or information about our 3D printers and materials."
+                url="/support"
+            />
             <div className="container" style={{ maxWidth: '800px' }}>
                 <div className="support-header" style={{ textAlign: 'center', marginBottom: '3rem', position: 'relative' }}>
                     <Link to="/" className="back-home-btn" style={{ position: 'absolute', top: '-40px', left: '0' }}>
