@@ -368,6 +368,7 @@ const Cart = () => {
                                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px dotted #e2e8f0' }}>
                                     <span style={{ color: '#64748b' }}>Points Discount</span>
                                     <span style={{ fontWeight: 600, color: '#059669' }}>-₹{appliedPoints.toLocaleString('en-IN')}</span>
+                                 </div>
                                                                {/* Coupon Section */}
                                 <div style={{ marginBottom: '20px' }}>
                                     <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '12px', color: '#1e293b' }}>Apply Coupon</h3>
