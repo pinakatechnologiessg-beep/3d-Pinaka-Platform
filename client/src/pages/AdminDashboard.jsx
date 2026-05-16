@@ -883,7 +883,7 @@ const AdminDashboard = () => {
               </button>
             </div>
             
-            <div className="admin-products-grid">
+            <div className="products-grid admin-products-grid">
               {heroSlides.length > 0 ? heroSlides.map(slide => (
                 <div key={slide._id} className="product-card">
                   <div className="product-image-container" style={{ position: 'relative', height: '180px', background: '#f8fafc', borderRadius: '8px 8px 0 0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
