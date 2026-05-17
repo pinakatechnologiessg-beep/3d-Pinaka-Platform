@@ -37,7 +37,8 @@ const AdminDashboard = () => {
   ];
 
   const [partnerProducts, setPartnerProducts] = useState([]);
-  const [partnerFormData, setPartnerFormData] = useState({ name: '', image: '', externalLink: '' });
+    const [partnerFormData, setPartnerFormData] = useState({ name: '', image: '', externalLink: '', category: '', price: '' });
+    const [partnerImageFile, setPartnerImageFile] = useState(null);
 
   const fetchPartnerProducts = async () => {
       try {
@@ -55,26 +56,39 @@ const AdminDashboard = () => {
       fetchPartnerProducts();
   }, []);
 
-  const handleAddPartnerProduct = async (e) => {
-      e.preventDefault();
-      try {
-          const res = await fetch(`${BASE_URL}/api/partner-products`, {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-              },
-              body: JSON.stringify(partnerFormData)
-          });
-          if (res.ok) {
-              alert('Partner product added');
-              fetchPartnerProducts();
-              setPartnerFormData({ name: '', image: '', externalLink: '' });
-          }
-      } catch (err) {
-          console.error(err);
-      }
-  };
+    const handleAddPartnerProduct = async (e) => {
+        e.preventDefault();
+        try {
+            const formData = new FormData();
+            formData.append('name', partnerFormData.name);
+            formData.append('externalLink', partnerFormData.externalLink);
+            formData.append('category', partnerFormData.category);
+            formData.append('price', partnerFormData.price);
+            if (partnerImageFile) {
+                formData.append('imageFile', partnerImageFile);
+            } else {
+                formData.append('image', partnerFormData.image);
+            }
+
+            const res = await fetch(`${BASE_URL}/api/partner-products`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                },
+                body: formData
+            });
+            if (res.ok) {
+                alert('Partner product added');
+                fetchPartnerProducts();
+                setPartnerFormData({ name: '', image: '', externalLink: '', category: '', price: '' });
+                setPartnerImageFile(null);
+            } else {
+                alert('Failed to add product');
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
   const handleDeletePartnerProduct = async (id) => {
       if(!window.confirm('Are you sure?')) return;
@@ -1578,9 +1592,21 @@ const AdminDashboard = () => {
                         <label>Product Name</label>
                         <input type="text" required value={partnerFormData.name} onChange={e => setPartnerFormData({...partnerFormData, name: e.target.value})} className="form-control" />
                     </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                        <div className="form-group">
+                            <label>Category</label>
+                            <input type="text" value={partnerFormData.category} onChange={e => setPartnerFormData({...partnerFormData, category: e.target.value})} className="form-control" placeholder="e.g. 3D Printer" />
+                        </div>
+                        <div className="form-group">
+                            <label>Price (Optional)</label>
+                            <input type="number" value={partnerFormData.price} onChange={e => setPartnerFormData({...partnerFormData, price: e.target.value})} className="form-control" placeholder="e.g. 5000" />
+                        </div>
+                    </div>
                     <div className="form-group">
-                        <label>Image URL (or path)</label>
-                        <input type="text" required value={partnerFormData.image} onChange={e => setPartnerFormData({...partnerFormData, image: e.target.value})} className="form-control" />
+                        <label>Image Upload</label>
+                        <input type="file" accept="image/*" onChange={e => setPartnerImageFile(e.target.files[0])} className="form-control" />
+                        <div style={{ marginTop: '0.5rem', fontSize: '0.85rem', color: '#64748b' }}>OR paste Image URL:</div>
+                        <input type="text" value={partnerFormData.image} onChange={e => setPartnerFormData({...partnerFormData, image: e.target.value})} className="form-control" style={{ marginTop: '0.25rem' }} />
                     </div>
                     <div className="form-group">
                         <label>External Link (Partner Website)</label>

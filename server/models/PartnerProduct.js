@@ -13,6 +13,14 @@ const partnerProductSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  category: {
+    type: String,
+    default: 'Uncategorized'
+  },
+  price: {
+    type: Number,
+    default: 0
+  },
   createdAt: {
     type: Date,
     default: Date.now

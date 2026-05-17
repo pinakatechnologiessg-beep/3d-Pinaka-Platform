@@ -687,12 +687,20 @@ const Home = () => {
                                 <div style={{ height: '120px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
                                     <img src={getImageUrl(product.image)} alt={product.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', filter: 'drop-shadow(0 10px 15px rgba(0,0,0,0.3))' }} onError={(e) => (e.target.src = PLACEHOLDER_SVG)} />
                                 </div>
-                                <h4 style={{ color: 'white', fontSize: '1.1rem', marginBottom: '1rem', fontWeight: 600, height: '40px', overflow: 'hidden' }}>{product.name}</h4>
+                                {product.category && product.category !== 'Uncategorized' && (
+                                    <span style={{ fontSize: '0.75rem', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', color: '#60a5fa', marginBottom: '0.5rem' }}>{product.category}</span>
+                                )}
+                                <h4 style={{ color: 'white', fontSize: '1.1rem', marginBottom: '0.5rem', fontWeight: 600, height: '40px', overflow: 'hidden' }}>{product.name}</h4>
+                                {product.price > 0 && (
+                                    <div style={{ fontSize: '1.2rem', fontWeight: 700, color: 'white', marginBottom: '1rem' }}>
+                                        ₹{product.price.toLocaleString()}
+                                    </div>
+                                )}
                                 <a 
                                     href={product.externalLink} 
                                     target="_blank" 
                                     rel="noopener noreferrer"
-                                    style={{ background: 'linear-gradient(to right, #3b82f6, #2563eb)', color: 'white', padding: '8px 16px', borderRadius: '8px', fontSize: '0.9rem', fontWeight: 600, textDecoration: 'none', display: 'inline-block', width: '100%' }}
+                                    style={{ background: 'linear-gradient(to right, #3b82f6, #2563eb)', color: 'white', padding: '8px 16px', borderRadius: '8px', fontSize: '0.9rem', fontWeight: 600, textDecoration: 'none', display: 'inline-block', width: '100%', marginTop: 'auto' }}
                                 >
                                     Explore Product
                                 </a>

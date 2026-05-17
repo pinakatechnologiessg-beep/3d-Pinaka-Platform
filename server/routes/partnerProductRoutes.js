@@ -1,5 +1,6 @@
 import express from 'express';
 import PartnerProduct from '../models/PartnerProduct.js';
+import upload from '../middleware/upload.js';
 
 const router = express.Router();
 
@@ -15,14 +16,25 @@ router.get('/', async (req, res) => {
 });
 
 // Add a new partner product
-router.post('/', async (req, res) => {
-    const { name, image, externalLink } = req.body;
-
+router.post('/', upload.single('imageFile'), async (req, res) => {
     try {
+        const { name, externalLink, category, price } = req.body;
+        let image = req.body.image; // fallback to string URL
+
+        if (req.file) {
+            image = req.file.path; // Use uploaded file path (e.g. Cloudinary URL)
+        }
+
+        if (!image) {
+            return res.status(400).json({ msg: 'Please provide an image URL or upload an image file.' });
+        }
+
         const newProduct = new PartnerProduct({
             name,
             image,
-            externalLink
+            externalLink,
+            category: category || 'Uncategorized',
+            price: price ? Number(price) : 0
         });
 
         const product = await newProduct.save();
