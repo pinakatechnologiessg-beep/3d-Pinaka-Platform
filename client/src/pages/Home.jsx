@@ -86,6 +86,7 @@ const Home = () => {
               img: slide.img ? (slide.img.startsWith('http') ? slide.img : getImageUrl(slide.img)) : getImageUrl(""),
               brand: slide.brand || '',
               brandColor: slide.brandColor || '#3b82f6',
+              bgColor: slide.bgColor || '#0f172a',
               title: slide.title,
               subtitle: slide.subtitle,
               price: slide.price,
