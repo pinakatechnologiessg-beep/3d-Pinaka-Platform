@@ -3416,6 +3416,15 @@ const AdminDashboard = () => {
                   </div>
                 </div>
                 <div>
+                  <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Background Color</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>
+                    <input type="color" value={newHeroSlide.bgColor || '#0f172a'} onChange={e => setNewHeroSlide({...newHeroSlide, bgColor: e.target.value})} style={{ width: '50px', padding: '0.2rem', borderRadius: '6px', border: '1px solid #cbd5e1', height: '42px', cursor: 'pointer' }} />
+                    <div style={{ flex: 1, background: newHeroSlide.bgColor || '#0f172a', borderRadius: '6px', height: '42px', display: 'flex', alignItems: 'center', padding: '0 1rem' }}>
+                      <span style={{ color: '#fff', fontSize: '0.8rem', fontWeight: 600 }}>{newHeroSlide.bgColor || '#0f172a'}</span>
+                    </div>
+                  </div>
+                </div>
+                <div>
                   <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Price</label>
                   <input type="text" value={newHeroSlide.price} onChange={e => setNewHeroSlide({...newHeroSlide, price: e.target.value})} placeholder="e.g. ₹1,49,999/-" style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
                 </div>
@@ -3533,6 +3542,15 @@ const AdminDashboard = () => {
                   <div>
                     <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Brand Color</label>
                     <input type="color" value={editHeroSlide.brandColor} onChange={e => setEditHeroSlide({...editHeroSlide, brandColor: e.target.value})} style={{ width: '100%', padding: '0.4rem', borderRadius: '6px', border: '1px solid #cbd5e1', height: '42px' }} />
+                  </div>
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Background Color</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>
+                    <input type="color" value={editHeroSlide.bgColor || '#0f172a'} onChange={e => setEditHeroSlide({...editHeroSlide, bgColor: e.target.value})} style={{ width: '50px', padding: '0.2rem', borderRadius: '6px', border: '1px solid #cbd5e1', height: '42px', cursor: 'pointer' }} />
+                    <div style={{ flex: 1, background: editHeroSlide.bgColor || '#0f172a', borderRadius: '6px', height: '42px', display: 'flex', alignItems: 'center', padding: '0 1rem' }}>
+                      <span style={{ color: '#fff', fontSize: '0.8rem', fontWeight: 600 }}>{editHeroSlide.bgColor || '#0f172a'}</span>
+                    </div>
                   </div>
                 </div>
                 <div>
