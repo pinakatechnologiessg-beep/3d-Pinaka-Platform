@@ -10,6 +10,38 @@ import { API_BASE_URL } from '../api/config';
 
 import SEO from '../components/SEO';
 
+const isColorDark = (color) => {
+  if (!color) return true;
+  const c = color.trim().toLowerCase();
+  
+  if (c === '#fff' || c === '#ffffff' || c === 'white' || c === 'rgb(255,255,255)' || c === 'rgba(255,255,255,1)') {
+    return false;
+  }
+  if (c === '#0f172a' || c === '#000' || c === '#000000' || c === 'black' || c.startsWith('rgba(15,23,42') || c.startsWith('rgb(15,23,42')) {
+    return true;
+  }
+  
+  if (c.startsWith('#')) {
+    let hex = c.substring(1);
+    if (hex.length === 3) {
+      hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+    }
+    if (hex.length === 6) {
+      const r = parseInt(hex.substring(0, 2), 16);
+      const g = parseInt(hex.substring(2, 4), 16);
+      const b = parseInt(hex.substring(4, 6), 16);
+      const hsp = Math.sqrt(
+        0.299 * (r * r) +
+        0.587 * (g * g) +
+        0.114 * (b * b)
+      );
+      return hsp < 170;
+    }
+  }
+  
+  return false;
+};
+
 const Home = () => {
 
     const [currentSlide, setCurrentSlide] = useState(0);
@@ -282,33 +314,59 @@ const Home = () => {
             height: '100%'
           }}
         >
-          {slides.map((slide, index) => (
-            <div 
-              key={index} 
-              className="hero-slide" 
-              style={{ minWidth: '100%', scrollSnapAlign: 'start', position: 'relative', backgroundColor: slide.bgColor || '#0f172a' }}
-            >
-              <img src={slide.img} alt={slide.title} className="hero-bg" />
-              <div className="container hero-content" style={{ color: slide.textColor || '#ffffff' }}>
-                <div className="brand-tag" style={{ background: slide.textColor === '#0f172a' ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.1)' }}>
-                  <div className="brand-icon" style={{ background: slide.brandColor || 'var(--success)' }}></div> 
-                  <span style={{ color: slide.brandColor || 'inherit', fontWeight: 700, fontSize: '1.1rem', letterSpacing: '0.5px' }}>{slide.brand}</span>
-                </div>
-                <h1>{slide.title}</h1>
-                <h3>{slide.subtitle}</h3>
-                <div className="price">{slide.price}</div>
-                <button className="btn btn-primary" onClick={() => navigate((slide.btnLink && slide.btnLink !== 'undefined') ? slide.btnLink : '/products')}>
-                  {(slide.btnText && slide.btnText !== 'undefined') ? slide.btnText : 'Shop Now'}
-                </button>
-                
-                <div className="hero-features">
-                  {slide.features.map((feat, i) => (
-                    <div key={i} className="feature-tag">{feat}</div>
-                  ))}
+          {slides.map((slide, index) => {
+            const textIsDark = isColorDark(slide.textColor);
+            const stripBg = textIsDark ? 'rgba(255, 255, 255, 0.85)' : 'rgba(15, 23, 42, 0.75)';
+            const brandTagBg = textIsDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(15, 23, 42, 0.8)';
+            
+            return (
+              <div 
+                key={index} 
+                className="hero-slide" 
+                style={{ minWidth: '100%', scrollSnapAlign: 'start', position: 'relative', backgroundColor: slide.bgColor || '#0f172a' }}
+              >
+                <img src={slide.img} alt={slide.title} className="hero-bg" />
+                <div 
+                  className="container hero-content" 
+                  style={{ 
+                    color: slide.textColor || '#ffffff',
+                    '--strip-bg': stripBg,
+                    '--brand-tag-bg': brandTagBg
+                  }}
+                >
+                  <div 
+                    className="brand-tag hero-brand-tag" 
+                    style={{ 
+                      background: isMobile 
+                        ? 'var(--brand-tag-bg)' 
+                        : (slide.textColor === '#0f172a' ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.1)') 
+                    }}
+                  >
+                    <div className="brand-icon" style={{ background: slide.brandColor || 'var(--success)' }}></div> 
+                    <span style={{ color: slide.brandColor || 'inherit', fontWeight: 700, fontSize: '1.1rem', letterSpacing: '0.5px' }}>{slide.brand}</span>
+                  </div>
+                  <h1>
+                    <span className="hero-text-strip">{slide.title}</span>
+                  </h1>
+                  <h3>
+                    <span className="hero-text-strip">{slide.subtitle}</span>
+                  </h3>
+                  <div className="price">
+                    <span className="hero-text-strip">{slide.price}</span>
+                  </div>
+                  <button className="btn btn-primary" onClick={() => navigate((slide.btnLink && slide.btnLink !== 'undefined') ? slide.btnLink : '/products')}>
+                    {(slide.btnText && slide.btnText !== 'undefined') ? slide.btnText : 'Shop Now'}
+                  </button>
+                  
+                  <div className="hero-features">
+                    {slide.features.map((feat, i) => (
+                      <div key={i} className="feature-tag">{feat}</div>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <div className="slider-controls">

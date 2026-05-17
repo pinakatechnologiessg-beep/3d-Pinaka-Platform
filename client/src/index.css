@@ -1417,17 +1417,41 @@ footer {
     grid-column: 1 / -1;
   }
 
+  .hero-text-strip {
+    background: var(--strip-bg);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 6px 12px;
+    border-radius: 6px;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+    display: inline;
+    line-height: 1.8;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+
   .hero h1 {
     font-size: 1.8rem;
+    line-height: 1.9 !important;
+    margin-bottom: 0.8rem;
   }
 
   .hero h3 {
     font-size: 0.95rem;
+    line-height: 1.9 !important;
+    margin-bottom: 0.8rem;
   }
 
   .hero .price {
     font-size: 1.3rem;
-    margin-bottom: 1rem;
+    line-height: 1.9 !important;
+    margin-bottom: 1.2rem;
+  }
+
+  .hero-brand-tag {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   }
 
   .brand-tag {
