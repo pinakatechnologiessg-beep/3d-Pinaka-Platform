@@ -1301,6 +1301,14 @@ footer {
     padding: 0 5%;
   }
 
+  .hero-content h1,
+  .hero-content h3,
+  .hero-content .price,
+  .hero-content .brand-tag,
+  .hero-content p {
+    max-width: 100% !important;
+  }
+
   .hero-bg {
     opacity: 1;
     width: 100%;
