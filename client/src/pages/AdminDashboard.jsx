@@ -3417,10 +3417,23 @@ const AdminDashboard = () => {
                 </div>
                 <div>
                   <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Background Color</label>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>
-                    <input type="color" value={newHeroSlide.bgColor || '#0f172a'} onChange={e => setNewHeroSlide({...newHeroSlide, bgColor: e.target.value})} style={{ width: '50px', padding: '0.2rem', borderRadius: '6px', border: '1px solid #cbd5e1', height: '42px', cursor: 'pointer' }} />
-                    <div style={{ flex: 1, background: newHeroSlide.bgColor || '#0f172a', borderRadius: '6px', height: '42px', display: 'flex', alignItems: 'center', padding: '0 1rem' }}>
-                      <span style={{ color: '#fff', fontSize: '0.8rem', fontWeight: 600 }}>{newHeroSlide.bgColor || '#0f172a'}</span>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '1rem' }}>
+                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                      {['#0f172a', '#1e3a8a', '#450a0a', '#14532d', '#3b82f6', '#ec4899', '#f59e0b', '#10b981'].map(color => (
+                        <div
+                          key={color}
+                          onClick={() => setNewHeroSlide({...newHeroSlide, bgColor: color})}
+                          style={{
+                            width: '32px', height: '32px', borderRadius: '50%', background: color, cursor: 'pointer',
+                            border: newHeroSlide.bgColor === color ? '2px solid white' : '1px solid #cbd5e1',
+                            boxShadow: newHeroSlide.bgColor === color ? '0 0 0 2px #3b82f6' : 'none',
+                            transition: 'all 0.2s'
+                          }}
+                        />
+                      ))}
+                    </div>
+                    <div style={{ width: '100%', background: newHeroSlide.bgColor || '#0f172a', borderRadius: '6px', height: '42px', display: 'flex', alignItems: 'center', padding: '0 1rem' }}>
+                      <span style={{ color: '#fff', fontSize: '0.8rem', fontWeight: 600 }}>Preview: {newHeroSlide.bgColor || '#0f172a'}</span>
                     </div>
                   </div>
                 </div>
@@ -3546,10 +3559,23 @@ const AdminDashboard = () => {
                 </div>
                 <div>
                   <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Background Color</label>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>
-                    <input type="color" value={editHeroSlide.bgColor || '#0f172a'} onChange={e => setEditHeroSlide({...editHeroSlide, bgColor: e.target.value})} style={{ width: '50px', padding: '0.2rem', borderRadius: '6px', border: '1px solid #cbd5e1', height: '42px', cursor: 'pointer' }} />
-                    <div style={{ flex: 1, background: editHeroSlide.bgColor || '#0f172a', borderRadius: '6px', height: '42px', display: 'flex', alignItems: 'center', padding: '0 1rem' }}>
-                      <span style={{ color: '#fff', fontSize: '0.8rem', fontWeight: 600 }}>{editHeroSlide.bgColor || '#0f172a'}</span>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '1rem' }}>
+                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                      {['#0f172a', '#1e3a8a', '#450a0a', '#14532d', '#3b82f6', '#ec4899', '#f59e0b', '#10b981'].map(color => (
+                        <div
+                          key={color}
+                          onClick={() => setEditHeroSlide({...editHeroSlide, bgColor: color})}
+                          style={{
+                            width: '32px', height: '32px', borderRadius: '50%', background: color, cursor: 'pointer',
+                            border: editHeroSlide.bgColor === color ? '2px solid white' : '1px solid #cbd5e1',
+                            boxShadow: editHeroSlide.bgColor === color ? '0 0 0 2px #3b82f6' : 'none',
+                            transition: 'all 0.2s'
+                          }}
+                        />
+                      ))}
+                    </div>
+                    <div style={{ width: '100%', background: editHeroSlide.bgColor || '#0f172a', borderRadius: '6px', height: '42px', display: 'flex', alignItems: 'center', padding: '0 1rem' }}>
+                      <span style={{ color: '#fff', fontSize: '0.8rem', fontWeight: 600 }}>Preview: {editHeroSlide.bgColor || '#0f172a'}</span>
                     </div>
                   </div>
                 </div>
