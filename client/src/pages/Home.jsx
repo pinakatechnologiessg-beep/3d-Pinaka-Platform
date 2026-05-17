@@ -285,9 +285,8 @@ const Home = () => {
             <div 
               key={index} 
               className="hero-slide" 
-              style={{ minWidth: '100%', scrollSnapAlign: 'start', position: 'relative' }}
+              style={{ minWidth: '100%', scrollSnapAlign: 'start', position: 'relative', backgroundColor: slide.bgColor || '#0f172a' }}
             >
-              <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: `linear-gradient(90deg, ${slide.bgColor || '#0f172a'} 0%, ${slide.bgColor || '#0f172a'}CC 40%, ${slide.bgColor || '#0f172a'}00 100%)`, zIndex: 1 }}></div>
               <img src={slide.img} alt={slide.title} className="hero-bg" />
               <div className="container hero-content">
                 <div className="brand-tag">
