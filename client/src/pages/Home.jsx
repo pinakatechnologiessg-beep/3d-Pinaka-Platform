@@ -292,10 +292,10 @@ const Home = () => {
               <div className="container hero-content" style={{ color: slide.textColor || '#ffffff' }}>
                 <div className="brand-tag" style={{ background: slide.textColor === '#0f172a' ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.1)' }}>
                   <div className="brand-icon" style={{ background: slide.brandColor || 'var(--success)' }}></div> 
-                  <span style={{ color: slide.brandColor || 'inherit', fontWeight: 600 }}>{slide.brand}</span>
+                  <span style={{ color: slide.brandColor || 'inherit', fontWeight: 700, fontSize: '1.1rem', letterSpacing: '0.5px' }}>{slide.brand}</span>
                 </div>
                 <h1>{slide.title}</h1>
-                <h3 style={{ color: slide.brandColor || 'inherit' }}>{slide.subtitle}</h3>
+                <h3>{slide.subtitle}</h3>
                 <div className="price">{slide.price}</div>
                 <button className="btn btn-primary" onClick={() => navigate((slide.btnLink && slide.btnLink !== 'undefined') ? slide.btnLink : '/products')}>
                   {(slide.btnText && slide.btnText !== 'undefined') ? slide.btnText : 'Shop Now'}
