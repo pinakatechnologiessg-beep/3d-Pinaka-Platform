@@ -1302,8 +1302,10 @@ footer {
   }
 
   .hero-bg {
-    opacity: 0.5;
+    opacity: 1;
     width: 100%;
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 
   .collections-grid {
