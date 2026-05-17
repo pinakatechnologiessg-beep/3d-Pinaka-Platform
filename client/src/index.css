@@ -496,7 +496,7 @@ header {
 .hero h3 {
   font-size: 1.2rem;
   font-weight: 400;
-  color: #cbd5e1;
+  opacity: 0.85;
   margin-bottom: 1rem;
 }
 
