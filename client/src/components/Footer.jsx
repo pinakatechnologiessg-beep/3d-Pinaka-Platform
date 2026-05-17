@@ -7,8 +7,8 @@ const Footer = () => {
     <footer>
       <div className="container footer-grid">
         <div className="footer-col" style={{ textAlign: 'left' }}>
-          <Link to="/" style={{ display: 'inline-block', marginBottom: '1.5rem' }}>
-            <img src="/footer-logo.png" alt="Pinaka Technologies" style={{ height: '85px', width: 'auto' }} />
+          <Link to="/" style={{ display: 'inline-block', marginBottom: '0' }}>
+            <img src="/footer-logo.png" alt="Pinaka Technologies" style={{ width: '220px', height: 'auto', marginTop: '-20px', marginBottom: '-40px' }} />
           </Link>
           <p style={{ marginTop: '1rem', maxWidth: '300px' }}>Your one-stop destination for premium 3D printers, materials, and accessories. Bringing innovation to life.</p>
           <div className="social-icons">

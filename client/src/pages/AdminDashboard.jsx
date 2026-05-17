@@ -31,10 +31,69 @@ const AdminDashboard = () => {
     { name: 'Orders', icon: <ShoppingCart size={24} /> },
     { name: 'Users', icon: <Users size={24} /> },
     { name: 'Marketing', icon: <Sparkle size={24} /> },
+      { name: 'Partners', icon: <TrendUp size={24} /> },
     { name: 'Support', icon: <Bell size={24} /> },
     { name: 'Settings', icon: <Gear size={24} /> }
   ];
 
+  const [partnerProducts, setPartnerProducts] = useState([]);
+  const [partnerFormData, setPartnerFormData] = useState({ name: '', image: '', externalLink: '' });
+
+  const fetchPartnerProducts = async () => {
+      try {
+          const res = await fetch(`${BASE_URL}/api/partner-products`);
+          if (res.ok) {
+              const data = await res.json();
+              setPartnerProducts(data);
+          }
+      } catch (err) {
+          console.error(err);
+      }
+  };
+
+  useEffect(() => {
+      fetchPartnerProducts();
+  }, []);
+
+  const handleAddPartnerProduct = async (e) => {
+      e.preventDefault();
+      try {
+          const res = await fetch(`${BASE_URL}/api/partner-products`, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+              },
+              body: JSON.stringify(partnerFormData)
+          });
+          if (res.ok) {
+              alert('Partner product added');
+              fetchPartnerProducts();
+              setPartnerFormData({ name: '', image: '', externalLink: '' });
+          }
+      } catch (err) {
+          console.error(err);
+      }
+  };
+
+  const handleDeletePartnerProduct = async (id) => {
+      if(!window.confirm('Are you sure?')) return;
+      try {
+          const res = await fetch(`${BASE_URL}/api/partner-products/${id}`, {
+              method: 'DELETE',
+              headers: {
+                  'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+              }
+          });
+          if (res.ok) {
+              fetchPartnerProducts();
+          }
+      } catch (err) {
+          console.error(err);
+      }
+  };
+
+  
   const [stats, setStats] = useState({
     totalProducts: 0,
     totalOrders: 0,
@@ -648,7 +707,8 @@ const AdminDashboard = () => {
   };
 
   if (loading) {
-      return (
+      
+  return (
           <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', fontFamily: 'Inter, sans-serif' }}>
               <div style={{ width: '40px', height: '40px', border: '3px solid #e2e8f0', borderTopColor: '#6366f1', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: '16px' }}></div>
               <p style={{ color: '#64748b', fontWeight: 500 }}>Initializing Admin Dashboard...</p>
@@ -1498,6 +1558,55 @@ const AdminDashboard = () => {
                     })()}
                   </tbody>
                 </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        
+        {activeTab === 'Partners' && (
+          <div className="admin-panel fade-in">
+            <div className="panel-header">
+              <h2>Partner Products</h2>
+            </div>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '2rem' }}>
+              <div style={{ background: 'white', padding: '1.5rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                <h3 style={{ marginBottom: '1rem', fontSize: '1.1rem' }}>Add New Partner Product</h3>
+                <form onSubmit={handleAddPartnerProduct} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <div className="form-group">
+                        <label>Product Name</label>
+                        <input type="text" required value={partnerFormData.name} onChange={e => setPartnerFormData({...partnerFormData, name: e.target.value})} className="form-control" />
+                    </div>
+                    <div className="form-group">
+                        <label>Image URL (or path)</label>
+                        <input type="text" required value={partnerFormData.image} onChange={e => setPartnerFormData({...partnerFormData, image: e.target.value})} className="form-control" />
+                    </div>
+                    <div className="form-group">
+                        <label>External Link (Partner Website)</label>
+                        <input type="text" required value={partnerFormData.externalLink} onChange={e => setPartnerFormData({...partnerFormData, externalLink: e.target.value})} className="form-control" placeholder="https://..." />
+                    </div>
+                    <button type="submit" className="btn btn-primary" style={{ marginTop: '0.5rem' }}>Add Partner Product</button>
+                </form>
+              </div>
+
+              <div style={{ background: 'white', padding: '1.5rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                <h3 style={{ marginBottom: '1rem', fontSize: '1.1rem' }}>Current Partner Products</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  {partnerProducts.map(p => (
+                      <div key={p._id} style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
+                          <img src={getImageUrl(p.image)} alt={p.name} style={{ width: '60px', height: '60px', objectFit: 'contain', background: '#f8fafc', borderRadius: '4px' }} />
+                          <div style={{ flex: 1 }}>
+                              <h4 style={{ fontSize: '0.95rem', margin: '0 0 4px 0' }}>{p.name}</h4>
+                              <a href={p.externalLink} target="_blank" rel="noreferrer" style={{ fontSize: '0.8rem', color: '#3b82f6' }}>View Link</a>
+                          </div>
+                          <button onClick={() => handleDeletePartnerProduct(p._id)} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '5px' }}>
+                              <Trash size={20} />
+                          </button>
+                      </div>
+                  ))}
+                  {partnerProducts.length === 0 && <p style={{ color: '#94a3b8' }}>No partner products added yet.</p>}
+                </div>
               </div>
             </div>
           </div>

@@ -13,6 +13,7 @@ import adminRoutes from './routes/adminRoutes.js';
 import popupRoutes from './routes/popupRoutes.js';
 import couponRoutes from './routes/couponRoutes.js';
 import heroRoutes from './routes/heroRoutes.js';
+import partnerProductRoutes from './routes/partnerProductRoutes.js';
 
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -139,6 +140,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/popup', popupRoutes);
 app.use('/api/coupons', couponRoutes);
 app.use('/api/hero', heroRoutes);
+app.use('/api/partner-products', partnerProductRoutes);
 
 
 // Global Error Handler to avoid returning HTML for 500 errors

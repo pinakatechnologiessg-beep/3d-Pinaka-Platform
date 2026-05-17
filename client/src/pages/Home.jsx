@@ -103,12 +103,7 @@ const Home = () => {
     fetchSlides();
   }, [BASE_URL]);
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, [slides.length]);
+  // Auto-scroll logic moved below goToSlide
 
   useEffect(() => {
     const observerOptions = {
@@ -141,6 +136,7 @@ const Home = () => {
   const [wishlist, setWishlist] = useState([]);
   const [dbFeaturedProducts, setDbFeaturedProducts] = useState([]);
   const [dbNewArrivals, setDbNewArrivals] = useState([]);
+  const [partnerProducts, setPartnerProducts] = useState([]);
   const heroSliderRef = useRef(null);
   const arrivalSliderRef = useRef(null);
   const isScrollingHero = useRef(false);
@@ -179,6 +175,15 @@ const Home = () => {
   };
 
   useEffect(() => {
+    const timer = setInterval(() => {
+      if (slides.length > 0) {
+        goToSlide((currentSlide + 1) % slides.length);
+      }
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [currentSlide, slides.length]);
+
+  useEffect(() => {
     const fetchFeatured = async () => {
         try {
             const res = await fetch(`${API_BASE_URL}/api/products?featured=true`);
@@ -212,6 +217,20 @@ const Home = () => {
             console.error("Fetch new arrivals error:", err);
         }
     };
+
+    
+    const fetchPartnerProducts = async () => {
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/partner-products`);
+            if (res.ok) {
+                const data = await res.json();
+                if (data && data.length > 0) setPartnerProducts(data);
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    };
+    fetchPartnerProducts();
 
     fetchFeatured();
     fetchNewArrivals();
@@ -362,120 +381,9 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Featured Products */}
-      <section className="section container" style={{ marginTop: '-2rem' }}>
-        <div className="products-header reveal" ref={addToRevealRefs} style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '15px' }}>
-            <div style={{ flex: '1 1 200px' }}>
-                <h2>Featured Products</h2>
-                <p style={{ color: 'var(--text-muted)', fontSize: isMobile ? '0.9rem' : '1rem' }}>Handpicked premium 3D printers for professionals</p>
-            </div>
-            <button className="btn btn-dark" onClick={() => navigate('/products')} style={{ whiteSpace: 'nowrap', padding: isMobile ? '8px 16px' : '12px 24px', fontSize: isMobile ? '0.85rem' : '1rem' }}>View All</button>
-        </div>
-
-        <div className="products-grid">
-            {(dbFeaturedProducts.length > 0 ? dbFeaturedProducts : PRODUCTS.filter(p => p.featured)).map((product, index) => {
-                console.log("Featured Product Item:", product); // Debug Step: Console log individual product
-                
-                const price = Number(parsePriceLocal(product.price));
-                const originalPrice = Number(parsePriceLocal(product.mrp || product.originalPrice));
-                const hasDiscount = originalPrice > price;
-                const discountPercent = product.discount || (hasDiscount ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0);
-
-                return (
-                <div 
-                    key={product._id || product.id} 
-                    className="reveal" 
-                    ref={addToRevealRefs}
-                    style={{ 
-                        background: 'white', 
-                        borderRadius: '12px', 
-                        padding: isMobile ? '12px' : '20px', 
-                        border: '1px solid #f1f5f9', 
-                        boxShadow: '0 4px 15px rgba(0,0,0,0.02)', 
-                        transition: 'transform 0.2s', 
-                        position: 'relative',
-                        display: 'flex',
-                        flexDirection: 'column'
-                    }}
-                >
-                    <button 
-                        className={`wishlist-btn ${wishlist.some(item => (item.productId || '').toString() === (product._id || product.id || '').toString()) ? 'active' : ''}`} 
-                        onClick={() => handleAddToWishlist(product)}
-                        style={{ zIndex: 10 }}
-                        title="Add to Wishlist"
-                    >
-                        <Heart size={20} weight={wishlist.some(item => (item.productId || '').toString() === (product._id || product.id || '').toString()) ? "fill" : "bold"} />
-                    </button>
-                    {product.badge && <div className="badge" style={{ ...product.badgeStyle, zIndex: 5 }}>{product.badge}</div>}
-                    
-                    <Link to={product._id ? `/product/${product._id}` : '/products'} style={{ textDecoration: 'none', display: 'block', flex: 1 }}>
-                        <div className="image-wrapper" style={{ height: isMobile ? '160px' : '220px', marginBottom: '12px', overflow: 'hidden', borderRadius: '8px', background: '#f8fafc' }}>
-                            <img 
-                                src={getImageUrl(product.image)} 
-                                alt={product.name || product.title} 
-                                style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '10px' }} 
-                                onError={(e) => (e.target.src = PLACEHOLDER_SVG)}
-                            />
-                        </div>
-                        <div style={{ fontSize: isMobile ? '0.7rem' : '0.85rem', color: '#64748b', textTransform: 'uppercase', marginBottom: '4px' }}>
-                            {product.category}
-                        </div>
-                        <h3 style={{ 
-                            fontSize: isMobile ? '0.95rem' : '1.1rem', 
-                            color: '#1e293b', 
-                            marginBottom: '8px', 
-                            height: isMobile ? '2.4rem' : '2.8rem', 
-                            overflow: 'hidden',
-                            lineHeight: 1.3,
-                            fontWeight: 600
-                        }}>{product.name || product.title}</h3>
-                        
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', marginTop: 'auto' }}>
-                            <div style={{ fontSize: isMobile ? '1.1rem' : '1.4rem', fontWeight: 800, color: '#2563eb' }}>
-                                ₹{price.toLocaleString('en-IN')}
-                            </div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                {hasDiscount && (
-                                    <div style={{ fontSize: isMobile ? '0.8rem' : '0.95rem', color: '#94a3b8', textDecoration: 'line-through' }}>
-                                        ₹{originalPrice.toLocaleString('en-IN')}
-                                    </div>
-                                )}
-                                {hasDiscount && (
-                                     <div style={{ fontSize: '0.7rem', color: '#10b981', fontWeight: 700, background: '#f0fdf4', padding: '2px 4px', borderRadius: '4px' }}>
-                                        {discountPercent}% OFF
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </Link>
-                    
-                    <button 
-                        className="btn btn-dark" 
-                        onClick={() => handleAddToCart(product)}
-                        style={{ 
-                            width: '100%', 
-                            marginTop: '12px', 
-                            padding: isMobile ? '10px' : '12px', 
-                            borderRadius: '8px', 
-                            border: 'none', 
-                            background: '#111827', 
-                            color: 'white', 
-                            fontWeight: 600, 
-                            cursor: 'pointer',
-                            fontSize: isMobile ? '0.85rem' : '1rem'
-                        }}
-                    >
-                        Add to Cart
-                    </button>
-                </div>
-                );
-            })}
-        </div>
-      </section>
-
       {/* New Arrivals Section */}
       {dbNewArrivals.length > 0 && (
-        <section className="section container" style={{ marginTop: '2rem', position: 'relative' }}>
+        <section className="section container" style={{ marginTop: '-2rem', position: 'relative' }}>
           <div className="products-header" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', gap: '15px' }}>
               <div style={{ flex: '1 1 200px' }}>
                   <h2 style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: isMobile ? '1.5rem' : '2rem', fontWeight: 800, color: '#0f172a' }}>
@@ -612,9 +520,197 @@ const Home = () => {
         </section>
       )}
 
+      {/* Featured Products */}
+      <section className="section container" style={{ marginTop: '2rem' }}>
+        <div className="products-header reveal" ref={addToRevealRefs} style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '15px' }}>
+            <div style={{ flex: '1 1 200px' }}>
+                <h2>Featured Products</h2>
+                <p style={{ color: 'var(--text-muted)', fontSize: isMobile ? '0.9rem' : '1rem' }}>Handpicked premium 3D printers for professionals</p>
+            </div>
+            <button className="btn btn-dark" onClick={() => navigate('/products')} style={{ whiteSpace: 'nowrap', padding: isMobile ? '8px 16px' : '12px 24px', fontSize: isMobile ? '0.85rem' : '1rem' }}>View All</button>
+        </div>
+
+        <div className="products-grid">
+            {(dbFeaturedProducts.length > 0 ? dbFeaturedProducts : PRODUCTS.filter(p => p.featured)).map((product, index) => {
+                console.log("Featured Product Item:", product); // Debug Step: Console log individual product
+                
+                const price = Number(parsePriceLocal(product.price));
+                const originalPrice = Number(parsePriceLocal(product.mrp || product.originalPrice));
+                const hasDiscount = originalPrice > price;
+                const discountPercent = product.discount || (hasDiscount ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0);
+
+                return (
+                <div 
+                    key={product._id || product.id} 
+                    className="reveal" 
+                    ref={addToRevealRefs}
+                    style={{ 
+                        background: 'white', 
+                        borderRadius: '12px', 
+                        padding: isMobile ? '12px' : '20px', 
+                        border: '1px solid #f1f5f9', 
+                        boxShadow: '0 4px 15px rgba(0,0,0,0.02)', 
+                        transition: 'transform 0.2s', 
+                        position: 'relative',
+                        display: 'flex',
+                        flexDirection: 'column'
+                    }}
+                >
+                    <button 
+                        className={`wishlist-btn ${wishlist.some(item => (item.productId || '').toString() === (product._id || product.id || '').toString()) ? 'active' : ''}`} 
+                        onClick={() => handleAddToWishlist(product)}
+                        style={{ zIndex: 10 }}
+                        title="Add to Wishlist"
+                    >
+                        <Heart size={20} weight={wishlist.some(item => (item.productId || '').toString() === (product._id || product.id || '').toString()) ? "fill" : "bold"} />
+                    </button>
+                    {product.badge && <div className="badge" style={{ ...product.badgeStyle, zIndex: 5 }}>{product.badge}</div>}
+                    
+                    <Link to={product._id ? `/product/${product._id}` : '/products'} style={{ textDecoration: 'none', display: 'block', flex: 1 }}>
+                        <div className="image-wrapper" style={{ height: isMobile ? '160px' : '220px', marginBottom: '12px', overflow: 'hidden', borderRadius: '8px', background: '#f8fafc' }}>
+                            <img 
+                                src={getImageUrl(product.image)} 
+                                alt={product.name || product.title} 
+                                style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '10px' }} 
+                                onError={(e) => (e.target.src = PLACEHOLDER_SVG)}
+                            />
+                        </div>
+                        <div style={{ fontSize: isMobile ? '0.7rem' : '0.85rem', color: '#64748b', textTransform: 'uppercase', marginBottom: '4px' }}>
+                            {product.category}
+                        </div>
+                        <h3 style={{ 
+                            fontSize: isMobile ? '0.95rem' : '1.1rem', 
+                            color: '#1e293b', 
+                            marginBottom: '8px', 
+                            height: isMobile ? '2.4rem' : '2.8rem', 
+                            overflow: 'hidden',
+                            lineHeight: 1.3,
+                            fontWeight: 600
+                        }}>{product.name || product.title}</h3>
+                        
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', marginTop: 'auto' }}>
+                            <div style={{ fontSize: isMobile ? '1.1rem' : '1.4rem', fontWeight: 800, color: '#2563eb' }}>
+                                ₹{price.toLocaleString('en-IN')}
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                {hasDiscount && (
+                                    <div style={{ fontSize: isMobile ? '0.8rem' : '0.95rem', color: '#94a3b8', textDecoration: 'line-through' }}>
+                                        ₹{originalPrice.toLocaleString('en-IN')}
+                                    </div>
+                                )}
+                                {hasDiscount && (
+                                     <div style={{ fontSize: '0.7rem', color: '#10b981', fontWeight: 700, background: '#f0fdf4', padding: '2px 4px', borderRadius: '4px' }}>
+                                        {discountPercent}% OFF
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </Link>
+                    
+                    <button 
+                        className="btn btn-dark" 
+                        onClick={() => handleAddToCart(product)}
+                        style={{ 
+                            width: '100%', 
+                            marginTop: '12px', 
+                            padding: isMobile ? '10px' : '12px', 
+                            borderRadius: '8px', 
+                            border: 'none', 
+                            background: '#111827', 
+                            color: 'white', 
+                            fontWeight: 600, 
+                            cursor: 'pointer',
+                            fontSize: isMobile ? '0.85rem' : '1rem'
+                        }}
+                    >
+                        Add to Cart
+                    </button>
+                </div>
+                );
+            })}
+        </div>
+      </section>
 
 
 
+
+
+      {/* External Website Premium Banner Section */}
+      <section className="section container" style={{ marginTop: '3rem', marginBottom: '3rem' }}>
+        <div style={{ 
+            background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', 
+            borderRadius: '24px', 
+            padding: isMobile ? '2.5rem 1.5rem' : (partnerProducts.length > 0 ? '3rem 2rem' : '0'), 
+            display: 'flex', 
+            flexDirection: 'column',
+            boxShadow: '0 25px 50px -12px rgba(15, 23, 42, 0.4)',
+            position: 'relative',
+            overflow: 'hidden',
+            border: '1px solid rgba(255, 255, 255, 0.1)'
+        }}>
+            {/* Glossy Overlay & Orbs */}
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '50%', background: 'linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 100%)', pointerEvents: 'none' }}></div>
+            <div style={{ position: 'absolute', top: '-20%', left: '-10%', width: '300px', height: '300px', background: 'radial-gradient(circle, rgba(59, 130, 246, 0.4) 0%, rgba(0,0,0,0) 70%)', borderRadius: '50%', pointerEvents: 'none', filter: 'blur(40px)' }}></div>
+            <div style={{ position: 'absolute', bottom: '-20%', right: '10%', width: '400px', height: '400px', background: 'radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, rgba(0,0,0,0) 70%)', borderRadius: '50%', pointerEvents: 'none', filter: 'blur(40px)' }}></div>
+
+            <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: partnerProducts.length > 0 ? 'flex-start' : 'center', justifyContent: 'space-between', zIndex: 1, padding: (isMobile || partnerProducts.length > 0) ? '0' : '4rem 3rem 4rem 4rem' }}>
+                <div style={{ flex: 1, textAlign: isMobile ? 'center' : 'left', maxWidth: partnerProducts.length > 0 ? '400px' : '100%', paddingRight: partnerProducts.length > 0 && !isMobile ? '2rem' : '0' }}>
+                    <div style={{ display: 'inline-block', padding: '6px 12px', background: 'rgba(59, 130, 246, 0.2)', color: '#60a5fa', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 700, marginBottom: '1.5rem', border: '1px solid rgba(59, 130, 246, 0.3)' }}>
+                        PREMIUM PARTNERS
+                    </div>
+                    <h2 style={{ color: 'white', fontSize: isMobile ? '2rem' : (partnerProducts.length > 0 ? '2.5rem' : '3rem'), fontWeight: 800, marginBottom: '1.25rem', lineHeight: 1.1, letterSpacing: '-0.02em' }}>
+                        Elevate Your <br style={{ display: isMobile ? 'none' : 'block' }} /> 
+                        <span style={{ background: 'linear-gradient(to right, #60a5fa, #a78bfa)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>3D Printing</span> Experience
+                    </h2>
+                    <p style={{ color: '#cbd5e1', fontSize: isMobile ? '1rem' : '1.15rem', margin: isMobile ? '0 auto 2rem' : '0 0 2.5rem', lineHeight: 1.6 }}>
+                        Explore our partner site for industrial-grade materials, enterprise hardware, and exclusive high-performance 3D solutions.
+                    </p>
+                    {partnerProducts.length === 0 && (
+                        <a 
+                            href="https://example.com" 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="btn"
+                            style={{ 
+                                background: 'white', color: '#0f172a', padding: '16px 36px', borderRadius: '12px', fontSize: '1.1rem', fontWeight: 700, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '12px', boxShadow: '0 10px 25px -5px rgba(255, 255, 255, 0.3)', transition: 'all 0.3s ease'
+                            }}
+                        >
+                            Visit Partner Site <Lightning size={20} weight="fill" color="#2563eb" />
+                        </a>
+                    )}
+                </div>
+
+                {partnerProducts.length > 0 ? (
+                    <div style={{ flex: 2, display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem', width: '100%', marginTop: isMobile ? '2rem' : '0' }}>
+                        {partnerProducts.slice(0, 4).map(product => (
+                            <div key={product._id} style={{ background: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(10px)', borderRadius: '16px', padding: '1.5rem', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', transition: 'transform 0.2s', ':hover': { transform: 'translateY(-5px)' } }}>
+                                <div style={{ height: '120px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+                                    <img src={getImageUrl(product.image)} alt={product.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', filter: 'drop-shadow(0 10px 15px rgba(0,0,0,0.3))' }} onError={(e) => (e.target.src = PLACEHOLDER_SVG)} />
+                                </div>
+                                <h4 style={{ color: 'white', fontSize: '1.1rem', marginBottom: '1rem', fontWeight: 600, height: '40px', overflow: 'hidden' }}>{product.name}</h4>
+                                <a 
+                                    href={product.externalLink} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    style={{ background: 'linear-gradient(to right, #3b82f6, #2563eb)', color: 'white', padding: '8px 16px', borderRadius: '8px', fontSize: '0.9rem', fontWeight: 600, textDecoration: 'none', display: 'inline-block', width: '100%' }}
+                                >
+                                    Explore Product
+                                </a>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div style={{ flex: 1, display: isMobile ? 'none' : 'flex', justifyContent: 'flex-end', alignItems: 'center', zIndex: 1, position: 'relative', height: '100%', minHeight: '400px' }}>
+                        <img 
+                            src={getImageUrl("/images/hero-printer-3-1774868059995.png")} 
+                            alt="Premium 3D Printer" 
+                            style={{ width: '120%', maxWidth: '500px', objectFit: 'contain', transform: 'translateY(10%) scale(1.1)', filter: 'drop-shadow(-20px 20px 30px rgba(0,0,0,0.5))' }} 
+                        />
+                    </div>
+                )}
+            </div>
+        </div>
+      </section>
 
       {/* Dynamic Brand Marquee logic is in Header or global CSS */}
 
