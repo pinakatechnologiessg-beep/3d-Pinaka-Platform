@@ -289,23 +289,7 @@ const Home = () => {
               style={{ minWidth: '100%', scrollSnapAlign: 'start', position: 'relative', backgroundColor: slide.bgColor || '#0f172a' }}
             >
               <img src={slide.img} alt={slide.title} className="hero-bg" />
-              <div 
-                className="container hero-content" 
-                style={{ 
-                  color: slide.textColor || '#ffffff',
-                  ...(isMobile ? {
-                    background: slide.textColor === '#0f172a' ? 'rgba(255, 255, 255, 0.85)' : 'rgba(15, 23, 42, 0.7)',
-                    backdropFilter: 'blur(8px)',
-                    WebkitBackdropFilter: 'blur(8px)',
-                    padding: '24px 20px',
-                    borderRadius: '16px',
-                    width: 'calc(100% - 30px)',
-                    margin: '0 auto',
-                    boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.1)',
-                    border: slide.textColor === '#0f172a' ? '1px solid rgba(0, 0, 0, 0.05)' : '1px solid rgba(255, 255, 255, 0.1)',
-                  } : {})
-                }}
-              >
+              <div className="container hero-content" style={{ color: slide.textColor || '#ffffff' }}>
                 <div className="brand-tag" style={{ background: slide.textColor === '#0f172a' ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.1)' }}>
                   <div className="brand-icon" style={{ background: slide.brandColor || 'var(--success)' }}></div> 
                   <span style={{ color: slide.brandColor || 'inherit', fontWeight: 700, fontSize: '1.1rem', letterSpacing: '0.5px' }}>{slide.brand}</span>
