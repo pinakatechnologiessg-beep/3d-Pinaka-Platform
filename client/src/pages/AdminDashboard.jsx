@@ -188,7 +188,7 @@ const AdminDashboard = () => {
   const [heroSlides, setHeroSlides] = useState([]);
   const [isHeroAddOpen, setIsHeroAddOpen] = useState(false);
   const [isHeroEditOpen, setIsHeroEditOpen] = useState(false);
-  const [newHeroSlide, setNewHeroSlide] = useState({ title: '', subtitle: '', brand: '', brandColor: '#3b82f6', price: '', features: '', btnText: '', btnLink: '', order: 0, active: true });
+  const [newHeroSlide, setNewHeroSlide] = useState({ title: '', subtitle: '', brand: '', brandColor: '#3b82f6', bgColor: '#0f172a', price: '', features: '', btnText: '', btnLink: '', order: 0, active: true });
   const [heroSelectedFile, setHeroSelectedFile] = useState(null);
   const [heroImagePreview, setHeroImagePreview] = useState(null);
   const [editHeroSlide, setEditHeroSlide] = useState(null);

@@ -27,7 +27,7 @@ router.get('/all', async (req, res) => {
 // Add a slide
 router.post('/', upload.single('img'), async (req, res) => {
   try {
-    const { title, subtitle, brand, brandColor, price, features, btnText, btnLink, order, active } = req.body;
+    const { title, subtitle, brand, brandColor, bgColor, price, features, btnText, btnLink, order, active } = req.body;
     
     if (!req.file) {
       return res.status(400).json({ message: "Image is required" });
@@ -38,6 +38,7 @@ router.post('/', upload.single('img'), async (req, res) => {
       subtitle: subtitle || '',
       brand: brand || '',
       brandColor: brandColor || '',
+      bgColor: bgColor || '#0f172a',
       price: price || '',
       features: features ? JSON.parse(features) : [],
       btnText: btnText || 'Explore Now',
@@ -58,13 +59,14 @@ router.post('/', upload.single('img'), async (req, res) => {
 // Update a slide
 router.put('/:id', upload.single('img'), async (req, res) => {
   try {
-    const { title, subtitle, brand, brandColor, price, features, btnText, btnLink, order, active } = req.body;
+    const { title, subtitle, brand, brandColor, bgColor, price, features, btnText, btnLink, order, active } = req.body;
     
     const updateData = {};
     if (title !== undefined) updateData.title = title;
     if (subtitle !== undefined) updateData.subtitle = subtitle;
     if (brand !== undefined) updateData.brand = brand;
     if (brandColor !== undefined) updateData.brandColor = brandColor;
+    if (bgColor !== undefined) updateData.bgColor = bgColor;
     if (price !== undefined) updateData.price = price;
     if (features !== undefined) updateData.features = JSON.parse(features);
     if (btnText !== undefined) updateData.btnText = btnText;

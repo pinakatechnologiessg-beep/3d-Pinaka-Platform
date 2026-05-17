@@ -6,6 +6,7 @@ const heroSlideSchema = new mongoose.Schema({
   img: { type: String, required: true },
   brand: { type: String },
   brandColor: { type: String },
+  bgColor: { type: String }, // New background color field
   price: { type: String },
   features: [{ type: String }],
   btnText: { type: String },
