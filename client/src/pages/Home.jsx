@@ -295,7 +295,7 @@ const Home = () => {
                   <span style={{ color: slide.brandColor || 'inherit', fontWeight: 600 }}>{slide.brand}</span>
                 </div>
                 <h1>{slide.title}</h1>
-                <h3>{slide.subtitle}</h3>
+                <h3 style={{ color: slide.brandColor || 'inherit' }}>{slide.subtitle}</h3>
                 <div className="price">{slide.price}</div>
                 <button className="btn btn-primary" onClick={() => navigate((slide.btnLink && slide.btnLink !== 'undefined') ? slide.btnLink : '/products')}>
                   {(slide.btnText && slide.btnText !== 'undefined') ? slide.btnText : 'Shop Now'}
