@@ -39,6 +39,7 @@ const AdminDashboard = () => {
   const [partnerProducts, setPartnerProducts] = useState([]);
     const [partnerFormData, setPartnerFormData] = useState({ name: '', image: '', externalLink: '', category: '', price: '' });
     const [partnerImageFile, setPartnerImageFile] = useState(null);
+    const [editingPartnerProductId, setEditingPartnerProductId] = useState(null);
 
   const fetchPartnerProducts = async () => {
       try {
@@ -70,24 +71,42 @@ const AdminDashboard = () => {
                 formData.append('image', partnerFormData.image);
             }
 
-            const res = await fetch(`${BASE_URL}/api/partner-products`, {
-                method: 'POST',
+            const url = editingPartnerProductId 
+                ? `${BASE_URL}/api/partner-products/${editingPartnerProductId}` 
+                : `${BASE_URL}/api/partner-products`;
+                
+            const res = await fetch(url, {
+                method: editingPartnerProductId ? 'PUT' : 'POST',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
                 },
                 body: formData
             });
             if (res.ok) {
-                alert('Partner product added');
+                alert(`Partner product ${editingPartnerProductId ? 'updated' : 'added'}`);
                 fetchPartnerProducts();
                 setPartnerFormData({ name: '', image: '', externalLink: '', category: '', price: '' });
                 setPartnerImageFile(null);
+                setEditingPartnerProductId(null);
             } else {
-                alert('Failed to add product');
+                alert('Failed to save product');
             }
         } catch (err) {
             console.error(err);
         }
+    };
+
+    const handleEditPartnerClick = (product) => {
+        setEditingPartnerProductId(product._id);
+        setPartnerFormData({
+            name: product.name || '',
+            image: product.image || '',
+            externalLink: product.externalLink || '',
+            category: product.category || '',
+            price: product.price || ''
+        });
+        setPartnerImageFile(null);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
   const handleDeletePartnerProduct = async (id) => {
@@ -1586,7 +1605,7 @@ const AdminDashboard = () => {
             
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '2rem' }}>
               <div style={{ background: 'white', padding: '1.5rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                <h3 style={{ marginBottom: '1rem', fontSize: '1.1rem' }}>Add New Partner Product</h3>
+                <h3 style={{ marginBottom: '1rem', fontSize: '1.1rem' }}>{editingPartnerProductId ? 'Edit Partner Product' : 'Add New Partner Product'}</h3>
                 <form onSubmit={handleAddPartnerProduct} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     <div className="form-group">
                         <label>Product Name</label>
@@ -1612,7 +1631,12 @@ const AdminDashboard = () => {
                         <label>External Link (Partner Website)</label>
                         <input type="text" required value={partnerFormData.externalLink} onChange={e => setPartnerFormData({...partnerFormData, externalLink: e.target.value})} className="form-control" placeholder="https://..." />
                     </div>
-                    <button type="submit" className="btn btn-primary" style={{ marginTop: '0.5rem' }}>Add Partner Product</button>
+                    <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
+                        <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>{editingPartnerProductId ? 'Update Product' : 'Add Partner Product'}</button>
+                        {editingPartnerProductId && (
+                            <button type="button" className="btn" style={{ flex: 1, background: '#e2e8f0', color: '#0f172a' }} onClick={() => { setEditingPartnerProductId(null); setPartnerFormData({ name: '', image: '', externalLink: '', category: '', price: '' }); setPartnerImageFile(null); }}>Cancel</button>
+                        )}
+                    </div>
                 </form>
               </div>
 
@@ -1626,9 +1650,14 @@ const AdminDashboard = () => {
                               <h4 style={{ fontSize: '0.95rem', margin: '0 0 4px 0' }}>{p.name}</h4>
                               <a href={p.externalLink} target="_blank" rel="noreferrer" style={{ fontSize: '0.8rem', color: '#3b82f6' }}>View Link</a>
                           </div>
-                          <button onClick={() => handleDeletePartnerProduct(p._id)} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '5px' }}>
-                              <Trash size={20} />
-                          </button>
+                          <div style={{ display: 'flex', gap: '5px' }}>
+                              <button onClick={() => handleEditPartnerClick(p)} style={{ background: 'none', border: 'none', color: '#3b82f6', cursor: 'pointer', padding: '5px' }}>
+                                  <PencilSimple size={20} />
+                              </button>
+                              <button onClick={() => handleDeletePartnerProduct(p._id)} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '5px' }}>
+                                  <Trash size={20} />
+                              </button>
+                          </div>
                       </div>
                   ))}
                   {partnerProducts.length === 0 && <p style={{ color: '#94a3b8' }}>No partner products added yet.</p>}

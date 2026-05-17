@@ -45,6 +45,40 @@ router.post('/', upload.single('imageFile'), async (req, res) => {
     }
 });
 
+// Update a partner product
+router.put('/:id', upload.single('imageFile'), async (req, res) => {
+    try {
+        const { name, externalLink, category, price } = req.body;
+        let product = await PartnerProduct.findById(req.params.id);
+
+        if (!product) {
+            return res.status(404).json({ msg: 'Product not found' });
+        }
+
+        let image = req.body.image; // fallback to string URL
+        if (req.file) {
+            image = req.file.path; // Use uploaded file path (e.g. Cloudinary URL)
+        }
+
+        product.name = name || product.name;
+        product.externalLink = externalLink || product.externalLink;
+        product.category = category !== undefined ? category : product.category;
+        product.price = price !== undefined ? Number(price) : product.price;
+        if (image) {
+            product.image = image;
+        }
+
+        await product.save();
+        res.json(product);
+    } catch (err) {
+        console.error(err.message);
+        if (err.kind === 'ObjectId') {
+            return res.status(404).json({ msg: 'Product not found' });
+        }
+        res.status(500).send('Server Error');
+    }
+});
+
 // Delete a partner product
 router.delete('/:id', async (req, res) => {
     try {
