@@ -3500,6 +3500,7 @@ const AdminDashboard = () => {
                                 formData.append('brand', newHeroSlide.brand);
                                 formData.append('brandColor', newHeroSlide.brandColor);
                                  formData.append('bgColor', newHeroSlide.bgColor || '#0f172a');
+                                 formData.append('textColor', newHeroSlide.textColor || '#ffffff');
                                 formData.append('price', newHeroSlide.price);
                                 formData.append('features', JSON.stringify((newHeroSlide.features || '').split(',').map(s => s.trim()).filter(Boolean)));
                                 formData.append('btnText', (!newHeroSlide.btnText || newHeroSlide.btnText === 'undefined') ? 'Shop Now' : newHeroSlide.btnText);
@@ -3640,6 +3641,7 @@ const AdminDashboard = () => {
                                 formData.append('brand', editHeroSlide.brand);
                                 formData.append('brandColor', editHeroSlide.brandColor);
                                  formData.append('bgColor', editHeroSlide.bgColor || '#0f172a');
+                                 formData.append('textColor', editHeroSlide.textColor || '#ffffff');
                                 formData.append('price', editHeroSlide.price);
                                 formData.append('features', JSON.stringify((editHeroSlide.features || '').split(',').map(s => s.trim()).filter(Boolean)));
                                 formData.append('btnText', (!editHeroSlide.btnText || editHeroSlide.btnText === 'undefined') ? 'Shop Now' : editHeroSlide.btnText);

@@ -87,6 +87,7 @@ const Home = () => {
               brand: slide.brand || '',
               brandColor: slide.brandColor || '#3b82f6',
               bgColor: slide.bgColor || '#0f172a',
+              textColor: slide.textColor || '#ffffff',
               title: slide.title,
               subtitle: slide.subtitle,
               price: slide.price,
@@ -288,7 +289,7 @@ const Home = () => {
               style={{ minWidth: '100%', scrollSnapAlign: 'start', position: 'relative', backgroundColor: slide.bgColor || '#0f172a' }}
             >
               <img src={slide.img} alt={slide.title} className="hero-bg" />
-              <div className="container hero-content">
+              <div className="container hero-content" style={{ color: slide.textColor || '#ffffff' }}>
                 <div className="brand-tag">
                   <div className="brand-icon" style={{ background: slide.brandColor || 'var(--success)' }}></div> 
                   {slide.brand}
