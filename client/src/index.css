@@ -1296,40 +1296,16 @@ footer {
 
 /* Simple Responsive */
 @media (max-width: 992px) {
-  .hero {
-    height: 550px;
-  }
-
-  .hero-slider {
-    height: 550px;
-  }
-
-  .hero-slide {
-    align-items: flex-end !important;
-    padding-bottom: 2rem;
-  }
-
   .hero-content {
-    width: 100% !important;
-    padding: 0 5% !important;
-    z-index: 2;
-  }
-
-  .hero-content h1,
-  .hero-content h3,
-  .hero-content .price,
-  .hero-content .brand-tag,
-  .hero-content p {
-    max-width: 100% !important;
+    width: 100%;
+    padding: 0 5%;
   }
 
   .hero-bg {
-    opacity: 1 !important;
-    width: 100% !important;
-    height: 60% !important;
-    top: 0 !important;
-    -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%) !important;
-    mask-image: linear-gradient(to bottom, black 50%, transparent 100%) !important;
+    opacity: 1;
+    width: 100%;
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 
   .collections-grid {
