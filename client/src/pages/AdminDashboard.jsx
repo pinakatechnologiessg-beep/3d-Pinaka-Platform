@@ -3438,8 +3438,15 @@ const AdminDashboard = () => {
                   </div>
                 </div>
                 <div>
+                  <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Text Color</label>
+                  <div style={{ display: 'flex', gap: '10px', marginBottom: '1rem' }}>
+                    <div onClick={() => setNewHeroSlide({...newHeroSlide, textColor: '#ffffff'})} style={{ padding: '0.5rem 1rem', borderRadius: '6px', background: '#0f172a', color: '#ffffff', cursor: 'pointer', border: newHeroSlide.textColor !== '#0f172a' ? '2px solid #3b82f6' : '1px solid #cbd5e1', fontWeight: 600 }}>Light Text</div>
+                    <div onClick={() => setNewHeroSlide({...newHeroSlide, textColor: '#0f172a'})} style={{ padding: '0.5rem 1rem', borderRadius: '6px', background: '#f8fafc', color: '#0f172a', cursor: 'pointer', border: newHeroSlide.textColor === '#0f172a' ? '2px solid #3b82f6' : '1px solid #cbd5e1', fontWeight: 600 }}>Dark Text</div>
+                  </div>
+                </div>
+                <div>
                   <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Price</label>
-                  <input type="text" value={newHeroSlide.price} onChange={e => setNewHeroSlide({...newHeroSlide, price: e.target.value})} placeholder="e.g. ₹1,49,999/-" style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
+                  <input type="text" value={newHeroSlide.price} onChange={e => setNewHeroSlide({...newHeroSlide, price: e.target.value})} placeholder="e.g. ?1,49,999/-" style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
                 </div>
                 <div>
                   <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Features (comma separated)</label>
@@ -3579,6 +3586,13 @@ const AdminDashboard = () => {
                     <div style={{ width: '100%', background: editHeroSlide.bgColor || '#0f172a', borderRadius: '6px', height: '42px', display: 'flex', alignItems: 'center', padding: '0 1rem' }}>
                       <span style={{ color: '#fff', fontSize: '0.8rem', fontWeight: 600 }}>Preview: {editHeroSlide.bgColor || '#0f172a'}</span>
                     </div>
+                  </div>
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Text Color</label>
+                  <div style={{ display: 'flex', gap: '10px', marginBottom: '1rem' }}>
+                    <div onClick={() => setEditHeroSlide({...editHeroSlide, textColor: '#ffffff'})} style={{ padding: '0.5rem 1rem', borderRadius: '6px', background: '#0f172a', color: '#ffffff', cursor: 'pointer', border: editHeroSlide.textColor !== '#0f172a' ? '2px solid #3b82f6' : '1px solid #cbd5e1', fontWeight: 600 }}>Light Text</div>
+                    <div onClick={() => setEditHeroSlide({...editHeroSlide, textColor: '#0f172a'})} style={{ padding: '0.5rem 1rem', borderRadius: '6px', background: '#f8fafc', color: '#0f172a', cursor: 'pointer', border: editHeroSlide.textColor === '#0f172a' ? '2px solid #3b82f6' : '1px solid #cbd5e1', fontWeight: 600 }}>Dark Text</div>
                   </div>
                 </div>
                 <div>
