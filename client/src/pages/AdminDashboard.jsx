@@ -83,13 +83,13 @@ const AdminDashboard = () => {
                 body: formData
             });
             if (res.ok) {
-                alert(`Partner product ${editingPartnerProductId ? 'updated' : 'added'}`);
+                showToast(`Partner product ${editingPartnerProductId ? 'updated' : 'added'}`, 'success');
                 fetchPartnerProducts();
                 setPartnerFormData({ name: '', image: '', externalLink: '', category: '', price: '' });
                 setPartnerImageFile(null);
                 setEditingPartnerProductId(null);
             } else {
-                alert('Failed to save product');
+                showToast('Failed to save product', 'error');
             }
         } catch (err) {
             console.error(err);
