@@ -40,6 +40,7 @@ const AdminDashboard = () => {
     const [partnerFormData, setPartnerFormData] = useState({ name: '', image: '', externalLink: '', category: '', price: '' });
     const [partnerImageFile, setPartnerImageFile] = useState(null);
     const [editingPartnerProductId, setEditingPartnerProductId] = useState(null);
+    const [deletePartnerConfirm, setDeletePartnerConfirm] = useState(null);
 
   const fetchPartnerProducts = async () => {
       try {
@@ -109,10 +110,14 @@ const AdminDashboard = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-  const handleDeletePartnerProduct = async (id) => {
-      if(!window.confirm('Are you sure?')) return;
+  const handleDeletePartnerProduct = (id) => {
+      setDeletePartnerConfirm(id);
+  };
+
+  const confirmDeletePartnerProduct = async () => {
+      if(!deletePartnerConfirm) return;
       try {
-          const res = await fetch(`${BASE_URL}/api/partner-products/${id}`, {
+          const res = await fetch(`${BASE_URL}/api/partner-products/${deletePartnerConfirm}`, {
               method: 'DELETE',
               headers: {
                   'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
@@ -120,10 +125,15 @@ const AdminDashboard = () => {
           });
           if (res.ok) {
               fetchPartnerProducts();
+              showToast('Partner product deleted', 'success');
+          } else {
+              showToast('Failed to delete product', 'error');
           }
       } catch (err) {
           console.error(err);
+          showToast('Network error deleting product', 'error');
       }
+      setDeletePartnerConfirm(null);
   };
 
   
@@ -4058,6 +4068,30 @@ const AdminDashboard = () => {
             }
         }
       `}</style>
+
+      {/* Delete Partner Confirm Modal */}
+      {deletePartnerConfirm && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1100, backdropFilter: 'blur(4px)' }}>
+          <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', width: '90%', maxWidth: '350px', textAlign: 'center', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)', animation: 'fadeIn 0.2s ease' }}>
+            <h3 style={{ margin: '0 0 1rem 0', color: '#1e293b', fontSize: '18px' }}>Confirm Delete</h3>
+            <p style={{ margin: '0 0 1.5rem 0', color: '#475569', fontSize: '15px' }}>Are you sure you want to permanently delete this partner product?</p>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem' }}>
+              <button 
+                onClick={() => setDeletePartnerConfirm(null)} 
+                style={{ padding: '0.6rem 1.2rem', borderRadius: '6px', border: '1px solid #cbd5e1', background: 'white', cursor: 'pointer', fontWeight: 600, color: '#334155' }}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={confirmDeletePartnerProduct} 
+                style={{ padding: '0.6rem 1.2rem', borderRadius: '6px', border: 'none', background: '#ef4444', color: 'white', cursor: 'pointer', fontWeight: 600 }}
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
