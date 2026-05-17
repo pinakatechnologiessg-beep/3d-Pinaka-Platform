@@ -3419,7 +3419,7 @@ const AdminDashboard = () => {
                   <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Background Color</label>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '1rem' }}>
                     <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                      {['#0f172a', '#1e3a8a', '#450a0a', '#14532d', '#3b82f6', '#ec4899', '#f59e0b', '#10b981'].map(color => (
+                      {['#0f172a', '#1e293b', '#1e3a8a', '#450a0a', '#14532d', '#3b82f6', '#8b5cf6', '#ec4899', '#ef4444', '#f97316', '#f59e0b', '#eab308', '#10b981', '#06b6d4', '#ffffff'].map(color => (
                         <div
                           key={color}
                           onClick={() => setNewHeroSlide({...newHeroSlide, bgColor: color})}
@@ -3499,6 +3499,7 @@ const AdminDashboard = () => {
                                 formData.append('subtitle', newHeroSlide.subtitle);
                                 formData.append('brand', newHeroSlide.brand);
                                 formData.append('brandColor', newHeroSlide.brandColor);
+                                 formData.append('bgColor', newHeroSlide.bgColor || '#0f172a');
                                 formData.append('price', newHeroSlide.price);
                                 formData.append('features', JSON.stringify((newHeroSlide.features || '').split(',').map(s => s.trim()).filter(Boolean)));
                                 formData.append('btnText', (!newHeroSlide.btnText || newHeroSlide.btnText === 'undefined') ? 'Shop Now' : newHeroSlide.btnText);
@@ -3561,7 +3562,7 @@ const AdminDashboard = () => {
                   <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600 }}>Background Color</label>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '1rem' }}>
                     <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                      {['#0f172a', '#1e3a8a', '#450a0a', '#14532d', '#3b82f6', '#ec4899', '#f59e0b', '#10b981'].map(color => (
+                      {['#0f172a', '#1e293b', '#1e3a8a', '#450a0a', '#14532d', '#3b82f6', '#8b5cf6', '#ec4899', '#ef4444', '#f97316', '#f59e0b', '#eab308', '#10b981', '#06b6d4', '#ffffff'].map(color => (
                         <div
                           key={color}
                           onClick={() => setEditHeroSlide({...editHeroSlide, bgColor: color})}
@@ -3638,6 +3639,7 @@ const AdminDashboard = () => {
                                 formData.append('subtitle', editHeroSlide.subtitle);
                                 formData.append('brand', editHeroSlide.brand);
                                 formData.append('brandColor', editHeroSlide.brandColor);
+                                 formData.append('bgColor', editHeroSlide.bgColor || '#0f172a');
                                 formData.append('price', editHeroSlide.price);
                                 formData.append('features', JSON.stringify((editHeroSlide.features || '').split(',').map(s => s.trim()).filter(Boolean)));
                                 formData.append('btnText', (!editHeroSlide.btnText || editHeroSlide.btnText === 'undefined') ? 'Shop Now' : editHeroSlide.btnText);
