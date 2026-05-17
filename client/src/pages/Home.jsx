@@ -290,9 +290,9 @@ const Home = () => {
             >
               <img src={slide.img} alt={slide.title} className="hero-bg" />
               <div className="container hero-content" style={{ color: slide.textColor || '#ffffff' }}>
-                <div className="brand-tag">
+                <div className="brand-tag" style={{ background: slide.textColor === '#0f172a' ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.1)' }}>
                   <div className="brand-icon" style={{ background: slide.brandColor || 'var(--success)' }}></div> 
-                  {slide.brand}
+                  <span style={{ color: slide.brandColor || 'inherit', fontWeight: 600 }}>{slide.brand}</span>
                 </div>
                 <h1>{slide.title}</h1>
                 <h3>{slide.subtitle}</h3>
