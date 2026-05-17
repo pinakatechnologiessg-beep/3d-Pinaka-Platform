@@ -683,16 +683,16 @@ const Home = () => {
                 {partnerProducts.length > 0 ? (
                     <div style={{ flex: 2, display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem', width: '100%', marginTop: isMobile ? '2rem' : '0' }}>
                         {partnerProducts.slice(0, 4).map(product => (
-                            <div key={product._id} style={{ background: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(10px)', borderRadius: '16px', padding: '1.5rem', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', transition: 'transform 0.2s', ':hover': { transform: 'translateY(-5px)' } }}>
-                                <div style={{ height: '120px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
-                                    <img src={getImageUrl(product.image)} alt={product.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', filter: 'drop-shadow(0 10px 15px rgba(0,0,0,0.3))' }} onError={(e) => (e.target.src = PLACEHOLDER_SVG)} />
+                            <div key={product._id} style={{ background: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(10px)', borderRadius: '16px', padding: '1.5rem', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', transition: 'transform 0.2s', ':hover': { transform: 'translateY(-5px)' }, width: '100%', maxWidth: '350px', margin: '0 auto' }}>
+                                <div style={{ height: '220px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem', overflow: 'hidden', borderRadius: '12px' }}>
+                                    <img src={getImageUrl(product.image)} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'contain', filter: 'drop-shadow(0 10px 15px rgba(0,0,0,0.3))' }} onError={(e) => (e.target.src = PLACEHOLDER_SVG)} />
                                 </div>
                                 {product.category && product.category !== 'Uncategorized' && (
-                                    <span style={{ fontSize: '0.75rem', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', color: '#60a5fa', marginBottom: '0.5rem' }}>{product.category}</span>
+                                    <span style={{ fontSize: '0.85rem', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', color: '#60a5fa', marginBottom: '0.75rem' }}>{product.category}</span>
                                 )}
-                                <h4 style={{ color: 'white', fontSize: '1.1rem', marginBottom: '0.5rem', fontWeight: 600, height: '40px', overflow: 'hidden' }}>{product.name}</h4>
+                                <h4 style={{ color: 'white', fontSize: '1.25rem', marginBottom: '0.75rem', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{product.name}</h4>
                                 {product.price > 0 && (
-                                    <div style={{ fontSize: '1.2rem', fontWeight: 700, color: 'white', marginBottom: '1rem' }}>
+                                    <div style={{ fontSize: '1.35rem', fontWeight: 700, color: '#e2e8f0', marginBottom: '1.5rem' }}>
                                         ₹{product.price.toLocaleString()}
                                     </div>
                                 )}
