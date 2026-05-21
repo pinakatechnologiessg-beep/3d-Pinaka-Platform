@@ -519,17 +519,7 @@ const Cart = () => {
                         overflowY: 'auto',
                         padding: '2rem 1rem'
                     }}>
-                        <div style={{ 
-                            background: 'white', 
-                            padding: '2.5rem', 
-                            borderRadius: '20px', 
-                            maxWidth: '500px', 
-                            width: '100%', 
-                            boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
-                            position: 'relative',
-                            marginTop: '2rem',
-                            marginBottom: '2rem'
-                        }}>
+                        <div className="checkout-modal-container">
                             <button 
                                 onClick={() => setIsCheckoutModalOpen(false)} 
                                 style={{ 
@@ -556,7 +546,7 @@ const Cart = () => {
                             <div style={{ marginBottom: '1.5rem' }}>
                                 <h2 style={{ fontWeight: 800 }}>Complete Your Order</h2>
                             </div>                            <form onSubmit={handleCheckout} style={{ maxHeight: '60vh', overflowY: 'auto', paddingRight: '10px' }}>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                                <div className="checkout-form-grid">
                                     <div>
                                         <label style={{ display: 'block', fontSize: '0.85rem', marginBottom: '5px', fontWeight: 600 }}>First Name*</label>
                                         <input required value={form.firstName} onChange={e => setForm({...form, firstName: e.target.value})} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #e2e8f0', outline: 'none' }} placeholder="First Name" />
@@ -588,7 +578,7 @@ const Cart = () => {
                                     <input value={form.streetAddress2} onChange={e => setForm({...form, streetAddress2: e.target.value})} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #e2e8f0', outline: 'none' }} placeholder="Apartment, suite, unit, etc. (optional)" />
                                 </div>
 
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                                <div className="checkout-form-grid">
                                     <div>
                                         <label style={{ display: 'block', fontSize: '0.85rem', marginBottom: '5px', fontWeight: 600 }}>State*</label>
                                         <input required value={form.state} onChange={e => setForm({...form, state: e.target.value})} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #e2e8f0', outline: 'none' }} placeholder="State" />
@@ -599,7 +589,7 @@ const Cart = () => {
                                     </div>
                                 </div>
 
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                                <div className="checkout-form-grid">
                                     <div>
                                         <label style={{ display: 'block', fontSize: '0.85rem', marginBottom: '5px', fontWeight: 600 }}>Postcode*</label>
                                         <input required value={form.postcode} onChange={e => setForm({...form, postcode: e.target.value})} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #e2e8f0', outline: 'none' }} placeholder="PIN code" />
