@@ -173,6 +173,7 @@ const Home = () => {
   const [partnerProducts, setPartnerProducts] = useState([]);
   const heroSliderRef = useRef(null);
   const arrivalSliderRef = useRef(null);
+  const partnerSliderRef = useRef(null);
   const isScrollingHero = useRef(false);
 
   useEffect(() => {
@@ -288,6 +289,14 @@ const Home = () => {
         const { scrollLeft, clientWidth } = arrivalSliderRef.current;
         const scrollAmount = direction === 'left' ? -clientWidth : clientWidth;
         arrivalSliderRef.current.scrollTo({ left: scrollLeft + scrollAmount, behavior: 'smooth' });
+    }
+  };
+
+  const scrollPartners = (direction) => {
+    if (partnerSliderRef.current) {
+        const { scrollLeft, clientWidth } = partnerSliderRef.current;
+        const scrollAmount = direction === 'left' ? -clientWidth : clientWidth;
+        partnerSliderRef.current.scrollTo({ left: scrollLeft + scrollAmount, behavior: 'smooth' });
     }
   };
 
@@ -696,89 +705,126 @@ const Home = () => {
 
 
       {/* External Website Premium Banner Section */}
-      <section className="section container" style={{ marginTop: '3rem', marginBottom: '3rem' }}>
-        <div style={{ 
-            background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', 
-            borderRadius: '24px', 
-            padding: isMobile ? '2.5rem 1.5rem' : (partnerProducts.length > 0 ? '3rem 2rem' : '0'), 
-            display: 'flex', 
-            flexDirection: 'column',
-            boxShadow: '0 25px 50px -12px rgba(15, 23, 42, 0.4)',
-            position: 'relative',
-            overflow: 'hidden',
-            border: '1px solid rgba(255, 255, 255, 0.1)'
-        }}>
-            {/* Glossy Overlay & Orbs */}
-            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '50%', background: 'linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 100%)', pointerEvents: 'none' }}></div>
-            <div style={{ position: 'absolute', top: '-20%', left: '-10%', width: '300px', height: '300px', background: 'radial-gradient(circle, rgba(59, 130, 246, 0.4) 0%, rgba(0,0,0,0) 70%)', borderRadius: '50%', pointerEvents: 'none', filter: 'blur(40px)' }}></div>
-            <div style={{ position: 'absolute', bottom: '-20%', right: '10%', width: '400px', height: '400px', background: 'radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, rgba(0,0,0,0) 70%)', borderRadius: '50%', pointerEvents: 'none', filter: 'blur(40px)' }}></div>
+      {partnerProducts.length > 0 && (
+        <section className="section container" style={{ marginTop: '2rem', marginBottom: '3rem', position: 'relative' }}>
+          <div className="products-header" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', gap: '15px' }}>
+              <div style={{ flex: '1 1 200px' }}>
+                  <div style={{ display: 'inline-block', padding: '4px 10px', background: '#eff6ff', color: '#2563eb', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 700, marginBottom: '0.5rem', border: '1px solid #bfdbfe' }}>
+                      PREMIUM PARTNERS
+                  </div>
+                  <h2 style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: isMobile ? '1.5rem' : '2rem', fontWeight: 800, color: '#0f172a' }}>
+                    Elevate Your 3D Printing Experience
+                  </h2>
+                  <p style={{ color: '#64748b', fontSize: isMobile ? '0.9rem' : '1.1rem' }}>Explore our partner site for industrial-grade materials, enterprise hardware, and exclusive high-performance 3D solutions.</p>
+              </div>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                  <button 
+                    onClick={() => scrollPartners('left')}
+                    style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '50%', width: '45px', height: '45px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}
+                  >
+                    <Lightning size={24} weight="bold" style={{ transform: 'rotate(180deg)' }} />
+                  </button>
+                  <button 
+                    onClick={() => scrollPartners('right')}
+                    style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '50%', width: '45px', height: '45px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}
+                  >
+                    <Lightning size={24} weight="bold" />
+                  </button>
+              </div>
+          </div>
 
-            <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: partnerProducts.length > 0 ? 'flex-start' : 'center', justifyContent: 'space-between', zIndex: 1, padding: (isMobile || partnerProducts.length > 0) ? '0' : '4rem 3rem 4rem 4rem' }}>
-                <div style={{ flex: 1, textAlign: isMobile ? 'center' : 'left', maxWidth: partnerProducts.length > 0 ? '400px' : '100%', paddingRight: partnerProducts.length > 0 && !isMobile ? '2rem' : '0' }}>
-                    <div style={{ display: 'inline-block', padding: '6px 12px', background: 'rgba(59, 130, 246, 0.2)', color: '#60a5fa', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 700, marginBottom: '1.5rem', border: '1px solid rgba(59, 130, 246, 0.3)' }}>
-                        PREMIUM PARTNERS
-                    </div>
-                    <h2 style={{ color: 'white', fontSize: isMobile ? '2rem' : (partnerProducts.length > 0 ? '2.5rem' : '3rem'), fontWeight: 800, marginBottom: '1.25rem', lineHeight: 1.1, letterSpacing: '-0.02em' }}>
-                        Elevate Your <br style={{ display: isMobile ? 'none' : 'block' }} /> 
-                        <span style={{ background: 'linear-gradient(to right, #60a5fa, #a78bfa)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>3D Printing</span> Experience
-                    </h2>
-                    <p style={{ color: '#cbd5e1', fontSize: isMobile ? '1rem' : '1.15rem', margin: isMobile ? '0 auto 2rem' : '0 0 2.5rem', lineHeight: 1.6 }}>
-                        Explore our partner site for industrial-grade materials, enterprise hardware, and exclusive high-performance 3D solutions.
-                    </p>
-                    {partnerProducts.length === 0 && (
-                        <a 
-                            href="https://example.com" 
-                            target="_blank" 
-                            rel="noopener noreferrer" 
-                            className="btn"
-                            style={{ 
-                                background: 'white', color: '#0f172a', padding: '16px 36px', borderRadius: '12px', fontSize: '1.1rem', fontWeight: 700, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '12px', boxShadow: '0 10px 25px -5px rgba(255, 255, 255, 0.3)', transition: 'all 0.3s ease'
-                            }}
-                        >
-                            Visit Partner Site <Lightning size={20} weight="fill" color="#2563eb" />
-                        </a>
-                    )}
-                </div>
-
-                {partnerProducts.length > 0 ? (
-                    <div style={{ flex: 2, display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem', width: '100%', marginTop: isMobile ? '2rem' : '0' }}>
-                        {partnerProducts.slice(0, 4).map(product => (
-                            <div key={product._id} style={{ background: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(10px)', borderRadius: '16px', padding: '1.5rem', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', transition: 'transform 0.2s', ':hover': { transform: 'translateY(-5px)' }, width: '100%', maxWidth: '350px', margin: '0 auto' }}>
-                                <div style={{ height: '220px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem', overflow: 'hidden', borderRadius: '12px' }}>
-                                    <img src={getImageUrl(product.image)} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'contain', filter: 'drop-shadow(0 10px 15px rgba(0,0,0,0.3))' }} onError={(e) => (e.target.src = PLACEHOLDER_SVG)} />
-                                </div>
-                                {product.category && product.category !== 'Uncategorized' && (
-                                    <span style={{ fontSize: '0.85rem', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', color: '#60a5fa', marginBottom: '0.75rem' }}>{product.category}</span>
-                                )}
-                                <h4 style={{ color: 'white', fontSize: '1.25rem', marginBottom: '0.75rem', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{product.name}</h4>
-                                {product.price > 0 && (
-                                    <div style={{ fontSize: '1.35rem', fontWeight: 700, color: '#e2e8f0', marginBottom: '1.5rem' }}>
-                                        ₹{product.price.toLocaleString()}
-                                    </div>
-                                )}
-                                <a 
-                                    href={product.externalLink} 
-                                    target="_blank" 
-                                    rel="noopener noreferrer"
-                                    style={{ background: 'linear-gradient(to right, #3b82f6, #2563eb)', color: 'white', padding: '8px 16px', borderRadius: '8px', fontSize: '0.9rem', fontWeight: 600, textDecoration: 'none', display: 'inline-block', width: '100%', marginTop: 'auto' }}
-                                >
-                                    Explore Product
-                                </a>
-                            </div>
-                        ))}
-                    </div>
-                ) : (
-                    <div style={{ flex: 1, display: isMobile ? 'none' : 'flex', justifyContent: 'flex-end', alignItems: 'center', zIndex: 1, position: 'relative', height: '100%', minHeight: '400px' }}>
-                        <img 
-                            src={getImageUrl("/images/hero-printer-3-1774868059995.png")} 
-                            alt="Premium 3D Printer" 
-                            style={{ width: '120%', maxWidth: '500px', objectFit: 'contain', transform: 'translateY(10%) scale(1.1)', filter: 'drop-shadow(-20px 20px 30px rgba(0,0,0,0.5))' }} 
-                        />
-                    </div>
-                )}
-            </div>
-        </div>
-      </section>
+          <div 
+            ref={partnerSliderRef}
+            className="partners-slider"
+            style={{ 
+                display: 'flex', 
+                gap: '20px', 
+                overflowX: 'auto', 
+                scrollSnapType: 'x mandatory',
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none',
+                padding: '10px 5px'
+            }}
+          >
+              {partnerProducts.map((product) => (
+                  <div 
+                      key={product._id || product.id} 
+                      style={{ 
+                          minWidth: isMobile ? '280px' : '320px',
+                          scrollSnapAlign: 'start',
+                          background: 'white', 
+                          borderRadius: '16px', 
+                          padding: isMobile ? '16px' : '24px', 
+                          border: '1px solid #f1f5f9', 
+                          boxShadow: '0 10px 25px -5px rgba(0,0,0,0.05)', 
+                          transition: 'all 0.3s ease', 
+                          position: 'relative',
+                          display: 'flex',
+                          flexDirection: 'column'
+                      }}
+                  >
+                      <a href={product.externalLink} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', display: 'block', flex: 1 }}>
+                          <div className="image-wrapper" style={{ height: isMobile ? '180px' : '240px', marginBottom: '15px', overflow: 'hidden', borderRadius: '12px', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                              <img 
+                                  src={getImageUrl(product.image)} 
+                                  alt={product.name || product.title} 
+                                  style={{ maxWidth: '90%', maxHeight: '90%', objectFit: 'contain' }} 
+                                  onError={(e) => (e.target.src = PLACEHOLDER_SVG)}
+                              />
+                          </div>
+                          {product.category && product.category !== 'Uncategorized' && (
+                              <div style={{ fontSize: '0.75rem', color: '#64748b', textTransform: 'uppercase', marginBottom: '6px', fontWeight: 600, letterSpacing: '0.05em' }}>
+                                  {product.category}
+                              </div>
+                          )}
+                          <h3 style={{ 
+                              fontSize: isMobile ? '1.1rem' : '1.25rem', 
+                              color: '#1e293b', 
+                              marginBottom: '12px', 
+                              height: '3rem', 
+                              overflow: 'hidden',
+                              lineHeight: 1.3,
+                              fontWeight: 700
+                          }}>{product.name || product.title}</h3>
+                          
+                          {product.price > 0 && (
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: 'auto' }}>
+                              <div style={{ fontSize: isMobile ? '1.25rem' : '1.5rem', fontWeight: 800, color: '#2563eb' }}>
+                                  ₹{product.price.toLocaleString('en-IN')}
+                              </div>
+                          </div>
+                          )}
+                      </a>
+                      
+                      <a 
+                          href={product.externalLink} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="btn btn-dark" 
+                          style={{ 
+                              width: '100%', 
+                              marginTop: '20px', 
+                              padding: '14px', 
+                              borderRadius: '10px', 
+                              border: 'none', 
+                              background: '#0f172a', 
+                              color: 'white', 
+                              fontWeight: 600, 
+                              cursor: 'pointer',
+                              fontSize: '1rem',
+                              transition: 'background 0.2s',
+                              textAlign: 'center',
+                              textDecoration: 'none',
+                              display: 'inline-block'
+                          }}
+                      >
+                          Explore Product
+                      </a>
+                  </div>
+              ))}
+          </div>
+        </section>
+      )}
 
       {/* Dynamic Brand Marquee logic is in Header or global CSS */}
 
