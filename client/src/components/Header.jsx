@@ -70,7 +70,7 @@ const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu, meta }) => {
         </div>
 
         <Link to="/" className="logo">
-          <Logo height={window.innerWidth < 768 ? 60 : 75} />
+          <Logo height={38} />
         </Link>
         
         <nav className="nav-links">

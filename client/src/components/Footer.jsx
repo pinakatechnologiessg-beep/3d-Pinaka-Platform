@@ -6,30 +6,35 @@ const Footer = () => {
   return (
     <footer>
       <div className="container footer-grid">
-        <div className="footer-col" style={{ textAlign: 'left' }}>
-          <Link to="/" style={{ display: 'inline-block', marginBottom: '0' }}>
-            <img src="/footer-logo.png" alt="Pinaka Technologies" style={{ width: '220px', height: 'auto', marginTop: '-20px', marginBottom: '-40px' }} />
+        {/* Col 1: Logo + description + social — full width on mobile */}
+        <div className="footer-col footer-brand-col">
+          <Link to="/" style={{ display: 'inline-block', marginBottom: '1rem' }}>
+            <img src="/footer-logo.png" alt="Pinaka Technologies" style={{ width: '180px', height: 'auto' }} />
           </Link>
-          <p style={{ marginTop: '1rem', maxWidth: '300px' }}>Your one-stop destination for premium 3D printers, materials, and accessories. Bringing innovation to life.</p>
+          <p style={{ maxWidth: '300px', lineHeight: 1.7 }}>Your one-stop destination for premium 3D printers, materials, and accessories. Bringing innovation to life.</p>
           <div className="social-icons">
-            <a href="#"><FacebookLogo /></a>
-            <a href="#"><TwitterLogo /></a>
-            <a href="#"><InstagramLogo /></a>
-            <a href="#"><YoutubeLogo /></a>
+            <a href="#" aria-label="Facebook"><FacebookLogo size={22} /></a>
+            <a href="#" aria-label="Twitter"><TwitterLogo size={22} /></a>
+            <a href="#" aria-label="Instagram"><InstagramLogo size={22} /></a>
+            <a href="#" aria-label="YouTube"><YoutubeLogo size={22} /></a>
           </div>
         </div>
+
+        {/* Col 2: Quick Links */}
         <div className="footer-col">
           <h4>Quick Links</h4>
           <ul>
             <li><Link to="/about-us.html">About Us</Link></li>
-            <li><Link to="/products.html">All Products</Link></li>
-            <li><Link to="/products.html?sort=popularity">Best Sellers</Link></li>
-            <li><Link to="/products.html?sort=newest">New Arrivals</Link></li>
+            <li><Link to="/products">All Products</Link></li>
+            <li><Link to="/products?sort=popularity">Best Sellers</Link></li>
+            <li><Link to="/products?sort=newest">New Arrivals</Link></li>
             <li><Link to="/printing-services">Printing Services</Link></li>
             <li><Link to="/materials">Materials</Link></li>
             <li><Link to="/testimonials">Testimonials</Link></li>
           </ul>
         </div>
+
+        {/* Col 3: Customer Service */}
         <div className="footer-col">
           <h4>Customer Service</h4>
           <ul>
@@ -40,15 +45,27 @@ const Footer = () => {
             <li><Link to="/shipping-policy">Shipping &amp; Delivery Policy</Link></li>
           </ul>
         </div>
-        <div className="footer-col">
+
+        {/* Col 4: Contact Us */}
+        <div className="footer-col footer-contact-col">
           <h4>Contact Us</h4>
-          <ul style={{ gap: '1rem' }}>
-            <li style={{ display: 'flex', gap: '10px' }}><MapPin size={20} style={{ color: 'var(--primary)' }} /> 86, Sanjay Gandhi Nagar, Naubasta, Kanpur, Uttar Pradesh-208021, India</li>
-            <li style={{ display: 'flex', gap: '10px' }}><Phone size={20} style={{ color: 'var(--primary)' }} /> (+91)-8299475268 (Whatsapp), +91-9935404850</li>
-            <li style={{ display: 'flex', gap: '10px' }}><Envelope size={20} style={{ color: 'var(--primary)' }} /> sales@3dpinaka.in</li>
+          <ul style={{ gap: '1.2rem' }}>
+            <li style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+              <MapPin size={20} style={{ color: 'var(--primary)', flexShrink: 0, marginTop: '2px' }} />
+              <span>86, Sanjay Gandhi Nagar, Naubasta, Kanpur, Uttar Pradesh-208021, India</span>
+            </li>
+            <li style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+              <Phone size={20} style={{ color: 'var(--primary)', flexShrink: 0, marginTop: '2px' }} />
+              <span>(+91)-8299475268 (Whatsapp), +91-9935404850</span>
+            </li>
+            <li style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+              <Envelope size={20} style={{ color: 'var(--primary)', flexShrink: 0, marginTop: '2px' }} />
+              <span>sales@3dpinaka.in</span>
+            </li>
           </ul>
         </div>
       </div>
+
       <div className="container footer-bottom">
         <p>@2023 3dpinaka.in. All rights reserved.</p>
       </div>

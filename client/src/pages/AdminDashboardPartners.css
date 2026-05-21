@@ -1,0 +1,25 @@
+.form-group label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-weight: 500;
+  color: var(--admin-text-main);
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--admin-border-color);
+  border-radius: 4px;
+  background: var(--admin-bg-color);
+  color: var(--admin-text-main);
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 480px) {
+  .partners-grid-layout {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 0.5rem;
+  }
+}

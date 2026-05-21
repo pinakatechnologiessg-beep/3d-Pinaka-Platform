@@ -6,6 +6,7 @@ import {
 } from '@phosphor-icons/react';
 import { getImageUrl, PLACEHOLDER_SVG } from '../utils/imageUtils';
 import './AdminDashboard.css';
+import './AdminDashboardPartners.css';
 
 const BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/$/, "");
 
