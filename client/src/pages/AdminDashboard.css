@@ -713,3 +713,37 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Partners Section */
+.partners-grid-layout {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 2rem;
+}
+
+.partners-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.partners-list-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 1024px) {
+  .partners-grid-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .partners-list-grid {
+    grid-template-columns: 1fr;
+  }
+  .partners-form-grid {
+    grid-template-columns: 1fr;
+  }
+}

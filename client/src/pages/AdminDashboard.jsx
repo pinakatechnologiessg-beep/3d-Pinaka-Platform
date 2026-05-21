@@ -1613,7 +1613,7 @@ const AdminDashboard = () => {
               <h2>Partner Products</h2>
             </div>
             
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '2rem' }}>
+            <div className="partners-grid-layout">
               <div style={{ background: 'white', padding: '1.5rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
                 <h3 style={{ marginBottom: '1rem', fontSize: '1.1rem' }}>{editingPartnerProductId ? 'Edit Partner Product' : 'Add New Partner Product'}</h3>
                 <form onSubmit={handleAddPartnerProduct} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -1621,7 +1621,7 @@ const AdminDashboard = () => {
                         <label>Product Name</label>
                         <input type="text" required value={partnerFormData.name} onChange={e => setPartnerFormData({...partnerFormData, name: e.target.value})} className="form-control" />
                     </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <div className="partners-form-grid">
                         <div className="form-group">
                             <label>Category</label>
                             <input type="text" value={partnerFormData.category} onChange={e => setPartnerFormData({...partnerFormData, category: e.target.value})} className="form-control" placeholder="e.g. 3D Printer" />
@@ -1652,7 +1652,7 @@ const AdminDashboard = () => {
 
               <div style={{ background: 'white', padding: '1.5rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
                 <h3 style={{ marginBottom: '1rem', fontSize: '1.1rem' }}>Current Partner Products</h3>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div className="partners-list-grid">
                   {partnerProducts.map(p => (
                       <div key={p._id} style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
                           <img src={getImageUrl(p.image)} alt={p.name} style={{ width: '60px', height: '60px', objectFit: 'contain', background: '#f8fafc', borderRadius: '4px' }} />
