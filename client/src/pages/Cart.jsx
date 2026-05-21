@@ -265,8 +265,8 @@ const Cart = () => {
     };
 
     return (
-        <main>
-            <div className="container cart-container reveal active" style={{ padding: '4rem 20px', minHeight: '60vh' }}>
+        <main style={{ overflowX: 'hidden' }}>
+            <div className="container cart-container reveal active" style={{ padding: '2rem 15px', minHeight: '60vh' }}>
                 <Link to="/" className="back-home-btn"><ArrowLeft /> Continue Shopping</Link>
                 <h1 style={{ marginBottom: '2.5rem', marginTop: '1rem', fontSize: '2rem', fontWeight: 800 }}>Shopping Cart</h1>
                 
@@ -281,10 +281,10 @@ const Cart = () => {
                                 <p>Looks like you have not added anything to your cart yet.</p>
                             </div>
                         ) : (
-                            <div style={{ background: 'white', borderRadius: '16px', border: '1px solid var(--border-color)', padding: '24px' }}>
+                            <div style={{ background: 'white', borderRadius: '16px', border: '1px solid var(--border-color)', padding: '16px' }}>
                                 <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1.5rem', color: '#1e293b' }}>Cart Summary</h2>
                                 {cartItems.map((item, index) => (
-                                    <div key={index} className="cart-item-new" style={{ display: 'flex', gap: '15px', padding: '15px 0', borderBottom: index === cartItems.length - 1 ? 'none' : '1px dotted #e2e8f0' }}>
+                                    <div key={index} className="cart-item-new" style={{ display: 'flex', flexWrap: 'wrap', gap: '15px', padding: '15px 0', borderBottom: index === cartItems.length - 1 ? 'none' : '1px dotted #e2e8f0' }}>
                                         <Link to={`/product/${item.productId}`} style={{ width: '80px', height: '80px', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '5px', flexShrink: 0, display: 'block' }}>
                                             <img 
                                                 src={getImageUrl(item.image)} 
@@ -293,11 +293,11 @@ const Cart = () => {
                                                 style={{ width: '100%', height: '100%', objectFit: 'contain' }} 
                                             />
                                         </Link>
-                                        <div style={{ flex: 1 }}>
+                                        <div style={{ flex: 1, minWidth: 0 }}>
                                             <Link to={`/product/${item.productId}`} style={{ textDecoration: 'none' }}>
-                                                <h4 style={{ fontSize: '0.95rem', fontWeight: 600, color: '#334155', marginBottom: '8px', lineHeight: '1.4' }}>{item.title}</h4>
+                                                <h4 style={{ fontSize: '0.95rem', fontWeight: 600, color: '#334155', marginBottom: '8px', lineHeight: '1.4', overflowWrap: 'break-word', wordWrap: 'break-word' }}>{item.title}</h4>
                                             </Link>
-                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '5px' }}>
                                                 <div style={{ fontSize: '0.9rem', color: '#64748b' }}>
                                                     ₹{item.price} <span style={{ margin: '0 4px' }}>×</span> {item.quantity || 1}
                                                 </div>
@@ -325,7 +325,7 @@ const Cart = () => {
 
                     <div id="billing-summary-section">
                         {cartItems.length > 0 && !isOrderSuccess && (
-                            <div style={{ background: 'white', borderRadius: '16px', border: '1px solid var(--border-color)', padding: '24px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.05)' }}>
+                            <div style={{ background: 'white', borderRadius: '16px', border: '1px solid var(--border-color)', padding: '16px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.05)' }}>
                                 <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1.5rem', color: '#1e293b' }}>Billing Summary</h2>
                                 
                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
