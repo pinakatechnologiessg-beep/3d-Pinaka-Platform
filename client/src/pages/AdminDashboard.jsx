@@ -1608,9 +1608,9 @@ const AdminDashboard = () => {
 
         
         {activeTab === 'Partners' && (
-          <div className="admin-panel fade-in">
-            <div className="panel-header">
-              <h2>Partner Products</h2>
+          <div className="dashboard-content fade-in" style={{ padding: '24px' }}>
+            <div className="admin-section-header" style={{ marginBottom: '20px' }}>
+              <h2 style={{ fontSize: '1.5rem', color: 'var(--admin-text-dark)', margin: 0 }}>Partner Products</h2>
             </div>
             
             <div className="partners-grid-layout">

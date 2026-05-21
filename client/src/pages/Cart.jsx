@@ -348,7 +348,7 @@ const Cart = () => {
                                             value={pointsToUse} 
                                             onChange={(e) => setPointsToUse(Math.max(0, Math.min(availablePoints, parseInt(e.target.value) || 0)))}
                                             placeholder="Enter points"
-                                            style={{ flex: 1, padding: '8px 12px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.9rem' }}
+                                            style={{ flex: 1, minWidth: 0, padding: '8px 12px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.9rem' }}
                                         />
                                         <button 
                                             onClick={() => applyPoints(pointsToUse)}
@@ -380,7 +380,7 @@ const Cart = () => {
                                                 value={couponCode} 
                                                 onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                                                 placeholder="Enter Coupon Code"
-                                                style={{ flex: 1, padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #e2e8f0', outline: 'none', fontWeight: 600 }}
+                                                style={{ flex: 1, minWidth: 0, padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #e2e8f0', outline: 'none', fontWeight: 600 }}
                                             />
                                             <button 
                                                 onClick={() => applyCoupon()}
