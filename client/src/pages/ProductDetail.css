@@ -613,26 +613,28 @@
     align-items: center;
   }
 
-  /* Action area — stack on very small screens */
+  /* Action area — keep in a row on all mobile sizes */
   .action-area {
-    flex-wrap: wrap;
-    gap: 0.75rem;
+    flex-wrap: nowrap !important;
+    gap: 0.6rem;
+    align-items: center;
   }
 
   .quantity-selector {
     flex: 0 0 auto;
-    min-width: 110px;
+    min-width: 100px;
   }
 
   .btn-primary.add-to-cart-btn {
     flex: 1;
     min-width: 0;
     font-size: 0.9rem;
-    padding: 0.75rem 1rem;
+    padding: 0.75rem 0.75rem;
   }
 
   .wishlist-btn-secondary {
     flex: 0 0 auto;
+    padding: 0.75rem;
   }
 
   /* Trust badges */
@@ -767,24 +769,34 @@
     font-size: 1.3rem !important;
   }
 
-  /* Action area — full width stack */
+  /* Action area — keep in a row, just tighter */
   .action-area {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row !important;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 0.5rem;
   }
 
   .quantity-selector {
-    width: 100%;
-    justify-content: center;
+    flex: 0 0 auto;
+    min-width: 90px;
+    padding: 0.4rem 0.6rem;
+    width: auto !important;
+    justify-content: space-between;
   }
 
   .btn-primary.add-to-cart-btn {
-    width: 100%;
+    flex: 1;
+    min-width: 0;
+    width: auto !important;
+    font-size: 0.82rem;
+    padding: 0.7rem 0.5rem;
   }
 
   .wishlist-btn-secondary {
-    width: 100%;
-    text-align: center;
+    flex: 0 0 auto;
+    width: auto !important;
+    padding: 0.7rem;
   }
 
   .trust-badges {
