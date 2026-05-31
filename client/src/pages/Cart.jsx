@@ -336,8 +336,9 @@ const Cart = () => {
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                                         <span style={{ fontSize: '0.9rem', fontWeight: 600, color: '#475569' }}>Your Points: <span style={{ color: '#4338ca' }}>{availablePoints}</span></span>
                                         <button 
+                                            type="button"
                                             onClick={useAllPoints}
-                                            style={{ background: 'none', border: 'none', color: '#4338ca', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', padding: 0 }}
+                                            style={{ background: 'none', border: 'none', color: '#4338ca', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', padding: '4px 8px', minWidth: '60px', flexShrink: 0 }}
                                         >
                                             USE ALL
                                         </button>
@@ -351,8 +352,9 @@ const Cart = () => {
                                             style={{ flex: 1, minWidth: 0, padding: '8px 12px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.9rem' }}
                                         />
                                         <button 
+                                            type="button"
                                             onClick={() => applyPoints(pointsToUse)}
-                                            style={{ background: '#4338ca', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '6px', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}
+                                            style={{ background: '#4338ca', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '6px', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer', flexShrink: 0 }}
                                         >
                                             Apply
                                         </button>

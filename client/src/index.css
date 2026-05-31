@@ -3605,7 +3605,6 @@ footer {
   .cart-layout > div {
     min-width: 0;
     width: 100%;
-    overflow-x: hidden;
   }
 
   /* Points row */
