@@ -613,9 +613,9 @@
     align-items: center;
   }
 
-  /* Action area — keep in a row on all mobile sizes */
+  /* Action area — two rows on mobile: [qty + add to cart] then [wishlist full width] */
   .action-area {
-    flex-wrap: nowrap !important;
+    flex-wrap: wrap !important;
     gap: 0.6rem;
     align-items: center;
   }
@@ -773,7 +773,7 @@
   .action-area {
     flex-direction: row !important;
     align-items: center;
-    flex-wrap: nowrap;
+    flex-wrap: wrap !important;
     gap: 0.5rem;
   }
 

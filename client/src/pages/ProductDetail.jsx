@@ -152,7 +152,11 @@ const ProductDetail = () => {
                 <div className="product-main">
                     <div className="product-gallery">
                         <div className="main-image">
-                            <ProductImageZoom image={activeImage || imageUrl} alt={product.name} />
+                            <ProductImageZoom 
+                              image={activeImage || imageUrl} 
+                              alt={product.name}
+                              allImages={[imageUrl, ...(product.images || []).map(img => getImageUrl(img))]}
+                            />
                         </div>
                         {product.images && product.images.length > 0 && (
                             <div className="thumbnail-gallery" style={{ display: 'flex', gap: '10px', marginTop: '15px', overflowX: 'auto', paddingBottom: '5px' }}>
