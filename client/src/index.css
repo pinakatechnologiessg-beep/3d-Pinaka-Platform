@@ -3595,6 +3595,26 @@ footer {
   }
 }
 
+@media (max-width: 768px) {
+  .cart-layout {
+    grid-template-columns: 1fr !important;
+    gap: 1rem;
+  }
+
+  /* Prevent any child from overflowing */
+  .cart-layout > div {
+    min-width: 0;
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  /* Points row */
+  .cart-layout .points-row,
+  .cart-layout [style*="display: flex"][style*="gap: '8px'"] {
+    flex-wrap: wrap;
+  }
+}
+
 .checkout-form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -3622,7 +3642,49 @@ footer {
 
 @media (max-width: 640px) {
   .checkout-modal-container {
-    padding: 1.5rem;
+    padding: 1.25rem;
+    border-radius: 14px;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    width: calc(100vw - 2rem);
+    max-width: 100%;
+  }
+
+  .checkout-form-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Cart container padding on mobile */
+  .cart-container {
+    padding: 1rem 12px !important;
+  }
+
+  /* Cart item rows */
+  .cart-item-new {
+    gap: 10px !important;
+  }
+
+  /* Points/coupon input rows */
+  .cart-layout input[type="number"],
+  .cart-layout input[type="text"] {
+    min-width: 0;
+    width: 100%;
+  }
+
+  /* Billing summary full width */
+  #billing-summary-section {
+    width: 100%;
+  }
+
+  /* Checkout modal form max height */
+  .checkout-modal-container form {
+    max-height: 65vh !important;
+  }
+
+  /* Cart page title */
+  .cart-container h1 {
+    font-size: 1.5rem !important;
+    margin-bottom: 1.5rem !important;
   }
 }
 
