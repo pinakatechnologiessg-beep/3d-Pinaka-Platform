@@ -152,6 +152,44 @@ const Cart = () => {
         updateCart();
     };
 
+    const sendOrderEmail = async (orderData, orderIdStr) => {
+        try {
+            const message = `
+New Order Details:
+------------------
+Order ID: ${orderIdStr}
+Customer: ${orderData.customerName}
+Email: ${orderData.customerEmail}
+Phone: ${orderData.phone}
+Address: ${orderData.address}
+
+Items Ordered:
+${orderData.items.map(item => `- ${item.productName} (Qty: ${item.quantity}) - ₹${item.price}`).join('\n')}
+
+Total Price: ₹${orderData.totalPrice}
+Payment Method: ${orderData.paymentMethod}
+Points Used: ${orderData.pointsUsed}
+Coupon Discount: ₹${orderData.couponDiscount}
+`;
+            
+            await fetch("https://api.web3forms.com/submit", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify({
+                    access_key: "2c808a23-646b-4cd6-b983-20c8105cac41",
+                    subject: `New Order Placed: ${orderIdStr}`,
+                    from_name: "3D Pinaka System",
+                    message: message
+                })
+            });
+        } catch (error) {
+            console.error("Failed to send email notification", error);
+        }
+    };
+
     const handleCheckout = async (e) => {
         e.preventDefault();
 
@@ -233,6 +271,7 @@ const Cart = () => {
                                 setIsOrderSuccess(true);
                                 cartService.clearCart();
                                 updateCart();
+                                sendOrderEmail(orderData, data.orderId);
                             } else {
                                 alert("Payment verification failed: " + verifyData.message);
                             }
@@ -253,6 +292,7 @@ const Cart = () => {
                     setIsOrderSuccess(true);
                     cartService.clearCart();
                     updateCart();
+                    sendOrderEmail(orderData, data.orderId);
                 }
             } else {
                 alert('Order failed: ' + data.message);
