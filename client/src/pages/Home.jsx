@@ -331,48 +331,12 @@ const Home = () => {
             return (
               <div 
                 key={index} 
-                className="hero-slide" 
-                style={{ minWidth: '100%', scrollSnapAlign: 'start', position: 'relative', backgroundColor: slide.bgColor || '#0f172a' }}
+                className="hero-slide"
+                onClick={() => { if (slide.btnLink && slide.btnLink !== 'undefined') navigate(slide.btnLink); }}
+                style={{ minWidth: '100%', scrollSnapAlign: 'start', position: 'relative', backgroundColor: slide.bgColor || '#0f172a', cursor: (slide.btnLink && slide.btnLink !== 'undefined') ? 'pointer' : 'default' }}
               >
                 <img src={slide.img} alt={slide.title} className="hero-bg" />
-                <div 
-                  className="container hero-content" 
-                  style={{ 
-                    color: slide.textColor || '#ffffff',
-                    '--strip-bg': stripBg,
-                    '--brand-tag-bg': brandTagBg
-                  }}
-                >
-                  <div 
-                    className="brand-tag hero-brand-tag" 
-                    style={{ 
-                      background: isMobile 
-                        ? 'var(--brand-tag-bg)' 
-                        : (slide.textColor === '#0f172a' ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.1)') 
-                    }}
-                  >
-                    <div className="brand-icon" style={{ background: slide.brandColor || 'var(--success)' }}></div> 
-                    <span style={{ color: slide.brandColor || 'inherit', fontWeight: 700, fontSize: '1.1rem', letterSpacing: '0.5px' }}>{slide.brand}</span>
-                  </div>
-                  <h1>
-                    <span className="hero-text-strip">{slide.title}</span>
-                  </h1>
-                  <h3>
-                    <span className="hero-text-strip">{slide.subtitle}</span>
-                  </h3>
-                  <div className="price">
-                    <span className="hero-text-strip">{slide.price}</span>
-                  </div>
-                  <button className="btn btn-primary" onClick={() => navigate((slide.btnLink && slide.btnLink !== 'undefined') ? slide.btnLink : '/products')}>
-                    {(slide.btnText && slide.btnText !== 'undefined') ? slide.btnText : 'Shop Now'}
-                  </button>
-                  
-                  <div className="hero-features">
-                    {slide.features.map((feat, i) => (
-                      <div key={i} className="feature-tag">{feat}</div>
-                    ))}
-                  </div>
-                </div>
+                {/* The user wants the banner to be just an image with a link. Removed text and buttons. */}
               </div>
             );
           })}
@@ -403,28 +367,6 @@ const Home = () => {
           <Lightning size={28} weight="fill" />
         </button>
       </section>
-
-      {/* Promo Banner */}
-      <div className="promo-banner">
-        <div className="marquee">
-          <div className="marquee-content">
-            <span>✦ Best Deals</span>
-            <span>✦ Safe Transactions</span>
-            <span>✦ Fast Shipping</span>
-            <span>✦ 7 Days Return Policy</span>
-            <span>✦ Affordable Pricing</span>
-            <span>✦ 24/7 Support</span>
-          </div>
-          <div className="marquee-content">
-            <span>✦ Best Deals</span>
-            <span>✦ Safe Transactions</span>
-            <span>✦ Fast Shipping</span>
-            <span>✦ 7 Days Return Policy</span>
-            <span>✦ Affordable Pricing</span>
-            <span>✦ 24/7 Support</span>
-          </div>
-        </div>
-      </div>
 
       {/* Shop by Brand */}
       <section className="section container">
@@ -522,7 +464,7 @@ const Home = () => {
                       </button>
                       <div className="badge" style={{ background: '#3b82f6', color: 'white', zIndex: 5, borderRadius: '6px', padding: '4px 8px', fontSize: '0.75rem', fontWeight: 700 }}>{product.badge || 'NEW'}</div>
                       
-                      <Link to={product._id ? `/product/${product._id}` : '/products'} style={{ textDecoration: 'none', display: 'block', flex: 1 }}>
+                      <Link to={product.name ? `/product/${encodeURIComponent((product.name || product.title || '').replace(/ /g, '-'))}` : '/products'} style={{ textDecoration: 'none', display: 'block', flex: 1 }}>
                           <div className="image-wrapper" style={{ height: isMobile ? '180px' : '240px', marginBottom: '15px', overflow: 'hidden', borderRadius: '12px', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                               <img 
                                   src={getImageUrl(product.image)} 
@@ -546,12 +488,12 @@ const Home = () => {
                           
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: 'auto' }}>
                               <div style={{ fontSize: isMobile ? '1.25rem' : '1.5rem', fontWeight: 800, color: '#2563eb' }}>
-                                  ₹{price.toLocaleString('en-IN')}
+                                  ₹{price.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
                               </div>
                               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                   {hasDiscount && (
                                       <div style={{ fontSize: '0.9rem', color: '#94a3b8', textDecoration: 'line-through' }}>
-                                          ₹{originalPrice.toLocaleString('en-IN')}
+                                          ₹{originalPrice.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
                                       </div>
                                   )}
                                   {hasDiscount && (
@@ -635,7 +577,7 @@ const Home = () => {
                     </button>
                     {product.badge && <div className="badge" style={{ ...product.badgeStyle, zIndex: 5 }}>{product.badge}</div>}
                     
-                    <Link to={product._id ? `/product/${product._id}` : '/products'} style={{ textDecoration: 'none', display: 'block', flex: 1 }}>
+                    <Link to={product.name ? `/product/${encodeURIComponent((product.name || product.title || '').replace(/ /g, '-'))}` : '/products'} style={{ textDecoration: 'none', display: 'block', flex: 1 }}>
                         <div className="image-wrapper" style={{ height: isMobile ? '160px' : '220px', marginBottom: '12px', overflow: 'hidden', borderRadius: '8px', background: '#f8fafc' }}>
                             <img 
                                 src={getImageUrl(product.image)} 
@@ -659,12 +601,12 @@ const Home = () => {
                         
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', marginTop: 'auto' }}>
                             <div style={{ fontSize: isMobile ? '1.1rem' : '1.4rem', fontWeight: 800, color: '#2563eb' }}>
-                                ₹{price.toLocaleString('en-IN')}
+                                ₹{price.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                 {hasDiscount && (
                                     <div style={{ fontSize: isMobile ? '0.8rem' : '0.95rem', color: '#94a3b8', textDecoration: 'line-through' }}>
-                                        ₹{originalPrice.toLocaleString('en-IN')}
+                                        ₹{originalPrice.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
                                     </div>
                                 )}
                                 {hasDiscount && (
@@ -790,7 +732,7 @@ const Home = () => {
                           {product.price > 0 && (
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: 'auto' }}>
                               <div style={{ fontSize: isMobile ? '1.25rem' : '1.5rem', fontWeight: 800, color: '#2563eb' }}>
-                                  ₹{product.price.toLocaleString('en-IN')}
+                                  ₹{product.price.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
                               </div>
                           </div>
                           )}

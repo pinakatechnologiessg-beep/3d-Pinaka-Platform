@@ -6,7 +6,17 @@ export const PLACEHOLDER_SVG = "https://images.unsplash.com/photo-1627389811802-
 
 export const getImageUrl = (img) => {
   if (!img) return PLACEHOLDER_SVG;
-  if (img.startsWith("http") || img.startsWith("blob:")) return img;
+  if (img.startsWith("http") || img.startsWith("blob:")) {
+    if (img.includes("res.cloudinary.com")) {
+      // Strip any existing width limit (like c_limit,w_800) from old uploads
+      let newImg = img.replace(/c_limit,w_\d+\//, "");
+      if (!newImg.includes("q_auto")) {
+        newImg = newImg.replace("/upload/", "/upload/q_auto:best,f_auto/");
+      }
+      return newImg;
+    }
+    return img;
+  }
   
   // Cache buster to force Vercel to bypass Edge delivery stale assets
   const bust = "?v=" + new Date().getTime().toString().slice(-4);

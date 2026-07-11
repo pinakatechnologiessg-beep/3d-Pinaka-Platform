@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Star, ShoppingCart, Heart, WhatsappLogo, ArrowLeft, Plus, Minus, CheckCircle, Truck, ShieldCheck, ArrowsCounterClockwise } from '@phosphor-icons/react';
+import { Star, ShoppingCart, Heart, WhatsappLogo, ArrowLeft, Plus, Minus, CheckCircle, Truck, ShieldCheck, ArrowsCounterClockwise, Receipt } from '@phosphor-icons/react';
 import ProductImageZoom from '../components/ProductImageZoom';
 import { cartService, SHOW_TOAST, WISHLIST_UPDATED } from '../services/cartService';
 import { getImageUrl, PLACEHOLDER_SVG } from '../utils/imageUtils';
@@ -42,7 +42,7 @@ const ProductDetail = () => {
                 const relatedRes = await fetch(`${BASE_URL}/api/products?category=${data.category}`);
                 if (relatedRes.ok) {
                     const relatedData = await relatedRes.json();
-                    setRelatedProducts(relatedData.filter(p => p._id !== id).slice(0, 4));
+                    setRelatedProducts(relatedData.filter(p => p._id !== data._id).slice(0, 4));
                 }
             } catch (err) {
                 setError(err.message);
@@ -204,10 +204,10 @@ const ProductDetail = () => {
                         </div>
 
                         <div className="price-section">
-                            <div className="current-price">₹{product.price?.toLocaleString('en-IN')}</div>
+                            <div className="current-price">₹{product.price?.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
                             {product.mrp > product.price && (
                                 <>
-                                    <div className="mrp-price">MRP: ₹{product.mrp?.toLocaleString('en-IN')}</div>
+                                    <div className="mrp-price">MRP: ₹{product.mrp?.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
                                     <div className="discount-tag">{discount}% OFF</div>
                                 </>
                             )}
@@ -262,6 +262,10 @@ const ProductDetail = () => {
                                 <ArrowsCounterClockwise size={24} />
                                 <span>Easy Returns</span>
                             </div>
+                            <div className="badge-item" style={{ gridColumn: 'span 3', background: 'var(--primary-light, #eff6ff)', border: '1px solid var(--primary, #2563eb)', color: 'var(--primary, #2563eb)' }}>
+                                <Receipt size={24} />
+                                <span style={{ fontWeight: 600 }}>GST Invoice Available</span>
+                            </div>
                         </div>
 
                         <div className="buy-now-section" style={{ marginTop: '2rem' }}>
@@ -300,6 +304,9 @@ const ProductDetail = () => {
                     <div className="tabs-header">
                         <button className={activeTab === 'description' ? 'active' : ''} onClick={() => setActiveTab('description')}>Description</button>
                         <button className={activeTab === 'specifications' ? 'active' : ''} onClick={() => setActiveTab('specifications')}>Specifications</button>
+                        <button className={activeTab === 'features' ? 'active' : ''} onClick={() => setActiveTab('features')}>Features & Contents</button>
+                        <button className={activeTab === 'shipping' ? 'active' : ''} onClick={() => setActiveTab('shipping')}>Shipping & Warranty</button>
+                        <button className={activeTab === 'faqs' ? 'active' : ''} onClick={() => setActiveTab('faqs')}>FAQs</button>
                         <button className={activeTab === 'reviews' ? 'active' : ''} onClick={() => setActiveTab('reviews')}>Reviews ({product.reviews?.length || 0})</button>
                     </div>
                     <div className="tabs-content">
@@ -334,6 +341,76 @@ const ProductDetail = () => {
                                     </table>
                                 ) : (
                                     <p>No specifications available.</p>
+                                )}
+                            </div>
+                        )}
+                        {activeTab === 'features' && (
+                            <div className="features-content" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
+                                <div>
+                                    <h3 style={{ marginBottom: '15px', color: '#0f172a' }}>Features & Benefits</h3>
+                                    {product.features && product.features.length > 0 ? (
+                                        <ul style={{ listStyleType: 'disc', paddingLeft: '20px', lineHeight: '1.8', color: '#475569' }}>
+                                            {product.features.map((feature, i) => (
+                                                <li key={i}>{feature}</li>
+                                            ))}
+                                        </ul>
+                                    ) : (
+                                        <p>High-quality construction with premium materials. Reliable performance and excellent value.</p>
+                                    )}
+                                </div>
+                                <div>
+                                    <h3 style={{ marginBottom: '15px', color: '#0f172a' }}>Package Contents</h3>
+                                    {product.packageContents && product.packageContents.length > 0 ? (
+                                        <ul style={{ listStyleType: 'disc', paddingLeft: '20px', lineHeight: '1.8', color: '#475569' }}>
+                                            {product.packageContents.map((item, i) => (
+                                                <li key={i}>{item}</li>
+                                            ))}
+                                        </ul>
+                                    ) : (
+                                        <p>1x {product.name}<br/>1x User Manual<br/>Standard Accessories included.</p>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                        {activeTab === 'shipping' && (
+                            <div className="shipping-content">
+                                <h3 style={{ marginBottom: '15px', color: '#0f172a' }}>Shipping Information</h3>
+                                <p style={{ lineHeight: '1.8', color: '#475569', marginBottom: '20px' }}>
+                                    {product.shippingInfo || 'Ships within 24-48 hours. Free standard delivery on all orders above ₹5,000. Express shipping options available at checkout.'}
+                                </p>
+                                
+                                <h3 style={{ marginBottom: '15px', color: '#0f172a' }}>Warranty & Support</h3>
+                                <p style={{ lineHeight: '1.8', color: '#475569', marginBottom: '20px' }}>
+                                    {product.warrantyInfo || '1 Year Standard Warranty. Covers manufacturing defects. Dedicated technical support team available for troubleshooting.'}
+                                </p>
+
+                                <div style={{ background: '#f8fafc', padding: '15px', borderRadius: '8px', borderLeft: '4px solid #2563eb', marginTop: '20px' }}>
+                                    <strong>GST Invoice:</strong> A proper tax invoice with GST details will be provided with this product, allowing businesses to claim input tax credit (ITC).
+                                </div>
+                            </div>
+                        )}
+                        {activeTab === 'faqs' && (
+                            <div className="faqs-content">
+                                {product.faqs && product.faqs.length > 0 ? (
+                                    <div className="faq-list">
+                                        {product.faqs.map((faq, i) => (
+                                            <div key={i} style={{ marginBottom: '20px', borderBottom: '1px solid #e2e8f0', paddingBottom: '15px' }}>
+                                                <h4 style={{ color: '#0f172a', marginBottom: '8px', fontSize: '1.1rem' }}>Q: {faq.question}</h4>
+                                                <p style={{ color: '#475569', lineHeight: '1.6' }}>A: {faq.answer}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="faq-list">
+                                        <div style={{ marginBottom: '20px', borderBottom: '1px solid #e2e8f0', paddingBottom: '15px' }}>
+                                            <h4 style={{ color: '#0f172a', marginBottom: '8px', fontSize: '1.1rem' }}>Q: Is this product authentic?</h4>
+                                            <p style={{ color: '#475569', lineHeight: '1.6' }}>A: Yes, all our products are 100% authentic and sourced directly from manufacturers or authorized distributors.</p>
+                                        </div>
+                                        <div style={{ marginBottom: '20px', borderBottom: '1px solid #e2e8f0', paddingBottom: '15px' }}>
+                                            <h4 style={{ color: '#0f172a', marginBottom: '8px', fontSize: '1.1rem' }}>Q: Do you offer technical support?</h4>
+                                            <p style={{ color: '#475569', lineHeight: '1.6' }}>A: Absolutely. We have a dedicated support team that can help you with setup and troubleshooting.</p>
+                                        </div>
+                                    </div>
                                 )}
                             </div>
                         )}
@@ -448,7 +525,7 @@ const ProductDetail = () => {
                         <h2 className="section-title">Related Products</h2>
                         <div className="products-grid">
                             {relatedProducts.map(p => (
-                                <Link to={`/product/${p._id}`} key={p._id} className="product-card">
+                                <Link to={`/product/${encodeURIComponent((p.name || '').replace(/ /g, '-'))}`} key={p._id} className="product-card">
                                     <div className="product-img-wrapper">
                                         <img 
                                             src={getImageUrl(p.image)} 
@@ -459,9 +536,9 @@ const ProductDetail = () => {
                                     <div className="product-info">
                                         <div className="product-title">{p.name}</div>
                                         <div className="product-price" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                            <span style={{ fontWeight: 700, color: '#2563eb' }}>₹{p.price?.toLocaleString('en-IN')}</span>
+                                            <span style={{ fontWeight: 700, color: '#2563eb' }}>₹{p.price?.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                                             {p.mrp && p.mrp > p.price && (
-                                                <span style={{ fontSize: '0.85rem', color: '#94a3b8', textDecoration: 'line-through' }}>₹{p.mrp?.toLocaleString('en-IN')}</span>
+                                                <span style={{ fontSize: '0.85rem', color: '#94a3b8', textDecoration: 'line-through' }}>₹{p.mrp?.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                                             )}
                                         </div>
                                     </div>

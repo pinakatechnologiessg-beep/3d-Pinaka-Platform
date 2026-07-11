@@ -3499,11 +3499,11 @@ const AdminDashboard = () => {
                     <button 
                         disabled={isSubmitting}
                         onClick={async () => {
-                            if (!newHeroSlide.title || !heroSelectedFile) return showToast('Title and Image are required', 'error');
+                            if (!heroSelectedFile) return showToast('Image is required', 'error');
                             setIsSubmitting(true);
                             try {
                                 const formData = new FormData();
-                                formData.append('title', newHeroSlide.title);
+                                formData.append('title', newHeroSlide.title || '');
                                 formData.append('subtitle', newHeroSlide.subtitle);
                                 formData.append('brand', newHeroSlide.brand);
                                 formData.append('brandColor', newHeroSlide.brandColor);
@@ -3511,8 +3511,8 @@ const AdminDashboard = () => {
                                  formData.append('textColor', newHeroSlide.textColor || '#ffffff');
                                 formData.append('price', newHeroSlide.price);
                                 formData.append('features', JSON.stringify((newHeroSlide.features || '').split(',').map(s => s.trim()).filter(Boolean)));
-                                formData.append('btnText', (!newHeroSlide.btnText || newHeroSlide.btnText === 'undefined') ? 'Shop Now' : newHeroSlide.btnText);
-                                formData.append('btnLink', (!newHeroSlide.btnLink || newHeroSlide.btnLink === 'undefined') ? '/products' : newHeroSlide.btnLink);
+                                formData.append('btnText', newHeroSlide.btnText || '');
+                                formData.append('btnLink', newHeroSlide.btnLink || '');
                                 formData.append('order', newHeroSlide.order);
                                 formData.append('active', newHeroSlide.active);
                                 formData.append('img', heroSelectedFile);
@@ -3647,11 +3647,10 @@ const AdminDashboard = () => {
                     <button 
                         disabled={isSubmitting}
                         onClick={async () => {
-                            if (!editHeroSlide.title) return showToast('Title is required', 'error');
                             setIsSubmitting(true);
                             try {
                                 const formData = new FormData();
-                                formData.append('title', editHeroSlide.title);
+                                formData.append('title', editHeroSlide.title || '');
                                 formData.append('subtitle', editHeroSlide.subtitle);
                                 formData.append('brand', editHeroSlide.brand);
                                 formData.append('brandColor', editHeroSlide.brandColor);
@@ -3659,8 +3658,8 @@ const AdminDashboard = () => {
                                  formData.append('textColor', editHeroSlide.textColor || '#ffffff');
                                 formData.append('price', editHeroSlide.price);
                                 formData.append('features', JSON.stringify((editHeroSlide.features || '').split(',').map(s => s.trim()).filter(Boolean)));
-                                formData.append('btnText', (!editHeroSlide.btnText || editHeroSlide.btnText === 'undefined') ? 'Shop Now' : editHeroSlide.btnText);
-                                formData.append('btnLink', (!editHeroSlide.btnLink || editHeroSlide.btnLink === 'undefined') ? '/products' : editHeroSlide.btnLink);
+                                formData.append('btnText', editHeroSlide.btnText || '');
+                                formData.append('btnLink', editHeroSlide.btnLink || '');
                                 formData.append('order', editHeroSlide.order);
                                 formData.append('active', editHeroSlide.active);
                                 if (editHeroSelectedFile) formData.append('img', editHeroSelectedFile);

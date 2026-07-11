@@ -225,7 +225,7 @@ const Account = () => {
                                                     </div>
                                                 </div>
                                                 <div style={{ textAlign: 'right' }}>
-                                                    <div style={{ fontWeight: 700, color: 'var(--primary)', marginBottom: '4px' }}>₹{order.totalPrice?.toLocaleString('en-IN')}</div>
+                                                    <div style={{ fontWeight: 700, color: 'var(--primary)', marginBottom: '4px' }}>₹{order.totalPrice?.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
                                                     <div style={{ 
                                                         display: 'flex', 
                                                         alignItems: 'center', 

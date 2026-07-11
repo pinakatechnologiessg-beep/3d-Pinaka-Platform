@@ -325,7 +325,7 @@ Coupon Discount: ₹${orderData.couponDiscount}
                                 <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1.5rem', color: '#1e293b' }}>Cart Summary</h2>
                                 {cartItems.map((item, index) => (
                                     <div key={index} className="cart-item-new" style={{ display: 'flex', flexWrap: 'wrap', gap: '15px', padding: '15px 0', borderBottom: index === cartItems.length - 1 ? 'none' : '1px dotted #e2e8f0' }}>
-                                        <Link to={`/product/${item.productId}`} style={{ width: '80px', height: '80px', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '5px', flexShrink: 0, display: 'block' }}>
+                                        <Link to={`/product/${encodeURIComponent((item.title || '').replace(/ /g, '-'))}`} style={{ width: '80px', height: '80px', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '5px', flexShrink: 0, display: 'block' }}>
                                             <img 
                                                 src={getImageUrl(item.image)} 
                                                 alt={item.title} 
@@ -334,7 +334,7 @@ Coupon Discount: ₹${orderData.couponDiscount}
                                             />
                                         </Link>
                                         <div style={{ flex: 1, minWidth: 0 }}>
-                                            <Link to={`/product/${item.productId}`} style={{ textDecoration: 'none' }}>
+                                            <Link to={`/product/${encodeURIComponent((item.title || '').replace(/ /g, '-'))}`} style={{ textDecoration: 'none' }}>
                                                 <h4 style={{ fontSize: '0.95rem', fontWeight: 600, color: '#334155', marginBottom: '8px', lineHeight: '1.4', overflowWrap: 'break-word', wordWrap: 'break-word' }}>{item.title}</h4>
                                             </Link>
                                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '5px' }}>
@@ -342,7 +342,7 @@ Coupon Discount: ₹${orderData.couponDiscount}
                                                     ₹{item.price} <span style={{ margin: '0 4px' }}>×</span> {item.quantity || 1}
                                                 </div>
                                                 <div style={{ fontWeight: 700, color: '#4338ca' }}>
-                                                    ₹{(parseInt(String(item.price).replace(/[^0-9]/g, '')) * (item.quantity || 1)).toLocaleString('en-IN')}
+                                                    ₹{(parseInt(String(item.price).replace(/[^0-9]/g, '')) * (item.quantity || 1)).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
                                                 </div>
                                             </div>
                                             <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
@@ -370,7 +370,7 @@ Coupon Discount: ₹${orderData.couponDiscount}
                                 
                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
                                     <span style={{ color: '#64748b' }}>Subtotal</span>
-                                    <span style={{ fontWeight: 600, color: '#334155' }}>₹{total.toLocaleString('en-IN')}</span>
+                                    <span style={{ fontWeight: 600, color: '#334155' }}>₹{total.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                                 </div>
                                 <div style={{ marginBottom: '15px', padding: '15px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
@@ -409,7 +409,7 @@ Coupon Discount: ₹${orderData.couponDiscount}
 
                                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px dotted #e2e8f0' }}>
                                     <span style={{ color: '#64748b' }}>Points Discount</span>
-                                    <span style={{ fontWeight: 600, color: '#059669' }}>-₹{appliedPoints.toLocaleString('en-IN')}</span>
+                                    <span style={{ fontWeight: 600, color: '#059669' }}>-₹{appliedPoints.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                                  </div>
                                                                {/* Coupon Section */}
                                 <div style={{ marginBottom: '20px' }}>
@@ -474,7 +474,7 @@ Coupon Discount: ₹${orderData.couponDiscount}
 
                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px dotted #e2e8f0' }}>
                                     <span style={{ color: '#64748b' }}>Coupon Discount</span>
-                                    <span style={{ fontWeight: 600, color: '#059669' }}>-₹{couponDiscount.toLocaleString('en-IN')}</span>
+                                    <span style={{ fontWeight: 600, color: '#059669' }}>-₹{couponDiscount.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                                 </div>
 
                                 <p style={{ fontSize: '0.75rem', color: '#ef4444', margin: '12px 0', fontStyle: 'italic' }}>
@@ -484,14 +484,14 @@ Coupon Discount: ₹${orderData.couponDiscount}
                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
                                     <span style={{ color: '#64748b' }}>Total with GST</span>
                                     <div style={{ textAlign: 'right' }}>
-                                        <div style={{ fontWeight: 700, color: '#334155' }}>₹{(total - appliedPoints - couponDiscount).toLocaleString('en-IN')}</div>
+                                        <div style={{ fontWeight: 700, color: '#334155' }}>₹{(total - appliedPoints - couponDiscount).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
                                         <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>(Incl. GST)</div>
                                     </div>
                                 </div>
 
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', paddingTop: '12px', borderTop: '1px solid #f1f5f9' }}>
                                     <span style={{ fontSize: '1.25rem', fontWeight: 700, color: '#16a34a' }}>Grand Total</span>
-                                    <span style={{ fontSize: '1.25rem', fontWeight: 800, color: '#16a34a' }}>₹{(total - appliedPoints - couponDiscount).toLocaleString('en-IN')}</span>
+                                    <span style={{ fontSize: '1.25rem', fontWeight: 800, color: '#16a34a' }}>₹{(total - appliedPoints - couponDiscount).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                                 </div>
 
                                 <div style={{ background: '#4338ca', borderRadius: '8px', padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
@@ -663,7 +663,7 @@ Coupon Discount: ₹${orderData.couponDiscount}
                                 <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '12px', marginBottom: '1.5rem', border: '1px dashed #cbd5e1' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.1rem', fontWeight: 800 }}>
                                         <span>Grand Total:</span>
-                                        <span style={{ color: 'var(--primary)' }}>₹{(total - appliedPoints - couponDiscount).toLocaleString('en-IN')}</span>
+                                        <span style={{ color: 'var(--primary)' }}>₹{(total - appliedPoints - couponDiscount).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                                     </div>
                                 </div>
                                 <button type="submit" disabled={loading} className="btn btn-primary" style={{ width: '100%', padding: '14px', borderRadius: '12px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>

@@ -25,6 +25,16 @@ const productSchema = new mongoose.Schema({
       value: { type: String }
     }
   ],
+  features: [{ type: String }],
+  packageContents: [{ type: String }],
+  warrantyInfo: { type: String, default: "1 Year Standard Warranty. Covers manufacturing defects." },
+  shippingInfo: { type: String, default: "Ships within 24-48 hours. Free standard delivery on all orders above ₹5,000." },
+  faqs: [
+    {
+      question: { type: String },
+      answer: { type: String }
+    }
+  ],
   reviews: [
     {
       userName: { type: String },

@@ -404,10 +404,27 @@ router.get('/new-arrivals', async (req, res) => {
   }
 });
 
-// Get a single product by ID
+// Get a single product by ID or Name
 router.get('/:id', async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const identifier = req.params.id;
+    let product;
+
+    // Check if it's a valid MongoDB ObjectId
+    if (identifier.match(/^[0-9a-fA-F]{24}$/)) {
+      product = await Product.findById(identifier);
+    }
+
+    // If not found by ID or not an ID, search by name
+    if (!product) {
+      // Decode URI component and replace hyphens with spaces for a flexible match
+      const decodedName = decodeURIComponent(identifier).replace(/-/g, ' ');
+      // Use regex for case-insensitive exact match
+      product = await Product.findOne({ 
+        name: { $regex: new RegExp(`^${decodedName}$`, 'i') } 
+      });
+    }
+
     if (!product) return res.status(404).json({ message: 'Product not found' });
     res.json(product);
   } catch (err) {
@@ -419,7 +436,22 @@ router.get('/:id', async (req, res) => {
 router.post('/:id/review', async (req, res) => {
   try {
     const { userName, rating, comment } = req.body;
-    const product = await Product.findById(req.params.id);
+    const identifier = req.params.id;
+    let product;
+
+    // Check if it's a valid MongoDB ObjectId
+    if (identifier.match(/^[0-9a-fA-F]{24}$/)) {
+      product = await Product.findById(identifier);
+    }
+
+    // If not found by ID or not an ID, search by name
+    if (!product) {
+      const decodedName = decodeURIComponent(identifier).replace(/-/g, ' ');
+      product = await Product.findOne({ 
+        name: { $regex: new RegExp(`^${decodedName}$`, 'i') } 
+      });
+    }
+
     if (!product) return res.status(404).json({ message: 'Product not found' });
 
     const newReview = {

@@ -42,8 +42,8 @@ router.post('/', upload.single('img'), async (req, res) => {
       textColor: textColor || '#ffffff',
       price: price || '',
       features: features ? JSON.parse(features) : [],
-      btnText: btnText || 'Explore Now',
-      btnLink: btnLink || '/products',
+      btnText: btnText !== undefined ? btnText : 'Explore Now',
+      btnLink: btnLink !== undefined ? btnLink : '/products',
       order: order ? Number(order) : 0,
       active: String(active) !== 'false',
       img: req.file.path

@@ -127,7 +127,10 @@ export const cartService = {
   isInWishlist: (pid) => {
     if (!pid) return false;
     const items = getFromStorage('wishlist');
-    return items.some(item => item.productId === pid);
+    return items.some(item => 
+      item.productId === pid || 
+      encodeURIComponent((item.title || '').replace(/ /g, '-')) === pid
+    );
   },
 
   // --- Initial Sync ---

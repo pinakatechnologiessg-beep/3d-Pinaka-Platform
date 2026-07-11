@@ -16,8 +16,7 @@ const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: '3d-print-hub/products',
-    allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
-    transformation: [{ width: 800, height: 800, crop: 'limit' }]
+    allowed_formats: ['jpg', 'png', 'jpeg', 'webp']
   },
 });
 

@@ -24,7 +24,7 @@ const BrandProductCard = ({ product, revealRef }) => {
                 {product.badge && <span className="mini-badge">{product.badge}</span>}
             </div>
             <div className="image-wrapper">
-                <Link to={`/product/${product._id}`} style={{ display: 'block', height: '100%' }}>
+                <Link to={`/product/${encodeURIComponent((product.name || product.title || '').replace(/ /g, '-'))}`} style={{ display: 'block', height: '100%' }}>
                     <img
                         src={getImageUrl(product.image)}
                         alt={product.name || product.title} 
@@ -40,7 +40,7 @@ const BrandProductCard = ({ product, revealRef }) => {
             </div>
             <div className="content">
                 <div className="product-cat">{product.category} {product.brand && `| ${product.brand}`}</div>
-                <Link to={`/product/${product._id}`} className="title" style={{ textDecoration: 'none', color: 'inherit' }}>
+                <Link to={`/product/${encodeURIComponent((product.name || product.title || '').replace(/ /g, '-'))}`} className="title" style={{ textDecoration: 'none', color: 'inherit' }}>
                     {product.name || product.title}
                 </Link>
                 <div className="reviews">
@@ -59,8 +59,8 @@ const BrandProductCard = ({ product, revealRef }) => {
                 </div>
                 <div className="footer">
                     <div className="price-section">
-                        <span className="current-price">₹{parsePrice(product.price).toLocaleString('en-IN')}</span>
-                        {(product.mrp || product.oldPrice) && <span className="old-price">₹{parsePrice(product.mrp || product.oldPrice).toLocaleString('en-IN')}</span>}
+                        <span className="current-price">₹{parsePrice(product.price).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                        {(product.mrp || product.oldPrice) && <span className="old-price">₹{parsePrice(product.mrp || product.oldPrice).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>}
                         {!product.inStock && <span className="out-of-stock-label">Out Of Stock</span>}
                     </div>
                     {product.inStock ? (

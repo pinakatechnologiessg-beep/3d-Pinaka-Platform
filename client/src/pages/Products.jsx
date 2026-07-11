@@ -405,7 +405,7 @@ const Products = () => {
                                                 display: 'flex',
                                                 flexDirection: 'column'
                                             }}>
-                                                <Link to={`/product/${product._id}`} style={{ textDecoration: 'none', display: 'block', flex: 1 }}>
+                                                <Link to={`/product/${encodeURIComponent((product.name || product.title || '').replace(/ /g, '-'))}`} style={{ textDecoration: 'none', display: 'block', flex: 1 }}>
                                                     <div className="image-wrapper" style={{ height: isMobile ? '160px' : '220px', marginBottom: '12px', overflow: 'hidden', borderRadius: '8px', background: '#f8fafc' }}>
                                                         <img 
                                                             src={
@@ -436,12 +436,12 @@ const Products = () => {
                                                     }}>{product.name}</h3>
                                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', marginTop: 'auto' }}>
                                                         <div style={{ fontSize: isMobile ? '1.1rem' : '1.4rem', fontWeight: 800, color: '#2563eb' }}>
-                                                            ₹{parsePriceLocal(product.price).toLocaleString('en-IN')}
+                                                            ₹{parsePriceLocal(product.price).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
                                                         </div>
                                                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                                             {product.mrp && product.mrp > product.price && (
                                                                 <div style={{ fontSize: isMobile ? '0.8rem' : '0.95rem', color: '#94a3b8', textDecoration: 'line-through' }}>
-                                                                    ₹{parsePriceLocal(product.mrp).toLocaleString('en-IN')}
+                                                                    ₹{parsePriceLocal(product.mrp).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
                                                                 </div>
                                                             )}
                                                             {product.mrp && product.mrp > product.price && (

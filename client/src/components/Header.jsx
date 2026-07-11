@@ -64,6 +64,9 @@ const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu, meta }) => {
           </div>
         </div>
       )}
+      
+
+
       <div className="container navbar">
         <div className="mobile-menu-trigger">
           <List size={22} className="menu-btn" onClick={toggleMobileMenu} />
@@ -164,8 +167,8 @@ const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu, meta }) => {
                               />
                             </div>
                             <div className="product-details">
-                              <Link to={`/product/${item._id}`} className="product-name">{item.name}</Link>
-                              <span className="product-price">₹{item.price?.toLocaleString('en-IN') || '0.00'}</span>
+                              <Link to={`/product/${encodeURIComponent((item.name || '').replace(/ /g, '-'))}`} className="product-name">{item.name}</Link>
+                              <span className="product-price">₹{item.price?.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2}) || '0.00'}</span>
                             </div>
                           </div>
                         ))

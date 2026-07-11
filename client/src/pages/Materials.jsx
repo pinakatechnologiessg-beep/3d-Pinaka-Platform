@@ -110,7 +110,7 @@ const Materials = () => {
                                         (item.stars || '★★★★★ (5.0)')
                                     }
                                 </div>
-                                <div className="product-price">₹{parsePrice(item.price).toLocaleString('en-IN')}</div>
+                                <div className="product-price">₹{parsePrice(item.price).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
                                 <button className="btn btn-block btn-dark" onClick={() => handleAddToCart(item)}>Add to Cart</button>
                             </div>
                         </div>

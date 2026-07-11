@@ -94,7 +94,7 @@ const MaterialsMenu = () => {
                     {products.map((product) => (
                       <Link 
                         key={product._id} 
-                        to={`/product/${product._id}`} 
+                        to={`/product/${encodeURIComponent((product.name || '').replace(/ /g, '-'))}`} 
                         className="mega-product-card"
                         onClick={() => setIsOpen(false)}
                       >
@@ -104,7 +104,7 @@ const MaterialsMenu = () => {
                         <div className="mega-info">
                           <div className="mega-brand">{product.brand}</div>
                           <div className="mega-name">{product.name}</div>
-                          <div className="mega-price">₹{Number(product.price).toLocaleString('en-IN')}</div>
+                          <div className="mega-price">₹{Number(product.price).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
                         </div>
                       </Link>
                     ))}

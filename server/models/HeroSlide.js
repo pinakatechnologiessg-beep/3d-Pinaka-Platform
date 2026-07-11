@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const heroSlideSchema = new mongoose.Schema({
-  title: { type: String, required: true },
+  title: { type: String },
   subtitle: { type: String },
   img: { type: String, required: true },
   brand: { type: String },

@@ -323,7 +323,7 @@ header {
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  height: 60px;
+  height: 80px;
 }
 
 .logo {
@@ -333,13 +333,13 @@ header {
   display: flex;
   align-items: center;
   gap: 8px;
-  height: 60px;
+  height: 80px;
   overflow: hidden;
   flex-shrink: 0;
 }
 
 .logo-img {
-  height: 60px !important;
+  height: 80px !important;
   width: auto;
   object-fit: cover;
   object-position: top center;
@@ -361,8 +361,9 @@ header {
   justify-content: center;
 }
 
-.nav-links a {
-  font-size: 0.85rem;
+.nav-links a,
+.nav-links .dropbtn {
+  font-size: 1rem;
   font-weight: 600;
   color: var(--text-dark);
   text-decoration: none;
@@ -444,7 +445,8 @@ header {
 /* Hero Section */
 .hero {
   position: relative;
-  height: 620px;
+  width: 100%;
+  aspect-ratio: 1920 / 750;
   background-color: var(--dark-bg);
   overflow: hidden;
 }
@@ -458,24 +460,24 @@ header {
 .hero-slide {
   min-width: 100%;
   height: 100%;
-  display: flex;
-  align-items: center;
+  display: block;
   position: relative;
 }
 
 .hero-bg {
   position: absolute;
-  right: 0;
+  left: 0;
   top: 0;
+  width: 100%;
   height: 100%;
-  width: 60%;
   object-fit: cover;
   z-index: 0;
 }
 
 @media (max-width: 768px) {
   .hero {
-    height: 420px;
+    aspect-ratio: 4 / 3;
+    height: auto;
   }
 
   .hero-bg {
@@ -517,10 +519,18 @@ header {
 }
 
 .hero-content {
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 2;
   width: 100%;
   color: var(--white);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
 }
 
 .hero-content h1,
