@@ -1,0 +1,314 @@
+.pigglitz-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    font-family: var(--font-main);
+}
+
+.pigglitz-top-border {
+    border-top: 3px solid var(--secondary); /* Blue solid border */
+    width: 100%;
+    margin-bottom: 2rem;
+}
+
+.pigglitz-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 2rem;
+}
+
+/* Sidebar */
+.pigglitz-sidebar {
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    overflow: hidden;
+    height: fit-content;
+}
+
+.pigglitz-tab {
+    padding: 1.25rem 1.5rem;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 1rem;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border-color);
+    transition: all 0.2s;
+}
+
+.pigglitz-tab:last-child {
+    border-bottom: none;
+    color: #ef4444; /* Logout red */
+}
+
+.pigglitz-tab.active {
+    background: var(--secondary); /* Theme Blue */
+    color: var(--white);
+    border-bottom: none;
+}
+.pigglitz-tab.active + .pigglitz-tab {
+    border-top: none;
+}
+
+/* Welcome Card */
+.pigglitz-welcome {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    border: 1px solid var(--border-color);
+}
+
+.pigglitz-welcome-icon {
+    width: 60px;
+    height: 60px;
+    background: #eff6ff; /* Light blue bg */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.pigglitz-welcome h2 {
+    color: var(--secondary); /* Theme blue */
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    margin-top: 0;
+}
+
+.pigglitz-welcome p {
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Stats Box */
+.pigglitz-stats {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    border: 1px solid var(--border-color);
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.pigglitz-stats .number {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--secondary); /* Theme blue */
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
+
+.pigglitz-stats .label {
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+/* Stores */
+.pigglitz-stores-wrapper {
+    margin-top: 3rem;
+}
+.pigglitz-stores {
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background: var(--white);
+    position: relative;
+    padding: 3rem 2rem 2rem;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.pigglitz-stores-header {
+    background: var(--secondary);
+    color: var(--white);
+    padding: 0.5rem 2rem;
+    border-radius: 8px;
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-weight: 600;
+}
+
+.pigglitz-store-logos {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.store-badge {
+    padding: 0.75rem 1.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-weight: bold;
+    color: var(--text-dark);
+    background: var(--white);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+
+.store-badge.amazon { color: #000; font-family: sans-serif; }
+.store-badge.flipkart { color: #2874f0; }
+.store-badge.indiamart { color: #e11d48; }
+
+/* Address Tab Styles */
+.pigglitz-btn {
+    background: var(--secondary);
+    color: var(--white);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+.pigglitz-btn:hover {
+    opacity: 0.9;
+}
+
+.pigglitz-address-card {
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+}
+
+.address-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.address-name {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text-dark);
+}
+
+.address-actions {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.address-actions span {
+    margin-left: 1rem;
+    cursor: pointer;
+}
+
+.address-actions span:hover {
+    color: var(--secondary);
+}
+
+.address-body p {
+    color: var(--text-muted);
+    margin: 0.5rem 0;
+    font-size: 0.95rem;
+}
+
+/* Orders Table Styles */
+.pigglitz-orders-container {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--white);
+}
+
+.pigglitz-orders-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    padding: 1.5rem;
+    background: var(--light-bg);
+    font-weight: 600;
+    color: var(--text-dark);
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.95rem;
+}
+
+.pigglitz-order-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    padding: 1.5rem;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    transition: background 0.2s;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+}
+
+.pigglitz-order-row:last-child {
+    border-bottom: none;
+}
+
+.pigglitz-order-row:hover {
+    background: #f8fafc;
+}
+
+.order-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
+}
+
+.icon-btn {
+    background: none;
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.icon-btn:hover {
+    color: var(--secondary);
+    border-color: var(--secondary);
+}
+
+.track-btn {
+    background: var(--secondary);
+    color: var(--white);
+    border: none;
+    padding: 0.5rem 1.5rem;
+    border-radius: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    font-size: 0.85rem;
+}
+
+.track-btn:hover {
+    opacity: 0.9;
+}
+
+@media (max-width: 768px) {
+    .pigglitz-layout {
+        grid-template-columns: 1fr;
+    }
+    .pigglitz-orders-header {
+        display: none;
+    }
+    .pigglitz-order-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    .order-actions {
+        justify-content: flex-start;
+    }
+}

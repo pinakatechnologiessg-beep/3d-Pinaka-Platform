@@ -3154,44 +3154,55 @@ const AdminDashboard = () => {
                 </div>
              </div>
 
-             {/* Tracking Details */}
+             {/* Tracking Details & Link */}
              <div>
-                <label style={{ display: 'block', fontSize: '0.8rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '10px' }}>Tracking Details</label>
-                <div style={{ display: 'flex', gap: '10px' }}>
+                <label style={{ display: 'block', fontSize: '0.8rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '10px' }}>Tracking Details & Link</label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                   <input 
                     type="text" 
                     placeholder="Enter tracking ID, carrier info..."
                     value={selectedOrderDetails.trackingDetails || ''}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setSelectedOrderDetails(prev => ({ ...prev, trackingDetails: val }));
-                    }}
-                    style={{ flex: 1, padding: '12px 15px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '0.95rem', outline: 'none', transition: 'border-color 0.2s' }}
+                    onChange={(e) => setSelectedOrderDetails(prev => ({ ...prev, trackingDetails: e.target.value }))}
+                    style={{ padding: '12px 15px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '0.95rem', outline: 'none', transition: 'border-color 0.2s' }}
                     onFocus={e => e.target.style.borderColor = '#3b82f6'}
                     onBlur={e => e.target.style.borderColor = '#e2e8f0'}
                   />
-                  <button 
-                    onClick={async () => {
-                      try {
-                        const res = await fetch(`${BASE_URL}/api/orders/${selectedOrderDetails.orderId}`, {
-                          method: 'PUT',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({ trackingDetails: selectedOrderDetails.trackingDetails })
-                        });
-                        if (res.ok) {
-                          setOrders(prev => prev.map(o => o.orderId === selectedOrderDetails.orderId ? { ...o, trackingDetails: selectedOrderDetails.trackingDetails } : o));
-                          showToast('Tracking details updated successfully', 'success');
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    <input 
+                      type="url" 
+                      placeholder="Enter tracking URL (e.g. https://track...)"
+                      value={selectedOrderDetails.trackingLink || ''}
+                      onChange={(e) => setSelectedOrderDetails(prev => ({ ...prev, trackingLink: e.target.value }))}
+                      style={{ flex: 1, padding: '12px 15px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '0.95rem', outline: 'none', transition: 'border-color 0.2s' }}
+                      onFocus={e => e.target.style.borderColor = '#3b82f6'}
+                      onBlur={e => e.target.style.borderColor = '#e2e8f0'}
+                    />
+                    <button 
+                      onClick={async () => {
+                        try {
+                          const res = await fetch(`${BASE_URL}/api/orders/${selectedOrderDetails.orderId}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ 
+                                trackingDetails: selectedOrderDetails.trackingDetails,
+                                trackingLink: selectedOrderDetails.trackingLink
+                            })
+                          });
+                          if (res.ok) {
+                            setOrders(prev => prev.map(o => o.orderId === selectedOrderDetails.orderId ? { ...o, trackingDetails: selectedOrderDetails.trackingDetails, trackingLink: selectedOrderDetails.trackingLink } : o));
+                            showToast('Tracking info updated successfully', 'success');
+                          }
+                        } catch (err) {
+                          showToast('Failed to update tracking info', 'error');
                         }
-                      } catch (err) {
-                        showToast('Failed to update tracking details', 'error');
-                      }
-                    }}
-                    style={{ padding: '0 20px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, cursor: 'pointer', fontSize: '0.9rem', transition: 'all 0.2s' }}
-                    onMouseOver={e => e.target.style.background = '#2563eb'}
-                    onMouseOut={e => e.target.style.background = '#3b82f6'}
-                  >
-                    Save
-                  </button>
+                      }}
+                      style={{ padding: '0 20px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, cursor: 'pointer', fontSize: '0.9rem', transition: 'all 0.2s' }}
+                      onMouseOver={e => e.target.style.background = '#2563eb'}
+                      onMouseOut={e => e.target.style.background = '#3b82f6'}
+                    >
+                      Save
+                    </button>
+                  </div>
                 </div>
              </div>
           </div>

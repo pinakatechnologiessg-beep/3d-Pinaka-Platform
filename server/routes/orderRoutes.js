@@ -161,6 +161,23 @@ router.post('/', async (req, res) => {
 
     const savedOrder = await newOrder.save();
 
+    // Save address to user profile if not present
+    const user = await User.findOne({ email: req.body.customerEmail });
+    if (user) {
+      if (!user.address || !user.address.streetAddress) {
+        user.address = {
+          streetAddress: req.body.streetAddress,
+          streetAddress2: req.body.streetAddress2,
+          city: req.body.city,
+          state: req.body.state,
+          postcode: req.body.postcode
+        };
+        user.companyName = req.body.companyName || user.companyName;
+        user.gstNumber = req.body.gstNumber || user.gstNumber;
+        await user.save();
+      }
+    }
+
     // Deduct points if used
     if (req.body.pointsUsed && req.body.pointsUsed > 0) {
       const user = await User.findOne({ email: req.body.customerEmail });
@@ -279,10 +296,11 @@ router.post('/verify', async (req, res) => {
 // PUT /api/orders/:id
 router.put('/:id', async (req, res) => {
   try {
-    const { status, trackingDetails } = req.body;
+    const { status, trackingDetails, trackingLink } = req.body;
     const updateData = {};
     if (status) updateData.status = status;
     if (trackingDetails !== undefined) updateData.trackingDetails = trackingDetails;
+    if (trackingLink !== undefined) updateData.trackingLink = trackingLink;
     
     let order;
     if (req.params.id.startsWith('ORD-')) {

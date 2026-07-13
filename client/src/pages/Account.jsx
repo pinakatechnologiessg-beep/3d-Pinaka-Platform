@@ -1,15 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { User, Shield, Package, Heart, SignOut, ArrowLeft, Envelope, Phone, ChatCircleText, Clock, CheckCircle, Truck, Printer } from '@phosphor-icons/react';
+import { User, Shield, Package, Heart, SignOut, ArrowLeft, Envelope, Phone, ChatCircleText, Clock, CheckCircle, Truck } from '@phosphor-icons/react';
 import { cartService } from '../services/cartService';
 import { API_BASE_URL } from '../api/config';
+import './Account.css'; // Import the new CSS
 
 const Account = () => {
     const [user, setUser] = useState(null);
-    const [wishlistCount, setWishlistCount] = useState(0);
     const [orders, setOrders] = useState([]);
     const [loadingOrders, setLoadingOrders] = useState(true);
     const [selectedOrder, setSelectedOrder] = useState(null);
+    
+    // New tab state
+    const [activeTab, setActiveTab] = useState('Dashboard');
+    const tabs = ['Dashboard', 'Addresses', 'Account details', 'Orders', 'Order Invoices', 'Logout'];
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -21,15 +26,7 @@ const Account = () => {
                 fetchProfile(userData.email);
                 fetchOrders(userData.email);
             } catch (e) { setUser(null); }
-        } else {
-            // Optional: You can choose to show a message or do nothing here
-            // Removing mandatory redirect to let users explore
         }
-
-        setWishlistCount(cartService.getWishlistCount());
-        const handleWishlist = () => setWishlistCount(cartService.getWishlistCount());
-        window.addEventListener('wishlistUpdated', handleWishlist);
-        return () => window.removeEventListener('wishlistUpdated', handleWishlist);
     }, [navigate]);
 
     const fetchProfile = async (email) => {
@@ -91,289 +88,236 @@ const Account = () => {
     );
 
     return (
-        <main className="account-page" style={{ backgroundColor: 'var(--light-bg)', padding: '4rem 0', minHeight: 'calc(100vh - 400px)' }}>
-            <div className="container">
-                <Link to="/" className="back-home-btn" style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', textDecoration: 'none' }}>
+        <main style={{ backgroundColor: '#fcf8ff', padding: '0 0 4rem 0', minHeight: 'calc(100vh - 400px)' }}>
+            <div className="pigglitz-top-border"></div>
+            
+            <div className="pigglitz-container">
+                <Link to="/" style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', textDecoration: 'none' }}>
                     <ArrowLeft /> Back to Home
                 </Link>
-                
-                <div className="account-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 2fr)', gap: '2rem' }}>
-                    {/* Sidebar / Profile Info */}
-                    <div className="account-sidebar">
-                        <div className="profile-card" style={{ background: 'var(--white)', padding: '2.5rem', borderRadius: '12px', border: '1px solid var(--border-color)', boxShadow: '0 10px 30px rgba(0,0,0,0.05)', textAlign: 'center' }}>
-                            <div style={{ width: '100px', height: '100px', borderRadius: '50%', background: 'var(--primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem', margin: '0 auto 1.5rem', fontWeight: 'bold', border: '4px solid #eff6ff' }}>
-                                {(user.firstName ? user.firstName.charAt(0) : user.name?.charAt(0))?.toUpperCase() || 'U'}
-                            </div>
-                            
-                            <h2 style={{ marginBottom: '0.25rem', fontSize: '1.5rem', color: 'var(--text-dark)' }}>
-                                {user.firstName ? `${user.firstName} ${user.lastName || ''}` : user.name || 'User Account'}
-                                {user.role === 'admin' && (
-                                    <span title="Administrator" style={{ color: 'var(--primary)', marginLeft: '8px', display: 'inline-flex', verticalAlign: 'middle' }}>
-                                        <Shield size={20} weight="fill" />
-                                    </span>
-                                )}
-                            </h2>
-                            <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
-                                {user.role === 'admin' ? 'Administrator Account' : 'Verified Customer'}
-                            </p>
 
-                            <div style={{ textAlign: 'left', background: '#f8fafc', padding: '1rem', borderRadius: '8px', marginBottom: '2rem' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '0.75rem', color: 'var(--text-dark)', fontSize: '0.9rem' }}>
-                                    <Envelope size={18} color="var(--primary)" />
-                                    <span>{user.email}</span>
-                                </div>
-                                {user.mobile && (
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--text-dark)', fontSize: '0.9rem' }}>
-                                        <Phone size={18} color="var(--primary)" />
-                                        <span>{user.mobile}</span>
-                                    </div>
-                                )}
-                            </div>
-
-                            <button 
-                                onClick={() => navigate('/my-tickets')} 
-                                className="btn btn-outline" 
-                                style={{ width: '100%', marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                <div className="pigglitz-layout">
+                    {/* Sidebar Tabs */}
+                    <div className="pigglitz-sidebar">
+                        {tabs.map(tab => (
+                            <div 
+                                key={tab}
+                                className={`pigglitz-tab ${activeTab === tab ? 'active' : ''}`}
+                                onClick={() => tab === 'Logout' ? handleLogout() : setActiveTab(tab)}
                             >
-                                <ChatCircleText size={20} /> My Support Tickets
-                            </button>
-
-                            {user.role === 'admin' && (
-                                <button 
-                                    onClick={() => navigate('/admin')} 
-                                    className="btn btn-primary" 
-                                    style={{ width: '100%', marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
-                                >
-                                    <Shield size={20} /> Go to Admin Panel
-                                </button>
-                            )}
-
-                            <button onClick={handleLogout} className="btn btn-outline" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                                <SignOut size={20} /> Logout
-                            </button>
-                        </div>
+                                {tab}
+                            </div>
+                        ))}
                     </div>
 
                     {/* Main Content Area */}
-                    <div className="account-content" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-                        <div className="content-card" style={{ background: 'var(--white)', padding: '2.5rem', borderRadius: '12px', border: '1px solid var(--border-color)', boxShadow: '0 10px 30px rgba(0,0,0,0.05)' }}>
-                            <h3 style={{ fontSize: '1.25rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                <Package size={24} color="var(--primary)" /> My Activities
-                            </h3>
-
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
-                                <div className="activity-card" style={{ padding: '1.5rem', background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)', borderRadius: '10px', border: 'none', transition: 'all 0.2s', color: 'white' }}>
-                                    <h4 style={{ fontSize: '1.75rem', color: 'white', marginBottom: '0.25rem' }}>{user.points || 0}</h4>
-                                    <div style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.9)', fontWeight: 500 }}>Reward Points</div>
-                                    <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.7)', marginTop: '4px' }}>1 point = ₹1</div>
-                                </div>
-                                <div className="activity-card" style={{ padding: '1.5rem', background: '#f8fafc', borderRadius: '10px', border: '1px solid var(--border-color)', transition: 'all 0.2s', cursor: 'default' }}>
-                                    <h4 style={{ fontSize: '1.75rem', color: 'var(--primary)', marginBottom: '0.25rem' }}>{orders.length}</h4>
-                                    <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: 500 }}>Total Orders</div>
-                                </div>
-                                <Link to="/wishlist" style={{ textDecoration: 'none', color: 'inherit' }}>
-                                    <div className="activity-card" style={{ padding: '1.5rem', background: '#f8fafc', borderRadius: '10px', border: '1px solid var(--border-color)', transition: 'all 0.2s' }}>
-                                        <h4 style={{ fontSize: '1.75rem', color: 'var(--primary)', marginBottom: '0.25rem' }}>{wishlistCount}</h4>
-                                        <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: 500 }}>My Wishlist</div>
+                    <div className="pigglitz-content">
+                        {activeTab === 'Dashboard' && (
+                            <>
+                                <div className="pigglitz-welcome">
+                                    <div className="pigglitz-welcome-icon">👋</div>
+                                    <div>
+                                        <h2>Hello, {user.firstName ? `${user.firstName} ${user.lastName || ''}` : user.name}!</h2>
+                                        <p>From your account dashboard you can view your recent orders, manage your shipping addresses, and edit your password and account details.</p>
                                     </div>
-                                </Link>
-                                <Link to="/my-tickets" style={{ textDecoration: 'none', color: 'inherit', gridColumn: 'span 1' }}>
-                                    <div className="activity-card" style={{ padding: '1.5rem', background: '#f8fafc', borderRadius: '10px', border: '1px solid var(--border-color)', transition: 'all 0.2s' }}>
-                                        <ChatCircleText size={28} color="var(--primary)" style={{ marginBottom: '8px' }} />
-                                        <div style={{ fontSize: '0.9rem', color: 'var(--text-dark)', fontWeight: 600 }}>Get Support</div>
-                                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>View Conversation</div>
-                                    </div>
-                                </Link>
-                            </div>
-                        </div>
-
-                        <div className="content-card" style={{ background: 'var(--white)', padding: '2.5rem', borderRadius: '12px', border: '1px solid var(--border-color)', boxShadow: '0 10px 30px rgba(0,0,0,0.05)' }}>
-                            <h3 style={{ fontSize: '1.25rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                <Package size={24} color="var(--primary)" /> Your Orders
-                            </h3>
-                            
-                            {loadingOrders ? (
-                                <div style={{ textAlign: 'center', padding: '2rem' }}>Loading your orders...</div>
-                            ) : orders.length === 0 ? (
-                                <div style={{ padding: '3rem 1rem', textAlign: 'center', background: '#fcfcfc', border: '1px dashed var(--border-color)', borderRadius: '10px' }}>
-                                    <Package size={48} color="#e2e8f0" style={{ marginBottom: '1rem' }} />
-                                    <p style={{ color: 'var(--text-muted)' }}>You haven't placed any orders yet.</p>
-                                    <button onClick={() => navigate('/products')} className="btn btn-dark" style={{ marginTop: '1rem', padding: '8px 24px' }}>Start Shopping</button>
                                 </div>
-                            ) : (
-                                <div className="orders-list" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                                    {orders.map(order => (
-                                        <div 
-                                            key={order.orderId} 
-                                            className="order-item" 
-                                            onClick={() => setSelectedOrder(selectedOrder === order.orderId ? null : order.orderId)}
-                                            style={{ 
-                                                padding: '1.5rem', 
-                                                border: '1px solid var(--border-color)', 
-                                                borderRadius: '10px', 
-                                                cursor: 'pointer',
-                                                transition: 'all 0.2s',
-                                                background: selectedOrder === order.orderId ? '#f8fafc' : 'white'
-                                            }}
-                                        >
-                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
-                                                <div>
-                                                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '4px' }}>ORDER #{order.orderId}</div>
-                                                    <div style={{ fontWeight: 600, color: 'var(--text-dark)' }}>{order.productName}</div>
-                                                    <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                                                        {new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
-                                                    </div>
-                                                </div>
-                                                <div style={{ textAlign: 'right' }}>
-                                                    <div style={{ fontWeight: 700, color: 'var(--primary)', marginBottom: '4px' }}>₹{order.totalPrice?.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
-                                                    <div style={{ 
-                                                        display: 'flex', 
-                                                        alignItems: 'center', 
-                                                        gap: '6px', 
-                                                        fontSize: '0.85rem', 
-                                                        fontWeight: 600,
-                                                        color: order.status === 'Delivered' || order.status === 'Completed' ? '#059669' : (order.status?.includes('Shipped') || order.status?.includes('Transit')) ? '#2563eb' : '#f59e0b',
-                                                        padding: '4px 10px',
-                                                        borderRadius: '20px',
-                                                        background: order.status === 'Delivered' || order.status === 'Completed' ? '#f0fdf4' : (order.status?.includes('Shipped') || order.status?.includes('Transit')) ? '#eff6ff' : '#fffbeb'
-                                                    }}>
-                                                        {getStatusIcon(order.status)} {order.status}
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            {selectedOrder === order.orderId && (
-                                                <div style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px dashed var(--border-color)', animation: 'slideDown 0.3s ease-out' }}>
-                                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
-                                                        <div>
-                                                            <h5 style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>Shipping Address</h5>
-                                                            <p style={{ fontSize: '0.9rem', lineHeight: '1.5' }}>
-                                                                {order.streetAddress ? (
-                                                                    <>
-                                                                        {order.streetAddress}<br />
-                                                                        {order.streetAddress2 && <>{order.streetAddress2}<br /></>}
-                                                                        {order.city}, {order.state} - {order.postcode}
-                                                                    </>
-                                                                ) : (
-                                                                    order.address
-                                                                )}
-                                                            </p>
-                                                        </div>
-                                                        <div>
-                                                            <h5 style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>Payment Details</h5>
-                                                            <p style={{ fontSize: '0.9rem' }}>Method: {order.paymentMethod}</p>
-                                                            <p style={{ fontSize: '0.9rem' }}>Status: <span style={{ color: order.paymentStatus === 'Paid' ? '#059669' : 'inherit', fontWeight: 600 }}>{order.paymentStatus}</span></p>
-                                                        </div>
-                                                        <div>
-                                                            <h5 style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>Contact</h5>
-                                                            <p style={{ fontSize: '0.9rem' }}>{order.firstName ? `${order.firstName} ${order.lastName || ''}` : order.customerName}</p>
-                                                            <p style={{ fontSize: '0.9rem' }}>{order.phone}</p>
-                                                            {order.companyName && <p style={{ fontSize: '0.85rem', color: 'var(--primary)', fontWeight: 600 }}>{order.companyName}</p>}
-                                                            {order.gstNumber && <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>GST: {order.gstNumber}</p>}
-                                                        </div>
-                                                    </div>
-                                                    
-                                                    {order.trackingDetails && (
-                                                        <div style={{ marginTop: '1.5rem', padding: '1rem', background: '#eff6ff', borderRadius: '8px', border: '1px solid #bfdbfe' }}>
-                                                            <h5 style={{ fontSize: '0.85rem', marginBottom: '8px', color: '#1e40af', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                                                <Truck size={20} /> Tracking Information
-                                                            </h5>
-                                                            <p style={{ fontSize: '0.95rem', fontWeight: 600, color: '#1e3a8a', margin: 0 }}>{order.trackingDetails}</p>
-                                                        </div>
-                                                    )}
-                                                    
-                                                    <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                                                        <h5 style={{ fontSize: '0.85rem', marginBottom: '10px' }}>Order Status Timeline</h5>
-                                                        <div style={{ display: 'flex', justifyContent: 'space-between', position: 'relative', padding: '0 10px' }}>
-                                                            {['Pending', 'Order Confirmed', 'Shipped / Dispatched', 'Delivered'].map((step, idx) => {
-                                                                const statusOrder = ['Pending', 'Order Confirmed', 'Processing', 'Packed / Ready for Dispatch', 'Shipped / Dispatched', 'In Transit', 'Out for Delivery', 'Delivered', 'Attempted Delivery', 'Delayed', 'Completed'];
-                                                                const currentStatusIdx = statusOrder.indexOf(order.status);
-                                                                const stepIdxInOrder = statusOrder.indexOf(step);
-                                                                const isCompleted = currentStatusIdx >= stepIdxInOrder;
-                                                                
-                                                                return (
-                                                                    <div key={step} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', zIndex: 1 }}>
-                                                                        <div style={{ 
-                                                                            width: '24px', 
-                                                                            height: '24px', 
-                                                                            borderRadius: '50%', 
-                                                                            background: isCompleted ? 'var(--primary)' : '#e2e8f0',
-                                                                            color: 'white',
-                                                                            display: 'flex',
-                                                                            alignItems: 'center',
-                                                                            justifyContent: 'center',
-                                                                            fontSize: '12px'
-                                                                        }}>
-                                                                            {isCompleted ? <CheckCircle size={14} weight="fill" /> : idx + 1}
-                                                                        </div>
-                                                                        <span style={{ fontSize: '0.7rem', fontWeight: isCompleted ? 700 : 500, color: isCompleted ? 'var(--text-dark)' : 'var(--text-muted)', textAlign: 'center' }}>{step}</span>
-                                                                    </div>
-                                                                )
-                                                            })}
-                                                            <div style={{ 
-                                                                position: 'absolute', 
-                                                                top: '12px', 
-                                                                left: '30px', 
-                                                                right: '30px', 
-                                                                height: '2px', 
-                                                                background: '#e2e8f0', 
-                                                                zIndex: 0 
-                                                            }}>
-                                                                <div style={{ 
-                                                                    height: '100%', 
-                                                                    background: 'var(--primary)', 
-                                                                    width: `${Math.min(100, Math.max(0, (['Pending', 'Order Confirmed', 'Shipped / Dispatched', 'Delivered'].indexOf(['Pending', 'Order Confirmed', 'Shipped / Dispatched', 'Delivered'].findLast((s, i) => {
-                                                                        const statusOrder = ['Pending', 'Order Confirmed', 'Processing', 'Packed / Ready for Dispatch', 'Shipped / Dispatched', 'In Transit', 'Out for Delivery', 'Delivered', 'Attempted Delivery', 'Delayed', 'Completed'];
-                                                                        return statusOrder.indexOf(order.status) >= statusOrder.indexOf(s);
-                                                                    })) / 3) * 100))}%`,
-                                                                    transition: 'width 0.5s ease-in-out'
-                                                                }}></div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            )}
+                                
+                                <div className="pigglitz-stats">
+                                    <div className="number">{orders.length}</div>
+                                    <div className="label">Total Orders</div>
+                                </div>
+                                
+                                <div className="pigglitz-stores-wrapper">
+                                    <div className="pigglitz-stores">
+                                        <div className="pigglitz-stores-header">Online Stores</div>
+                                        <div className="pigglitz-store-logos">
+                                            <div className="store-badge amazon">amazon</div>
+                                            <div className="store-badge flipkart">Flipkart</div>
+                                            <div className="store-badge indiamart">IndiaMART</div>
                                         </div>
-                                    ))}
+                                    </div>
                                 </div>
-                            )}
-                        </div>
+                            </>
+                        )}
+
+                        {activeTab === 'Orders' && (
+                            <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' }}>
+                                <h3 style={{ color: 'var(--secondary)', marginBottom: '1.5rem', fontSize: '1.5rem' }}>Your Orders</h3>
+                                {loadingOrders ? (
+                                    <div style={{ textAlign: 'center', padding: '2rem' }}>Loading your orders...</div>
+                                ) : orders.length === 0 ? (
+                                    <div style={{ padding: '3rem 1rem', textAlign: 'center', background: '#fcfcfc', border: '1px dashed #cbd5e1', borderRadius: '10px' }}>
+                                        <Package size={48} color="#e2e8f0" style={{ margin: '0 auto 1rem' }} />
+                                        <p style={{ color: 'var(--text-muted)' }}>You haven't placed any orders yet.</p>
+                                        <button onClick={() => navigate('/products')} className="btn btn-dark" style={{ marginTop: '1rem', padding: '8px 24px', background: 'var(--secondary)', border: 'none' }}>Start Shopping</button>
+                                    </div>
+                                ) : (
+                                    <div className="pigglitz-orders-container">
+                                        <div className="pigglitz-orders-header">
+                                            <div>Order</div>
+                                            <div>Date</div>
+                                            <div>Status</div>
+                                            <div>Total</div>
+                                            <div style={{ textAlign: 'right' }}>Actions</div>
+                                        </div>
+                                        {orders.map(order => (
+                                            <div key={order.orderId} className="pigglitz-order-row" onClick={() => setSelectedOrder(selectedOrder === order.orderId ? null : order.orderId)}>
+                                                <div className="order-id">#{order.orderId}</div>
+                                                <div className="order-date">
+                                                    {new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
+                                                </div>
+                                                <div className="order-status" style={{ color: order.status === 'Delivered' ? '#059669' : 'var(--primary)' }}>
+                                                    {order.status}
+                                                </div>
+                                                <div className="order-total">
+                                                    ₹{order.totalPrice?.toLocaleString('en-IN', {minimumFractionDigits: 2})} for {order.quantity || 1} items
+                                                </div>
+                                                <div className="order-actions">
+                                                    <button className="icon-btn" title="View Details" onClick={(e) => { e.stopPropagation(); setSelectedOrder(selectedOrder === order.orderId ? null : order.orderId); }}>
+                                                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                                    </button>
+                                                    <button className="track-btn" onClick={(e) => { 
+                                                        e.stopPropagation(); 
+                                                        if (order.trackingLink) {
+                                                            window.open(order.trackingLink, '_blank');
+                                                        } else {
+                                                            alert('Tracking link not available yet.');
+                                                        }
+                                                    }}>Track</button>
+                                                </div>
+                                                
+                                                {selectedOrder === order.orderId && (
+                                                    <div className="order-details-expanded" style={{ gridColumn: '1 / -1', padding: '1.5rem', background: '#f8fafc', borderTop: '1px solid var(--border-color)', marginTop: '1rem', borderRadius: '0 0 8px 8px' }}>
+                                                        <h4 style={{ marginBottom: '1rem', color: 'var(--text-dark)' }}>{order.productName}</h4>
+                                                        <p><strong>Payment Method:</strong> {order.paymentMethod}</p>
+                                                        <p><strong>Payment Status:</strong> {order.paymentStatus}</p>
+                                                        {order.trackingDetails && <p><strong>Tracking:</strong> {order.trackingDetails}</p>}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {activeTab === 'Account details' && (
+                            <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' }}>
+                                <h3 style={{ color: 'var(--secondary)', marginBottom: '1.5rem', fontSize: '1.5rem' }}>Account Details</h3>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '2rem' }}>
+                                    <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'var(--secondary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5rem', fontWeight: 'bold' }}>
+                                        {(user.firstName ? user.firstName.charAt(0) : user.name?.charAt(0))?.toUpperCase() || 'U'}
+                                    </div>
+                                    <div>
+                                        <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#0f172a' }}>{user.firstName ? `${user.firstName} ${user.lastName || ''}` : user.name}</div>
+                                        <div style={{ color: '#64748b' }}>{user.role === 'admin' ? 'Administrator' : 'Customer'}</div>
+                                    </div>
+                                </div>
+                                <div style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: '8px' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1rem', color: '#334155' }}>
+                                        <Envelope size={20} color="var(--secondary)" />
+                                        <span>{user.email}</span>
+                                    </div>
+                                    {user.mobile && (
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1rem', color: '#334155' }}>
+                                            <Phone size={20} color="var(--secondary)" />
+                                            <span>{user.mobile}</span>
+                                        </div>
+                                    )}
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#334155' }}>
+                                        <Heart size={20} color="var(--secondary)" />
+                                        <span>Reward Points: <strong>{user.points || 0}</strong></span>
+                                    </div>
+                                </div>
+                                {user.role === 'admin' && (
+                                    <button onClick={() => navigate('/admin')} style={{ marginTop: '2rem', background: 'var(--secondary)', color: 'white', padding: '0.75rem 1.5rem', borderRadius: '6px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                        <Shield size={20} /> Go to Admin Panel
+                                    </button>
+                                )}
+                            </div>
+                        )}
+
+                        {activeTab === 'Addresses' && (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
+                                {/* Billing Addresses */}
+                                <div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+                                        <h3 style={{ color: 'var(--text-dark)', margin: 0, fontSize: '1.8rem', fontWeight: 800 }}>Billing Addresses</h3>
+                                        <button className="pigglitz-btn">Add Billing Address</button>
+                                    </div>
+                                    <div className="pigglitz-address-card">
+                                        <div className="address-header">
+                                            <div className="address-name">{user.firstName ? `${user.firstName} ${user.lastName || ''}` : user.name}</div>
+                                            <div className="address-actions">
+                                                <span>Edit</span> <span>Delete</span>
+                                            </div>
+                                        </div>
+                                        <div className="address-body">
+                                            {user.address && user.address.streetAddress ? (
+                                                <>
+                                                    <p>{user.address.streetAddress}</p>
+                                                    {user.address.streetAddress2 && <p>{user.address.streetAddress2}</p>}
+                                                    <p>{user.address.city}, {user.address.postcode}</p>
+                                                    <p>{user.address.state || 'India'}</p>
+                                                </>
+                                            ) : (
+                                                <p style={{ fontStyle: 'italic', color: '#94a3b8' }}>
+                                                    No address saved yet. It will be automatically saved after your first order.
+                                                </p>
+                                            )}
+                                            <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #f1f5f9' }}>
+                                                <p>Phone: {user.mobile}</p>
+                                                <p>Email: {user.email}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Shipping Addresses */}
+                                <div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+                                        <h3 style={{ color: 'var(--text-dark)', margin: 0, fontSize: '1.8rem', fontWeight: 800 }}>Shipping Addresses</h3>
+                                        <button className="pigglitz-btn">Add Shipping Address</button>
+                                    </div>
+                                    <div className="pigglitz-address-card">
+                                        <div className="address-header">
+                                            <div className="address-name">{user.firstName ? `${user.firstName} ${user.lastName || ''}` : user.name}</div>
+                                            <div className="address-actions">
+                                                <span>Edit</span> <span>Delete</span>
+                                            </div>
+                                        </div>
+                                        <div className="address-body">
+                                            {user.address && user.address.streetAddress ? (
+                                                <>
+                                                    <p>{user.address.streetAddress}</p>
+                                                    {user.address.streetAddress2 && <p>{user.address.streetAddress2}</p>}
+                                                    <p>{user.address.city}, {user.address.postcode}</p>
+                                                    <p>{user.address.state || 'India'}</p>
+                                                </>
+                                            ) : (
+                                                <p style={{ fontStyle: 'italic', color: '#94a3b8' }}>
+                                                    No address saved yet. It will be automatically saved after your first order.
+                                                </p>
+                                            )}
+                                            <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #f1f5f9' }}>
+                                                <p>Phone: {user.mobile}</p>
+                                                <p>Email: {user.email}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'Order Invoices' && (
+                            <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' }}>
+                                <h3 style={{ color: 'var(--secondary)', marginBottom: '1.5rem', fontSize: '1.5rem' }}>Order Invoices</h3>
+                                <p style={{ color: '#64748b' }}>You can download invoices for your completed orders here.</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
-
-            <style>{`
-                .activity-card:hover {
-                    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
-                    transform: translateY(-2px);
-                    border-color: var(--primary) !important;
-                }
-                .order-item:hover {
-                    border-color: var(--primary) !important;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-                }
-                @keyframes slideDown {
-                    from { opacity: 0; transform: translateY(-10px); }
-                    to { opacity: 1; transform: translateY(0); }
-                }
-                @media (max-width: 991px) {
-                    .account-grid {
-                        grid-template-columns: 1fr !important;
-                        gap: 1.5rem !important;
-                    }
-                    .account-sidebar {
-                        margin-bottom: 0;
-                    }
-                }
-                @media (max-width: 480px) {
-                    .account-page {
-                        padding: 2rem 0 !important;
-                    }
-                    .content-card, .profile-card {
-                        padding: 1.5rem !important;
-                    }
-                }
-            `}</style>
         </main>
     );
 };

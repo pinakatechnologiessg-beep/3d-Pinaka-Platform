@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import compression from 'compression';
 import productRoutes from './routes/productRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import supportRoutes from './routes/supportRoutes.js';
@@ -31,6 +32,7 @@ const app = express();
 const PORT = process.env.PORT || 10000;
 
 // Middleware
+app.use(compression());
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
@@ -39,10 +41,8 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use('/images', express.static(path.join(__dirname, 'public/images')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Root Route
-app.get("/", (req, res) => {
-  res.send("API is running 🚀");
-});
+// Serve React static files in production
+app.use(express.static(path.join(__dirname, '../client/dist')));
 
 // API Base Route
 app.get("/api", (req, res) => {
@@ -142,6 +142,14 @@ app.use('/api/coupons', couponRoutes);
 app.use('/api/hero', heroRoutes);
 app.use('/api/partner-products', partnerProductRoutes);
 
+// Catch-all route to serve React App for all unknown routes (SPA routing)
+app.get('*', (req, res) => {
+  // If it's an API route that wasn't found, don't serve HTML
+  if (req.path.startsWith('/api')) {
+    return res.status(404).json({ success: false, message: 'API Route Not Found' });
+  }
+  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+});
 
 // Global Error Handler to avoid returning HTML for 500 errors
 app.use((err, req, res, next) => {

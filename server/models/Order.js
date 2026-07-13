@@ -45,6 +45,10 @@ const orderSchema = new mongoose.Schema({
     type: String,
     default: ""
   },
+  trackingLink: {
+    type: String,
+    default: ""
+  },
   paymentMethod: {
     type: String,
     default: "COD"

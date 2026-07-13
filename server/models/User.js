@@ -17,7 +17,17 @@ const userSchema = new mongoose.Schema({
     quantity: { type: Number, default: 1 }
   }],
   role: { type: String, default: 'user' },
-  points: { type: Number, default: 0 }
+  points: { type: Number, default: 0 },
+  address: {
+    streetAddress: { type: String },
+    streetAddress2: { type: String },
+    city: { type: String },
+    state: { type: String },
+    postcode: { type: String },
+    country: { type: String, default: 'India' }
+  },
+  companyName: { type: String },
+  gstNumber: { type: String }
 }, { timestamps: true });
 
 userSchema.pre('save', async function() {
