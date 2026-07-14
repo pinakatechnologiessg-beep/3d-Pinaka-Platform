@@ -143,7 +143,7 @@ app.use('/api/hero', heroRoutes);
 app.use('/api/partner-products', partnerProductRoutes);
 
 // Catch-all route to serve React App for all unknown routes (SPA routing)
-app.get('*', (req, res) => {
+app.get(/.*/, (req, res) => {
   // If it's an API route that wasn't found, don't serve HTML
   if (req.path.startsWith('/api')) {
     return res.status(404).json({ success: false, message: 'API Route Not Found' });

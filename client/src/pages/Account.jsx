@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { User, Shield, Package, Heart, SignOut, ArrowLeft, Envelope, Phone, ChatCircleText, Clock, CheckCircle, Truck } from '@phosphor-icons/react';
 import { cartService } from '../services/cartService';
 import { API_BASE_URL } from '../api/config';
+import { getImageUrl } from '../utils/imageUtils';
 import './Account.css'; // Import the new CSS
 
 const Account = () => {
@@ -127,16 +128,6 @@ const Account = () => {
                                     <div className="label">Total Orders</div>
                                 </div>
                                 
-                                <div className="pigglitz-stores-wrapper">
-                                    <div className="pigglitz-stores">
-                                        <div className="pigglitz-stores-header">Online Stores</div>
-                                        <div className="pigglitz-store-logos">
-                                            <div className="store-badge amazon">amazon</div>
-                                            <div className="store-badge flipkart">Flipkart</div>
-                                            <div className="store-badge indiamart">IndiaMART</div>
-                                        </div>
-                                    </div>
-                                </div>
                             </>
                         )}
 
@@ -149,7 +140,7 @@ const Account = () => {
                                     <div style={{ padding: '3rem 1rem', textAlign: 'center', background: '#fcfcfc', border: '1px dashed #cbd5e1', borderRadius: '10px' }}>
                                         <Package size={48} color="#e2e8f0" style={{ margin: '0 auto 1rem' }} />
                                         <p style={{ color: 'var(--text-muted)' }}>You haven't placed any orders yet.</p>
-                                        <button onClick={() => navigate('/products')} className="btn btn-dark" style={{ marginTop: '1rem', padding: '8px 24px', background: 'var(--secondary)', border: 'none' }}>Start Shopping</button>
+                                        <button onClick={() => navigate('/products')} className="btn btn-dark" style={{ marginTop: '1rem', padding: '8px 24px', background: 'var(--primary)', border: 'none' }}>Start Shopping</button>
                                     </div>
                                 ) : (
                                     <div className="pigglitz-orders-container">
@@ -203,9 +194,9 @@ const Account = () => {
 
                         {activeTab === 'Account details' && (
                             <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' }}>
-                                <h3 style={{ color: 'var(--secondary)', marginBottom: '1.5rem', fontSize: '1.5rem' }}>Account Details</h3>
+                                <h3 style={{ color: 'var(--primary)', marginBottom: '1.5rem', fontSize: '1.5rem' }}>Account Details</h3>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '2rem' }}>
-                                    <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'var(--secondary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5rem', fontWeight: 'bold' }}>
+                                    <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'var(--primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5rem', fontWeight: 'bold' }}>
                                         {(user.firstName ? user.firstName.charAt(0) : user.name?.charAt(0))?.toUpperCase() || 'U'}
                                     </div>
                                     <div>
@@ -215,22 +206,22 @@ const Account = () => {
                                 </div>
                                 <div style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: '8px' }}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1rem', color: '#334155' }}>
-                                        <Envelope size={20} color="var(--secondary)" />
+                                        <Envelope size={20} color="var(--primary)" />
                                         <span>{user.email}</span>
                                     </div>
                                     {user.mobile && (
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1rem', color: '#334155' }}>
-                                            <Phone size={20} color="var(--secondary)" />
+                                            <Phone size={20} color="var(--primary)" />
                                             <span>{user.mobile}</span>
                                         </div>
                                     )}
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#334155' }}>
-                                        <Heart size={20} color="var(--secondary)" />
+                                        <Heart size={20} color="var(--primary)" />
                                         <span>Reward Points: <strong>{user.points || 0}</strong></span>
                                     </div>
                                 </div>
                                 {user.role === 'admin' && (
-                                    <button onClick={() => navigate('/admin')} style={{ marginTop: '2rem', background: 'var(--secondary)', color: 'white', padding: '0.75rem 1.5rem', borderRadius: '6px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <button onClick={() => navigate('/admin')} style={{ marginTop: '2rem', background: 'var(--primary)', color: 'white', padding: '0.75rem 1.5rem', borderRadius: '6px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
                                         <Shield size={20} /> Go to Admin Panel
                                     </button>
                                 )}
@@ -310,11 +301,67 @@ const Account = () => {
                         )}
 
                         {activeTab === 'Order Invoices' && (
-                            <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' }}>
-                                <h3 style={{ color: 'var(--secondary)', marginBottom: '1.5rem', fontSize: '1.5rem' }}>Order Invoices</h3>
-                                <p style={{ color: '#64748b' }}>You can download invoices for your completed orders here.</p>
+                            <div className="invoice-table-container">
+                                <h3>Order Invoices</h3>
+                                {loadingOrders ? (
+                                    <p style={{ color: 'var(--text-muted)' }}>Loading invoices...</p>
+                                ) : orders.length === 0 ? (
+                                    <p style={{ color: 'var(--text-muted)' }}>No invoices available yet.</p>
+                                ) : (
+                                    <div style={{ overflowX: 'auto' }}>
+                                        <table className="invoice-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Order Number</th>
+                                                    <th>Order Placed Date</th>
+                                                    <th>Order Status</th>
+                                                    <th>View Details</th>
+                                                    <th>Download Invoice</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {orders.map(order => (
+                                                    <tr key={order.orderId}>
+                                                        <td style={{ fontWeight: 600 }}>#{order.orderId}</td>
+                                                        <td>{new Date(order.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
+                                                        <td className="invoice-status">{order.status}</td>
+                                                        <td>
+                                                            <button className="btn-gray" onClick={() => {
+                                                                setActiveTab('Orders');
+                                                                setSelectedOrder(order.orderId);
+                                                            }}>View Details</button>
+                                                        </td>
+                                                        <td>
+                                                            <button 
+                                                                className="btn-blue" 
+                                                                onClick={() => {
+                                                                    if (order.invoiceImage) {
+                                                                        window.open(getImageUrl(order.invoiceImage), '_blank');
+                                                                    } else {
+                                                                        alert('Invoice is not available yet. Please check back later.');
+                                                                    }
+                                                                }}
+                                                            >
+                                                                Request Invoice
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                )}
                             </div>
                         )}
+                    </div>
+                </div>
+
+                <div className="online-stores-banner">
+                    <div className="online-stores-header">Online Stores</div>
+                    <div className="store-logos-container">
+                        <div className="store-logo-box store-amazon">amazon</div>
+                        <div className="store-logo-box store-flipkart">Flipkart</div>
+                        <div className="store-logo-box store-indiamart">IndiaMART</div>
                     </div>
                 </div>
             </div>

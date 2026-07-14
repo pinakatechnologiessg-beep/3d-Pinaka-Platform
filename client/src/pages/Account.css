@@ -6,7 +6,7 @@
 }
 
 .pigglitz-top-border {
-    border-top: 3px solid var(--secondary); /* Blue solid border */
+    border-top: 3px solid var(--primary); /* Theme primary border */
     width: 100%;
     margin-bottom: 2rem;
 }
@@ -42,7 +42,7 @@
 }
 
 .pigglitz-tab.active {
-    background: var(--secondary); /* Theme Blue */
+    background: var(--primary); /* Theme primary */
     color: var(--white);
     border-bottom: none;
 }
@@ -76,7 +76,7 @@
 }
 
 .pigglitz-welcome h2 {
-    color: var(--secondary); /* Theme blue */
+    color: var(--primary); /* Theme primary */
     font-size: 1.5rem;
     margin-bottom: 0.5rem;
     margin-top: 0;
@@ -102,7 +102,7 @@
 .pigglitz-stats .number {
     font-size: 3rem;
     font-weight: 800;
-    color: var(--secondary); /* Theme blue */
+    color: var(--primary); /* Theme primary */
     line-height: 1;
     margin-bottom: 0.5rem;
 }
@@ -127,7 +127,7 @@
 }
 
 .pigglitz-stores-header {
-    background: var(--secondary);
+    background: var(--primary);
     color: var(--white);
     padding: 0.5rem 2rem;
     border-radius: 8px;
@@ -312,3 +312,120 @@
         justify-content: flex-start;
     }
 }
+
+/* Order Invoices Page Styles */
+.invoice-table-container {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.invoice-table-container h3 {
+    color: var(--primary);
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+    font-weight: 800;
+}
+
+.invoice-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.invoice-table th {
+    background: #eef2ff; /* Light indigo bg */
+    color: var(--primary);
+    font-weight: 700;
+    padding: 1.2rem 1rem;
+    text-align: left;
+    font-size: 0.95rem;
+    border-bottom: 1px solid #e0e7ff;
+}
+
+.invoice-table th:first-child { border-top-left-radius: 8px; border-bottom-left-radius: 8px; }
+.invoice-table th:last-child { border-top-right-radius: 8px; border-bottom-right-radius: 8px; }
+
+.invoice-table td {
+    padding: 1.5rem 1rem;
+    color: var(--text-dark);
+    font-size: 0.95rem;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+}
+
+.invoice-status {
+    color: #3b82f6; /* Blue text */
+    font-weight: 600;
+}
+
+.btn-gray {
+    background: #e2e8f0;
+    color: #334155;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-gray:hover { background: #cbd5e1; }
+
+.btn-blue {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-blue:hover { background: #2563eb; }
+
+/* Online Stores Banner */
+.online-stores-banner {
+    margin-top: 4rem;
+    border: 3px dashed var(--secondary); /* Theme secondary dashed border */
+    border-radius: 12px;
+    background: white;
+    padding: 0 0 2rem 0;
+    text-align: center;
+    overflow: hidden;
+}
+
+.online-stores-header {
+    background: var(--primary);
+    color: white;
+    padding: 0.75rem 2rem;
+    font-weight: 800;
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+}
+
+.store-logos-container {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    padding: 0 2rem;
+}
+
+.store-logo-box {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 900;
+    font-size: 1.6rem;
+    background: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+}
+
+.store-amazon { color: #000000; font-family: sans-serif; }
+.store-flipkart { color: #2874f0; font-style: italic; }
+.store-indiamart { color: #dc2626; font-family: sans-serif; }

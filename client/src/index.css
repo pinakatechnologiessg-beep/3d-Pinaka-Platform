@@ -1,20 +1,23 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  --primary: #00e5ff;
-  --primary-hover: #00b8cc;
-  --secondary: #2563eb;
-  --dark-bg: #0f172a;
-  --card-bg-dark: #1e293b;
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --secondary: #e11d48;
+  --dark-bg: #09090b;
+  --card-bg-dark: #18181b;
   --white: #ffffff;
-  --light-bg: #f8fafc;
-  --text-dark: #1e293b;
+  --light-bg: #fafafa;
+  --text-dark: #0f172a;
   --text-light: #f8fafc;
   --text-muted: #64748b;
-  --border-color: #e2e8f0;
+  --border-color: #f1f5f9;
   --success: #10b981;
-  --font-main: 'Inter', sans-serif;
-  --gradient: linear-gradient(135deg, #00e5ff 0%, #a855f7 100%);
+  --font-main: 'Plus Jakarta Sans', sans-serif;
+  --gradient: linear-gradient(135deg, #4f46e5 0%, #e11d48 100%);
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.5);
+  --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
 }
 
 /* Stock Badge Styles */
@@ -310,12 +313,15 @@ img {
 
 /* Header & Nav */
 header {
-  background-color: var(--white);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   padding: 0;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.6);
   position: sticky;
   top: 0;
   z-index: 100;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 .navbar {
@@ -582,20 +588,24 @@ header {
 .btn {
   padding: 10px 24px;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .btn-primary {
-  background-color: var(--primary);
-  color: var(--dark-bg);
+  background: var(--gradient);
+  background-size: 200% auto;
+  color: var(--white);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .btn-primary:hover {
-  background-color: var(--primary-hover);
-  transform: translateY(-2px);
+  background-position: right center;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 10px 20px -5px rgba(225, 29, 72, 0.5), 0 4px 10px -3px rgba(79, 70, 229, 0.4);
 }
 
 /* Feature tags in Hero floating right side */
@@ -776,6 +786,10 @@ header {
 .section-header h2 {
   font-size: 2.2rem;
   margin-bottom: 0.5rem;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .section-header p {
@@ -792,16 +806,17 @@ header {
 .collection-card {
   background: var(--white);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 1.5rem;
   text-align: center;
-  transition: 0.3s;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   cursor: pointer;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 .collection-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   border-color: var(--primary);
 }
 

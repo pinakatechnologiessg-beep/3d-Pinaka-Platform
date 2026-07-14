@@ -202,6 +202,33 @@ const AdminDashboard = () => {
   const [orderFilter, setOrderFilter] = useState('All Orders');
   const [selectedOrderDetails, setSelectedOrderDetails] = useState(null);
   const [statusConfirmState, setStatusConfirmState] = useState(null);
+  const [invoiceFile, setInvoiceFile] = useState(null);
+  
+  const handleInvoiceUpload = async (orderId) => {
+    if (!invoiceFile) {
+        showToast('Please select a file first', 'error');
+        return;
+    }
+    const formData = new FormData();
+    formData.append('invoiceImage', invoiceFile);
+    try {
+        const res = await fetch(`${BASE_URL}/api/orders/${orderId}/invoice`, {
+            method: 'POST',
+            body: formData
+        });
+        if (res.ok) {
+            const data = await res.json();
+            setOrders(prev => prev.map(o => o.orderId === orderId ? data.order : o));
+            setSelectedOrderDetails(data.order);
+            setInvoiceFile(null);
+            showToast('Invoice uploaded successfully', 'success');
+        } else {
+            showToast('Failed to upload invoice', 'error');
+        }
+    } catch (err) {
+        showToast('Network error while uploading invoice', 'error');
+    }
+  };
   
   // --- Admin Settings State ---
   const [adminProfile, setAdminProfile] = useState(null);
@@ -3155,7 +3182,7 @@ const AdminDashboard = () => {
              </div>
 
              {/* Tracking Details & Link */}
-             <div>
+             <div style={{ marginBottom: '1.5rem' }}>
                 <label style={{ display: 'block', fontSize: '0.8rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '10px' }}>Tracking Details & Link</label>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                   <input 
@@ -3204,6 +3231,32 @@ const AdminDashboard = () => {
                     </button>
                   </div>
                 </div>
+             </div>
+
+             {/* Invoice Upload */}
+             <div>
+                <label style={{ display: 'block', fontSize: '0.8rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '10px' }}>Order Invoice Image</label>
+                <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                  <input 
+                    type="file" 
+                    accept="image/*"
+                    onChange={(e) => setInvoiceFile(e.target.files[0])}
+                    style={{ flex: 1, padding: '10px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '0.9rem', background: '#f8fafc' }}
+                  />
+                  <button 
+                    onClick={() => handleInvoiceUpload(selectedOrderDetails.orderId)}
+                    disabled={!invoiceFile}
+                    style={{ padding: '12px 20px', background: invoiceFile ? '#10b981' : '#9ca3af', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, cursor: invoiceFile ? 'pointer' : 'not-allowed', display: 'flex', alignItems: 'center', gap: '8px' }}
+                  >
+                    <UploadSimple size={18} /> Upload
+                  </button>
+                </div>
+                {selectedOrderDetails.invoiceImage && (
+                  <p style={{ marginTop: '10px', fontSize: '0.85rem', color: '#16a34a', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    <CheckCircle size={16} /> Invoice uploaded successfully
+                    <a href={getImageUrl(selectedOrderDetails.invoiceImage)} target="_blank" rel="noreferrer" style={{ marginLeft: '10px', color: '#3b82f6', textDecoration: 'underline' }}>View</a>
+                  </p>
+                )}
              </div>
           </div>
         </div>

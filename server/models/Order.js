@@ -49,6 +49,10 @@ const orderSchema = new mongoose.Schema({
     type: String,
     default: ""
   },
+  invoiceImage: {
+    type: String,
+    default: ""
+  },
   paymentMethod: {
     type: String,
     default: "COD"

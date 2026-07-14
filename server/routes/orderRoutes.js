@@ -7,6 +7,7 @@ import Razorpay from 'razorpay';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';
+import upload from '../middleware/upload.js';
 
 dotenv.config();
 
@@ -333,5 +334,33 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-export default router;
+// POST /api/orders/:id/invoice
+router.post('/:id/invoice', upload.single('invoiceImage'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No image uploaded' });
+    }
 
+    let order;
+    if (req.params.id.startsWith('ORD-')) {
+        order = await Order.findOneAndUpdate(
+          { orderId: req.params.id }, 
+          { invoiceImage: req.file.path }, 
+          { new: true, runValidators: true }
+        );
+    } else {
+        order = await Order.findByIdAndUpdate(
+          req.params.id, 
+          { invoiceImage: req.file.path }, 
+          { new: true, runValidators: true }
+        );
+    }
+
+    if (!order) return res.status(404).json({ message: 'Order not found' });
+    res.json({ message: 'Invoice uploaded successfully', order });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+export default router;
