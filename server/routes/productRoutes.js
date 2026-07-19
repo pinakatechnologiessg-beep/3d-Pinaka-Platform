@@ -67,7 +67,15 @@ router.get('/', async (req, res) => {
     }
 
     if (q) {
-      filter.name = { $regex: q, $options: 'i' };
+      const searchTerms = q.split(/\s+/).filter(Boolean);
+      filter.$and = searchTerms.map(term => ({
+        $or: [
+          { name: { $regex: term, $options: 'i' } },
+          { category: { $regex: term, $options: 'i' } },
+          { brand: { $regex: term, $options: 'i' } },
+          { tags: { $regex: term, $options: 'i' } }
+        ]
+      }));
     }
 
     if (availability === "in") {
