@@ -92,7 +92,7 @@ const Materials = () => {
                             >
                                 <Heart size={20} weight={wishlist.some(w => w.title === (item.name || item.title)) ? "fill" : "bold"} />
                             </button>
-                            <div className="product-img-wrapper" style={{ height: '200px', background: '#f8fafc', borderRadius: '8px', overflow: 'hidden', marginBottom: '12px' }}>
+                            <div className="product-img-wrapper" style={{ height: '200px', background: 'var(--light-bg)', borderRadius: '8px', overflow: 'hidden', marginBottom: '12px' }}>
                                 <img 
                                     src={getImageUrl(item.image)} 
                                     alt={item.name || item.title} 

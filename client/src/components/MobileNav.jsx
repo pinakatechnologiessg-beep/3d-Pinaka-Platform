@@ -14,7 +14,7 @@ const MobileNav = ({ user, isOpen, onClose, activeDropdowns, toggleDropdown, car
         <div className={`mobile-menu-header ${(user?.role === 'admin' && location.pathname.startsWith('/admin')) ? 'admin-header' : ''}`}>
           {user?.role === 'admin' && location.pathname.startsWith('/admin') ? (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-              <div style={{ fontSize: '24px', fontWeight: 700, color: '#111827', fontFamily: "'Inter', sans-serif" }}>Admin<span style={{ color: '#6366f1' }}>Pro</span></div>
+              <div style={{ fontSize: '24px', fontWeight: 700, color: 'var(--card-bg-dark)', fontFamily: "'Inter', sans-serif" }}>Admin<span style={{ color: '#6366f1' }}>Pro</span></div>
               <div className="close-menu-btn" onClick={onClose} style={{ cursor: 'pointer' }}>
                 <X size={24} weight="bold" />
               </div>

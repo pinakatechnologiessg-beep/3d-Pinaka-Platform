@@ -415,13 +415,18 @@ router.get('/:id', async (req, res) => {
       product = await Product.findById(identifier);
     }
 
-    // If not found by ID or not an ID, search by name
     if (!product) {
-      // Decode URI component and replace hyphens with spaces for a flexible match
-      const decodedName = decodeURIComponent(identifier).replace(/-/g, ' ');
+      const decodedName = decodeURIComponent(identifier);
+      
+      // Extract alphanumeric parts to ignore any spacing, hyphens, commas, or dots
+      const parts = decodedName.split(/[^a-zA-Z0-9]+/);
+      
+      // Build a flexible pattern that matches these parts in order, ignoring punctuation between them
+      const searchPattern = parts.filter(Boolean).join('.*?');
+      
       // Use regex for case-insensitive exact match
       product = await Product.findOne({ 
-        name: { $regex: new RegExp(`^${decodedName}$`, 'i') } 
+        name: { $regex: new RegExp(searchPattern, 'i') } 
       });
     }
 

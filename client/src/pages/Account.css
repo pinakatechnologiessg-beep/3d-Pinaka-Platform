@@ -66,7 +66,7 @@
 .pigglitz-welcome-icon {
     width: 60px;
     height: 60px;
-    background: #eff6ff; /* Light blue bg */
+    background: var(--border-color); /* Light blue bg */
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -252,7 +252,7 @@
 }
 
 .pigglitz-order-row:hover {
-    background: #f8fafc;
+    background: var(--light-bg);
 }
 
 .order-actions {
@@ -356,12 +356,12 @@
 }
 
 .invoice-status {
-    color: #3b82f6; /* Blue text */
+    color: var(--primary); /* Blue text */
     font-weight: 600;
 }
 
 .btn-gray {
-    background: #e2e8f0;
+    background: var(--border-color);
     color: #334155;
     border: none;
     padding: 0.6rem 1.2rem;
@@ -375,7 +375,7 @@
 .btn-gray:hover { background: #cbd5e1; }
 
 .btn-blue {
-    background: #3b82f6;
+    background: var(--primary);
     color: white;
     border: none;
     padding: 0.6rem 1.2rem;
@@ -386,7 +386,7 @@
     transition: background 0.2s;
 }
 
-.btn-blue:hover { background: #2563eb; }
+.btn-blue:hover { background: var(--primary); }
 
 /* Online Stores Banner */
 .online-stores-banner {
@@ -417,7 +417,7 @@
 }
 
 .store-logo-box {
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 0.75rem 1.5rem;
     font-weight: 900;

@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import MarketplaceBanner from './components/MarketplaceBanner';
 import MobileNav from './components/MobileNav';
+
 import Home from './pages/Home';
 import Support from './pages/Support';
 import Materials from './pages/Materials';
@@ -16,6 +18,7 @@ import Testimonials from './pages/Testimonials';
 import PrintingServices from './pages/PrintingServices';
 import ProductDetail from './pages/ProductDetail';
 import AdminDashboard from './pages/AdminDashboard';
+import BlogDetail from './pages/BlogDetail';
 import Account from './pages/Account';
 import MyTickets from './pages/MyTickets';
 import AdminSupport from './pages/AdminSupport';
@@ -61,7 +64,7 @@ class AdminErrorBoundary extends React.Component {
       return (
         <div style={{ padding: '40px', textAlign: 'center', fontFamily: 'sans-serif' }}>
           <h1 style={{ color: '#ef4444' }}>Something went wrong in the Admin Panel</h1>
-          <p style={{ color: '#64748b' }}>{this.state.error?.message || "Unknown error"}</p>
+          <p style={{ color: 'var(--text-muted)' }}>{this.state.error?.message || "Unknown error"}</p>
           <button 
             onClick={() => window.location.reload()} 
             style={{ padding: '10px 20px', background: '#6366f1', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}
@@ -210,6 +213,8 @@ function App() {
         />
 
         <Routes>
+          <Route path="/blog/:id" element={<BlogDetail />} />
+          
           <Route path="/" element={<Home />} />
           <Route path="/index.html" element={<Home />} />
           <Route path="/support" element={<Support />} />
@@ -279,6 +284,7 @@ function App() {
           <Route path="/shipping-policy.html" element={<ShippingPolicy />} />
         </Routes>
 
+        <MarketplaceBanner />
         <Footer />
       </div>
     </Router>

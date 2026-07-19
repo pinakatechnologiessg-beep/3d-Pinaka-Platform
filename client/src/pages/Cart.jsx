@@ -282,7 +282,7 @@ Coupon Discount: ₹${orderData.couponDiscount}
                             email: form.customerEmail
                         },
                         theme: {
-                            color: "#1e293b"
+                            color: "var(--text-dark)"
                         }
                     };
                     const rzp = new window.Razorpay(options);
@@ -315,17 +315,17 @@ Coupon Discount: ₹${orderData.couponDiscount}
                 <div className="cart-layout">
                     <div id="cart-items-section">
                         {cartItems.length === 0 ? (
-                            <div className="cart-empty" style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-muted)', background: 'white', borderRadius: '16px', border: '1px solid var(--border-color)' }}>
+                            <div className="cart-empty" style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-muted)', background: 'var(--colorful-bg)', borderRadius: '16px', border: '1px solid var(--border-color)' }}>
                                 <ShoppingCart size={64} style={{ marginBottom: '1rem', opacity: 0.5 }} />
                                 <h3>Your cart is empty</h3>
                                 <p>Looks like you have not added anything to your cart yet.</p>
                             </div>
                         ) : (
-                            <div style={{ background: 'white', borderRadius: '16px', border: '1px solid var(--border-color)', padding: '16px' }}>
-                                <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1.5rem', color: '#1e293b' }}>Cart Summary</h2>
+                            <div style={{ background: 'var(--colorful-bg)', borderRadius: '16px', border: '1px solid var(--border-color)', padding: '16px' }}>
+                                <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1.5rem', color: 'var(--text-dark)' }}>Cart Summary</h2>
                                 {cartItems.map((item, index) => (
-                                    <div key={index} className="cart-item-new" style={{ display: 'flex', flexWrap: 'wrap', gap: '15px', padding: '15px 0', borderBottom: index === cartItems.length - 1 ? 'none' : '1px dotted #e2e8f0' }}>
-                                        <Link to={`/product/${encodeURIComponent((item.title || '').replace(/ /g, '-'))}`} style={{ width: '80px', height: '80px', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '5px', flexShrink: 0, display: 'block' }}>
+                                    <div key={index} className="cart-item-new" style={{ display: 'flex', flexWrap: 'wrap', gap: '15px', padding: '15px 0', borderBottom: index === cartItems.length - 1 ? 'none' : '1px dotted var(--border-color)' }}>
+                                        <Link to={`/product/${encodeURIComponent((item.title || '').replace(/ /g, '-'))}`} style={{ width: '80px', height: '80px', border: '1px solid var(--border-color)', borderRadius: '12px', padding: '5px', flexShrink: 0, display: 'block' }}>
                                             <img 
                                                 src={getImageUrl(item.image)} 
                                                 alt={item.title} 
@@ -338,7 +338,7 @@ Coupon Discount: ₹${orderData.couponDiscount}
                                                 <h4 style={{ fontSize: '0.95rem', fontWeight: 600, color: '#334155', marginBottom: '8px', lineHeight: '1.4', overflowWrap: 'break-word', wordWrap: 'break-word' }}>{item.title}</h4>
                                             </Link>
                                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '5px' }}>
-                                                <div style={{ fontSize: '0.9rem', color: '#64748b' }}>
+                                                <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
                                                     ₹{item.price} <span style={{ margin: '0 4px' }}>×</span> {item.quantity || 1}
                                                 </div>
                                                 <div style={{ fontWeight: 700, color: '#4338ca' }}>
@@ -346,7 +346,7 @@ Coupon Discount: ₹${orderData.couponDiscount}
                                                 </div>
                                             </div>
                                             <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
-                                                <div style={{ display: 'flex', alignItems: 'center', background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+                                                <div style={{ display: 'flex', alignItems: 'center', background: 'var(--light-bg)', borderRadius: '6px', border: '1px solid var(--border-color)' }}>
                                                     <button onClick={() => handleQuantity(item.id, -1)} style={{ border: 'none', background: 'none', padding: '2px 8px', cursor: 'pointer' }}>-</button>
                                                     <span style={{ fontSize: '0.85rem', fontWeight: 600, minWidth: '20px', textAlign: 'center' }}>{item.quantity || 1}</span>
                                                     <button onClick={() => handleQuantity(item.id, 1)} style={{ border: 'none', background: 'none', padding: '2px 8px', cursor: 'pointer' }}>+</button>
@@ -365,14 +365,14 @@ Coupon Discount: ₹${orderData.couponDiscount}
 
                     <div id="billing-summary-section">
                         {cartItems.length > 0 && !isOrderSuccess && (
-                            <div style={{ background: 'white', borderRadius: '16px', border: '1px solid var(--border-color)', padding: '16px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.05)' }}>
-                                <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1.5rem', color: '#1e293b' }}>Billing Summary</h2>
+                            <div style={{ background: 'var(--colorful-bg)', borderRadius: '16px', border: '1px solid var(--border-color)', padding: '16px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.05)' }}>
+                                <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1.5rem', color: 'var(--text-dark)' }}>Billing Summary</h2>
                                 
                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                                    <span style={{ color: '#64748b' }}>Subtotal</span>
+                                    <span style={{ color: 'var(--text-muted)' }}>Subtotal</span>
                                     <span style={{ fontWeight: 600, color: '#334155' }}>₹{total.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                                 </div>
-                                <div style={{ marginBottom: '15px', padding: '15px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                                <div style={{ marginBottom: '15px', padding: '15px', background: 'var(--light-bg)', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                                         <span style={{ fontSize: '0.9rem', fontWeight: 600, color: '#475569' }}>Your Points: <span style={{ color: '#4338ca' }}>{availablePoints}</span></span>
                                         <button 
@@ -407,13 +407,13 @@ Coupon Discount: ₹${orderData.couponDiscount}
                                     )}
                                 </div>
 
-                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px dotted #e2e8f0' }}>
-                                    <span style={{ color: '#64748b' }}>Points Discount</span>
+                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px dotted var(--border-color)' }}>
+                                    <span style={{ color: 'var(--text-muted)' }}>Points Discount</span>
                                     <span style={{ fontWeight: 600, color: '#059669' }}>-₹{appliedPoints.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                                  </div>
                                                                {/* Coupon Section */}
                                 <div style={{ marginBottom: '20px' }}>
-                                    <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '12px', color: '#1e293b' }}>Apply Coupon</h3>
+                                    <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '12px', color: 'var(--text-dark)' }}>Apply Coupon</h3>
                                     
                                     {!appliedCoupon ? (
                                         <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
@@ -422,19 +422,19 @@ Coupon Discount: ₹${orderData.couponDiscount}
                                                 value={couponCode} 
                                                 onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                                                 placeholder="Enter Coupon Code"
-                                                style={{ flex: 1, minWidth: 0, padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #e2e8f0', outline: 'none', fontWeight: 600 }}
+                                                style={{ flex: 1, minWidth: 0, padding: '10px 12px', borderRadius: '8px', border: '1.5px solid var(--border-color)', outline: 'none', fontWeight: 600 }}
                                             />
                                             <button 
                                                 onClick={() => applyCoupon()}
-                                                style={{ background: '#1e293b', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}
+                                                style={{ background: 'var(--text-dark)', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}
                                             >
                                                 Apply
                                             </button>
                                         </div>
                                     ) : (
-                                        <div style={{ background: '#ecfdf5', padding: '12px 15px', borderRadius: '12px', border: '1px solid #10b981', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+                                        <div style={{ background: '#ecfdf5', padding: '12px 15px', borderRadius: '12px', border: '1px solid var(--success)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                                <div style={{ background: '#10b981', color: 'white', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800 }}>{appliedCoupon.code}</div>
+                                                <div style={{ background: 'var(--success)', color: 'white', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800 }}>{appliedCoupon.code}</div>
                                                 <div style={{ fontSize: '0.85rem', color: '#047857', fontWeight: 600 }}>Applied Successfully!</div>
                                             </div>
                                             <button 
@@ -452,19 +452,19 @@ Coupon Discount: ₹${orderData.couponDiscount}
 
                                     {availableCoupons.length > 0 && !appliedCoupon && (
                                         <div style={{ marginTop: '10px' }}>
-                                            <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '8px', fontWeight: 600 }}>Available Coupons:</p>
+                                            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '8px', fontWeight: 600 }}>Available Coupons:</p>
                                             <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '8px' }}>
                                                 {availableCoupons.map(coupon => (
                                                     <div 
                                                         key={coupon._id}
                                                         onClick={() => { setCouponCode(coupon.code); applyCoupon(coupon.code); }}
                                                         style={{ 
-                                                            padding: '8px 12px', background: '#f0f7ff', border: '1.5px dashed #3b82f6', borderRadius: '8px', 
-                                                            color: '#3b82f6', cursor: 'pointer', minWidth: '120px', flexShrink: 0
+                                                            padding: '8px 12px', background: '#f0f7ff', border: '1.5px dashed var(--primary)', borderRadius: '8px', 
+                                                            color: 'var(--primary)', cursor: 'pointer', minWidth: '120px', flexShrink: 0
                                                         }}
                                                     >
                                                         <div style={{ fontSize: '0.8rem', fontWeight: 800, marginBottom: '2px' }}>{coupon.code}</div>
-                                                        <div style={{ fontSize: '0.65rem', color: '#64748b', fontWeight: 500, whiteSpace: 'normal', lineHeight: '1.2' }}>{coupon.description}</div>
+                                                        <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 500, whiteSpace: 'normal', lineHeight: '1.2' }}>{coupon.description}</div>
                                                     </div>
                                                 ))}
                                             </div>
@@ -472,8 +472,8 @@ Coupon Discount: ₹${orderData.couponDiscount}
                                     )}
                                 </div>
 
-                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px dotted #e2e8f0' }}>
-                                    <span style={{ color: '#64748b' }}>Coupon Discount</span>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px dotted var(--border-color)' }}>
+                                    <span style={{ color: 'var(--text-muted)' }}>Coupon Discount</span>
                                     <span style={{ fontWeight: 600, color: '#059669' }}>-₹{couponDiscount.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                                 </div>
 
@@ -482,31 +482,31 @@ Coupon Discount: ₹${orderData.couponDiscount}
                                 </p>
 
                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
-                                    <span style={{ color: '#64748b' }}>Total with GST</span>
+                                    <span style={{ color: 'var(--text-muted)' }}>Total with GST</span>
                                     <div style={{ textAlign: 'right' }}>
                                         <div style={{ fontWeight: 700, color: '#334155' }}>₹{(total - appliedPoints - couponDiscount).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
-                                        <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>(Incl. GST)</div>
+                                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>(Incl. GST)</div>
                                     </div>
                                 </div>
 
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', paddingTop: '12px', borderTop: '1px solid #f1f5f9' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', paddingTop: '12px', borderTop: '1px solid var(--border-color)' }}>
                                     <span style={{ fontSize: '1.25rem', fontWeight: 700, color: '#16a34a' }}>Grand Total</span>
                                     <span style={{ fontSize: '1.25rem', fontWeight: 800, color: '#16a34a' }}>₹{(total - appliedPoints - couponDiscount).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                                 </div>
 
                                 <div style={{ background: '#4338ca', borderRadius: '8px', padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                                     <span style={{ color: 'white', fontSize: '0.9rem', fontWeight: 600 }}>Points Earned</span>
-                                    <div style={{ background: 'white', color: '#4338ca', padding: '4px 12px', borderRadius: '20px', fontWeight: 700, fontSize: '0.9rem' }}>
+                                    <div style={{ background: 'var(--colorful-bg)', color: '#4338ca', padding: '4px 12px', borderRadius: '20px', fontWeight: 700, fontSize: '0.9rem' }}>
                                         {Math.floor((total - appliedPoints - couponDiscount)/500)} points
                                     </div>
                                 </div>
 
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
-                                    <label style={{ display: 'flex', gap: '10px', fontSize: '0.85rem', color: '#64748b', cursor: 'pointer' }}>
+                                    <label style={{ display: 'flex', gap: '10px', fontSize: '0.85rem', color: 'var(--text-muted)', cursor: 'pointer' }}>
                                         <input type="checkbox" required />
                                         <span>I have read and agree to the website <Link to="/terms-and-conditions" style={{ color: 'var(--primary)' }}>Terms and Conditions*</Link></span>
                                     </label>
-                                    <label style={{ display: 'flex', gap: '10px', fontSize: '0.85rem', color: '#64748b', cursor: 'pointer', alignItems: 'center' }}>
+                                    <label style={{ display: 'flex', gap: '10px', fontSize: '0.85rem', color: 'var(--text-muted)', cursor: 'pointer', alignItems: 'center' }}>
                                         <input type="checkbox" />
                                         <span><WhatsappLogo size={18} color="#25D366" weight="fill" style={{ verticalAlign: 'middle', marginRight: '4px' }} /> I want to receive order updates on WhatsApp</span>
                                     </label>
@@ -568,7 +568,7 @@ Coupon Discount: ₹${orderData.couponDiscount}
                                     position: 'absolute',
                                     top: '1.5rem',
                                     right: '1.5rem',
-                                    background: '#f1f5f9', 
+                                    background: 'var(--border-color)', 
                                     border: 'none', 
                                     padding: '8px',
                                     borderRadius: '50%',
@@ -576,12 +576,12 @@ Coupon Discount: ₹${orderData.couponDiscount}
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     cursor: 'pointer',
-                                    color: '#64748b',
+                                    color: 'var(--text-muted)',
                                     zIndex: 10,
                                     transition: 'all 0.2s'
                                 }}
-                                onMouseOver={(e) => e.currentTarget.style.background = '#e2e8f0'}
-                                onMouseOut={(e) => e.currentTarget.style.background = '#f1f5f9'}
+                                onMouseOver={(e) => e.currentTarget.style.background = 'var(--border-color)'}
+                                onMouseOut={(e) => e.currentTarget.style.background = 'var(--border-color)'}
                             >
                                 <X size={20} weight="bold" />
                             </button>
@@ -591,54 +591,54 @@ Coupon Discount: ₹${orderData.couponDiscount}
                                 <div className="checkout-form-grid">
                                     <div>
                                         <label style={{ display: 'block', fontSize: '0.85rem', marginBottom: '5px', fontWeight: 600 }}>First Name*</label>
-                                        <input required value={form.firstName} onChange={e => setForm({...form, firstName: e.target.value})} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #e2e8f0', outline: 'none' }} placeholder="First Name" />
+                                        <input required value={form.firstName} onChange={e => setForm({...form, firstName: e.target.value})} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid var(--border-color)', outline: 'none' }} placeholder="First Name" />
                                     </div>
                                     <div>
                                         <label style={{ display: 'block', fontSize: '0.85rem', marginBottom: '5px', fontWeight: 600 }}>Last Name*</label>
-                                        <input required value={form.lastName} onChange={e => setForm({...form, lastName: e.target.value})} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #e2e8f0', outline: 'none' }} placeholder="Last Name" />
+                                        <input required value={form.lastName} onChange={e => setForm({...form, lastName: e.target.value})} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid var(--border-color)', outline: 'none' }} placeholder="Last Name" />
                                     </div>
                                 </div>
 
                                 <div style={{ marginBottom: '1rem' }}>
                                     <label style={{ display: 'block', fontSize: '0.85rem', marginBottom: '5px', fontWeight: 600 }}>Company Name (Optional)</label>
-                                    <input value={form.companyName} onChange={e => setForm({...form, companyName: e.target.value})} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #e2e8f0', outline: 'none' }} placeholder="Business Entity" />
+                                    <input value={form.companyName} onChange={e => setForm({...form, companyName: e.target.value})} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid var(--border-color)', outline: 'none' }} placeholder="Business Entity" />
                                 </div>
 
                                 <div style={{ marginBottom: '1rem' }}>
                                     <label style={{ display: 'block', fontSize: '0.85rem', marginBottom: '5px', fontWeight: 600 }}>GST Number (Optional)</label>
-                                    <input value={form.gstNumber} onChange={e => setForm({...form, gstNumber: e.target.value})} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #e2e8f0', outline: 'none' }} placeholder="GSTIN" />
+                                    <input value={form.gstNumber} onChange={e => setForm({...form, gstNumber: e.target.value})} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid var(--border-color)', outline: 'none' }} placeholder="GSTIN" />
                                 </div>
 
                                 <div style={{ marginBottom: '1rem' }}>
                                     <label style={{ display: 'block', fontSize: '0.85rem', marginBottom: '5px', fontWeight: 600 }}>Email Address*</label>
-                                    <input required type="email" value={form.customerEmail} onChange={e => setForm({...form, customerEmail: e.target.value})} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #e2e8f0', outline: 'none' }} placeholder="email@address.com" />
+                                    <input required type="email" value={form.customerEmail} onChange={e => setForm({...form, customerEmail: e.target.value})} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid var(--border-color)', outline: 'none' }} placeholder="email@address.com" />
                                 </div>
 
                                 <div style={{ marginBottom: '1rem' }}>
                                     <label style={{ display: 'block', fontSize: '0.85rem', marginBottom: '5px', fontWeight: 600 }}>Street Address*</label>
-                                    <input required value={form.streetAddress} onChange={e => setForm({...form, streetAddress: e.target.value})} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #e2e8f0', outline: 'none', marginBottom: '10px' }} placeholder="House number and street name" />
-                                    <input value={form.streetAddress2} onChange={e => setForm({...form, streetAddress2: e.target.value})} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #e2e8f0', outline: 'none' }} placeholder="Apartment, suite, unit, etc. (optional)" />
+                                    <input required value={form.streetAddress} onChange={e => setForm({...form, streetAddress: e.target.value})} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid var(--border-color)', outline: 'none', marginBottom: '10px' }} placeholder="House number and street name" />
+                                    <input value={form.streetAddress2} onChange={e => setForm({...form, streetAddress2: e.target.value})} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid var(--border-color)', outline: 'none' }} placeholder="Apartment, suite, unit, etc. (optional)" />
                                 </div>
 
                                 <div className="checkout-form-grid">
                                     <div>
                                         <label style={{ display: 'block', fontSize: '0.85rem', marginBottom: '5px', fontWeight: 600 }}>State*</label>
-                                        <input required value={form.state} onChange={e => setForm({...form, state: e.target.value})} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #e2e8f0', outline: 'none' }} placeholder="State" />
+                                        <input required value={form.state} onChange={e => setForm({...form, state: e.target.value})} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid var(--border-color)', outline: 'none' }} placeholder="State" />
                                     </div>
                                     <div>
                                         <label style={{ display: 'block', fontSize: '0.85rem', marginBottom: '5px', fontWeight: 600 }}>City*</label>
-                                        <input required value={form.city} onChange={e => setForm({...form, city: e.target.value})} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #e2e8f0', outline: 'none' }} placeholder="Town / City" />
+                                        <input required value={form.city} onChange={e => setForm({...form, city: e.target.value})} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid var(--border-color)', outline: 'none' }} placeholder="Town / City" />
                                     </div>
                                 </div>
 
                                 <div className="checkout-form-grid">
                                     <div>
                                         <label style={{ display: 'block', fontSize: '0.85rem', marginBottom: '5px', fontWeight: 600 }}>Postcode*</label>
-                                        <input required value={form.postcode} onChange={e => setForm({...form, postcode: e.target.value})} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #e2e8f0', outline: 'none' }} placeholder="PIN code" />
+                                        <input required value={form.postcode} onChange={e => setForm({...form, postcode: e.target.value})} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid var(--border-color)', outline: 'none' }} placeholder="PIN code" />
                                     </div>
                                     <div>
                                         <label style={{ display: 'block', fontSize: '0.85rem', marginBottom: '5px', fontWeight: 600 }}>Phone*</label>
-                                        <input required value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #e2e8f0', outline: 'none' }} placeholder="10-digit number" />
+                                        <input required value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid var(--border-color)', outline: 'none' }} placeholder="10-digit number" />
                                     </div>
                                 </div>
 
@@ -660,7 +660,7 @@ Coupon Discount: ₹${orderData.couponDiscount}
                                         <span style={{ fontSize: '0.9rem', fontWeight: 700 }}>Secure Online Payment (Razorpay)</span>
                                     </div>
                                 </div>
-                                <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '12px', marginBottom: '1.5rem', border: '1px dashed #cbd5e1' }}>
+                                <div style={{ background: 'var(--light-bg)', padding: '1rem', borderRadius: '12px', marginBottom: '1.5rem', border: '1px dashed #cbd5e1' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.1rem', fontWeight: 800 }}>
                                         <span>Grand Total:</span>
                                         <span style={{ color: 'var(--primary)' }}>₹{(total - appliedPoints - couponDiscount).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>

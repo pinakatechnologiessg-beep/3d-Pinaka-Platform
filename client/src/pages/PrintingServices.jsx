@@ -107,32 +107,32 @@ const PrintingServices = () => {
                 {/* Step Progress Bar */}
                 <div className="step-bar-container" style={{ opacity: 0.8 }}>
                     <div className={`step-item ${file ? 'active' : ''}`} style={{ textAlign: 'center', minWidth: '80px' }}>
-                        <div style={{ fontWeight: 600, color: file ? 'var(--primary)' : '#94a3b8' }}>1. Upload</div>
-                        <span style={{ fontSize: '0.75rem', color: '#64748b' }}>{file ? 'Uploaded' : 'Pending'}</span>
+                        <div style={{ fontWeight: 600, color: file ? 'var(--primary)' : 'var(--text-muted)' }}>1. Upload</div>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{file ? 'Uploaded' : 'Pending'}</span>
                     </div>
                     <div className="step-divider" style={{ color: '#cbd5e1', paddingTop: '10px' }}>————</div>
                     <div className="step-item" style={{ textAlign: 'center', minWidth: '80px' }}>
                         <div style={{ fontWeight: 600, color: 'var(--text-dark)' }}>2. Settings</div>
-                        <span style={{ fontSize: '0.75rem', color: '#64748b' }}>{quality}mm | {material}</span>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{quality}mm | {material}</span>
                     </div>
                     <div className="step-divider" style={{ color: '#cbd5e1', paddingTop: '10px' }}>————</div>
                     <div className="step-item" style={{ textAlign: 'center', minWidth: '80px' }}>
-                        <div style={{ fontWeight: 600, color: result ? 'var(--primary)' : '#94a3b8' }}>3. Price</div>
-                        <span style={{ fontSize: '0.75rem', color: '#64748b' }}>{result ? `₹${result.price}` : 'Pending'}</span>
+                        <div style={{ fontWeight: 600, color: result ? 'var(--primary)' : 'var(--text-muted)' }}>3. Price</div>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{result ? `₹${result.price}` : 'Pending'}</span>
                     </div>
                 </div>
 
                 <div className="calculator-main-grid">
                     
                     {/* Left Side: Upload */}
-                    <div style={{ background: 'white', padding: '1.5rem', borderRadius: '20px', boxShadow: '0 10px 30px rgba(0,0,0,0.05)', textAlign: 'center' }}>
+                    <div style={{ background: 'var(--colorful-bg)', padding: '1.5rem', borderRadius: '20px', boxShadow: '0 10px 30px rgba(0,0,0,0.05)', textAlign: 'center' }}>
                         <div 
                             style={{ 
-                                border: '2px dashed #e2e8f0', 
+                                border: '2px dashed var(--border-color)', 
                                 padding: '3rem 1.5rem', 
                                 borderRadius: '15px', 
                                 cursor: 'pointer',
-                                background: '#f8fafc',
+                                background: 'var(--light-bg)',
                                 transition: 'all 0.2s ease'
                             }}
                             onClick={() => fileInputRef.current.click()}
@@ -149,16 +149,16 @@ const PrintingServices = () => {
                                     display: 'flex', 
                                     alignItems: 'center', 
                                     gap: '1rem', 
-                                    background: '#f8fafc', 
+                                    background: 'var(--light-bg)', 
                                     padding: '1rem', 
                                     borderRadius: '12px', 
-                                    border: '1px solid #e2e8f0',
+                                    border: '1px solid var(--border-color)',
                                     textAlign: 'left'
                                 }}>
                                     <div style={{ 
                                         width: '48px', 
                                         height: '48px', 
-                                        background: 'white', 
+                                        background: 'var(--colorful-bg)', 
                                         borderRadius: '8px', 
                                         display: 'flex', 
                                         alignItems: 'center', 
@@ -174,8 +174,8 @@ const PrintingServices = () => {
                                     <button 
                                         onClick={(e) => { e.stopPropagation(); fileInputRef.current.click(); }}
                                         style={{ 
-                                            background: 'white', 
-                                            border: '1px solid #e2e8f0', 
+                                            background: 'var(--colorful-bg)', 
+                                            border: '1px solid var(--border-color)', 
                                             padding: '5px 12px', 
                                             borderRadius: '6px', 
                                             fontSize: '0.75rem', 
@@ -183,7 +183,7 @@ const PrintingServices = () => {
                                             cursor: 'pointer',
                                             transition: 'all 0.2s'
                                         }}
-                                        onMouseOver={(e) => e.target.style.background = '#f1f5f9'}
+                                        onMouseOver={(e) => e.target.style.background = 'var(--border-color)'}
                                         onMouseOut={(e) => e.target.style.background = 'white'}
                                     >
                                         Change
@@ -191,7 +191,7 @@ const PrintingServices = () => {
                                 </div>
                             ) : (
                                 <div>
-                                    <UploadSimple size={50} weight="light" color="#94a3b8" />
+                                    <UploadSimple size={50} weight="light" color="var(--text-muted)" />
                                     <h4 style={{ marginTop: '1rem', marginBottom: '8px' }}>Upload your 3D file</h4>
                                     <button className="btn btn-primary" style={{ marginTop: '0.5rem', padding: '10px 20px' }}>Choose 3D File</button>
                                     <p style={{ marginTop: '1rem', fontSize: '0.75rem', color: 'var(--text-muted)' }}>(.stl, .obj, .glb, .step, .stp)</p>
@@ -208,28 +208,28 @@ const PrintingServices = () => {
 
                         {/* 3D Viewer Placeholder (Only shows when file is selected) */}
                         {file && (
-                            <div style={{ marginTop: '1.5rem', background: '#f8fafc', borderRadius: '15px', border: '1px solid #e2e8f0', overflow: 'hidden', height: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-                                <Cube size={120} weight="thin" color="#e2e8f0" />
+                            <div style={{ marginTop: '1.5rem', background: 'var(--light-bg)', borderRadius: '15px', border: '1px solid var(--border-color)', overflow: 'hidden', height: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+                                <Cube size={120} weight="thin" color="var(--border-color)" />
                                 <div style={{ position: 'absolute', bottom: '10px', right: '10px', display: 'flex', gap: '5px' }}>
-                                    <span style={{ fontSize: '0.65rem', color: '#94a3b8', background: 'white', padding: '2px 6px', borderRadius: '4px', border: '1px solid #e2e8f0' }}>X: {rotationX}°</span>
-                                    <span style={{ fontSize: '0.65rem', color: '#94a3b8', background: 'white', padding: '2px 6px', borderRadius: '4px', border: '1px solid #e2e8f0' }}>Y: {rotationY}°</span>
+                                    <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', background: 'var(--colorful-bg)', padding: '2px 6px', borderRadius: '4px', border: '1px solid var(--border-color)' }}>X: {rotationX}°</span>
+                                    <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', background: 'var(--colorful-bg)', padding: '2px 6px', borderRadius: '4px', border: '1px solid var(--border-color)' }}>Y: {rotationY}°</span>
                                 </div>
-                                <div style={{ color: '#94a3b8', fontSize: '0.8rem' }}>3D Preview Ready</div>
+                                <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>3D Preview Ready</div>
                             </div>
                         )}
 
                         {/* Rotation Controls (Moved from right side as per image) */}
                         {file && (
-                           <div style={{ marginTop: '1.5rem', background: 'white', padding: '1.5rem', borderRadius: '20px', border: '1px solid #e2e8f0', textAlign: 'left' }}>
+                           <div style={{ marginTop: '1.5rem', background: 'var(--colorful-bg)', padding: '1.5rem', borderRadius: '20px', border: '1px solid var(--border-color)', textAlign: 'left' }}>
                                 <label style={{ fontWeight: 800, fontSize: '0.9rem', marginBottom: '1.5rem', display: 'block' }}>Rotation</label>
                                 
                                 {/* X Axis */}
                                 <div style={{ marginBottom: '1.5rem' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                                        <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#64748b' }}>X Axis</span>
+                                        <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)' }}>X Axis</span>
                                         <div style={{ display: 'flex', gap: '8px' }}>
-                                            <button onClick={() => setRotationX(prev => Math.max(-180, prev - 90))} style={{ padding: '4px 10px', border: '1px solid #cbd5e1', borderRadius: '4px', background: 'white', fontSize: '0.75rem', cursor: 'pointer' }}>-90°</button>
-                                            <button onClick={() => setRotationX(prev => Math.min(180, prev + 90))} style={{ padding: '4px 10px', border: '1px solid #cbd5e1', borderRadius: '4px', background: 'white', fontSize: '0.75rem', cursor: 'pointer' }}>+90°</button>
+                                            <button onClick={() => setRotationX(prev => Math.max(-180, prev - 90))} style={{ padding: '4px 10px', border: '1px solid #cbd5e1', borderRadius: '4px', background: 'var(--colorful-bg)', fontSize: '0.75rem', cursor: 'pointer' }}>-90°</button>
+                                            <button onClick={() => setRotationX(prev => Math.min(180, prev + 90))} style={{ padding: '4px 10px', border: '1px solid #cbd5e1', borderRadius: '4px', background: 'var(--colorful-bg)', fontSize: '0.75rem', cursor: 'pointer' }}>+90°</button>
                                         </div>
                                     </div>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
@@ -248,10 +248,10 @@ const PrintingServices = () => {
                                 {/* Y Axis */}
                                 <div>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                                        <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#64748b' }}>Y Axis</span>
+                                        <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)' }}>Y Axis</span>
                                         <div style={{ display: 'flex', gap: '8px' }}>
-                                            <button onClick={() => setRotationY(prev => Math.max(-180, prev - 90))} style={{ padding: '4px 10px', border: '1px solid #cbd5e1', borderRadius: '4px', background: 'white', fontSize: '0.75rem', cursor: 'pointer' }}>-90°</button>
-                                            <button onClick={() => setRotationY(prev => Math.min(180, prev + 90))} style={{ padding: '4px 10px', border: '1px solid #cbd5e1', borderRadius: '4px', background: 'white', fontSize: '0.75rem', cursor: 'pointer' }}>+90°</button>
+                                            <button onClick={() => setRotationY(prev => Math.max(-180, prev - 90))} style={{ padding: '4px 10px', border: '1px solid #cbd5e1', borderRadius: '4px', background: 'var(--colorful-bg)', fontSize: '0.75rem', cursor: 'pointer' }}>-90°</button>
+                                            <button onClick={() => setRotationY(prev => Math.min(180, prev + 90))} style={{ padding: '4px 10px', border: '1px solid #cbd5e1', borderRadius: '4px', background: 'var(--colorful-bg)', fontSize: '0.75rem', cursor: 'pointer' }}>+90°</button>
                                         </div>
                                     </div>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
@@ -276,19 +276,19 @@ const PrintingServices = () => {
                                 
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dashed #bae6fd', paddingBottom: '8px' }}>
-                                        <span style={{ fontSize: '0.85rem', color: '#64748b' }}>Volume</span>
+                                        <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Volume</span>
                                         <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0c4a6e' }}>
                                             {calculating ? 'Analyzing...' : result?.modelInfo ? `${(result.modelInfo.volume).toFixed(2)} mm³ (${(result.modelInfo.volume / 1000).toFixed(2)} cm³)` : '---'}
                                         </span>
                                     </div>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dashed #bae6fd', paddingBottom: '8px' }}>
-                                        <span style={{ fontSize: '0.85rem', color: '#64748b' }}>Triangles</span>
+                                        <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Triangles</span>
                                         <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0c4a6e' }}>
                                             {calculating ? 'Analyzing...' : result?.modelInfo ? result.modelInfo.triangles.toLocaleString() : '---'}
                                         </span>
                                     </div>
                                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                        <span style={{ fontSize: '0.85rem', color: '#64748b' }}>Dimensions</span>
+                                        <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Dimensions</span>
                                         <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0c4a6e' }}>
                                             {calculating ? 'Analyzing...' : result?.modelInfo ? `${result.modelInfo.dimensions.x.toFixed(2)} × ${result.modelInfo.dimensions.y.toFixed(2)} × ${result.modelInfo.dimensions.z.toFixed(2)} mm` : '---'}
                                         </span>
@@ -299,8 +299,8 @@ const PrintingServices = () => {
                     </div>
 
                     {/* Right Side: Options & Price */}
-                    <div style={{ background: 'white', padding: '1.5rem 1.5rem', borderRadius: '20px', boxShadow: '0 10px 30px rgba(0,0,0,0.05)' }}>
-                        <h3 style={{ marginBottom: '1.5rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.8rem' }}>Choose Settings</h3>
+                    <div style={{ background: 'var(--colorful-bg)', padding: '1.5rem 1.5rem', borderRadius: '20px', boxShadow: '0 10px 30px rgba(0,0,0,0.05)' }}>
+                        <h3 style={{ marginBottom: '1.5rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.8rem' }}>Choose Settings</h3>
                         
                         {/* Quality Select */}
                         <div style={{ marginBottom: '2rem' }}>
@@ -318,7 +318,7 @@ const PrintingServices = () => {
                                             padding: '10px 8px', 
                                             borderRadius: '8px', 
                                             border: '1px solid',
-                                            borderColor: quality === opt.id ? 'var(--primary)' : '#e2e8f0',
+                                            borderColor: quality === opt.id ? 'var(--primary)' : 'var(--border-color)',
                                             background: quality === opt.id ? '#f0f9ff' : 'white',
                                             cursor: 'pointer',
                                             textAlign: 'center',
@@ -350,7 +350,7 @@ const PrintingServices = () => {
                                             padding: '10px 8px', 
                                             borderRadius: '8px', 
                                             border: '1px solid',
-                                            borderColor: material === opt.id ? 'var(--primary)' : '#e2e8f0',
+                                            borderColor: material === opt.id ? 'var(--primary)' : 'var(--border-color)',
                                             background: material === opt.id ? '#f0f9ff' : 'white',
                                             cursor: 'pointer',
                                             textAlign: 'center',
@@ -380,7 +380,7 @@ const PrintingServices = () => {
                                             padding: '10px 8px', 
                                             borderRadius: '8px', 
                                             border: '1px solid',
-                                            borderColor: infill === opt.id ? 'var(--primary)' : '#e2e8f0',
+                                            borderColor: infill === opt.id ? 'var(--primary)' : 'var(--border-color)',
                                             background: infill === opt.id ? '#f0f9ff' : 'white',
                                             cursor: 'pointer',
                                             textAlign: 'center',
@@ -396,7 +396,7 @@ const PrintingServices = () => {
 
                         {/* Result Display */}
                         {result ? (
-                            <div style={{ background: '#1e293b', color: 'white', padding: '1.5rem', borderRadius: '15px', marginBottom: '2rem', animation: 'fadeIn 0.5s' }}>
+                            <div style={{ background: 'var(--text-dark)', color: 'white', padding: '1.5rem', borderRadius: '15px', marginBottom: '2rem', animation: 'fadeIn 0.5s' }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                                     <span style={{ fontSize: '1rem' }}>Estimations:</span>
                                     <span style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--primary)' }}>₹{result.price}</span>
@@ -444,35 +444,35 @@ const PrintingServices = () => {
                     
                     <div className="policy-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem', marginBottom: '3rem' }}>
                         {/* Card 1 */}
-                        <div className="policy-card" style={{ background: 'white', padding: '2rem', borderRadius: '20px', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+                        <div className="policy-card" style={{ background: 'var(--colorful-bg)', padding: '2rem', borderRadius: '20px', border: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
                             <div style={{ width: '45px', height: '45px', background: '#e0f2fe', borderRadius: '12px' }}></div>
                             <h4 style={{ fontWeight: 800, fontSize: '1.1rem', lineHeight: '1.3' }}>Unboxing Video Requirement</h4>
-                            <p style={{ fontSize: '0.85rem', color: '#64748b', lineHeight: '1.6' }}>Customers are strongly advised to record a complete and continuous unboxing video immediately upon receiving the product.</p>
+                            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: '1.6' }}>Customers are strongly advised to record a complete and continuous unboxing video immediately upon receiving the product.</p>
                             <div style={{ fontSize: '0.85rem' }}>
                                 <strong style={{ display: 'block', marginBottom: '8px' }}>Mandatory in case of:</strong>
-                                <ul style={{ listStyle: 'none', padding: 0, color: '#64748b', display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                                <ul style={{ listStyle: 'none', padding: 0, color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', gap: '5px' }}>
                                     <li>▢ Transit damage</li>
                                     <li>▢ Missing parts</li>
                                     <li>▢ Incorrect product delivery</li>
                                 </ul>
                             </div>
-                            <p style={{ fontSize: '0.85rem', color: '#64748b', lineHeight: '1.6' }}>The unboxing video helps us validate claims and obtain approval from the manufacturer, ensuring faster resolution.</p>
+                            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: '1.6' }}>The unboxing video helps us validate claims and obtain approval from the manufacturer, ensuring faster resolution.</p>
                         </div>
 
                         {/* Card 2 */}
-                        <div className="policy-card" style={{ background: 'white', padding: '2rem', borderRadius: '20px', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+                        <div className="policy-card" style={{ background: 'var(--colorful-bg)', padding: '2rem', borderRadius: '20px', border: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
                             <div style={{ width: '45px', height: '45px', background: '#e0f2fe', borderRadius: '12px' }}></div>
                             <h4 style={{ fontWeight: 800, fontSize: '1.1rem', lineHeight: '1.3' }}>Original Packaging Mandatory</h4>
-                            <p style={{ fontSize: '0.85rem', color: '#64748b', lineHeight: '1.6' }}>For any under-warranty repair or in-house service, the product <strong>must</strong> be shipped only in its original packaging.</p>
-                            <p style={{ fontSize: '0.85rem', color: '#64748b', lineHeight: '1.6' }}>Includes all foam, supports, and protective materials provided at delivery.</p>
+                            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: '1.6' }}>For any under-warranty repair or in-house service, the product <strong>must</strong> be shipped only in its original packaging.</p>
+                            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: '1.6' }}>Includes all foam, supports, and protective materials provided at delivery.</p>
                         </div>
 
                         {/* Card 3 */}
-                        <div className="policy-card" style={{ background: 'white', padding: '2rem', borderRadius: '20px', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+                        <div className="policy-card" style={{ background: 'var(--colorful-bg)', padding: '2rem', borderRadius: '20px', border: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
                             <div style={{ width: '45px', height: '45px', background: '#e0f2fe', borderRadius: '12px' }}></div>
                             <h4 style={{ fontWeight: 800, fontSize: '1.1rem', lineHeight: '1.3' }}>Warranty Limitation</h4>
-                            <p style={{ fontSize: '0.85rem', color: '#64748b', lineHeight: '1.6' }}>Without original packaging, the following may apply:</p>
-                            <ul style={{ listStyle: 'none', padding: 0, color: '#64748b', display: 'flex', flexDirection: 'column', gap: '5px', fontSize: '0.85rem' }}>
+                            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: '1.6' }}>Without original packaging, the following may apply:</p>
+                            <ul style={{ listStyle: 'none', padding: 0, color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', gap: '5px', fontSize: '0.85rem' }}>
                                 <li>▢ Warranty may be void</li>
                                 <li>▢ Transit damage not covered</li>
                             </ul>
@@ -482,17 +482,17 @@ const PrintingServices = () => {
                         </div>
 
                         {/* Card 4 */}
-                        <div className="policy-card" style={{ background: 'white', padding: '2rem', borderRadius: '20px', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+                        <div className="policy-card" style={{ background: 'var(--colorful-bg)', padding: '2rem', borderRadius: '20px', border: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
                             <div style={{ width: '45px', height: '45px', background: '#e0f2fe', borderRadius: '12px' }}></div>
                             <h4 style={{ fontWeight: 800, fontSize: '1.1rem', lineHeight: '1.3' }}>Transportation Responsibility</h4>
-                            <p style={{ fontSize: '0.85rem', color: '#64748b', lineHeight: '1.6' }}>The customer is solely responsible for ensuring the product is properly packed and safely shipped.</p>
-                            <p style={{ fontSize: '0.85rem', color: '#64748b', lineHeight: '1.6' }}>Follow manufacturer guidelines to prevent damage during transit.</p>
+                            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: '1.6' }}>The customer is solely responsible for ensuring the product is properly packed and safely shipped.</p>
+                            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: '1.6' }}>Follow manufacturer guidelines to prevent damage during transit.</p>
                         </div>
                     </div>
 
                     {/* Important Note Banner */}
                     <div style={{ background: '#fffbeb', border: '1px solid #fef3c7', padding: '1.5rem 2rem', borderRadius: '15px' }}>
-                        <h5 style={{ fontWeight: 800, fontSize: '1.2rem', marginBottom: '8px', color: '#1e293b' }}>Important Note:</h5>
+                        <h5 style={{ fontWeight: 800, fontSize: '1.2rem', marginBottom: '8px', color: 'var(--text-dark)' }}>Important Note:</h5>
                         <p style={{ fontSize: '0.85rem', color: '#4b5563', lineHeight: '1.5' }}>
                             Failure to comply with the above guidelines may result in rejection of warranty claims or chargeable repairs. Please ensure all safety protocols are followed.
                         </p>

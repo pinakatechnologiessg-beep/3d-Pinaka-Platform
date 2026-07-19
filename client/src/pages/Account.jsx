@@ -14,7 +14,9 @@ const Account = () => {
     
     // New tab state
     const [activeTab, setActiveTab] = useState('Dashboard');
-    const tabs = ['Dashboard', 'Addresses', 'Account details', 'Orders', 'Order Invoices', 'Logout'];
+    const tabs = ['Dashboard', 'Addresses', 'Account details', 'Orders', 'Order Invoices'];
+    if (user?.role === 'admin') tabs.push('Admin Panel');
+    tabs.push('Logout');
 
     const navigate = useNavigate();
 
@@ -67,18 +69,18 @@ const Account = () => {
     const getStatusIcon = (status) => {
         switch (status) {
             case 'Order Confirmed': return <CheckCircle size={20} color="#16a34a" />;
-            case 'Shipped / Dispatched': return <Truck size={20} color="#2563eb" />;
+            case 'Shipped / Dispatched': return <Truck size={20} color="var(--primary)" />;
             case 'In Transit': return <Truck size={20} color="#4338ca" />;
             case 'Delivered': return <Package size={20} color="#059669" />;
-            case 'Completed': return <CheckCircle size={20} color="#0f172a" />;
-            default: return <Clock size={20} color="#f59e0b" />;
+            case 'Completed': return <CheckCircle size={20} color="var(--text-dark)" />;
+            default: return <Clock size={20} color="var(--warning)" />;
         }
     };
 
     if (!user) return (
         <main style={{ padding: '4rem 0', textAlign: 'center' }}>
             <div className="container">
-                <div style={{ background: 'white', padding: '3rem', borderRadius: '12px', border: '1px solid var(--border-color)', maxWidth: '500px', margin: '0 auto' }}>
+                <div style={{ background: 'var(--colorful-bg)', padding: '3rem', borderRadius: '12px', border: '1px solid var(--border-color)', maxWidth: '500px', margin: '0 auto' }}>
                     <User size={48} color="var(--primary)" style={{ marginBottom: '1.5rem' }} />
                     <h2 style={{ marginBottom: '1rem' }}>not loged in pls login</h2>
                     <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>Please sign in to view your orders and manage your account.</p>
@@ -104,7 +106,7 @@ const Account = () => {
                             <div 
                                 key={tab}
                                 className={`pigglitz-tab ${activeTab === tab ? 'active' : ''}`}
-                                onClick={() => tab === 'Logout' ? handleLogout() : setActiveTab(tab)}
+                                onClick={() => tab === 'Logout' ? handleLogout() : tab === 'Admin Panel' ? navigate('/admin') : setActiveTab(tab)}
                             >
                                 {tab}
                             </div>
@@ -132,13 +134,13 @@ const Account = () => {
                         )}
 
                         {activeTab === 'Orders' && (
-                            <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' }}>
+                            <div style={{ background: 'var(--colorful-bg)', padding: '2rem', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' }}>
                                 <h3 style={{ color: 'var(--secondary)', marginBottom: '1.5rem', fontSize: '1.5rem' }}>Your Orders</h3>
                                 {loadingOrders ? (
                                     <div style={{ textAlign: 'center', padding: '2rem' }}>Loading your orders...</div>
                                 ) : orders.length === 0 ? (
                                     <div style={{ padding: '3rem 1rem', textAlign: 'center', background: '#fcfcfc', border: '1px dashed #cbd5e1', borderRadius: '10px' }}>
-                                        <Package size={48} color="#e2e8f0" style={{ margin: '0 auto 1rem' }} />
+                                        <Package size={48} color="var(--border-color)" style={{ margin: '0 auto 1rem' }} />
                                         <p style={{ color: 'var(--text-muted)' }}>You haven't placed any orders yet.</p>
                                         <button onClick={() => navigate('/products')} className="btn btn-dark" style={{ marginTop: '1rem', padding: '8px 24px', background: 'var(--primary)', border: 'none' }}>Start Shopping</button>
                                     </div>
@@ -178,7 +180,7 @@ const Account = () => {
                                                 </div>
                                                 
                                                 {selectedOrder === order.orderId && (
-                                                    <div className="order-details-expanded" style={{ gridColumn: '1 / -1', padding: '1.5rem', background: '#f8fafc', borderTop: '1px solid var(--border-color)', marginTop: '1rem', borderRadius: '0 0 8px 8px' }}>
+                                                    <div className="order-details-expanded" style={{ gridColumn: '1 / -1', padding: '1.5rem', background: 'var(--light-bg)', borderTop: '1px solid var(--border-color)', marginTop: '1rem', borderRadius: '0 0 8px 8px' }}>
                                                         <h4 style={{ marginBottom: '1rem', color: 'var(--text-dark)' }}>{order.productName}</h4>
                                                         <p><strong>Payment Method:</strong> {order.paymentMethod}</p>
                                                         <p><strong>Payment Status:</strong> {order.paymentStatus}</p>
@@ -193,18 +195,18 @@ const Account = () => {
                         )}
 
                         {activeTab === 'Account details' && (
-                            <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' }}>
+                            <div style={{ background: 'var(--colorful-bg)', padding: '2rem', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' }}>
                                 <h3 style={{ color: 'var(--primary)', marginBottom: '1.5rem', fontSize: '1.5rem' }}>Account Details</h3>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '2rem' }}>
                                     <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'var(--primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5rem', fontWeight: 'bold' }}>
                                         {(user.firstName ? user.firstName.charAt(0) : user.name?.charAt(0))?.toUpperCase() || 'U'}
                                     </div>
                                     <div>
-                                        <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#0f172a' }}>{user.firstName ? `${user.firstName} ${user.lastName || ''}` : user.name}</div>
-                                        <div style={{ color: '#64748b' }}>{user.role === 'admin' ? 'Administrator' : 'Customer'}</div>
+                                        <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--text-dark)' }}>{user.firstName ? `${user.firstName} ${user.lastName || ''}` : user.name}</div>
+                                        <div style={{ color: 'var(--text-muted)' }}>{user.role === 'admin' ? 'Administrator' : 'Customer'}</div>
                                     </div>
                                 </div>
-                                <div style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: '8px' }}>
+                                <div style={{ background: 'var(--light-bg)', padding: '1.5rem', borderRadius: '8px' }}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1rem', color: '#334155' }}>
                                         <Envelope size={20} color="var(--primary)" />
                                         <span>{user.email}</span>
@@ -252,11 +254,11 @@ const Account = () => {
                                                     <p>{user.address.state || 'India'}</p>
                                                 </>
                                             ) : (
-                                                <p style={{ fontStyle: 'italic', color: '#94a3b8' }}>
+                                                <p style={{ fontStyle: 'italic', color: 'var(--text-muted)' }}>
                                                     No address saved yet. It will be automatically saved after your first order.
                                                 </p>
                                             )}
-                                            <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #f1f5f9' }}>
+                                            <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--border-color)' }}>
                                                 <p>Phone: {user.mobile}</p>
                                                 <p>Email: {user.email}</p>
                                             </div>
@@ -286,11 +288,11 @@ const Account = () => {
                                                     <p>{user.address.state || 'India'}</p>
                                                 </>
                                             ) : (
-                                                <p style={{ fontStyle: 'italic', color: '#94a3b8' }}>
+                                                <p style={{ fontStyle: 'italic', color: 'var(--text-muted)' }}>
                                                     No address saved yet. It will be automatically saved after your first order.
                                                 </p>
                                             )}
-                                            <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #f1f5f9' }}>
+                                            <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--border-color)' }}>
                                                 <p>Phone: {user.mobile}</p>
                                                 <p>Email: {user.email}</p>
                                             </div>

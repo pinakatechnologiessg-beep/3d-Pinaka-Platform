@@ -17,7 +17,7 @@ const isColorDark = (color) => {
   if (c === '#fff' || c === '#ffffff' || c === 'white' || c === 'rgb(255,255,255)' || c === 'rgba(255,255,255,1)') {
     return false;
   }
-  if (c === '#0f172a' || c === '#000' || c === '#000000' || c === 'black' || c.startsWith('rgba(15,23,42') || c.startsWith('rgb(15,23,42')) {
+  if (c === 'var(--text-dark)' || c === '#000' || c === '#000000' || c === 'black' || c.startsWith('rgba(15,23,42') || c.startsWith('rgb(15,23,42')) {
     return true;
   }
   
@@ -77,7 +77,7 @@ const Home = () => {
     {
       img: getImageUrl("/images/hero-printer-2-1774868029567.png"),
       brand: "Anycubic",
-      brandColor: "#f97316",
+      brandColor: "var(--secondary)",
       title: "PHOTON M3",
       subtitle: "Ultra-Precision MSLA",
       price: "₹45,999/-",
@@ -86,7 +86,7 @@ const Home = () => {
     {
       img: getImageUrl("/images/hero-printer-3-1774868059995.png"),
       brand: "Creality",
-      brandColor: "#3b82f6",
+      brandColor: "var(--primary)",
       title: "K1C 3D PRINTER",
       subtitle: "Professional CoreXY Speed",
       price: "₹52,999/-",
@@ -95,7 +95,7 @@ const Home = () => {
     {
       img: getImageUrl("/images/hero-printer-4-1774868325785.png"),
       brand: "Snapmaker",
-      brandColor: "#10b981",
+      brandColor: "var(--success)",
       title: "A350T 3-IN-1",
       subtitle: "Industrial 3-in-1 Powerhouse",
       price: "₹1,99,000/-",
@@ -117,8 +117,8 @@ const Home = () => {
               _id: slide._id,
               img: slide.img ? (slide.img.startsWith('http') ? slide.img : getImageUrl(slide.img)) : getImageUrl(""),
               brand: slide.brand || '',
-              brandColor: slide.brandColor || '#3b82f6',
-              bgColor: slide.bgColor || '#0f172a',
+              brandColor: slide.brandColor || 'var(--primary)',
+              bgColor: slide.bgColor || 'var(--text-dark)',
               textColor: slide.textColor || '#ffffff',
               title: slide.title,
               subtitle: slide.subtitle,
@@ -138,6 +138,12 @@ const Home = () => {
   }, [BASE_URL]);
 
   // Auto-scroll logic moved below goToSlide
+
+  const [wishlist, setWishlist] = useState([]);
+  const [dbFeaturedProducts, setDbFeaturedProducts] = useState([]);
+  const [dbNewArrivals, setDbNewArrivals] = useState([]);
+  const [blogs, setBlogs] = useState([]);
+  const [partnerPosters, setPartnerPosters] = useState({ left: null, right: null });
 
   useEffect(() => {
     const observerOptions = {
@@ -159,7 +165,7 @@ const Home = () => {
     });
 
     return () => observer.disconnect();
-  }, []);
+  }, [dbFeaturedProducts, dbNewArrivals, blogs]);
 
   const addToRevealRefs = (el) => {
     if (el && !revealRefs.current.includes(el)) {
@@ -167,10 +173,6 @@ const Home = () => {
     }
   };
 
-  const [wishlist, setWishlist] = useState([]);
-  const [dbFeaturedProducts, setDbFeaturedProducts] = useState([]);
-  const [dbNewArrivals, setDbNewArrivals] = useState([]);
-  const [partnerProducts, setPartnerProducts] = useState([]);
   const heroSliderRef = useRef(null);
   const arrivalSliderRef = useRef(null);
   const partnerSliderRef = useRef(null);
@@ -243,32 +245,52 @@ const Home = () => {
         try {
             const res = await fetch(`${API_BASE_URL}/api/products/new-arrivals`);
             if (res.ok) {
-                const data = await res.json();
-                if (data && data.length > 0) {
-                    setDbNewArrivals(data);
-                }
+                setDbNewArrivals(await res.json());
             }
-        } catch (err) {
-            console.error("Fetch new arrivals error:", err);
+        } catch (error) {
+            console.error("Error fetching new arrivals:", error);
         }
     };
 
-    
-    const fetchPartnerProducts = async () => {
+    const fetchBlogs = async () => {
         try {
-            const res = await fetch(`${API_BASE_URL}/api/partner-products`);
+            const blogsRes = await fetch(`${API_BASE_URL}/api/blogs`);
+            if (blogsRes.ok) {
+                const blogsData = await blogsRes.json();
+                console.log("Blogs fetched successfully:", blogsData);
+                setBlogs(blogsData);
+            } else {
+                console.error("Failed to fetch blogs, status:", blogsRes.status);
+            }
+        } catch (error) {
+            console.error("Error fetching blogs:", error);
+        }
+    };
+
+
+    const fetchPartnerPosters = async () => {
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/partner-posters`);
             if (res.ok) {
                 const data = await res.json();
-                if (data && data.length > 0) setPartnerProducts(data);
+                const posters = { left: null, right: null };
+                data.forEach(p => {
+                    if (p.isActive) {
+                        posters[p.position] = p;
+                    }
+                });
+                setPartnerPosters(posters);
             }
         } catch (err) {
             console.error(err);
         }
     };
-    fetchPartnerProducts();
+
+    fetchPartnerPosters();
 
     fetchFeatured();
     fetchNewArrivals();
+    fetchBlogs();
 
     const updateWishlist = () => setWishlist(cartService.getWishlistItems());
     updateWishlist();
@@ -292,13 +314,6 @@ const Home = () => {
     }
   };
 
-  const scrollPartners = (direction) => {
-    if (partnerSliderRef.current) {
-        const { scrollLeft, clientWidth } = partnerSliderRef.current;
-        const scrollAmount = direction === 'left' ? -clientWidth : clientWidth;
-        partnerSliderRef.current.scrollTo({ left: scrollLeft + scrollAmount, behavior: 'smooth' });
-    }
-  };
 
     return (
         <main>
@@ -333,7 +348,7 @@ const Home = () => {
                 key={index} 
                 className="hero-slide"
                 onClick={() => { if (slide.btnLink && slide.btnLink !== 'undefined') navigate(slide.btnLink); }}
-                style={{ minWidth: '100%', scrollSnapAlign: 'start', position: 'relative', backgroundColor: slide.bgColor || '#0f172a', cursor: (slide.btnLink && slide.btnLink !== 'undefined') ? 'pointer' : 'default' }}
+                style={{ minWidth: '100%', scrollSnapAlign: 'start', position: 'relative', backgroundColor: slide.bgColor || 'var(--text-dark)', cursor: (slide.btnLink && slide.btnLink !== 'undefined') ? 'pointer' : 'default' }}
               >
                 <img src={slide.img} alt={slide.title} className="hero-bg" />
                 {/* The user wants the banner to be just an image with a link. Removed text and buttons. */}
@@ -397,21 +412,21 @@ const Home = () => {
         <section className="section container" style={{ marginTop: '-2rem', position: 'relative' }}>
           <div className="products-header" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', gap: '15px' }}>
               <div style={{ flex: '1 1 200px' }}>
-                  <h2 style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: isMobile ? '1.5rem' : '2rem', fontWeight: 800, color: '#0f172a' }}>
-                    New Arrivals <Sparkle size={isMobile ? 24 : 32} color="#f59e0b" weight="fill" />
+                  <h2 style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: isMobile ? '1.5rem' : '2rem', fontWeight: 800, color: 'var(--text-dark)' }}>
+                    New Arrivals <Sparkle size={isMobile ? 24 : 32} color="var(--warning)" weight="fill" />
                   </h2>
-                  <p style={{ color: '#64748b', fontSize: isMobile ? '0.9rem' : '1.1rem' }}>The latest and greatest in 3D printing technology</p>
+                  <p style={{ color: 'var(--text-muted)', fontSize: isMobile ? '0.9rem' : '1.1rem' }}>The latest and greatest in 3D printing technology</p>
               </div>
               <div style={{ display: 'flex', gap: '10px' }}>
                   <button 
                     onClick={() => scrollArrivals('left')}
-                    style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '50%', width: '45px', height: '45px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}
+                    style={{ background: 'var(--colorful-bg)', border: '1px solid var(--border-color)', borderRadius: '50%', width: '45px', height: '45px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}
                   >
                     <Lightning size={24} weight="bold" style={{ transform: 'rotate(180deg)' }} />
                   </button>
                   <button 
                     onClick={() => scrollArrivals('right')}
-                    style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '50%', width: '45px', height: '45px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}
+                    style={{ background: 'var(--colorful-bg)', border: '1px solid var(--border-color)', borderRadius: '50%', width: '45px', height: '45px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}
                   >
                     <Lightning size={24} weight="bold" />
                   </button>
@@ -443,10 +458,10 @@ const Home = () => {
                       style={{ 
                           minWidth: isMobile ? '280px' : '320px',
                           scrollSnapAlign: 'start',
-                          background: 'white', 
+                          background: 'var(--colorful-bg)', 
                           borderRadius: '16px', 
                           padding: isMobile ? '16px' : '24px', 
-                          border: '1px solid #f1f5f9', 
+                          border: '1px solid var(--border-color)', 
                           boxShadow: '0 10px 25px -5px rgba(0,0,0,0.05)', 
                           transition: 'all 0.3s ease', 
                           position: 'relative',
@@ -462,10 +477,10 @@ const Home = () => {
                       >
                           <Heart size={20} weight={wishlist.some(item => (item.productId || '').toString() === (product._id || product.id || '').toString()) ? "fill" : "bold"} />
                       </button>
-                      <div className="badge" style={{ background: '#3b82f6', color: 'white', zIndex: 5, borderRadius: '6px', padding: '4px 8px', fontSize: '0.75rem', fontWeight: 700 }}>{product.badge || 'NEW'}</div>
+                      <div className="badge" style={{ background: 'var(--primary)', color: 'white', zIndex: 5, borderRadius: '6px', padding: '4px 8px', fontSize: '0.75rem', fontWeight: 700 }}>{product.badge || 'NEW'}</div>
                       
                       <Link to={product.name ? `/product/${encodeURIComponent((product.name || product.title || '').replace(/ /g, '-'))}` : '/products'} style={{ textDecoration: 'none', display: 'block', flex: 1 }}>
-                          <div className="image-wrapper" style={{ height: isMobile ? '180px' : '240px', marginBottom: '15px', overflow: 'hidden', borderRadius: '12px', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <div className="image-wrapper" style={{ height: isMobile ? '180px' : '240px', marginBottom: '15px', overflow: 'hidden', borderRadius: '12px', background: 'var(--light-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                               <img 
                                   src={getImageUrl(product.image)} 
                                   alt={product.name || product.title} 
@@ -473,12 +488,12 @@ const Home = () => {
                                   onError={(e) => (e.target.src = PLACEHOLDER_SVG)}
                               />
                           </div>
-                          <div style={{ fontSize: '0.75rem', color: '#64748b', textTransform: 'uppercase', marginBottom: '6px', fontWeight: 600, letterSpacing: '0.05em' }}>
+                          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '6px', fontWeight: 600, letterSpacing: '0.05em' }}>
                               {product.category}
                           </div>
                           <h3 style={{ 
                               fontSize: isMobile ? '1.1rem' : '1.25rem', 
-                              color: '#1e293b', 
+                              color: 'var(--text-dark)', 
                               marginBottom: '12px', 
                               height: '3rem', 
                               overflow: 'hidden',
@@ -487,17 +502,17 @@ const Home = () => {
                           }}>{product.name || product.title}</h3>
                           
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: 'auto' }}>
-                              <div style={{ fontSize: isMobile ? '1.25rem' : '1.5rem', fontWeight: 800, color: '#2563eb' }}>
+                              <div style={{ fontSize: isMobile ? '1.25rem' : '1.5rem', fontWeight: 800, color: 'var(--primary)' }}>
                                   ₹{price.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
                               </div>
                               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                   {hasDiscount && (
-                                      <div style={{ fontSize: '0.9rem', color: '#94a3b8', textDecoration: 'line-through' }}>
+                                      <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)', textDecoration: 'line-through' }}>
                                           ₹{originalPrice.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
                                       </div>
                                   )}
                                   {hasDiscount && (
-                                       <div style={{ fontSize: '0.75rem', color: '#10b981', fontWeight: 700, background: '#f0fdf4', padding: '2px 8px', borderRadius: '6px' }}>
+                                       <div style={{ fontSize: '0.75rem', color: 'var(--success)', fontWeight: 700, background: '#f0fdf4', padding: '2px 8px', borderRadius: '6px' }}>
                                           {discountPercent}% OFF
                                       </div>
                                   )}
@@ -514,7 +529,7 @@ const Home = () => {
                               padding: '14px', 
                               borderRadius: '10px', 
                               border: 'none', 
-                              background: '#0f172a', 
+                              background: 'var(--text-dark)', 
                               color: 'white', 
                               fontWeight: 600, 
                               cursor: 'pointer',
@@ -556,10 +571,10 @@ const Home = () => {
                     className="reveal" 
                     ref={addToRevealRefs}
                     style={{ 
-                        background: 'white', 
+                        background: 'var(--colorful-bg)', 
                         borderRadius: '12px', 
                         padding: isMobile ? '12px' : '20px', 
-                        border: '1px solid #f1f5f9', 
+                        border: '1px solid var(--border-color)', 
                         boxShadow: '0 4px 15px rgba(0,0,0,0.02)', 
                         transition: 'transform 0.2s', 
                         position: 'relative',
@@ -578,7 +593,7 @@ const Home = () => {
                     {product.badge && <div className="badge" style={{ ...product.badgeStyle, zIndex: 5 }}>{product.badge}</div>}
                     
                     <Link to={product.name ? `/product/${encodeURIComponent((product.name || product.title || '').replace(/ /g, '-'))}` : '/products'} style={{ textDecoration: 'none', display: 'block', flex: 1 }}>
-                        <div className="image-wrapper" style={{ height: isMobile ? '160px' : '220px', marginBottom: '12px', overflow: 'hidden', borderRadius: '8px', background: '#f8fafc' }}>
+                        <div className="image-wrapper" style={{ height: isMobile ? '160px' : '220px', marginBottom: '12px', overflow: 'hidden', borderRadius: '8px', background: 'var(--light-bg)' }}>
                             <img 
                                 src={getImageUrl(product.image)} 
                                 alt={product.name || product.title} 
@@ -586,12 +601,12 @@ const Home = () => {
                                 onError={(e) => (e.target.src = PLACEHOLDER_SVG)}
                             />
                         </div>
-                        <div style={{ fontSize: isMobile ? '0.7rem' : '0.85rem', color: '#64748b', textTransform: 'uppercase', marginBottom: '4px' }}>
+                        <div style={{ fontSize: isMobile ? '0.7rem' : '0.85rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '4px' }}>
                             {product.category}
                         </div>
                         <h3 style={{ 
                             fontSize: isMobile ? '0.95rem' : '1.1rem', 
-                            color: '#1e293b', 
+                            color: 'var(--text-dark)', 
                             marginBottom: '8px', 
                             height: isMobile ? '2.4rem' : '2.8rem', 
                             overflow: 'hidden',
@@ -600,17 +615,17 @@ const Home = () => {
                         }}>{product.name || product.title}</h3>
                         
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', marginTop: 'auto' }}>
-                            <div style={{ fontSize: isMobile ? '1.1rem' : '1.4rem', fontWeight: 800, color: '#2563eb' }}>
+                            <div style={{ fontSize: isMobile ? '1.1rem' : '1.4rem', fontWeight: 800, color: 'var(--primary)' }}>
                                 ₹{price.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                 {hasDiscount && (
-                                    <div style={{ fontSize: isMobile ? '0.8rem' : '0.95rem', color: '#94a3b8', textDecoration: 'line-through' }}>
+                                    <div style={{ fontSize: isMobile ? '0.8rem' : '0.95rem', color: 'var(--text-muted)', textDecoration: 'line-through' }}>
                                         ₹{originalPrice.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
                                     </div>
                                 )}
                                 {hasDiscount && (
-                                     <div style={{ fontSize: '0.7rem', color: '#10b981', fontWeight: 700, background: '#f0fdf4', padding: '2px 4px', borderRadius: '4px' }}>
+                                     <div style={{ fontSize: '0.7rem', color: 'var(--success)', fontWeight: 700, background: '#f0fdf4', padding: '2px 4px', borderRadius: '4px' }}>
                                         {discountPercent}% OFF
                                     </div>
                                 )}
@@ -627,7 +642,7 @@ const Home = () => {
                             padding: isMobile ? '10px' : '12px', 
                             borderRadius: '8px', 
                             border: 'none', 
-                            background: '#111827', 
+                            background: 'var(--card-bg-dark)', 
                             color: 'white', 
                             fontWeight: 600, 
                             cursor: 'pointer',
@@ -647,129 +662,88 @@ const Home = () => {
 
 
       {/* External Website Premium Banner Section */}
-      {partnerProducts.length > 0 && (
+      {(partnerPosters.left || partnerPosters.right) && (
         <section className="section container" style={{ marginTop: '2rem', marginBottom: '3rem', position: 'relative' }}>
           <div className="products-header" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', gap: '15px' }}>
               <div style={{ flex: '1 1 200px' }}>
-                  <div style={{ display: 'inline-block', padding: '4px 10px', background: '#eff6ff', color: '#2563eb', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 700, marginBottom: '0.5rem', border: '1px solid #bfdbfe' }}>
+                  <div style={{ display: 'inline-block', padding: '4px 10px', background: 'var(--border-color)', color: 'var(--primary)', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 700, marginBottom: '0.5rem', border: '1px solid #bfdbfe' }}>
                       PREMIUM PARTNERS
                   </div>
-                  <h2 style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: isMobile ? '1.5rem' : '2rem', fontWeight: 800, color: '#0f172a' }}>
-                    Elevate Your 3D Printing Experience
+                  <h2 style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: isMobile ? '1.5rem' : '2rem', fontWeight: 800, color: 'var(--text-dark)' }}>
+                    Our Partner Brands
                   </h2>
-                  <p style={{ color: '#64748b', fontSize: isMobile ? '0.9rem' : '1.1rem' }}>Explore our partner site for industrial-grade materials, enterprise hardware, and exclusive high-performance 3D solutions.</p>
-              </div>
-              <div style={{ display: 'flex', gap: '10px' }}>
-                  <button 
-                    onClick={() => scrollPartners('left')}
-                    style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '50%', width: '45px', height: '45px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}
-                  >
-                    <Lightning size={24} weight="bold" style={{ transform: 'rotate(180deg)' }} />
-                  </button>
-                  <button 
-                    onClick={() => scrollPartners('right')}
-                    style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '50%', width: '45px', height: '45px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}
-                  >
-                    <Lightning size={24} weight="bold" />
-                  </button>
+                  <p style={{ color: 'var(--text-muted)', fontSize: isMobile ? '0.9rem' : '1.1rem' }}>Check out our recommended tools and partner brands.</p>
               </div>
           </div>
 
-          <div 
-            ref={partnerSliderRef}
-            className="partners-slider"
-            style={{ 
-                display: 'flex', 
-                gap: '20px', 
-                overflowX: 'auto', 
-                scrollSnapType: 'x mandatory',
-                scrollbarWidth: 'none',
-                msOverflowStyle: 'none',
-                padding: '10px 5px'
-            }}
-          >
-              {partnerProducts.map((product) => (
-                  <div 
-                      key={product._id || product.id} 
-                      style={{ 
-                          minWidth: isMobile ? '280px' : '320px',
-                          scrollSnapAlign: 'start',
-                          background: 'white', 
-                          borderRadius: '16px', 
-                          padding: isMobile ? '16px' : '24px', 
-                          border: '1px solid #f1f5f9', 
-                          boxShadow: '0 10px 25px -5px rgba(0,0,0,0.05)', 
-                          transition: 'all 0.3s ease', 
-                          position: 'relative',
-                          display: 'flex',
-                          flexDirection: 'column'
-                      }}
-                  >
-                      <a href={product.externalLink} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', display: 'block', flex: 1 }}>
-                          <div className="image-wrapper" style={{ height: isMobile ? '180px' : '240px', marginBottom: '15px', overflow: 'hidden', borderRadius: '12px', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                              <img 
-                                  src={getImageUrl(product.image)} 
-                                  alt={product.name || product.title} 
-                                  style={{ maxWidth: '90%', maxHeight: '90%', objectFit: 'contain' }} 
-                                  onError={(e) => (e.target.src = PLACEHOLDER_SVG)}
-                              />
-                          </div>
-                          {product.category && product.category !== 'Uncategorized' && (
-                              <div style={{ fontSize: '0.75rem', color: '#64748b', textTransform: 'uppercase', marginBottom: '6px', fontWeight: 600, letterSpacing: '0.05em' }}>
-                                  {product.category}
-                              </div>
-                          )}
-                          <h3 style={{ 
-                              fontSize: isMobile ? '1.1rem' : '1.25rem', 
-                              color: '#1e293b', 
-                              marginBottom: '12px', 
-                              height: '3rem', 
-                              overflow: 'hidden',
-                              lineHeight: 1.3,
-                              fontWeight: 700
-                          }}>{product.name || product.title}</h3>
-                          
-                          {product.price > 0 && (
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: 'auto' }}>
-                              <div style={{ fontSize: isMobile ? '1.25rem' : '1.5rem', fontWeight: 800, color: '#2563eb' }}>
-                                  ₹{product.price.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
-                              </div>
-                          </div>
-                          )}
-                      </a>
-                      
-                      <a 
-                          href={product.externalLink} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="btn btn-dark" 
-                          style={{ 
-                              width: '100%', 
-                              marginTop: '20px', 
-                              padding: '14px', 
-                              borderRadius: '10px', 
-                              border: 'none', 
-                              background: '#0f172a', 
-                              color: 'white', 
-                              fontWeight: 600, 
-                              cursor: 'pointer',
-                              fontSize: '1rem',
-                              transition: 'background 0.2s',
-                              textAlign: 'center',
-                              textDecoration: 'none',
-                              display: 'inline-block'
-                          }}
-                      >
-                          Explore Product
-                      </a>
-                  </div>
-              ))}
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '30px', alignItems: 'stretch' }}>
+              {/* Left Poster */}
+              {partnerPosters.left && (
+                  <a href={partnerPosters.left.link} target="_blank" rel="noopener noreferrer" style={{ display: 'block', textDecoration: 'none' }}>
+                      <img src={partnerPosters.left.imageUrl} alt="Partner Poster" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '16px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }} />
+                  </a>
+              )}
+              
+              {/* Right Poster */}
+              {partnerPosters.right && (
+                  <a href={partnerPosters.right.link} target="_blank" rel="noopener noreferrer" style={{ display: 'block', textDecoration: 'none' }}>
+                      <img src={partnerPosters.right.imageUrl} alt="Partner Poster" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '16px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }} />
+                  </a>
+              )}
           </div>
         </section>
       )}
 
-      {/* Dynamic Brand Marquee logic is in Header or global CSS */}
 
+      {/* Blogs Section */}
+      {blogs && blogs.length > 0 && (
+          <section className="section container" style={{ padding: '4rem 1rem' }}>
+              <div className="section-header reveal" ref={addToRevealRefs}>
+                  <h2>Latest News & Updates</h2>
+                  <p>Stay informed with our latest articles and announcements</p>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px' }}>
+                  {blogs.map(blog => {
+                      const safeContent = blog.content || '';
+                      const formatDate = (dateStr) => {
+                          try {
+                              if (!dateStr) return '';
+                              const d = new Date(dateStr);
+                              return isNaN(d.getTime()) ? '' : d.toLocaleDateString();
+                          } catch(e) { return ''; }
+                      };
+                      return (
+                      <div key={blog._id || Math.random()} className="reveal" ref={addToRevealRefs} style={{ background: 'var(--light-bg)', borderRadius: '16px', overflow: 'hidden', border: '1px solid var(--border-color)', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column' }}>
+                          <a href={`/blog/${blog._id}`} style={{ textDecoration: 'none', color: 'inherit', display: 'flex', flexDirection: 'column', height: '100%' }}>
+                              <div style={{ height: '220px', overflow: 'hidden' }}>
+                                  <img 
+                                      src={getImageUrl(blog.thumbnailImage) || PLACEHOLDER_SVG} 
+                                      alt={blog.title || 'Blog'} 
+                                      style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.3s ease' }} 
+                                      onMouseOver={e => e.currentTarget.style.transform = 'scale(1.05)'}
+                                      onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
+                                  />
+                              </div>
+                              <div style={{ padding: '24px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                                  <div style={{ fontSize: '0.85rem', color: 'var(--primary)', fontWeight: 600, marginBottom: '10px' }}>
+                                      By {blog.author || 'Admin'} {formatDate(blog.createdAt) ? `• ${formatDate(blog.createdAt)}` : ''}
+                                  </div>
+                                  <h3 style={{ fontSize: '1.25rem', marginBottom: '15px', color: 'var(--text-dark)', lineHeight: 1.4 }}>
+                                      {blog.title || 'Untitled'}
+                                  </h3>
+                                  <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', flex: 1 }}>
+                                      {safeContent.length > 120 ? safeContent.substring(0, 120) + '...' : safeContent}
+                                  </p>
+                                  <div style={{ marginTop: '20px', fontWeight: 600, color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                      Read More &rarr;
+                                  </div>
+                              </div>
+                          </a>
+                      </div>
+                  )})}
+              </div>
+          </section>
+      )}
 
 
       {/* Testimonials */}
@@ -801,7 +775,7 @@ const Home = () => {
                 }
             ].map((testi, i) => (
                 <div key={i} className="testi-card reveal" ref={addToRevealRefs}>
-                    <div className="stars" style={{ color: '#f59e0b', marginBottom: '1rem' }}>★★★★★</div>
+                    <div className="stars" style={{ color: 'var(--warning)', marginBottom: '1rem' }}>★★★★★</div>
                     <p style={{ fontSize: '1.05rem', lineHeight: 1.6, color: '#334155' }}>"{testi.text}"</p>
                     <div className="user-info" style={{ marginTop: '1.5rem' }}>
                         <img src={testi.img} alt={testi.name} className="user-avatar" style={{ border: '2px solid var(--primary)' }} />

@@ -31,7 +31,7 @@ export const PRODUCTS = [
     image: "/images/creality-k1c.png",
     stars: "★★★★★ (4.9)",
     badge: "Popular",
-    badgeStyle: { background: "#10b981", color: "white" },
+    badgeStyle: { background: "var(--success)", color: "white" },
     featured: true
   },
   {
@@ -42,7 +42,7 @@ export const PRODUCTS = [
     image: "/images/snapmaker-2.0-a350t-3-in-1.png",
     stars: "★★★★★ (5.0)",
     badge: "Premium",
-    badgeStyle: { background: "#f97316", color: "white" }
+    badgeStyle: { background: "var(--secondary)", color: "white" }
   },
   {
     id: 5,
@@ -52,7 +52,7 @@ export const PRODUCTS = [
     image: "/images/bambu-lab-p1s-combo.png",
     stars: "★★★★★ (4.8)",
     badge: "Top Seller",
-    badgeStyle: { background: "#10b981", color: "white" }
+    badgeStyle: { background: "var(--success)", color: "white" }
   },
   {
     id: 6,
@@ -105,7 +105,7 @@ export const PRODUCTS = [
     image: "/images/creality-k2-plus-combo.png",
     stars: "★★★★★ (4.7)",
     badge: "Top Seller",
-    badgeStyle: { background: "#10b981", color: "white" }
+    badgeStyle: { background: "var(--success)", color: "white" }
   }
 ];
 
@@ -145,8 +145,8 @@ export const MATERIALS = [
 ];
 
 export const BRANDS = [
-  { name: "Anycubic", path: "anycubic", color: "#2563eb" },
-  { name: "Bambu Lab", path: "bambu", color: "#10b981" },
+  { name: "Anycubic", path: "anycubic", color: "var(--primary)" },
+  { name: "Bambu Lab", path: "bambu", color: "var(--success)" },
   { name: "Creality", path: "creality", color: "#000" },
   { name: "Snapmaker", path: "snapmaker", color: "#333", italic: true },
   { name: "Rotrics", path: "rotrics", color: "#ef4444" },

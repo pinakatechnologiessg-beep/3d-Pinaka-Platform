@@ -124,7 +124,7 @@ const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu, meta }) => {
                   </Link>
                 </div>
                 <div className="mega-col mega-img-col">
-                  <Link to="/products.html?category=Laser Engraver" className="mega-img-card laser-img" style={{ background: '#e2e8f0' }}>
+                  <Link to="/products.html?category=Laser Engraver" className="mega-img-card laser-img" style={{ background: 'var(--border-color)' }}>
                     <img src={getImageUrl("/images/product-resin-2-1774868383507.png")} alt="Laser Engraver" loading="lazy" onError={(e) => (e.target.src = PLACEHOLDER_SVG)}/>
                     <span className="label" style={{ boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }}>Laser Engraver</span>
                   </Link>
@@ -173,7 +173,7 @@ const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu, meta }) => {
                           </div>
                         ))
                       ) : (
-                        <div style={{ padding: '10px', color: '#64748b', fontSize: '0.85rem' }}>No featured items yet</div>
+                        <div style={{ padding: '10px', color: 'var(--text-muted)', fontSize: '0.85rem' }}>No featured items yet</div>
                       )}
                     </div>
                 </div>
@@ -189,31 +189,31 @@ const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu, meta }) => {
           <div className="desktop-only">
             {user ? (
                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                <Link to="/account" style={{ color: 'var(--text-dark)', textDecoration: 'none', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <User size={20} />
-                  <span style={{ fontSize: '0.85rem' }}>{user.firstName || user.name?.split(' ')[0] || 'User'}</span>
+                <Link to="/account" style={{ color: 'var(--text-dark)', textDecoration: 'none', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <User size={24} />
+                  <span style={{ fontSize: '1.1rem' }}>{user.firstName || user.name?.split(' ')[0] || 'User'}</span>
                 </Link>
                </div>
             ) : (
-                <Link to="/login" style={{ color: 'var(--text-dark)', textDecoration: 'none' }}><User size={20} /></Link>
+                <Link to="/login" style={{ color: 'var(--text-dark)', textDecoration: 'none' }}><User size={24} /></Link>
             )}
           </div>
 
-          <Link to="/wishlist.html" className="heart-icon-wrap desktop-only" style={{ color: 'var(--text-dark)', textDecoration: 'none' }}>
-            <Heart size={20} />
+          <Link to="/wishlist.html" className="heart-icon-wrap desktop-only" style={{ color: 'var(--text-dark)', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+            <Heart size={24} />
             {wishlistCount > 0 && <span className="heart-badge">{wishlistCount}</span>}
           </Link>
           
           <div 
             onClick={() => setIsSearchOpen(true)}
             className="search-icon-mobile" 
-            style={{ color: 'var(--text-dark)', textDecoration: 'none', cursor: 'pointer' }}
+            style={{ color: 'var(--text-dark)', textDecoration: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
           >
-            <MagnifyingGlass size={22} />
+            <MagnifyingGlass size={24} />
           </div>
 
-          <Link to="/cart.html" className="cart-icon-wrap" style={{ color: 'var(--text-dark)', textDecoration: 'none' }}>
-            <ShoppingCart size={22} />
+          <Link to="/cart.html" className="cart-icon-wrap" style={{ color: 'var(--text-dark)', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+            <ShoppingCart size={24} />
             <span className="cart-badge">{cartCount}</span>
           </Link>
         </div>

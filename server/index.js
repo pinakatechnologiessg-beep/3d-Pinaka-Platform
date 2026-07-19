@@ -15,6 +15,10 @@ import popupRoutes from './routes/popupRoutes.js';
 import couponRoutes from './routes/couponRoutes.js';
 import heroRoutes from './routes/heroRoutes.js';
 import partnerProductRoutes from './routes/partnerProductRoutes.js';
+import partnerPosterRoutes from './routes/partnerPosterRoutes.js';
+import marketplaceRoutes from './routes/marketplaceRoutes.js';
+import blogRoutes from './routes/blogRoutes.js';
+
 
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -141,13 +145,18 @@ app.use('/api/popup', popupRoutes);
 app.use('/api/coupons', couponRoutes);
 app.use('/api/hero', heroRoutes);
 app.use('/api/partner-products', partnerProductRoutes);
+app.use('/api/partner-posters', partnerPosterRoutes);
+app.use('/api/marketplaces', marketplaceRoutes);
+app.use('/api/blogs', blogRoutes);
+
+
+// Catch-all for API routes to prevent HTML responses for unmatched API endpoints
+app.use('/api', (req, res) => {
+    res.status(404).json({ success: false, message: `API Route Not Found: ${req.method} ${req.path}` });
+});
 
 // Catch-all route to serve React App for all unknown routes (SPA routing)
 app.get(/.*/, (req, res) => {
-  // If it's an API route that wasn't found, don't serve HTML
-  if (req.path.startsWith('/api')) {
-    return res.status(404).json({ success: false, message: 'API Route Not Found' });
-  }
   res.sendFile(path.join(__dirname, '../client/dist/index.html'));
 });
 

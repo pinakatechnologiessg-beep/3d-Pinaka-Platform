@@ -163,7 +163,7 @@ const ProductDetail = () => {
                                 <div 
                                     className={`thumbnail-item ${activeImage === imageUrl ? 'active' : ''}`}
                                     onClick={() => setActiveImage(imageUrl)}
-                                    style={{ width: '70px', height: '70px', borderRadius: '8px', border: `2px solid ${activeImage === imageUrl ? '#2563eb' : '#e2e8f0'}`, overflow: 'hidden', cursor: 'pointer', flexShrink: 0 }}
+                                    style={{ width: '70px', height: '70px', borderRadius: '8px', border: `2px solid ${activeImage === imageUrl ? 'var(--primary)' : 'var(--border-color)'}`, overflow: 'hidden', cursor: 'pointer', flexShrink: 0 }}
                                 >
                                     <img src={imageUrl} alt="thumbnail" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                 </div>
@@ -174,7 +174,7 @@ const ProductDetail = () => {
                                             key={i}
                                             className={`thumbnail-item ${activeImage === thumbUrl ? 'active' : ''}`}
                                             onClick={() => setActiveImage(thumbUrl)}
-                                            style={{ width: '70px', height: '70px', borderRadius: '8px', border: `2px solid ${activeImage === thumbUrl ? '#2563eb' : '#e2e8f0'}`, overflow: 'hidden', cursor: 'pointer', flexShrink: 0 }}
+                                            style={{ width: '70px', height: '70px', borderRadius: '8px', border: `2px solid ${activeImage === thumbUrl ? 'var(--primary)' : 'var(--border-color)'}`, overflow: 'hidden', cursor: 'pointer', flexShrink: 0 }}
                                         >
                                             <img src={thumbUrl} alt={`thumbnail ${i}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                         </div>
@@ -195,7 +195,7 @@ const ProductDetail = () => {
                                         key={i} 
                                         size={18} 
                                         weight={i < Math.floor(product.rating || 0) ? "fill" : "regular"} 
-                                        color={i < Math.floor(product.rating || 0) ? "#f59e0b" : "#cbd5e1"}
+                                        color={i < Math.floor(product.rating || 0) ? "var(--warning)" : "#cbd5e1"}
                                     />
                                 ))}
                             </div>
@@ -262,7 +262,7 @@ const ProductDetail = () => {
                                 <ArrowsCounterClockwise size={24} />
                                 <span>Easy Returns</span>
                             </div>
-                            <div className="badge-item" style={{ gridColumn: 'span 3', background: 'var(--primary-light, #eff6ff)', border: '1px solid var(--primary, #2563eb)', color: 'var(--primary, #2563eb)' }}>
+                            <div className="badge-item" style={{ gridColumn: 'span 3', background: 'var(--primary-light, var(--border-color))', border: '1px solid var(--primary, var(--primary))', color: 'var(--primary, var(--primary))' }}>
                                 <Receipt size={24} />
                                 <span style={{ fontWeight: 600 }}>GST Invoice Available</span>
                             </div>
@@ -277,7 +277,7 @@ const ProductDetail = () => {
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     gap: '0.75rem',
-                                    backgroundColor: (!product.inStock || product.stockQuantity <= 0) ? '#94a3b8' : '#10b981',
+                                    backgroundColor: (!product.inStock || product.stockQuantity <= 0) ? 'var(--text-muted)' : 'var(--success)',
                                     color: 'white',
                                     padding: '1.1rem',
                                     borderRadius: '12px',
@@ -320,7 +320,7 @@ const ProductDetail = () => {
                                 {product.descriptionImages && product.descriptionImages.length > 0 && (
                                     <div className="description-images-gallery" style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
                                         {product.descriptionImages.map((img, i) => (
-                                            <img key={i} src={getImageUrl(img)} alt={`${product.name} detail ${i + 1}`} style={{ width: '100%', borderRadius: '8px', border: '1px solid #e2e8f0', objectFit: 'contain', maxHeight: '500px' }} />
+                                            <img key={i} src={getImageUrl(img)} alt={`${product.name} detail ${i + 1}`} style={{ width: '100%', borderRadius: '8px', border: '1px solid var(--border-color)', objectFit: 'contain', maxHeight: '500px' }} />
                                         ))}
                                     </div>
                                 )}
@@ -347,7 +347,7 @@ const ProductDetail = () => {
                         {activeTab === 'features' && (
                             <div className="features-content" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
                                 <div>
-                                    <h3 style={{ marginBottom: '15px', color: '#0f172a' }}>Features & Benefits</h3>
+                                    <h3 style={{ marginBottom: '15px', color: 'var(--text-dark)' }}>Features & Benefits</h3>
                                     {product.features && product.features.length > 0 ? (
                                         <ul style={{ listStyleType: 'disc', paddingLeft: '20px', lineHeight: '1.8', color: '#475569' }}>
                                             {product.features.map((feature, i) => (
@@ -359,7 +359,7 @@ const ProductDetail = () => {
                                     )}
                                 </div>
                                 <div>
-                                    <h3 style={{ marginBottom: '15px', color: '#0f172a' }}>Package Contents</h3>
+                                    <h3 style={{ marginBottom: '15px', color: 'var(--text-dark)' }}>Package Contents</h3>
                                     {product.packageContents && product.packageContents.length > 0 ? (
                                         <ul style={{ listStyleType: 'disc', paddingLeft: '20px', lineHeight: '1.8', color: '#475569' }}>
                                             {product.packageContents.map((item, i) => (
@@ -374,17 +374,17 @@ const ProductDetail = () => {
                         )}
                         {activeTab === 'shipping' && (
                             <div className="shipping-content">
-                                <h3 style={{ marginBottom: '15px', color: '#0f172a' }}>Shipping Information</h3>
+                                <h3 style={{ marginBottom: '15px', color: 'var(--text-dark)' }}>Shipping Information</h3>
                                 <p style={{ lineHeight: '1.8', color: '#475569', marginBottom: '20px' }}>
                                     {product.shippingInfo || 'Ships within 24-48 hours. Free standard delivery on all orders above ₹5,000. Express shipping options available at checkout.'}
                                 </p>
                                 
-                                <h3 style={{ marginBottom: '15px', color: '#0f172a' }}>Warranty & Support</h3>
+                                <h3 style={{ marginBottom: '15px', color: 'var(--text-dark)' }}>Warranty & Support</h3>
                                 <p style={{ lineHeight: '1.8', color: '#475569', marginBottom: '20px' }}>
                                     {product.warrantyInfo || '1 Year Standard Warranty. Covers manufacturing defects. Dedicated technical support team available for troubleshooting.'}
                                 </p>
 
-                                <div style={{ background: '#f8fafc', padding: '15px', borderRadius: '8px', borderLeft: '4px solid #2563eb', marginTop: '20px' }}>
+                                <div style={{ background: 'var(--light-bg)', padding: '15px', borderRadius: '8px', borderLeft: '4px solid var(--primary)', marginTop: '20px' }}>
                                     <strong>GST Invoice:</strong> A proper tax invoice with GST details will be provided with this product, allowing businesses to claim input tax credit (ITC).
                                 </div>
                             </div>
@@ -394,20 +394,20 @@ const ProductDetail = () => {
                                 {product.faqs && product.faqs.length > 0 ? (
                                     <div className="faq-list">
                                         {product.faqs.map((faq, i) => (
-                                            <div key={i} style={{ marginBottom: '20px', borderBottom: '1px solid #e2e8f0', paddingBottom: '15px' }}>
-                                                <h4 style={{ color: '#0f172a', marginBottom: '8px', fontSize: '1.1rem' }}>Q: {faq.question}</h4>
+                                            <div key={i} style={{ marginBottom: '20px', borderBottom: '1px solid var(--border-color)', paddingBottom: '15px' }}>
+                                                <h4 style={{ color: 'var(--text-dark)', marginBottom: '8px', fontSize: '1.1rem' }}>Q: {faq.question}</h4>
                                                 <p style={{ color: '#475569', lineHeight: '1.6' }}>A: {faq.answer}</p>
                                             </div>
                                         ))}
                                     </div>
                                 ) : (
                                     <div className="faq-list">
-                                        <div style={{ marginBottom: '20px', borderBottom: '1px solid #e2e8f0', paddingBottom: '15px' }}>
-                                            <h4 style={{ color: '#0f172a', marginBottom: '8px', fontSize: '1.1rem' }}>Q: Is this product authentic?</h4>
+                                        <div style={{ marginBottom: '20px', borderBottom: '1px solid var(--border-color)', paddingBottom: '15px' }}>
+                                            <h4 style={{ color: 'var(--text-dark)', marginBottom: '8px', fontSize: '1.1rem' }}>Q: Is this product authentic?</h4>
                                             <p style={{ color: '#475569', lineHeight: '1.6' }}>A: Yes, all our products are 100% authentic and sourced directly from manufacturers or authorized distributors.</p>
                                         </div>
-                                        <div style={{ marginBottom: '20px', borderBottom: '1px solid #e2e8f0', paddingBottom: '15px' }}>
-                                            <h4 style={{ color: '#0f172a', marginBottom: '8px', fontSize: '1.1rem' }}>Q: Do you offer technical support?</h4>
+                                        <div style={{ marginBottom: '20px', borderBottom: '1px solid var(--border-color)', paddingBottom: '15px' }}>
+                                            <h4 style={{ color: 'var(--text-dark)', marginBottom: '8px', fontSize: '1.1rem' }}>Q: Do you offer technical support?</h4>
                                             <p style={{ color: '#475569', lineHeight: '1.6' }}>A: Absolutely. We have a dedicated support team that can help you with setup and troubleshooting.</p>
                                         </div>
                                     </div>
@@ -425,7 +425,7 @@ const ProductDetail = () => {
                                                     key={i} 
                                                     size={22} 
                                                     weight={i < Math.floor(avgRating) ? "fill" : "regular"} 
-                                                    color="#f59e0b"
+                                                    color="var(--warning)"
                                                 />
                                             ))}
                                         </div>
@@ -460,7 +460,7 @@ const ProductDetail = () => {
                                                                 key={starI} 
                                                                 size={14} 
                                                                 weight={starI < review.rating ? "fill" : "regular"} 
-                                                                color="#f59e0b"
+                                                                color="var(--warning)"
                                                             />
                                                         ))}
                                                     </div>
@@ -536,9 +536,9 @@ const ProductDetail = () => {
                                     <div className="product-info">
                                         <div className="product-title">{p.name}</div>
                                         <div className="product-price" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                            <span style={{ fontWeight: 700, color: '#2563eb' }}>₹{p.price?.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                                            <span style={{ fontWeight: 700, color: 'var(--primary)' }}>₹{p.price?.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                                             {p.mrp && p.mrp > p.price && (
-                                                <span style={{ fontSize: '0.85rem', color: '#94a3b8', textDecoration: 'line-through' }}>₹{p.mrp?.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                                                <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', textDecoration: 'line-through' }}>₹{p.mrp?.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                                             )}
                                         </div>
                                     </div>

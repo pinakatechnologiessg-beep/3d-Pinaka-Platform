@@ -58,7 +58,7 @@ const Wishlist = () => {
                                 <button className="wishlist-btn active" onClick={() => removeItem(item.id)}>
                                     <Trash size={18} weight="bold" />
                                 </button>
-                                <div className="product-img-wrapper" style={{ height: '200px', background: '#f8fafc', borderRadius: '8px', overflow: 'hidden', marginBottom: '12px' }}>
+                                <div className="product-img-wrapper" style={{ height: '200px', background: 'var(--light-bg)', borderRadius: '8px', overflow: 'hidden', marginBottom: '12px' }}>
                                     <img 
                                         src={getImageUrl(item.image)} 
                                         alt={item.title} 

@@ -93,7 +93,7 @@ const ProductImageZoom = ({ image, alt, allImages = [] }) => {
           overflow: 'hidden',
           backgroundColor: '#fff',
           borderRadius: '16px',
-          border: '1px solid #f1f5f9',
+          border: '1px solid var(--border-color)',
           cursor: isTouchDevice ? 'pointer' : 'crosshair',
           boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
           display: 'flex',
@@ -146,7 +146,7 @@ const ProductImageZoom = ({ image, alt, allImages = [] }) => {
           <div style={{
             position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)',
             backgroundColor: 'rgba(255,255,255,0.95)', padding: '8px 16px', borderRadius: '30px',
-            fontSize: '0.85rem', color: '#1e293b', fontWeight: 600,
+            fontSize: '0.85rem', color: 'var(--text-dark)', fontWeight: 600,
             boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', pointerEvents: 'none',
             backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', gap: '8px',
             zIndex: 10, border: '1px solid rgba(0,0,0,0.05)'
@@ -166,7 +166,7 @@ const ProductImageZoom = ({ image, alt, allImages = [] }) => {
             {imageList.map((_, i) => (
               <div key={i} style={{
                 width: i === activeIndex ? '18px' : '6px', height: '6px',
-                borderRadius: '3px', background: i === activeIndex ? '#2563eb' : 'rgba(0,0,0,0.25)',
+                borderRadius: '3px', background: i === activeIndex ? 'var(--primary)' : 'rgba(0,0,0,0.25)',
                 transition: 'all 0.3s ease'
               }} />
             ))}
@@ -187,7 +187,7 @@ const ProductImageZoom = ({ image, alt, allImages = [] }) => {
           onTouchEnd={handleLightboxTouchEnd}
         >
           <button
-            style={{ position: 'absolute', top: '20px', right: '20px', background: 'white', border: 'none', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 10 }}
+            style={{ position: 'absolute', top: '20px', right: '20px', background: 'var(--colorful-bg)', border: 'none', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 10 }}
             onClick={(e) => { e.stopPropagation(); setIsLightboxOpen(false); }}
           >
             <X size={24} color="#000" />

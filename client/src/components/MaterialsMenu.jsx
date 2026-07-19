@@ -43,7 +43,7 @@ const MaterialsMenu = () => {
       onMouseEnter={() => setIsOpen(true)}
       onMouseLeave={() => setIsOpen(false)}
     >
-      <span className="dropbtn" style={{ cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600' }}>
+      <span className="dropbtn" style={{ cursor: 'pointer' }}>
         Materials <CaretDown size={14} weight="bold" />
       </span>
       
@@ -136,7 +136,7 @@ const MaterialsMenu = () => {
           z-index: 9999;
           border-radius: 16px;
           overflow: hidden;
-          border: 1px solid #e2e8f0;
+          border: 1px solid var(--border-color);
           animation: megaFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
           margin-top: 5px;
         }
@@ -153,8 +153,8 @@ const MaterialsMenu = () => {
 
         .mega-sidebar {
           width: 220px;
-          background: #f8fafc;
-          border-right: 1px solid #e2e8f0;
+          background: var(--light-bg);
+          border-right: 1px solid var(--border-color);
           flex-shrink: 0;
           padding: 1rem 0;
         }
@@ -183,15 +183,15 @@ const MaterialsMenu = () => {
         }
 
         .mega-tab-item:hover {
-          background: #f1f5f9;
+          background: var(--border-color);
         }
         
         .mega-tab-item:hover .mega-tab-link {
-          color: #2563eb;
+          color: var(--primary);
         }
 
         .mega-tab-item.active {
-          background: #2563eb;
+          background: var(--primary);
         }
 
         .mega-tab-item.active .mega-tab-link {
@@ -211,13 +211,13 @@ const MaterialsMenu = () => {
           align-items: center;
           margin-bottom: 1.5rem;
           padding-bottom: 0.8rem;
-          border-bottom: 1.5px solid #f1f5f9;
+          border-bottom: 1.5px solid var(--border-color);
         }
 
         .mega-header h3 {
           font-size: 0.8rem;
           font-weight: 800;
-          color: #94a3b8;
+          color: var(--text-muted);
           letter-spacing: 0.12em;
           margin: 0;
           text-transform: uppercase;
@@ -226,7 +226,7 @@ const MaterialsMenu = () => {
         .mega-browse-all {
           font-size: 0.75rem;
           font-weight: 700;
-          color: #2563eb;
+          color: var(--primary);
           text-decoration: none;
           padding: 4px 12px;
           border-radius: 6px;
@@ -234,7 +234,7 @@ const MaterialsMenu = () => {
         }
         
         .mega-browse-all:hover {
-          background: #eff6ff;
+          background: var(--border-color);
         }
 
         .mega-grid {
@@ -258,11 +258,11 @@ const MaterialsMenu = () => {
         .mega-product-card:hover {
           transform: translateY(-5px);
           box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-          border-color: #f1f5f9;
+          border-color: var(--border-color);
         }
 
         .mega-img-wrap {
-          background: #f8fafc;
+          background: var(--light-bg);
           border-radius: 10px;
           height: 180px; /* Slightly increased for better focus */
           display: flex;
@@ -287,7 +287,7 @@ const MaterialsMenu = () => {
         .mega-brand {
           font-size: 0.7rem;
           font-weight: 700;
-          color: #64748b;
+          color: var(--text-muted);
           text-transform: uppercase;
           margin-bottom: 4px;
         }
@@ -295,7 +295,7 @@ const MaterialsMenu = () => {
         .mega-name {
           font-size: 0.9rem;
           font-weight: 600;
-          color: #1e293b;
+          color: var(--text-dark);
           display: -webkit-box;
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
@@ -308,20 +308,20 @@ const MaterialsMenu = () => {
         .mega-price {
           font-size: 1rem;
           font-weight: 700;
-          color: #2563eb;
+          color: var(--primary);
           margin-top: 6px;
         }
 
         .mega-shimmer {
           padding: 10px;
         }
-        .mega-shimmer-img { height: 180px; background: #f1f5f9; border-radius: 10px; margin-bottom: 10px; }
-        .mega-shimmer-line { height: 12px; background: #f1f5f9; width: 80%; border-radius: 4px; margin-bottom: 6px; }
+        .mega-shimmer-img { height: 180px; background: var(--border-color); border-radius: 10px; margin-bottom: 10px; }
+        .mega-shimmer-line { height: 12px; background: var(--border-color); width: 80%; border-radius: 4px; margin-bottom: 6px; }
 
         .mega-empty {
           text-align: center;
           padding: 4rem 0;
-          color: #94a3b8;
+          color: var(--text-muted);
           font-size: 1rem;
         }
       `}</style>

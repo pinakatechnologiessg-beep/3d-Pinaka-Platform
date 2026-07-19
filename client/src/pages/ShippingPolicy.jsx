@@ -22,7 +22,7 @@ const ShippingPolicy = () => {
             </div>
 
             {/* Content Section */}
-            <section className="section container policy-content" style={{ background: 'white', padding: '3rem', borderRadius: '15px', border: '1px solid var(--border-color)', margin: '2rem auto', maxWidth: '1000px', boxShadow: '0 10px 30px rgba(0,0,0,0.05)' }}>
+            <section className="section container policy-content" style={{ background: 'var(--colorful-bg)', padding: '3rem', borderRadius: '15px', border: '1px solid var(--border-color)', margin: '2rem auto', maxWidth: '1000px', boxShadow: '0 10px 30px rgba(0,0,0,0.05)' }}>
                 <div style={{ color: 'var(--text-dark)', lineHeight: '1.8' }}>
 
                     <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', fontSize: '0.95rem' }}><strong>Last Updated: May 2026</strong></p>

@@ -78,7 +78,7 @@ const BrandProductCard = ({ product, revealRef }) => {
                             </button>
                         </>
                     ) : (
-                        <button className="add-cart-btn sold-out-btn" disabled style={{ background: '#94a3b8', cursor: 'not-allowed' }}>
+                        <button className="add-cart-btn sold-out-btn" disabled style={{ background: 'var(--text-muted)', cursor: 'not-allowed' }}>
                              <ShoppingCart size={22} weight="bold" />
                         </button>
                     )}
@@ -240,7 +240,7 @@ const BrandPage = () => {
 
                 <Link to="/" className="back-home-btn"><ArrowLeft /> Back to Home</Link>
                 <h1>{brand.name} Printers</h1>
-                <p style={{ color: '#94a3b8', marginTop: '1rem' }}>Professional 3D Printing solutions by {brand.name}</p>
+                <p style={{ color: 'var(--text-muted)', marginTop: '1rem' }}>Professional 3D Printing solutions by {brand.name}</p>
             </div>
 
             <section className="section container">
@@ -316,9 +316,9 @@ const BrandPage = () => {
                                 <BrandProductCard key={product._id || product.id} product={product} revealRef={addToRevealRefs} />
                             ))
                         ) : (
-                            <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '8rem 2rem', background: '#f8fafc', borderRadius: '12px' }}>
+                            <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '8rem 2rem', background: 'var(--light-bg)', borderRadius: '12px' }}>
                                 <h3 style={{ marginBottom: '1rem' }}>No Products Found</h3>
-                                <p style={{ color: '#64748b' }}>We couldn't find any products matching your selected filters for this brand.</p>
+                                <p style={{ color: 'var(--text-muted)' }}>We couldn't find any products matching your selected filters for this brand.</p>
                                 <button className="btn btn-primary" style={{ marginTop: '2rem' }} onClick={clearAll}>Clear All Filters</button>
                             </div>
                         )}

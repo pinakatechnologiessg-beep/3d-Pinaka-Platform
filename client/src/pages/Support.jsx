@@ -85,8 +85,8 @@ const Support = () => {
 
                 <div className="support-card" style={{ background: 'var(--white)', padding: '3rem', borderRadius: '16px', border: '1px solid var(--border-color)', boxShadow: '0 20px 40px rgba(0,0,0,0.05)' }}>
                     {user && (
-                        <div style={{ marginBottom: '2rem', textAlign: 'center', padding: '1rem', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                            <p style={{ fontSize: '0.9rem', color: '#64748b', marginBottom: '10px' }}>Already have an active request? Check your conversation status here.</p>
+                        <div style={{ marginBottom: '2rem', textAlign: 'center', padding: '1rem', background: 'var(--light-bg)', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
+                            <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '10px' }}>Already have an active request? Check your conversation status here.</p>
                             <button onClick={() => navigate('/my-tickets')} className="btn btn-outline" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '10px 20px' }}>
                                 <ChatCircleText size={20} /> View My Support Tickets
                             </button>

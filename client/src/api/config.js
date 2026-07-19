@@ -3,7 +3,7 @@
  * Defaults to localhost:5000 if VITE_API_URL is not set in environment.
  */
 export const API_BASE_URL = import.meta.env.PROD 
-  ? (import.meta.env.VITE_API_URL || '') 
+  ? (import.meta.env.VITE_API_URL || '').replace(/\/$/, "")
   : (import.meta.env.VITE_API_URL || 'http://localhost:10000').replace(/\/$/, "");
 
 // Helper for standard API paths

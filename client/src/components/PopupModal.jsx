@@ -53,7 +53,7 @@ const PopupModal = () => {
             <div 
                 onClick={(e) => e.stopPropagation()}
                 style={{
-                    background: 'white',
+                    background: 'var(--colorful-bg)',
                     borderRadius: '24px',
                     overflow: 'hidden',
                     maxWidth: '600px',
@@ -116,7 +116,7 @@ const PopupModal = () => {
                                 borderRadius: '4px', 
                                 fontSize: '1.1rem', 
                                 fontWeight: 800,
-                                background: popup.templateData?.codeBgColor || '#f97316',
+                                background: popup.templateData?.codeBgColor || 'var(--secondary)',
                                 color: popup.templateData?.codeColor || 'white',
                                 boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
                                 letterSpacing: '1px'
@@ -130,7 +130,7 @@ const PopupModal = () => {
                                 className="btn btn-primary" 
                                 style={{ 
                                     marginTop: '25px', 
-                                    background: 'white', 
+                                    background: 'var(--colorful-bg)', 
                                     color: popup.templateData?.color || '#ef4444', 
                                     padding: '12px 35px', 
                                     fontWeight: 700,

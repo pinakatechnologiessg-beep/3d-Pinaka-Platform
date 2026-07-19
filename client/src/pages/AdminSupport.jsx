@@ -85,7 +85,7 @@ const AdminSupport = ({ toggleMobileMenu }) => {
 
     const getStatusColor = (status) => {
         switch (status) {
-            case 'New': return { bg: '#eff6ff', text: '#1d4ed8', border: '#bfdbfe' };
+            case 'New': return { bg: 'var(--border-color)', text: '#1d4ed8', border: '#bfdbfe' };
             case 'Pending': return { bg: '#fffbeb', text: '#b45309', border: '#fde68a' };
             case 'Resolved': return { bg: '#f0fdf4', text: '#15803d', border: '#bbf7d0' };
             default: return { bg: '#f9fafb', text: '#4b5563', border: '#e5e7eb' };
@@ -100,11 +100,11 @@ const AdminSupport = ({ toggleMobileMenu }) => {
         <main className="admin-support-page" style={{ background: '#f4f7fa', padding: '0 0 2rem 0', minHeight: '100vh' }}>
             <div className="mobile-admin-header" style={{ 
                 display: 'flex', 
-                background: 'white', 
+                background: 'var(--colorful-bg)', 
                 padding: '12px 20px', 
                 alignItems: 'center', 
                 justifyContent: 'space-between',
-                borderBottom: '1px solid #e2e8f0',
+                borderBottom: '1px solid var(--border-color)',
                 position: 'sticky',
                 top: 0,
                 zIndex: 50
@@ -122,8 +122,8 @@ const AdminSupport = ({ toggleMobileMenu }) => {
             <div className="container-fluid" style={{ padding: '1.5rem 2rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2.5rem', flexWrap: 'wrap', gap: '20px' }}>
                     <div>
-                        <h1 style={{ fontSize: '2rem', color: '#1e293b', fontWeight: 800, marginBottom: '0.25rem' }}>Support Dashboard</h1>
-                        <p style={{ color: '#64748b', fontSize: '0.95rem' }}>Manage all customer support queries from one place.</p>
+                        <h1 style={{ fontSize: '2rem', color: 'var(--text-dark)', fontWeight: 800, marginBottom: '0.25rem' }}>Support Dashboard</h1>
+                        <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>Manage all customer support queries from one place.</p>
                     </div>
                     <div style={{ display: 'flex', gap: '1rem' }}>
                         <select 
@@ -132,8 +132,8 @@ const AdminSupport = ({ toggleMobileMenu }) => {
                             style={{ 
                                 padding: '10px 15px', 
                                 borderRadius: '8px', 
-                                border: '1px solid #e2e8f0', 
-                                background: 'white',
+                                border: '1px solid var(--border-color)', 
+                                background: 'var(--colorful-bg)',
                                 outline: 'none',
                                 fontWeight: 500
                             }}
@@ -143,16 +143,16 @@ const AdminSupport = ({ toggleMobileMenu }) => {
                             <option value="Pending">Pending</option>
                             <option value="Resolved">Resolved</option>
                         </select>
-                        <button onClick={fetchAllTickets} className="btn-refresh" style={{ background: 'white', border: '1px solid #e2e8f0', padding: '10px', borderRadius: '8px', cursor: 'pointer' }}>
-                            <ArrowsClockwise size={20} color="#64748b" />
+                        <button onClick={fetchAllTickets} className="btn-refresh" style={{ background: 'var(--colorful-bg)', border: '1px solid var(--border-color)', padding: '10px', borderRadius: '8px', cursor: 'pointer' }}>
+                            <ArrowsClockwise size={20} color="var(--text-muted)" />
                         </button>
                     </div>
                 </div>
 
                 <div className="admin-support-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(400px, 1fr) 2fr', gap: '2rem' }}>
-                    <div className="ticket-list-sidebar" style={{ background: 'white', borderRadius: '12px', border: '1px solid #e2e8f0', height: 'calc(100vh - 180px)', overflowY: 'auto' }}>
+                    <div className="ticket-list-sidebar" style={{ background: 'var(--colorful-bg)', borderRadius: '12px', border: '1px solid var(--border-color)', height: 'calc(100vh - 180px)', overflowY: 'auto' }}>
                         {filteredTickets.length === 0 ? (
-                            <div style={{ padding: '4rem 2rem', textAlign: 'center', color: '#94a3b8' }}>
+                            <div style={{ padding: '4rem 2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
                                 <ChatCircleDots size={48} style={{ marginBottom: '1rem' }} />
                                 <p>No tickets found in this category.</p>
                             </div>
@@ -166,16 +166,16 @@ const AdminSupport = ({ toggleMobileMenu }) => {
                                         onClick={() => setSelectedTicket(ticket)}
                                         style={{ 
                                             padding: '1.25rem', 
-                                            borderBottom: '1px solid #f1f5f9', 
+                                            borderBottom: '1px solid var(--border-color)', 
                                             cursor: 'pointer', 
                                             transition: 'all 0.2s',
-                                            background: isSelected ? '#eff6ff' : 'white',
+                                            background: isSelected ? 'var(--border-color)' : 'white',
                                             borderLeft: `4px solid ${isSelected ? '#6366f1' : 'transparent'}`
                                         }}
                                         className="admin-ticket-item"
                                     >
                                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                                            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#94a3b8' }}>#{ticket._id.slice(-6).toUpperCase()}</span>
+                                            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)' }}>#{ticket._id.slice(-6).toUpperCase()}</span>
                                             <span style={{ 
                                                 padding: '2px 8px', 
                                                 borderRadius: '4px', 
@@ -186,7 +186,7 @@ const AdminSupport = ({ toggleMobileMenu }) => {
                                             }}>{ticket.status}</span>
                                         </div>
                                         <h4 style={{ fontSize: '0.95rem', fontWeight: 600, marginBottom: '0.25rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{ticket.subject}</h4>
-                                        <p style={{ fontSize: '0.8rem', color: '#64748b' }}>{ticket.name} • {new Date(ticket.createdAt).toLocaleDateString()}</p>
+                                        <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{ticket.name} • {new Date(ticket.createdAt).toLocaleDateString()}</p>
                                     </div>
                                 );
                             })
@@ -195,19 +195,19 @@ const AdminSupport = ({ toggleMobileMenu }) => {
 
                     <div className="ticket-detail-content">
                         {!selectedTicket ? (
-                            <div style={{ background: 'white', borderRadius: '12px', border: '1px dashed #e2e8f0', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#94a3b8' }}>
+                            <div style={{ background: 'var(--colorful-bg)', borderRadius: '12px', border: '1px dashed var(--border-color)', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
                                 <ChatCircleDots size={80} style={{ marginBottom: '1.5rem', opacity: 0.5 }} />
                                 <h3 style={{ fontSize: '1.5rem', fontWeight: 500 }}>Select a ticket to view conversation</h3>
                             </div>
                         ) : (
-                            <div style={{ background: 'white', borderRadius: '12px', border: '1px solid #e2e8f0', height: 'calc(100vh - 180px)', display: 'flex', flexDirection: 'column', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
-                                <div style={{ padding: '1.5rem', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                            <div style={{ background: 'var(--colorful-bg)', borderRadius: '12px', border: '1px solid var(--border-color)', height: 'calc(100vh - 180px)', display: 'flex', flexDirection: 'column', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
+                                <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                                     <div>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '0.5rem' }}>
                                             <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>{selectedTicket.subject}</h2>
-                                            <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>#{selectedTicket._id}</span>
+                                            <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>#{selectedTicket._id}</span>
                                         </div>
-                                        <div className="ticket-header-meta" style={{ display: 'flex', gap: '1.5rem', color: '#64748b', fontSize: '0.9rem', flexWrap: 'wrap' }}>
+                                        <div className="ticket-header-meta" style={{ display: 'flex', gap: '1.5rem', color: 'var(--text-muted)', fontSize: '0.9rem', flexWrap: 'wrap' }}>
                                             <span><strong>User:</strong> {selectedTicket.name} ({selectedTicket.email})</span>
                                             <span><strong>Date:</strong> {new Date(selectedTicket.createdAt).toLocaleString()}</span>
                                         </div>
@@ -217,7 +217,7 @@ const AdminSupport = ({ toggleMobileMenu }) => {
                                             <button 
                                                 key={s}
                                                 onClick={() => updateTicketStatus(selectedTicket._id, s)}
-                                                style={{ padding: '8px 16px', borderRadius: '6px', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer', background: selectedTicket.status === s ? getStatusColor(s).bg : '#f8fafc', color: selectedTicket.status === s ? getStatusColor(s).text : '#64748b', border: `1px solid ${selectedTicket.status === s ? getStatusColor(s).border : '#e2e8f0'}` }}
+                                                style={{ padding: '8px 16px', borderRadius: '6px', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer', background: selectedTicket.status === s ? getStatusColor(s).bg : 'var(--light-bg)', color: selectedTicket.status === s ? getStatusColor(s).text : 'var(--text-muted)', border: `1px solid ${selectedTicket.status === s ? getStatusColor(s).border : 'var(--border-color)'}` }}
                                             >
                                                 {s}
                                             </button>
@@ -228,11 +228,11 @@ const AdminSupport = ({ toggleMobileMenu }) => {
                                 <div style={{ flex: 1, padding: '2rem', overflowY: 'auto' }}>
                                     <div style={{ marginBottom: '2rem' }}>
                                         <div style={{ display: 'flex', gap: '12px', marginBottom: '8px' }}>
-                                            <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#64748b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem' }}>
+                                            <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--text-muted)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem' }}>
                                                 {selectedTicket.name.charAt(0).toUpperCase()}
                                             </div>
-                                            <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '0 12px 12px 12px', flex: 1, border: '1px solid #f1f5f9' }}>
-                                                <div style={{ fontWeight: 600, marginBottom: '6px', fontSize: '0.9rem', color: '#1e293b' }}>{selectedTicket.name} (Client)</div>
+                                            <div style={{ background: 'var(--light-bg)', padding: '1.25rem', borderRadius: '0 12px 12px 12px', flex: 1, border: '1px solid var(--border-color)' }}>
+                                                <div style={{ fontWeight: 600, marginBottom: '6px', fontSize: '0.9rem', color: 'var(--text-dark)' }}>{selectedTicket.name} (Client)</div>
                                                 <div style={{ lineHeight: 1.6, color: '#334155' }}>{selectedTicket.message}</div>
                                             </div>
                                         </div>
@@ -240,10 +240,10 @@ const AdminSupport = ({ toggleMobileMenu }) => {
 
                                     {selectedTicket.replies.map((reply, index) => (
                                         <div key={index} style={{ display: 'flex', gap: '12px', justifyContent: reply.sender === 'admin' ? 'flex-end' : 'flex-start', flexDirection: reply.sender === 'admin' ? 'row-reverse' : 'row', marginBottom: '2rem', alignItems: 'flex-end' }}>
-                                            <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: reply.sender === 'admin' ? '#3b82f6' : '#e2e8f0', color: reply.sender === 'admin' ? 'white' : '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: 600, flexShrink: 0, marginBottom: '4px' }}>
+                                            <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: reply.sender === 'admin' ? 'var(--primary)' : 'var(--border-color)', color: reply.sender === 'admin' ? 'white' : 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: 600, flexShrink: 0, marginBottom: '4px' }}>
                                                 {reply.sender === 'admin' ? <ShieldCheck size={20} /> : selectedTicket.name.charAt(0).toUpperCase()}
                                             </div>
-                                            <div className="chat-bubble" style={{ background: reply.sender === 'admin' ? '#2563eb' : 'white', padding: '1rem 1.25rem', borderRadius: reply.sender === 'admin' ? '20px 20px 4px 20px' : '20px 20px 20px 4px', maxWidth: '80%', border: reply.sender === 'admin' ? 'none' : '1px solid #e2e8f0', textAlign: 'left', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', color: reply.sender === 'admin' ? 'white' : '#1e293b' }}>
+                                            <div className="chat-bubble" style={{ background: reply.sender === 'admin' ? 'var(--primary)' : 'white', padding: '1rem 1.25rem', borderRadius: reply.sender === 'admin' ? '20px 20px 4px 20px' : '20px 20px 20px 4px', maxWidth: '80%', border: reply.sender === 'admin' ? 'none' : '1px solid var(--border-color)', textAlign: 'left', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', color: reply.sender === 'admin' ? 'white' : 'var(--text-dark)' }}>
                                                 <div style={{ fontWeight: 700, marginBottom: '6px', fontSize: '0.8rem', opacity: 0.9 }}>{reply.sender === 'admin' ? 'Support Team' : selectedTicket.name}</div>
                                                 <div style={{ lineHeight: 1.5, fontSize: '0.95rem' }}>{reply.message}</div>
                                                 <div style={{ fontSize: '0.7rem', opacity: 0.7, marginTop: '8px', textAlign: reply.sender === 'admin' ? 'right' : 'left' }}>{new Date(reply.date).toLocaleString([], { hour: '2-digit', minute: '2-digit', month: 'short', day: 'numeric' })}</div>
@@ -279,7 +279,7 @@ const AdminSupport = ({ toggleMobileMenu }) => {
                                             <PaperPlaneTilt size={22} weight="fill" />
                                         </button>
                                     </form>
-                                    <p className="hide-mobile" style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '8px', textAlign: 'center' }}>
+                                    <p className="hide-mobile" style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '8px', textAlign: 'center' }}>
                                         Press Enter to send | Shift + Enter for new line
                                     </p>
                                 </div>
@@ -290,8 +290,8 @@ const AdminSupport = ({ toggleMobileMenu }) => {
             </div>
 
             <style>{`
-                .admin-ticket-item:hover { background: #f8fafc !important; }
-                textarea:focus { border-color: #3b82f6 !important; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+                .admin-ticket-item:hover { background: var(--light-bg) !important; }
+                textarea:focus { border-color: var(--primary) !important; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
                 @media (max-width: 1024px) {
                     .admin-support-grid { grid-template-columns: 1fr !important; }
                     .ticket-list-sidebar { height: 250px !important; }

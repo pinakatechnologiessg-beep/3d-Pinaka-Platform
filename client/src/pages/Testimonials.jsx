@@ -61,7 +61,7 @@ const Testimonials = () => {
             <section className="section container">
                 <div className="testi-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))' }}>
                     {allTestimonials.map((t, i) => (
-                        <div key={i} className="testi-card reveal" ref={addToRevealRefs} style={{ background: 'white', border: '1px solid var(--border-color)', margin: 0 }}>
+                        <div key={i} className="testi-card reveal" ref={addToRevealRefs} style={{ background: 'var(--colorful-bg)', border: '1px solid var(--border-color)', margin: 0 }}>
                             <div className="stars">★★★★★</div>
                             <p style={{ fontStyle: 'italic', color: 'var(--text-dark)', margin: '1.5rem 0' }}>"{t.text}"</p>
                             <div className="user-info">

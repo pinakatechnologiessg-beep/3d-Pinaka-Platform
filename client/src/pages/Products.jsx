@@ -163,13 +163,13 @@ const Products = () => {
             {/* Header */}
 
             <div style={{ background: 'var(--dark-bg)', padding: isMobile ? '2.5rem 1rem' : '4rem 0', textAlign: 'center', color: 'white' }}>
-                <Link to="/" className="back-home-btn" style={{ textDecoration: 'none', color: '#94a3b8', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                <Link to="/" className="back-home-btn" style={{ textDecoration: 'none', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                     <ArrowLeft size={18} /> Back to Home
                 </Link>
                 <h1 style={{ marginTop: '1.5rem', fontSize: isMobile ? '1.8rem' : '2.5rem', padding: '0 10px' }}>
                     {searchParams.get('condition') === 'Refurbished' ? 'Refurbished Store' : 'All 3D Printers'}
                 </h1>
-                <p style={{ color: '#94a3b8', marginTop: '1rem', fontSize: isMobile ? '0.9rem' : '1rem' }}>Professional 3D Printing solutions by 3DPINAKA</p>
+                <p style={{ color: 'var(--text-muted)', marginTop: '1rem', fontSize: isMobile ? '0.9rem' : '1rem' }}>Professional 3D Printing solutions by 3DPINAKA</p>
             </div>
 
             <section className="section container" style={{ padding: isMobile ? '15px' : undefined }}>
@@ -182,7 +182,7 @@ const Products = () => {
                     gap: isMobile ? '15px' : '20px',
                     marginBottom: '30px', 
                     padding: isMobile ? '15px' : '20px', 
-                    background: '#f8fafc', 
+                    background: 'var(--light-bg)', 
                     borderRadius: '12px' 
                 }}>
                     <button 
@@ -193,12 +193,12 @@ const Products = () => {
                             justifyContent: 'center',
                             gap: '8px', 
                             padding: '12px 18px', 
-                            border: '1px solid #e2e8f0', 
+                            border: '1px solid var(--border-color)', 
                             borderRadius: '8px', 
-                            background: 'white', 
+                            background: 'var(--colorful-bg)', 
                             fontWeight: 600, 
                             cursor: 'pointer',
-                            color: '#1e293b'
+                            color: 'var(--text-dark)'
                         }}
                     >
                         <FunnelSimple size={18} weight="bold" />
@@ -206,15 +206,15 @@ const Products = () => {
                     </button>
 
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: isMobile ? 'space-between' : 'flex-end' }}>
-                        <span style={{ fontWeight: 600, color: '#64748b', fontSize: isMobile ? '0.9rem' : '1rem' }}>Sort by:</span>
+                        <span style={{ fontWeight: 600, color: 'var(--text-muted)', fontSize: isMobile ? '0.9rem' : '1rem' }}>Sort by:</span>
                         <select 
                             value={filters.sort}
                             onChange={(e) => setFilters(prev => ({ ...prev, sort: e.target.value }))}
                             style={{ 
                                 padding: '10px 15px', 
                                 borderRadius: '8px', 
-                                border: '1px solid #e2e8f0', 
-                                background: 'white', 
+                                border: '1px solid var(--border-color)', 
+                                background: 'var(--colorful-bg)', 
                                 cursor: 'pointer', 
                                 outline: 'none',
                                 flex: isMobile ? 1 : 'none'
@@ -256,7 +256,7 @@ const Products = () => {
                             width: '85%',
                             maxWidth: '320px',
                             height: '100%',
-                            background: 'white',
+                            background: 'var(--colorful-bg)',
                             zIndex: 2000,
                             padding: '25px',
                             boxShadow: '-5px 0 25px rgba(0,0,0,0.15)',
@@ -266,11 +266,11 @@ const Products = () => {
                         } : { width: '280px', flexShrink: 0 }}>
                             
                             {isMobile && (
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px', borderBottom: '1px solid #f1f5f9', paddingBottom: '15px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px', borderBottom: '1px solid var(--border-color)', paddingBottom: '15px' }}>
                                     <h3 style={{ margin: 0, fontSize: '1.25rem' }}>Filters</h3>
                                     <button 
                                         onClick={() => setShowFilter(false)} 
-                                        style={{ background: '#f1f5f9', border: 'none', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+                                        style={{ background: 'var(--border-color)', border: 'none', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
                                     >
                                         <X size={20} />
                                     </button>
@@ -278,8 +278,8 @@ const Products = () => {
                             )}
 
                             {/* Availability */}
-                            <div style={{ marginBottom: '30px', borderBottom: '1px solid #f1f5f9', paddingBottom: '20px' }}>
-                                <h4 style={{ marginBottom: '15px', color: '#1e293b' }}>Availability</h4>
+                            <div style={{ marginBottom: '30px', borderBottom: '1px solid var(--border-color)', paddingBottom: '20px' }}>
+                                <h4 style={{ marginBottom: '15px', color: 'var(--text-dark)' }}>Availability</h4>
                                 <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', marginBottom: '12px' }}>
                                     <input 
                                         type="checkbox" 
@@ -301,8 +301,8 @@ const Products = () => {
                             </div>
 
                             {/* Categories (Dynamic) */}
-                            <div style={{ marginBottom: '30px', borderBottom: '1px solid #f1f5f9', paddingBottom: '20px' }}>
-                                <h4 style={{ marginBottom: '15px', color: '#1e293b' }}>Categories</h4>
+                            <div style={{ marginBottom: '30px', borderBottom: '1px solid var(--border-color)', paddingBottom: '20px' }}>
+                                <h4 style={{ marginBottom: '15px', color: 'var(--text-dark)' }}>Categories</h4>
                                 <div style={{ maxHeight: '250px', overflowY: 'auto', paddingRight: '10px' }}>
                                     {meta.categories.map(cat => (
                                         <label key={cat} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', marginBottom: '12px' }}>
@@ -319,8 +319,8 @@ const Products = () => {
                             </div>
 
                             {/* Brands (Dynamic) */}
-                            <div style={{ marginBottom: '30px', borderBottom: '1px solid #f1f5f9', paddingBottom: '20px' }}>
-                                <h4 style={{ marginBottom: '15px', color: '#1e293b' }}>Brands</h4>
+                            <div style={{ marginBottom: '30px', borderBottom: '1px solid var(--border-color)', paddingBottom: '20px' }}>
+                                <h4 style={{ marginBottom: '15px', color: 'var(--text-dark)' }}>Brands</h4>
                                 <div style={{ maxHeight: '250px', overflowY: 'auto', paddingRight: '10px' }}>
                                     {meta.brands.map(brand => (
                                         <label key={brand} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', marginBottom: '12px' }}>
@@ -338,33 +338,33 @@ const Products = () => {
 
                             {/* Price Range */}
                             <div style={{ marginBottom: '30px' }}>
-                                <h4 style={{ marginBottom: '15px', color: '#1e293b' }}>Price Range</h4>
+                                <h4 style={{ marginBottom: '15px', color: 'var(--text-dark)' }}>Price Range</h4>
                                 <div style={{ display: 'flex', gap: '10px' }}>
                                     <input 
                                         type="number" 
                                         placeholder="Min" 
                                         value={filters.minPrice} 
                                         onChange={(e) => setFilters(prev => ({ ...prev, minPrice: e.target.value }))}
-                                        style={{ width: '50%', padding: '10px', border: '1px solid #e2e8f0', borderRadius: '8px' }}
+                                        style={{ width: '50%', padding: '10px', border: '1px solid var(--border-color)', borderRadius: '8px' }}
                                     />
                                     <input 
                                         type="number" 
                                         placeholder="Max" 
                                         value={filters.maxPrice} 
                                         onChange={(e) => setFilters(prev => ({ ...prev, maxPrice: e.target.value }))}
-                                        style={{ width: '50%', padding: '10px', border: '1px solid #e2e8f0', borderRadius: '8px' }}
+                                        style={{ width: '50%', padding: '10px', border: '1px solid var(--border-color)', borderRadius: '8px' }}
                                     />
                                 </div>
                                 <button 
                                     onClick={clearAll}
-                                    style={{ marginTop: '20px', width: '100%', padding: '12px', border: 'none', borderRadius: '8px', background: '#f1f5f9', color: '#1e293b', fontWeight: 600, cursor: 'pointer' }}
+                                    style={{ marginTop: '20px', width: '100%', padding: '12px', border: 'none', borderRadius: '8px', background: 'var(--border-color)', color: 'var(--text-dark)', fontWeight: 600, cursor: 'pointer' }}
                                 >
                                     Reset Filters
                                 </button>
                                 {isMobile && (
                                     <button 
                                         onClick={() => setShowFilter(false)}
-                                        style={{ marginTop: '10px', width: '100%', padding: '12px', border: 'none', borderRadius: '8px', background: '#111827', color: 'white', fontWeight: 600, cursor: 'pointer' }}
+                                        style={{ marginTop: '10px', width: '100%', padding: '12px', border: 'none', borderRadius: '8px', background: 'var(--card-bg-dark)', color: 'white', fontWeight: 600, cursor: 'pointer' }}
                                     >
                                         Apply Filters
                                     </button>
@@ -382,7 +382,7 @@ const Products = () => {
                         ) : (
                             <>
                                 <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <h3 style={{ fontSize: isMobile ? '1.1rem' : '1.5rem', color: '#1e293b' }}>
+                                    <h3 style={{ fontSize: isMobile ? '1.1rem' : '1.5rem', color: 'var(--text-dark)' }}>
                                         {products.length} Products Found
                                     </h3>
                                 </div>
@@ -395,10 +395,10 @@ const Products = () => {
                                     {products.length > 0 ? (
                                         products.map(product => (
                                             <div key={product._id} style={{ 
-                                                background: 'white', 
+                                                background: 'var(--colorful-bg)', 
                                                 borderRadius: '12px', 
                                                 padding: isMobile ? '12px' : '20px', 
-                                                border: '1px solid #f1f5f9', 
+                                                border: '1px solid var(--border-color)', 
                                                 boxShadow: '0 4px 15px rgba(0,0,0,0.02)', 
                                                 transition: 'transform 0.2s', 
                                                 position: 'relative',
@@ -406,7 +406,7 @@ const Products = () => {
                                                 flexDirection: 'column'
                                             }}>
                                                 <Link to={`/product/${encodeURIComponent((product.name || product.title || '').replace(/ /g, '-'))}`} style={{ textDecoration: 'none', display: 'block', flex: 1 }}>
-                                                    <div className="image-wrapper" style={{ height: isMobile ? '160px' : '220px', marginBottom: '12px', overflow: 'hidden', borderRadius: '8px', background: '#f8fafc' }}>
+                                                    <div className="image-wrapper" style={{ height: isMobile ? '160px' : '220px', marginBottom: '12px', overflow: 'hidden', borderRadius: '8px', background: 'var(--light-bg)' }}>
                                                         <img 
                                                             src={
                                                                 product.name === "Refurbished Bambu Lab A1 Mini 3D Printer" 
@@ -423,29 +423,29 @@ const Products = () => {
                                                             </div>
                                                         )}
                                                     </div>
-                                                    <div style={{ fontSize: isMobile ? '0.7rem' : '0.85rem', color: '#64748b', textTransform: 'uppercase', marginBottom: '4px' }}>
+                                                    <div style={{ fontSize: isMobile ? '0.7rem' : '0.85rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '4px' }}>
                                                         {product.category}
                                                     </div>
                                                     <h3 style={{ 
                                                         fontSize: isMobile ? '0.95rem' : '1.1rem', 
-                                                        color: '#1e293b', 
+                                                        color: 'var(--text-dark)', 
                                                         marginBottom: '8px', 
                                                         height: isMobile ? '2.4rem' : '2.8rem', 
                                                         overflow: 'hidden',
                                                         lineHeight: 1.3
                                                     }}>{product.name}</h3>
                                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', marginTop: 'auto' }}>
-                                                        <div style={{ fontSize: isMobile ? '1.1rem' : '1.4rem', fontWeight: 800, color: '#2563eb' }}>
+                                                        <div style={{ fontSize: isMobile ? '1.1rem' : '1.4rem', fontWeight: 800, color: 'var(--primary)' }}>
                                                             ₹{parsePriceLocal(product.price).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
                                                         </div>
                                                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                                             {product.mrp && product.mrp > product.price && (
-                                                                <div style={{ fontSize: isMobile ? '0.8rem' : '0.95rem', color: '#94a3b8', textDecoration: 'line-through' }}>
+                                                                <div style={{ fontSize: isMobile ? '0.8rem' : '0.95rem', color: 'var(--text-muted)', textDecoration: 'line-through' }}>
                                                                     ₹{parsePriceLocal(product.mrp).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
                                                                 </div>
                                                             )}
                                                             {product.mrp && product.mrp > product.price && (
-                                                                 <div style={{ fontSize: '0.7rem', color: '#10b981', fontWeight: 700, background: '#f0fdf4', padding: '2px 4px', borderRadius: '4px' }}>
+                                                                 <div style={{ fontSize: '0.7rem', color: 'var(--success)', fontWeight: 700, background: '#f0fdf4', padding: '2px 4px', borderRadius: '4px' }}>
                                                                     {product.discount || Math.round(((product.mrp - product.price) / product.mrp) * 100)}% OFF
                                                                 </div>
                                                             )}
@@ -461,7 +461,7 @@ const Products = () => {
                                                         padding: isMobile ? '10px' : '12px', 
                                                         borderRadius: '8px', 
                                                         border: 'none', 
-                                                        background: product.inStock ? '#111827' : '#94a3b8', 
+                                                        background: product.inStock ? 'var(--card-bg-dark)' : 'var(--text-muted)', 
                                                         color: 'white', 
                                                         fontWeight: 600, 
                                                         cursor: product.inStock ? 'pointer' : 'not-allowed',
@@ -476,8 +476,8 @@ const Products = () => {
                                         <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px 0' }}>
                                             <FunnelSimple size={48} style={{ opacity: 0.2, marginBottom: '20px' }} />
                                             <h3>No products match your filters</h3>
-                                            <p style={{ color: '#64748b' }}>Try clearing some filters or search for something else.</p>
-                                            <button onClick={clearAll} style={{ marginTop: '20px', padding: '10px 25px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}>Clear All</button>
+                                            <p style={{ color: 'var(--text-muted)' }}>Try clearing some filters or search for something else.</p>
+                                            <button onClick={clearAll} style={{ marginTop: '20px', padding: '10px 25px', background: 'var(--primary)', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}>Clear All</button>
                                         </div>
                                     )}
                                 </div>

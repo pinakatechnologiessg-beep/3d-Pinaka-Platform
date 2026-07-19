@@ -81,7 +81,7 @@ const About = () => {
                                 </div>
                             </div>
                             <div style={{ display: 'flex', gap: '1rem' }}>
-                                <div style={{ background: '#3b82f6', color: 'white', padding: '12px', borderRadius: '10px', height: 'fit-content', flexShrink: 0 }}>
+                                <div style={{ background: 'var(--primary)', color: 'white', padding: '12px', borderRadius: '10px', height: 'fit-content', flexShrink: 0 }}>
                                     <Users size={24} weight="bold" />
                                 </div>
                                 <div>
@@ -99,19 +99,19 @@ const About = () => {
                 <div className="container stats-grid reveal" ref={addToRevealRefs}>
                     <div className="stat-item" style={{ padding: '10px' }}>
                         <h3 style={{ fontSize: '3rem', color: 'var(--primary)', marginBottom: '0.5rem' }}>10k+</h3>
-                        <p style={{ color: '#94a3b8', fontSize: '0.9rem' }}>Happy Customers</p>
+                        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Happy Customers</p>
                     </div>
                     <div className="stat-item" style={{ padding: '10px' }}>
                         <h3 style={{ fontSize: '3rem', color: '#a855f7', marginBottom: '0.5rem' }}>500+</h3>
-                        <p style={{ color: '#94a3b8', fontSize: '0.9rem' }}>Expert Engineers</p>
+                        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Expert Engineers</p>
                     </div>
                     <div className="stat-item" style={{ padding: '10px' }}>
-                        <h3 style={{ fontSize: '3rem', color: '#3b82f6', marginBottom: '0.5rem' }}>25+</h3>
-                        <p style={{ color: '#94a3b8', fontSize: '0.9rem' }}>Premium Brands</p>
+                        <h3 style={{ fontSize: '3rem', color: 'var(--primary)', marginBottom: '0.5rem' }}>25+</h3>
+                        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Premium Brands</p>
                     </div>
                     <div className="stat-item" style={{ padding: '10px' }}>
-                        <h3 style={{ fontSize: '3rem', color: '#10b981', marginBottom: '0.5rem' }}>24/7</h3>
-                        <p style={{ color: '#94a3b8', fontSize: '0.9rem' }}>Customer Support</p>
+                        <h3 style={{ fontSize: '3rem', color: 'var(--success)', marginBottom: '0.5rem' }}>24/7</h3>
+                        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Customer Support</p>
                     </div>
                 </div>
             </div>
@@ -120,18 +120,18 @@ const About = () => {
             <section className="section container reveal" ref={addToRevealRefs} style={{ textAlign: 'center' }}>
                 <h2 style={{ fontSize: '2.5rem', marginBottom: '3rem', padding: '0 15px' }}>Why Choose 3D Pinaka?</h2>
                 <div className="about-values-grid" style={{ padding: '0 15px' }}>
-                    <div className="feature-box" style={{ background: 'white', boxShadow: '0 10px 30px rgba(0,0,0,0.05)', border: '1px solid #e2e8f0', margin: 0 }}>
+                    <div className="feature-box" style={{ background: 'var(--colorful-bg)', boxShadow: '0 10px 30px rgba(0,0,0,0.05)', border: '1px solid var(--border-color)', margin: 0 }}>
                         <div style={{ color: 'var(--primary)', marginBottom: '1rem' }}><Globe size={40} /></div>
                         <h3 style={{ fontSize: '1.2rem', marginBottom: '10px' }}>Global Presence</h3>
                         <p style={{ fontSize: '0.9rem' }}>We ship internationally, ensuring premium 3D tech reaches every corner.</p>
                     </div>
-                    <div className="feature-box" style={{ background: 'white', boxShadow: '0 10px 30px rgba(0,0,0,0.05)', border: '1px solid #e2e8f0', margin: 0 }}>
+                    <div className="feature-box" style={{ background: 'var(--colorful-bg)', boxShadow: '0 10px 30px rgba(0,0,0,0.05)', border: '1px solid var(--border-color)', margin: 0 }}>
                         <div style={{ color: '#a855f7', marginBottom: '1rem' }}><Cpu size={40} /></div>
                         <h3 style={{ fontSize: '1.2rem', marginBottom: '10px' }}>Quality Assured</h3>
                         <p style={{ fontSize: '0.9rem' }}>Every printer undergoes rigorous testing before it leaves our facility.</p>
                     </div>
-                    <div className="feature-box" style={{ background: 'white', boxShadow: '0 10px 30px rgba(0,0,0,0.05)', border: '1px solid #e2e8f0', margin: 0 }}>
-                        <div style={{ color: '#3b82f6', marginBottom: '1rem' }}><Users size={40} /></div>
+                    <div className="feature-box" style={{ background: 'var(--colorful-bg)', boxShadow: '0 10px 30px rgba(0,0,0,0.05)', border: '1px solid var(--border-color)', margin: 0 }}>
+                        <div style={{ color: 'var(--primary)', marginBottom: '1rem' }}><Users size={40} /></div>
                         <h3 style={{ fontSize: '1.2rem', marginBottom: '10px' }}>Customer First</h3>
                         <p style={{ fontSize: '0.9rem' }}>Our priority is your success. We're with you from the first print.</p>
                     </div>

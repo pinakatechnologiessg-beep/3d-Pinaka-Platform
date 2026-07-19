@@ -1,15 +1,15 @@
 :root {
-  --primary: #2563eb;
+  --primary: var(--primary);
   --primary-hover: #1d4ed8;
-  --secondary: #64748b;
-  --accent: #f59e0b;
-  --dark-bg: #1e293b;
-  --light-bg: #f8fafc;
+  --secondary: var(--text-muted);
+  --accent: var(--warning);
+  --dark-bg: var(--text-dark);
+  --light-bg: var(--light-bg);
 }
 
 .product-detail-page {
   padding: 4rem 0;
-  background-color: var(--light-bg);
+  background-color: transparent;
 }
 
 .container {
@@ -64,7 +64,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--border-color);
   position: relative;
 }
 
@@ -86,7 +86,7 @@
 }
 
 .brand-badge {
-  background-color: #e2e8f0;
+  background-color: var(--border-color);
   color: var(--dark-bg);
   padding: 0.25rem 0.75rem;
   border-radius: 9999px;
@@ -170,7 +170,7 @@
   align-items: center;
   gap: 0.75rem;
   background-color: white;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-color);
   padding: 0.5rem 1rem;
   border-radius: 8px;
 }
@@ -203,7 +203,7 @@
 
 .wishlist-btn-secondary {
   background-color: white;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-color);
   padding: 0.875rem;
   border-radius: 8px;
   cursor: pointer;
@@ -211,7 +211,7 @@
 }
 
 .wishlist-btn-secondary:hover {
-  background-color: #f1f5f9;
+  background-color: var(--border-color);
   color: #e11d48;
 }
 
@@ -227,7 +227,7 @@
   gap: 1rem;
   margin-top: 1.5rem;
   padding-top: 1.5rem;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--border-color);
 }
 
 .badge-item {
@@ -268,8 +268,8 @@
 
 .tabs-header {
   display: flex;
-  border-bottom: 1px solid #e2e8f0;
-  background-color: #f1f5f9;
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--border-color);
 }
 
 .tabs-header button {
@@ -303,7 +303,7 @@
 
 .specs-table td {
   padding: 1rem;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .spec-key {
@@ -314,7 +314,7 @@
 
 .review-card {
   padding: 1.5rem 0;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .review-header {
@@ -341,16 +341,16 @@
     gap: 3rem;
     margin-bottom: 3rem;
     padding-bottom: 3rem;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid var(--border-color);
     align-items: center;
 }
 
 .overall-rating {
     text-align: center;
-    background: #f8fafc;
+    background: var(--light-bg);
     padding: 2rem;
     border-radius: 16px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-color);
 }
 
 .big-avg {
@@ -396,14 +396,14 @@
 .bar {
     flex: 1;
     height: 8px;
-    background-color: #e2e8f0;
+    background-color: var(--border-color);
     border-radius: 4px;
     overflow: hidden;
 }
 
 .fill {
     height: 100%;
-    background-color: #f59e0b; /* Orange */
+    background-color: var(--warning); /* Orange */
     transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -425,7 +425,7 @@
 .add-review-section {
   margin-top: 3rem;
   padding-top: 2rem;
-  border-top: 2px solid #f1f5f9;
+  border-top: 2px solid var(--border-color);
 }
 
 .review-form {
@@ -451,7 +451,7 @@
 .form-group select,
 .form-group textarea {
   padding: 0.75rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   font-family: inherit;
   font-size: 1rem;
@@ -522,7 +522,7 @@
   }
   
   .thumbnail-item.active {
-     box-shadow: 0 0 0 2px #2563eb;
+     box-shadow: 0 0 0 2px var(--primary);
      transform: scale(1.05);
   }
 
