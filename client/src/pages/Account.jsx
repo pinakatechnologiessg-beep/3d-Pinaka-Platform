@@ -333,7 +333,7 @@ const Account = () => {
                                                                     if (order.invoiceImage) {
                                                                         window.open(getImageUrl(order.invoiceImage), '_blank');
                                                                     } else {
-                                                                        alert('Invoice is not available yet. Please check back later.');
+                                                                        window.dispatchEvent(new CustomEvent('showToast', { detail: { message: 'Invoice is not available yet. Please check back later.', type: 'error' } }));
                                                                     }
                                                                 }}
                                                             >
