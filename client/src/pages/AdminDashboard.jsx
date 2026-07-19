@@ -1637,7 +1637,7 @@ const AdminDashboard = () => {
                                 <div className="product-title" style={{ minHeight: '45px' }}>{product.name || product.title || "Unnamed Product"}</div>
                                 <div className="stars">
                                     {typeof product.rating === 'number' ? 
-                                        ('★'.repeat(Math.floor(product.rating)) + '☆'.repeat(5 - Math.floor(product.rating)) + ` (${product.rating.toFixed(1)})`) : 
+                                        ('★'.repeat(Math.max(0, Math.min(5, Math.floor(product.rating)))) + '☆'.repeat(Math.max(0, 5 - Math.min(5, Math.max(0, Math.floor(product.rating))))) + ` (${product.rating.toFixed(1)})`) : 
                                         (product.stars || '★★★★★ (5.0)')
                                     }
                                 </div>

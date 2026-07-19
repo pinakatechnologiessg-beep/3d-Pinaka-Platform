@@ -106,7 +106,7 @@ const Materials = () => {
                                 <div className="product-title">{item.name || item.title}</div>
                                 <div className="stars">
                                     {typeof item.rating === 'number' ? 
-                                        ('★'.repeat(Math.floor(item.rating)) + '☆'.repeat(5 - Math.floor(item.rating)) + ` (${item.rating.toFixed(1)})`) : 
+                                        ('★'.repeat(Math.max(0, Math.min(5, Math.floor(item.rating)))) + '☆'.repeat(Math.max(0, 5 - Math.min(5, Math.max(0, Math.floor(item.rating))))) + ` (${item.rating.toFixed(1)})`) : 
                                         (item.stars || '★★★★★ (5.0)')
                                     }
                                 </div>

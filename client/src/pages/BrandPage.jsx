@@ -46,7 +46,7 @@ const BrandProductCard = ({ product, revealRef }) => {
                 <div className="reviews">
                     <span className="stars">
                         {typeof product.rating === 'number' ? 
-                            ('★'.repeat(Math.floor(product.rating)) + '☆'.repeat(5 - Math.floor(product.rating))) : 
+                            ('★'.repeat(Math.max(0, Math.min(5, Math.floor(product.rating)))) + '☆'.repeat(Math.max(0, 5 - Math.min(5, Math.max(0, Math.floor(product.rating)))))) : 
                             ('★★★★★')
                         }
                     </span>
