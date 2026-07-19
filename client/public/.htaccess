@@ -1,6 +1,10 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
+  
+  # Redirect sitemap.xml to dynamic backend sitemap generator
+  RewriteRule ^sitemap\.xml$ https://mediumaquamarine-goshawk-463282.hostingersite.com/api/sitemap.xml [R=301,L]
+  
   RewriteRule ^index\.html$ - [L]
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d

@@ -18,6 +18,7 @@ import partnerProductRoutes from './routes/partnerProductRoutes.js';
 import partnerPosterRoutes from './routes/partnerPosterRoutes.js';
 import marketplaceRoutes from './routes/marketplaceRoutes.js';
 import blogRoutes from './routes/blogRoutes.js';
+import sitemapRoutes from './routes/sitemapRoutes.js';
 
 
 import path from 'path';
@@ -148,6 +149,7 @@ app.use('/api/partner-products', partnerProductRoutes);
 app.use('/api/partner-posters', partnerPosterRoutes);
 app.use('/api/marketplaces', marketplaceRoutes);
 app.use('/api/blogs', blogRoutes);
+app.use('/api/sitemap.xml', sitemapRoutes);
 
 
 // Catch-all for API routes to prevent HTML responses for unmatched API endpoints
