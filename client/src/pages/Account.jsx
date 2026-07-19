@@ -159,7 +159,7 @@ const Account = () => {
                                                 <div className="order-date">
                                                     {new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
                                                 </div>
-                                                <div className="order-status" style={{ color: order.status === 'Delivered' ? '#059669' : 'var(--primary)' }}>
+                                                <div className="order-status" style={{ color: (order.status === 'Delivered' || order.status === 'Completed') ? '#059669' : 'var(--primary)' }}>
                                                     {order.status}
                                                 </div>
                                                 <div className="order-total">
@@ -374,7 +374,8 @@ const Account = () => {
                     'Shipped / Dispatched': 2,
                     'In Transit': 2,
                     'Out for Delivery': 3,
-                    'Delivered': 4
+                    'Delivered': 4,
+                    'Completed': 4
                 };
 
                 const currentStep = statusObj[order.status] || 1;

@@ -512,7 +512,7 @@
 }
 
 .write-review-btn {
-    background: #e91e63;
+    background: var(--primary);
     color: white;
     border: none;
     padding: 8px 16px;
@@ -524,7 +524,7 @@
 }
 
 .write-review-btn:hover {
-    background: #d81b60;
+    background: var(--text-dark);
 }
 
 .order-tracking-box {
@@ -556,7 +556,7 @@
     top: 15px;
     left: 10%;
     height: 4px;
-    background: #00c3ff;
+    background: var(--primary);
     z-index: 2;
     transition: width 0.5s ease;
 }
@@ -585,7 +585,7 @@
 }
 
 .tracking-step.active .tracking-icon {
-    background: #00c3ff;
+    background: var(--primary);
 }
 
 .tracking-label {
@@ -597,6 +597,6 @@
 }
 
 .tracking-step.active .tracking-label {
-    color: #00c3ff;
+    color: var(--primary);
 }
 
