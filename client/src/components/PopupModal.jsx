@@ -53,14 +53,13 @@ const PopupModal = () => {
             <div 
                 onClick={(e) => e.stopPropagation()}
                 style={{
-                    background: popup.useTemplate ? 'var(--colorful-bg)' : 'transparent',
+                    background: 'var(--colorful-bg)',
                     borderRadius: '24px',
                     overflow: 'hidden',
-                    maxWidth: '90vw',
-                    width: popup.useTemplate ? '90%' : 'auto',
-                    maxHeight: '90vh',
+                    maxWidth: '600px',
+                    width: '90%',
                     position: 'relative',
-                    boxShadow: popup.useTemplate ? '0 25px 50px -12px rgba(0,0,0,0.5)' : 'none',
+                    boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)',
                     animation: 'scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
                     cursor: 'default'
                 }}
@@ -149,16 +148,7 @@ const PopupModal = () => {
                         <img 
                             src={popup.image.startsWith('http') ? popup.image : `${API_BASE_URL}${popup.image}`} 
                             alt="Promotion" 
-                            style={{ 
-                                maxWidth: '90vw', 
-                                maxHeight: '90vh', 
-                                width: 'auto', 
-                                height: 'auto', 
-                                display: 'block', 
-                                margin: '0 auto',
-                                borderRadius: '24px',
-                                boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)'
-                            }} 
+                            style={{ width: '100%', height: 'auto', display: 'block' }} 
                         />
                     </a>
                 )}
