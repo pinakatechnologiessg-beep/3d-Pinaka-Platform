@@ -421,8 +421,9 @@ router.get('/:id', async (req, res) => {
       // Extract alphanumeric parts to ignore any spacing, hyphens, commas, or dots
       const parts = decodedName.split(/[^a-zA-Z0-9]+/);
       
-      // Build a flexible pattern that matches these parts in order, ignoring punctuation between them
-      const searchPattern = parts.filter(Boolean).join('.*?');
+      // Build a strictly anchored pattern that matches these parts in order, ignoring punctuation between them
+      // This prevents a product named "Test" from matching "Test Name"
+      const searchPattern = '^[^a-zA-Z0-9]*' + parts.filter(Boolean).join('[^a-zA-Z0-9]+') + '[^a-zA-Z0-9]*$';
       
       // Use regex for case-insensitive exact match
       product = await Product.findOne({ 
