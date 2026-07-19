@@ -56,11 +56,11 @@ const Footer = () => {
             </li>
             <li style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
               <Phone size={20} style={{ color: 'var(--primary)', flexShrink: 0, marginTop: '2px' }} />
-              <span>(+91)-8299475268 (Whatsapp), +91-9935404850</span>
+              <span>+918299475268</span>
             </li>
             <li style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
               <Envelope size={20} style={{ color: 'var(--primary)', flexShrink: 0, marginTop: '2px' }} />
-              <span>sales@3dpinaka.in</span>
+              <span>pinakatechnologiessg@gmail.com</span>
             </li>
           </ul>
         </div>

@@ -179,14 +179,7 @@ const Account = () => {
                                                     }}>Track</button>
                                                 </div>
                                                 
-                                                {selectedOrder === order.orderId && (
-                                                    <div className="order-details-expanded" style={{ gridColumn: '1 / -1', padding: '1.5rem', background: 'var(--light-bg)', borderTop: '1px solid var(--border-color)', marginTop: '1rem', borderRadius: '0 0 8px 8px' }}>
-                                                        <h4 style={{ marginBottom: '1rem', color: 'var(--text-dark)' }}>{order.productName}</h4>
-                                                        <p><strong>Payment Method:</strong> {order.paymentMethod}</p>
-                                                        <p><strong>Payment Status:</strong> {order.paymentStatus}</p>
-                                                        {order.trackingDetails && <p><strong>Tracking:</strong> {order.trackingDetails}</p>}
-                                                    </div>
-                                                )}
+                                                {/* Expanded view replaced by modal */}
                                             </div>
                                         ))}
                                     </div>
@@ -367,6 +360,70 @@ const Account = () => {
                     </div>
                 </div>
             </div>
+            
+            {/* Order Tracking Modal */}
+            {selectedOrder && (() => {
+                const order = orders.find(o => o.orderId === selectedOrder);
+                if (!order) return null;
+
+                const statusObj = {
+                    'Pending': 1,
+                    'Order Confirmed': 1,
+                    'Processing': 1,
+                    'Packed / Ready for Dispatch': 1,
+                    'Shipped / Dispatched': 2,
+                    'In Transit': 2,
+                    'Out for Delivery': 3,
+                    'Delivered': 4
+                };
+
+                const currentStep = statusObj[order.status] || 1;
+
+                return (
+                    <div className="order-modal-overlay" onClick={() => setSelectedOrder(null)}>
+                        <div className="order-modal-content" onClick={e => e.stopPropagation()}>
+                            <div className="order-modal-header">
+                                <h3>Order #{order.orderId}</h3>
+                                <button className="order-modal-close" onClick={() => setSelectedOrder(null)}>&times;</button>
+                            </div>
+                            <div className="order-modal-body">
+                                <h4>Items Ordered:</h4>
+                                <div className="order-item-box">
+                                    <div className="order-item-name">{order.quantity || 1}x {order.productName}</div>
+                                    <button className="write-review-btn" onClick={() => alert('Review feature coming soon!')}>Write a Review</button>
+                                </div>
+
+                                <div className="order-tracking-box">
+                                    <div className="tracking-timeline">
+                                        <div className="tracking-line"></div>
+                                        <div className="tracking-line-fill" style={{ width: `${(currentStep - 1) * 33.33}%` }}></div>
+                                        
+                                        <div className={`tracking-step ${currentStep >= 1 ? 'active' : ''}`}>
+                                            <div className="tracking-icon"><CheckCircle weight="fill" size={24} /></div>
+                                            <div className="tracking-label">Order Placed</div>
+                                        </div>
+                                        
+                                        <div className={`tracking-step ${currentStep >= 2 ? 'active' : ''}`}>
+                                            <div className="tracking-icon"><CheckCircle weight="fill" size={24} /></div>
+                                            <div className="tracking-label">In Transit</div>
+                                        </div>
+                                        
+                                        <div className={`tracking-step ${currentStep >= 3 ? 'active' : ''}`}>
+                                            <div className="tracking-icon"><CheckCircle weight="fill" size={24} /></div>
+                                            <div className="tracking-label">Out for Delivery</div>
+                                        </div>
+                                        
+                                        <div className={`tracking-step ${currentStep >= 4 ? 'active' : ''}`}>
+                                            <div className="tracking-icon"><CheckCircle weight="fill" size={24} /></div>
+                                            <div className="tracking-label">Delivered</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            })()}
         </main>
     );
 };
