@@ -53,17 +53,16 @@ const PopupModal = () => {
             <div 
                 onClick={(e) => e.stopPropagation()}
                 style={{
-                    background: 'var(--colorful-bg)',
+                    background: popup.useTemplate ? 'var(--colorful-bg)' : 'transparent',
                     borderRadius: '24px',
                     overflow: 'hidden',
                     maxWidth: '90vw',
                     width: popup.useTemplate ? '90%' : 'auto',
                     maxHeight: '90vh',
                     position: 'relative',
-                    boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)',
+                    boxShadow: popup.useTemplate ? '0 25px 50px -12px rgba(0,0,0,0.5)' : 'none',
                     animation: 'scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                    cursor: 'default',
-                    display: 'flex'
+                    cursor: 'default'
                 }}
             >
                 <button 
@@ -146,11 +145,20 @@ const PopupModal = () => {
                         )}
                     </div>
                 ) : (
-                    <a href={popup.link || '#'} onClick={(e) => !popup.link && e.preventDefault()} style={{ display: 'block', width: '100%', height: '100%' }}>
+                    <a href={popup.link || '#'} onClick={(e) => !popup.link && e.preventDefault()} style={{ display: 'block' }}>
                         <img 
                             src={popup.image.startsWith('http') ? popup.image : `${API_BASE_URL}${popup.image}`} 
                             alt="Promotion" 
-                            style={{ maxWidth: '100%', maxHeight: '90vh', width: 'auto', height: 'auto', display: 'block', objectFit: 'contain' }} 
+                            style={{ 
+                                maxWidth: '90vw', 
+                                maxHeight: '90vh', 
+                                width: 'auto', 
+                                height: 'auto', 
+                                display: 'block', 
+                                margin: '0 auto',
+                                borderRadius: '24px',
+                                boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)'
+                            }} 
                         />
                     </a>
                 )}
