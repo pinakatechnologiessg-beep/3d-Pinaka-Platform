@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { 
   House, Package, ShoppingCart, Users, Gear, 
-  Bell, MagnifyingGlass, List, CurrencyDollar, TrendUp, Clock, ArrowLeft, Heart, X, UploadSimple, Trash, PencilSimple, Plus, Sparkle, Eye, Funnel, Storefront, Bag, Article
+  Bell, MagnifyingGlass, List, CurrencyDollar, TrendUp, Clock, ArrowLeft, Heart, X, UploadSimple, DownloadSimple, Trash, PencilSimple, Plus, Sparkle, Eye, Funnel, Storefront, Bag, Article
 } from '@phosphor-icons/react';
 import { getImageUrl, PLACEHOLDER_SVG } from '../utils/imageUtils';
 import './AdminDashboard.css';
@@ -980,6 +980,43 @@ const AdminDashboard = () => {
       );
   }
 
+  const handleDownloadExcel = () => {
+      if (!adminProducts || adminProducts.length === 0) {
+          showToast('No products available to download', 'error');
+          return;
+      }
+      
+      const headers = ['Product Name', 'Brand', 'Category', 'Price (INR)', 'MRP (INR)', 'Stock Quantity', 'Status', 'Condition', 'Featured', 'New Arrival'];
+      
+      const csvRows = adminProducts.map(p => {
+          return [
+              `"${(p.name || '').replace(/"/g, '""')}"`,
+              `"${(p.brand || '').replace(/"/g, '""')}"`,
+              `"${(p.category || '').replace(/"/g, '""')}"`,
+              p.price || 0,
+              p.mrp || 0,
+              p.stockQuantity || 0,
+              p.inStock ? 'In Stock' : 'Out of Stock',
+              p.condition || 'New',
+              p.featured ? 'Yes' : 'No',
+              p.newArrival ? 'Yes' : 'No'
+          ].join(',');
+      });
+      
+      const csvContent = [headers.join(','), ...csvRows].join('\n');
+      
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'products_export.csv');
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast('Products exported successfully', 'success');
+  };
+
   return (
     <div className="admin-layout">
       {/* Sidebar */}
@@ -1441,6 +1478,24 @@ const AdminDashboard = () => {
               >
                 <Funnel size={18} weight="bold" />
                 {showAdminFilters ? 'Hide Filters' : 'Filters'}
+              </button>
+
+              <button 
+                onClick={handleDownloadExcel}
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '8px', 
+                  padding: '10px 15px', 
+                  border: '1px solid var(--admin-primary)', 
+                  borderRadius: '8px', 
+                  background: 'white', 
+                  fontWeight: 600, 
+                  cursor: 'pointer',
+                  color: 'var(--admin-primary)'
+                }}
+              >
+                <DownloadSimple size={18} weight="bold" /> Download CSV
               </button>
 
               <button 
