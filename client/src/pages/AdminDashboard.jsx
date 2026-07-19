@@ -2014,67 +2014,7 @@ const AdminDashboard = () => {
             </div>
 
             
-            <div className="partners-grid-layout">
-              <div style={{ background: 'var(--colorful-bg)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-                <h3 style={{ marginBottom: '1rem', fontSize: '1.1rem' }}>{editingPartnerProductId ? 'Edit Partner Product' : 'Add New Partner Product'}</h3>
-                <form onSubmit={handleAddPartnerProduct} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    <div className="form-group">
-                        <label>Product Name</label>
-                        <input type="text" required value={partnerFormData.name} onChange={e => setPartnerFormData({...partnerFormData, name: e.target.value})} className="form-control" />
-                    </div>
-                    <div className="partners-form-grid">
-                        <div className="form-group">
-                            <label>Category</label>
-                            <input type="text" value={partnerFormData.category} onChange={e => setPartnerFormData({...partnerFormData, category: e.target.value})} className="form-control" placeholder="e.g. 3D Printer" />
-                        </div>
-                        <div className="form-group">
-                            <label>Price (Optional)</label>
-                            <input type="number" value={partnerFormData.price} onChange={e => setPartnerFormData({...partnerFormData, price: e.target.value})} className="form-control" placeholder="e.g. 5000" />
-                        </div>
-                    </div>
-                    <div className="form-group">
-                        <label>Image Upload</label>
-                        <input type="file" accept="image/*" onChange={e => setPartnerImageFile(e.target.files[0])} className="form-control" />
-                        <div style={{ marginTop: '0.5rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>OR paste Image URL:</div>
-                        <input type="text" value={partnerFormData.image} onChange={e => setPartnerFormData({...partnerFormData, image: e.target.value})} className="form-control" style={{ marginTop: '0.25rem' }} />
-                    </div>
-                    <div className="form-group">
-                        <label>External Link (Partner Website)</label>
-                        <input type="text" required value={partnerFormData.externalLink} onChange={e => setPartnerFormData({...partnerFormData, externalLink: e.target.value})} className="form-control" placeholder="https://..." />
-                    </div>
-                    <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
-                        <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>{editingPartnerProductId ? 'Update Product' : 'Add Partner Product'}</button>
-                        {editingPartnerProductId && (
-                            <button type="button" className="btn" style={{ flex: 1, background: 'var(--border-color)', color: 'var(--text-dark)' }} onClick={() => { setEditingPartnerProductId(null); setPartnerFormData({ name: '', image: '', externalLink: '', category: '', price: '' }); setPartnerImageFile(null); }}>Cancel</button>
-                        )}
-                    </div>
-                </form>
-              </div>
 
-              <div style={{ background: 'var(--colorful-bg)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-                <h3 style={{ marginBottom: '1rem', fontSize: '1.1rem' }}>Current Partner Products</h3>
-                <div className="partners-list-grid">
-                  {partnerProducts.map(p => (
-                      <div key={p._id} style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', border: '1px solid var(--border-color)', borderRadius: '8px' }}>
-                          <img src={getImageUrl(p.image)} alt={p.name} style={{ width: '60px', height: '60px', objectFit: 'contain', background: 'var(--light-bg)', borderRadius: '4px' }} />
-                          <div style={{ flex: 1 }}>
-                              <h4 style={{ fontSize: '0.95rem', margin: '0 0 4px 0' }}>{p.name}</h4>
-                              <a href={p.externalLink} target="_blank" rel="noreferrer" style={{ fontSize: '0.8rem', color: 'var(--primary)' }}>View Link</a>
-                          </div>
-                          <div style={{ display: 'flex', gap: '5px' }}>
-                              <button onClick={() => handleEditPartnerClick(p)} style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', padding: '5px' }}>
-                                  <PencilSimple size={20} />
-                              </button>
-                              <button onClick={() => handleDeletePartnerProduct(p._id)} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '5px' }}>
-                                  <Trash size={20} />
-                              </button>
-                          </div>
-                      </div>
-                  ))}
-                  {partnerProducts.length === 0 && <p style={{ color: 'var(--text-muted)' }}>No partner products added yet.</p>}
-                </div>
-              </div>
-            </div>
           </div>
         )}
 
