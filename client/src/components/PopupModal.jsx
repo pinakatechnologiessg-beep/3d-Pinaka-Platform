@@ -56,12 +56,14 @@ const PopupModal = () => {
                     background: 'var(--colorful-bg)',
                     borderRadius: '24px',
                     overflow: 'hidden',
-                    maxWidth: '600px',
-                    width: '90%',
+                    maxWidth: '90vw',
+                    width: popup.useTemplate ? '90%' : 'auto',
+                    maxHeight: '90vh',
                     position: 'relative',
                     boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)',
                     animation: 'scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                    cursor: 'default'
+                    cursor: 'default',
+                    display: 'flex'
                 }}
             >
                 <button 
@@ -144,11 +146,11 @@ const PopupModal = () => {
                         )}
                     </div>
                 ) : (
-                    <a href={popup.link || '#'} onClick={(e) => !popup.link && e.preventDefault()} style={{ display: 'block' }}>
+                    <a href={popup.link || '#'} onClick={(e) => !popup.link && e.preventDefault()} style={{ display: 'block', width: '100%', height: '100%' }}>
                         <img 
                             src={popup.image.startsWith('http') ? popup.image : `${API_BASE_URL}${popup.image}`} 
                             alt="Promotion" 
-                            style={{ width: '100%', height: 'auto', display: 'block' }} 
+                            style={{ maxWidth: '100%', maxHeight: '90vh', width: 'auto', height: 'auto', display: 'block', objectFit: 'contain' }} 
                         />
                     </a>
                 )}
