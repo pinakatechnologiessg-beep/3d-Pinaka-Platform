@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { User, Shield, Package, Heart, SignOut, ArrowLeft, Envelope, Phone, ChatCircleText, Clock, CheckCircle, Truck } from '@phosphor-icons/react';
+import { User, Shield, Package, Heart, SignOut, ArrowLeft, Envelope, Phone, ChatCircleText, Clock, CheckCircle, Truck, Star, X } from '@phosphor-icons/react';
 import { cartService } from '../services/cartService';
 import { API_BASE_URL } from '../api/config';
 import { getImageUrl } from '../utils/imageUtils';
@@ -11,6 +11,41 @@ const Account = () => {
     const [orders, setOrders] = useState([]);
     const [loadingOrders, setLoadingOrders] = useState(true);
     const [selectedOrder, setSelectedOrder] = useState(null);
+    
+    // Review Modal States
+    const [reviewModalOpen, setReviewModalOpen] = useState(false);
+    const [reviewForm, setReviewForm] = useState({ rating: 5, comment: '', productId: null, productName: '' });
+    const [submittingReview, setSubmittingReview] = useState(false);
+    
+    const handleReviewSubmit = async (e) => {
+        e.preventDefault();
+        if (!reviewForm.productId) {
+            window.dispatchEvent(new CustomEvent('showToast', { detail: { message: 'Product ID is missing', type: 'error' } }));
+            return;
+        }
+        setSubmittingReview(true);
+        try {
+            const userName = JSON.parse(localStorage.getItem('user'))?.name || 'Customer';
+            const res = await fetch(`${API_BASE_URL}/api/products/${reviewForm.productId}/review`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userName, rating: reviewForm.rating, comment: reviewForm.comment })
+            });
+            if (res.ok) {
+                window.dispatchEvent(new CustomEvent('showToast', { detail: { message: 'Review submitted successfully!', type: 'success' } }));
+                setReviewModalOpen(false);
+                setReviewForm({ rating: 5, comment: '', productId: null, productName: '' });
+            } else {
+                const errData = await res.json();
+                window.dispatchEvent(new CustomEvent('showToast', { detail: { message: errData.message || 'Failed to submit review', type: 'error' } }));
+            }
+        } catch (err) {
+            console.error(err);
+            window.dispatchEvent(new CustomEvent('showToast', { detail: { message: 'Network error submitting review', type: 'error' } }));
+        } finally {
+            setSubmittingReview(false);
+        }
+    };
     
     // New tab state
     const [activeTab, setActiveTab] = useState('Dashboard');
@@ -389,10 +424,29 @@ const Account = () => {
                             </div>
                             <div className="order-modal-body">
                                 <h4>Items Ordered:</h4>
-                                <div className="order-item-box">
-                                    <div className="order-item-name">{order.quantity || 1}x {order.productName}</div>
-                                    <button className="write-review-btn" onClick={() => alert('Review feature coming soon!')}>Write a Review</button>
-                                </div>
+                                {(order.items && order.items.length > 0) ? (
+                                    order.items.map((item, idx) => (
+                                        <div className="order-item-box" key={idx}>
+                                            <div className="order-item-name">{item.quantity || 1}x {item.productName}</div>
+                                            {(order.status === 'Delivered' || order.status === 'Completed') && (
+                                                <button className="write-review-btn" onClick={() => {
+                                                    setReviewForm({ rating: 5, comment: '', productId: item.productId, productName: item.productName });
+                                                    setReviewModalOpen(true);
+                                                }}>Write a Review</button>
+                                            )}
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="order-item-box">
+                                        <div className="order-item-name">{order.quantity || 1}x {order.productName}</div>
+                                        {(order.status === 'Delivered' || order.status === 'Completed') && (
+                                            <button className="write-review-btn" onClick={() => {
+                                                setReviewForm({ rating: 5, comment: '', productId: order.productId, productName: order.productName });
+                                                setReviewModalOpen(true);
+                                            }}>Write a Review</button>
+                                        )}
+                                    </div>
+                                )}
 
                                 <div className="order-tracking-box">
                                     <div className="tracking-timeline">
@@ -425,6 +479,59 @@ const Account = () => {
                     </div>
                 );
             })()}
+
+            {/* Review Modal */}
+            {reviewModalOpen && (
+                <div className="order-modal-overlay" onClick={() => setReviewModalOpen(false)}>
+                    <div className="order-modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '450px' }}>
+                        <div className="order-modal-header">
+                            <h3>Write a Review</h3>
+                            <button className="order-modal-close" onClick={() => setReviewModalOpen(false)}><X size={24} /></button>
+                        </div>
+                        <div className="order-modal-body" style={{ paddingTop: '10px' }}>
+                            <p style={{ marginBottom: '15px', color: 'var(--text-muted)' }}>How was your experience with <strong>{reviewForm.productName}</strong>?</p>
+                            
+                            <form onSubmit={handleReviewSubmit}>
+                                <div style={{ marginBottom: '20px', display: 'flex', gap: '5px', justifyContent: 'center' }}>
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                        <Star 
+                                            key={star}
+                                            size={32}
+                                            weight={star <= reviewForm.rating ? "fill" : "regular"}
+                                            color={star <= reviewForm.rating ? "#f59e0b" : "#d1d5db"}
+                                            style={{ cursor: 'pointer', transition: 'transform 0.1s' }}
+                                            onClick={() => setReviewForm({...reviewForm, rating: star})}
+                                            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
+                                            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                                        />
+                                    ))}
+                                </div>
+                                
+                                <div className="form-group" style={{ marginBottom: '20px' }}>
+                                    <label style={{ display: 'block', marginBottom: '8px', fontWeight: 600 }}>Your Comment</label>
+                                    <textarea 
+                                        rows="4" 
+                                        placeholder="What did you like or dislike? What was it used for?"
+                                        value={reviewForm.comment}
+                                        onChange={(e) => setReviewForm({...reviewForm, comment: e.target.value})}
+                                        required
+                                        style={{ width: '100%', padding: '12px', border: '1px solid var(--border-color)', borderRadius: '8px', resize: 'vertical' }}
+                                    ></textarea>
+                                </div>
+                                
+                                <button 
+                                    type="submit" 
+                                    className="btn-dark" 
+                                    disabled={submittingReview}
+                                    style={{ width: '100%', padding: '12px', borderRadius: '8px', background: 'var(--text-dark)', color: 'white', border: 'none', fontWeight: 600, cursor: submittingReview ? 'not-allowed' : 'pointer', opacity: submittingReview ? 0.7 : 1 }}
+                                >
+                                    {submittingReview ? 'Submitting...' : 'Submit Review'}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            )}
         </main>
     );
 };
