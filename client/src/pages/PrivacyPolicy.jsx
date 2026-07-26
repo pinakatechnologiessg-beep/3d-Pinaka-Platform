@@ -9,7 +9,7 @@ const PrivacyPolicy = () => {
         <main>
             <SEO 
                 title="Privacy Policy" 
-                description="Learn about how 3D Pinaka collects, uses, and protects your personal information."
+                description="Learn about how PINAKA TECHNOLOGIES SG PRIVATE LIMITED collects, uses, and protects your personal information."
                 url="/privacy-policy"
             />
             {/* Header Section */}
@@ -33,12 +33,12 @@ const PrivacyPolicy = () => {
 
                     <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', fontSize: '0.95rem' }}><strong>Last Updated: May 2026</strong></p>
 
-                    <p>Welcome to <strong>3DPinaka</strong>. This Privacy Policy explains how Pinaka Technologies SG Pvt Ltd collects, uses, and protects customer information.</p>
+                    <p>Welcome to <strong>PINAKA TECHNOLOGIES SG PRIVATE LIMITED</strong>. This Privacy Policy explains how PINAKA TECHNOLOGIES SG PRIVATE LIMITED SG PRIVATE LIMITED collects, uses, and protects customer information.</p>
 
                     <h3 style={{ color: 'var(--primary)', marginTop: '2rem', marginBottom: '1rem' }}>1. Company Information</h3>
                     <ul style={{ paddingLeft: '1.5rem', marginBottom: '1.5rem', listStyle: 'none' }}>
-                        <li><strong>Company Name:</strong> Pinaka Technologies SG Pvt Ltd</li>
-                        <li><strong>Brand Name:</strong> 3DPinaka</li>
+                        <li><strong>Company Name:</strong> PINAKA TECHNOLOGIES SG PRIVATE LIMITED SG PRIVATE LIMITED</li>
+                        <li><strong>Brand Name:</strong> PINAKA TECHNOLOGIES SG PRIVATE LIMITED</li>
                         <li><strong>GSTIN:</strong> 09AALCP3503BIZQ</li>
                         <li><strong>Address:</strong> 86 Sanjay Gandhi Nagar, Naubasta, Kanpur, Uttar Pradesh, India</li>
                         <li><strong>Email:</strong> <a href="mailto:PINAKATECHNOLOGIESSG@GMAIL.COM" style={{ color: 'var(--primary)' }}>PINAKATECHNOLOGIESSG@GMAIL.COM</a></li>

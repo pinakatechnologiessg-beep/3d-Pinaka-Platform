@@ -71,8 +71,8 @@ const Materials = () => {
         <main>
             <SEO 
                 title="Filaments & Resins"
-                description="Explore our high-quality range of 3D printing filaments and resins. PLA, ABS, PETG, TPU, and more from top brands at 3D Pinaka."
-                keywords="3D printer filament, 3D printing resin, PLA filament India, ABS filament, PETG, TPU, UV resin, 3D Pinaka"
+                description="Explore our high-quality range of 3D printing filaments and resins. PLA, ABS, PETG, TPU, and more from top brands at PINAKA TECHNOLOGIES SG PRIVATE LIMITED."
+                keywords="3D printer filament, 3D printing resin, PLA filament India, ABS filament, PETG, TPU, UV resin, PINAKA TECHNOLOGIES SG PRIVATE LIMITED"
             />
             <div style={{ background: 'var(--secondary)', padding: '4rem 0', textAlign: 'center', color: 'white' }}>
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { 
   House, Package, ShoppingCart, Users, Gear, 
-  Bell, MagnifyingGlass, List, CurrencyDollar, TrendUp, Clock, ArrowLeft, Heart, X, UploadSimple, DownloadSimple, Trash, PencilSimple, Plus, Sparkle, Eye, Funnel, Storefront, Bag, Article
+  Bell, MagnifyingGlass, List, CurrencyDollar, TrendUp, Clock, ArrowLeft, Heart, X, UploadSimple, DownloadSimple, Trash, PencilSimple, Plus, Sparkle, Eye, Funnel, Storefront, Bag, Article, CheckCircle
 } from '@phosphor-icons/react';
 import { getImageUrl, PLACEHOLDER_SVG } from '../utils/imageUtils';
 import './AdminDashboard.css';
@@ -517,7 +517,7 @@ const AdminDashboard = () => {
             if (updatedData.phone) {
                 const cleanPhone = updatedData.phone.replace(/\D/g, '');
                 const finalPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
-                const msg = `Hello ${updatedData.firstName || updatedData.customerName || 'Customer'}, your order *${updatedData.orderId}* status has been updated to: *${updatedData.status}*.%0A%0ACheck details here: https://3dpinaka.in/account%0A%0AThank you for choosing 3D Pinaka!`;
+                const msg = `Hello ${updatedData.firstName || updatedData.customerName || 'Customer'}, your order *${updatedData.orderId}* status has been updated to: *${updatedData.status}*.%0A%0ACheck details here: https://PINAKA TECHNOLOGIES SG PRIVATE LIMITED.in/account%0A%0AThank you for choosing PINAKA TECHNOLOGIES SG PRIVATE LIMITED SG PRIVATE LIMITED!`;
                 window.open(`https://wa.me/${finalPhone}?text=${msg}`, '_blank');
             }
             
@@ -3467,7 +3467,7 @@ const AdminDashboard = () => {
                    <div style={{ color: 'var(--text-dark)', fontWeight: 700, marginBottom: '4px' }}>
                       {selectedOrderDetails.firstName ? `${selectedOrderDetails.firstName} ${selectedOrderDetails.lastName || ''}` : (selectedOrderDetails.customerName || 'N/A')}
                    </div>
-                   <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '2px' }}>{selectedOrderDetails.email || selectedOrderDetails.customerEmail}</div>
+                   <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '2px', wordBreak: 'break-all' }}>{selectedOrderDetails.email || selectedOrderDetails.customerEmail}</div>
                    <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>{selectedOrderDetails.phone}</div>
                 </div>
                 <div style={{ background: 'var(--light-bg)', padding: '1.25rem', borderRadius: '12px', border: '1px solid var(--border-color)' }}>

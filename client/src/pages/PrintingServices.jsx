@@ -477,7 +477,7 @@ const PrintingServices = () => {
                                 <li>▢ Transit damage not covered</li>
                             </ul>
                             <p style={{ fontSize: '0.85rem', color: '#ef4444', lineHeight: '1.6', marginTop: 'auto' }}>
-                                3D Pinaka Technology Ltd. is not responsible for transit-related damages in these cases.
+                                PINAKA TECHNOLOGIES SG PRIVATE LIMITED SG PRIVATE LIMITED is not responsible for transit-related damages in these cases.
                             </p>
                         </div>
 

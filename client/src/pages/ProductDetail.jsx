@@ -131,8 +131,8 @@ const ProductDetail = () => {
         <main className="product-detail-page">
             <SEO 
                 title={product.name} 
-                description={product.description?.substring(0, 160) || `Buy ${product.name} at 3D Pinaka. High-quality 3D printer and materials.`}
-                keywords={`${product.name}, ${product.brand}, ${product.category}, 3D Pinaka, buy 3D printer India`}
+                description={product.description?.substring(0, 160) || `Buy ${product.name} at PINAKA TECHNOLOGIES SG PRIVATE LIMITED. High-quality 3D printer and materials.`}
+                keywords={`${product.name}, ${product.brand}, ${product.category}, PINAKA TECHNOLOGIES SG PRIVATE LIMITED, buy 3D printer India`}
                 image={imageUrl}
                 type="product"
                 productData={product}

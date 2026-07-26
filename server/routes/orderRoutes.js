@@ -36,7 +36,7 @@ export const sendOrderEmailNotification = async (order) => {
     const statusText = isPaid ? 'Order Confirmed' : 'PLACED';
     
     await transporter.sendMail({
-      from: `"3D Pinaka Notifications" <${process.env.EMAIL_USER}>`,
+      from: `"PINAKA TECHNOLOGIES SG PRIVATE LIMITED Notifications" <${process.env.EMAIL_USER}>`,
       to: process.env.EMAIL_USER,
       subject: `New Order ${statusText}: ${order.orderId}`,
       html: `
@@ -66,7 +66,7 @@ export const sendOrderEmailNotification = async (order) => {
           <p><strong>Total Price:</strong> ₹${order.totalPrice}</p>
           <hr />
           <p style="font-size: 0.9em; color: #7f8c8d; text-align: center;">
-            This is an automated notification from your 3D Pinaka store.
+            This is an automated notification from your PINAKA TECHNOLOGIES SG PRIVATE LIMITED store.
           </p>
         </div>
       `
@@ -74,7 +74,7 @@ export const sendOrderEmailNotification = async (order) => {
 
     // Send confirmation email to customer
     await transporter.sendMail({
-      from: `"3D Pinaka" <${process.env.EMAIL_USER}>`,
+      from: `"PINAKA TECHNOLOGIES SG PRIVATE LIMITED" <${process.env.EMAIL_USER}>`,
       to: order.customerEmail,
       subject: `Order Confirmation - ${order.orderId}`,
       html: `
@@ -89,7 +89,7 @@ export const sendOrderEmailNotification = async (order) => {
           <p><strong>Payment Method:</strong> ${order.paymentMethod}</p>
           <hr style="border: none; border-top: 1px solid #eee;" />
           <p>We will notify you once your order is shipped.</p>
-          <p>Best regards,<br /><strong>3D Pinaka Team</strong></p>
+          <p>Best regards,<br /><strong>PINAKA TECHNOLOGIES SG PRIVATE LIMITED Team</strong></p>
         </div>
       `
     });

@@ -9,7 +9,7 @@ const Footer = () => {
         {/* Col 1: Logo + description + social — full width on mobile */}
         <div className="footer-col footer-brand-col">
           <Link to="/" style={{ display: 'inline-block', marginBottom: '1rem' }}>
-            <img src="/footer-logo.png" alt="Pinaka Technologies" style={{ width: '180px', height: 'auto' }} />
+            <img src="/footer-logo.png" alt="PINAKA TECHNOLOGIES SG PRIVATE LIMITED" style={{ width: '180px', height: 'auto' }} />
           </Link>
           <p style={{ maxWidth: '300px', lineHeight: 1.7 }}>Your one-stop destination for premium 3D printers, materials, and accessories. Bringing innovation to life.</p>
           <div className="social-icons">
@@ -67,7 +67,7 @@ const Footer = () => {
       </div>
 
       <div className="container footer-bottom">
-        <p>@2023 3dpinaka.in. All rights reserved.</p>
+        <p>@2023 PINAKA TECHNOLOGIES SG PRIVATE LIMITED.in. All rights reserved.</p>
       </div>
     </footer>
   );

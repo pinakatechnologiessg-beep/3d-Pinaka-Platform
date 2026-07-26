@@ -158,7 +158,7 @@ const Products = () => {
             <SEO 
                 title={searchParams.get('condition') === 'Refurbished' ? 'Refurbished 3D Printer Store' : 'All 3D Printers'}
                 description="Browse our extensive collection of professional and hobbyist 3D printers. Top brands, best prices, and expert support in India."
-                keywords="3D printers, buy 3D printer India, professional 3D printers, refurbished 3D printers, 3D Pinaka"
+                keywords="3D printers, buy 3D printer India, professional 3D printers, refurbished 3D printers, PINAKA TECHNOLOGIES SG PRIVATE LIMITED"
             />
             {/* Header */}
 
@@ -169,7 +169,7 @@ const Products = () => {
                 <h1 style={{ marginTop: '1.5rem', fontSize: isMobile ? '1.8rem' : '2.5rem', padding: '0 10px' }}>
                     {searchParams.get('condition') === 'Refurbished' ? 'Refurbished Store' : 'All 3D Printers'}
                 </h1>
-                <p style={{ color: 'var(--text-muted)', marginTop: '1rem', fontSize: isMobile ? '0.9rem' : '1rem' }}>Professional 3D Printing solutions by 3DPINAKA</p>
+                <p style={{ color: 'var(--text-muted)', marginTop: '1rem', fontSize: isMobile ? '0.9rem' : '1rem' }}>Professional 3D Printing solutions by PINAKA TECHNOLOGIES SG PRIVATE LIMITED</p>
             </div>
 
             <section className="section container" style={{ padding: isMobile ? '15px' : undefined }}>

@@ -107,7 +107,7 @@ const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu, meta }) => {
                 </div>
                 <div className="mega-col" style={{ borderRight: 'none', paddingRight: 0 }}>
                   <div className="col-header">
-                    <h4>3D PINAKA EXCLUSIVE</h4>
+                    <h4>PINAKA TECHNOLOGIES SG PRIVATE LIMITED EXCLUSIVE</h4>
                   </div>
                   <ul className="mega-list">
                     <li><Link to="/products?brand=Anycubic">Anycubic Kobra 2 Neo 3D Printer</Link></li>

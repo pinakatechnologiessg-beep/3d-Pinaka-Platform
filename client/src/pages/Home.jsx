@@ -319,8 +319,8 @@ const Home = () => {
         <main>
             <SEO 
                 title="Home" 
-                description="3D Pinaka is India's leading destination for premium 3D printers, filaments, resins, and 3D printing services. Explore top brands like Bambu Lab, Anycubic, and Creality."
-                keywords="3D Pinaka, 3D printer India, Buy 3D printer, 3D printing services, filaments, resins, industrial 3D printers"
+                description="PINAKA TECHNOLOGIES SG PRIVATE LIMITED is India's leading destination for premium 3D printers, filaments, resins, and 3D printing services. Explore top brands like Bambu Lab, Anycubic, and Creality."
+                keywords="PINAKA TECHNOLOGIES SG PRIVATE LIMITED, 3D printer India, Buy 3D printer, 3D printing services, filaments, resins, industrial 3D printers"
             />
             <PopupModal />
 
@@ -469,18 +469,17 @@ const Home = () => {
                           flexDirection: 'column'
                       }}
                   >
-                      <button 
-                          className={`wishlist-btn ${wishlist.some(item => (item.productId || '').toString() === (product._id || product.id || '').toString()) ? 'active' : ''}`} 
-                          onClick={() => handleAddToWishlist(product)}
-                          style={{ zIndex: 10, position: 'absolute', top: '15px', right: '15px' }}
-                          title="Add to Wishlist"
-                      >
-                          <Heart size={20} weight={wishlist.some(item => (item.productId || '').toString() === (product._id || product.id || '').toString()) ? "fill" : "bold"} />
-                      </button>
-                      <div className="badge" style={{ background: 'var(--primary)', color: 'white', zIndex: 5, borderRadius: '6px', padding: '4px 8px', fontSize: '0.75rem', fontWeight: 700 }}>{product.badge || 'NEW'}</div>
-                      
                       <Link to={product.name ? `/product/${encodeURIComponent((product.name || product.title || '').replace(/ /g, '-'))}` : '/products'} style={{ textDecoration: 'none', display: 'block', flex: 1 }}>
-                          <div className="image-wrapper" style={{ height: isMobile ? '180px' : '240px', marginBottom: '15px', overflow: 'hidden', borderRadius: '12px', background: 'var(--light-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <div className="image-wrapper" style={{ height: isMobile ? '180px' : '240px', marginBottom: '15px', overflow: 'hidden', borderRadius: '12px', background: 'var(--light-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+                              <button 
+                                  className={`wishlist-btn ${wishlist.some(item => (item.productId || '').toString() === (product._id || product.id || '').toString()) ? 'active' : ''}`} 
+                                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleAddToWishlist(product); }}
+                                  style={{ zIndex: 10, position: 'absolute', top: '10px', right: '10px' }}
+                                  title="Add to Wishlist"
+                              >
+                                  <Heart size={20} weight={wishlist.some(item => (item.productId || '').toString() === (product._id || product.id || '').toString()) ? "fill" : "bold"} />
+                              </button>
+                              <div className="badge" style={{ background: 'var(--primary)', color: 'white', zIndex: 5, borderTopLeftRadius: '12px', borderBottomRightRadius: '12px', padding: '6px 16px 6px 24px', fontSize: '0.85rem', fontWeight: 900, position: 'absolute', top: 0, left: 0, margin: 0, boxShadow: '3px 3px 0 rgba(0,0,0,0.15)' }}>{product.badge || 'NEW'}</div>
                               <img 
                                   src={getImageUrl(product.image)} 
                                   alt={product.name || product.title} 
@@ -558,8 +557,6 @@ const Home = () => {
 
         <div className="products-grid">
             {(dbFeaturedProducts.length > 0 ? dbFeaturedProducts : PRODUCTS.filter(p => p.featured)).map((product, index) => {
-                console.log("Featured Product Item:", product); // Debug Step: Console log individual product
-                
                 const price = Number(parsePriceLocal(product.price));
                 const originalPrice = Number(parsePriceLocal(product.mrp || product.originalPrice));
                 const hasDiscount = originalPrice > price;
@@ -582,18 +579,17 @@ const Home = () => {
                         flexDirection: 'column'
                     }}
                 >
-                    <button 
-                        className={`wishlist-btn ${wishlist.some(item => (item.productId || '').toString() === (product._id || product.id || '').toString()) ? 'active' : ''}`} 
-                        onClick={() => handleAddToWishlist(product)}
-                        style={{ zIndex: 10 }}
-                        title="Add to Wishlist"
-                    >
-                        <Heart size={20} weight={wishlist.some(item => (item.productId || '').toString() === (product._id || product.id || '').toString()) ? "fill" : "bold"} />
-                    </button>
-                    {product.badge && <div className="badge" style={{ ...product.badgeStyle, zIndex: 5 }}>{product.badge}</div>}
-                    
                     <Link to={product.name ? `/product/${encodeURIComponent((product.name || product.title || '').replace(/ /g, '-'))}` : '/products'} style={{ textDecoration: 'none', display: 'block', flex: 1 }}>
-                        <div className="image-wrapper" style={{ height: isMobile ? '160px' : '220px', marginBottom: '12px', overflow: 'hidden', borderRadius: '8px', background: 'var(--light-bg)' }}>
+                        <div className="image-wrapper" style={{ height: isMobile ? '160px' : '220px', marginBottom: '12px', overflow: 'hidden', borderRadius: '8px', background: 'var(--light-bg)', position: 'relative' }}>
+                            <button 
+                                className={`wishlist-btn ${wishlist.some(item => (item.productId || '').toString() === (product._id || product.id || '').toString()) ? 'active' : ''}`} 
+                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleAddToWishlist(product); }}
+                                style={{ zIndex: 10, position: 'absolute', top: '8px', right: '8px' }}
+                                title="Add to Wishlist"
+                            >
+                                <Heart size={20} weight={wishlist.some(item => (item.productId || '').toString() === (product._id || product.id || '').toString()) ? "fill" : "bold"} />
+                            </button>
+                            {product.badge && <div className="badge" style={{ ...product.badgeStyle, zIndex: 5, borderTopLeftRadius: '8px', borderBottomRightRadius: '8px', padding: '4px 12px 4px 16px', fontSize: '0.8rem', fontWeight: 900, position: 'absolute', top: 0, left: 0, margin: 0, boxShadow: '2px 3px 0 rgba(0,0,0,0.15)' }}>{product.badge}</div>}
                             <img 
                                 src={getImageUrl(product.image)} 
                                 alt={product.name || product.title} 
@@ -758,7 +754,7 @@ const Home = () => {
                 { 
                     name: "Rajesh S. Khanna", 
                     role: "Industrial Designer, Bangalore", 
-                    text: "Pinaka Technologies has been our go-to partner for all our prototyping needs. Their Anycubic Kobra 3 setup is a beast—unbeatable precision and speed!", 
+                    text: "PINAKA TECHNOLOGIES SG PRIVATE LIMITED has been our go-to partner for all our prototyping needs. Their Anycubic Kobra 3 setup is a beast—unbeatable precision and speed!", 
                     img: "https://i.pravatar.cc/150?img=12" 
                 },
                 { 

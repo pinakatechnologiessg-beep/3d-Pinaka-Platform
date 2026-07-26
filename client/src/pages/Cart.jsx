@@ -181,7 +181,7 @@ Coupon Discount: ₹${orderData.couponDiscount}
                 body: JSON.stringify({
                     access_key: "2c808a23-646b-4cd6-b983-20c8105cac41",
                     subject: `New Order Placed: ${orderIdStr}`,
-                    from_name: "3D Pinaka System",
+                    from_name: "PINAKA TECHNOLOGIES SG PRIVATE LIMITED SG PRIVATE LIMITED System",
                     message: message
                 })
             });
@@ -250,8 +250,8 @@ Coupon Discount: ₹${orderData.couponDiscount}
                         key: data.razorpayKeyId,
                         amount: (total - appliedPoints - couponDiscount) * 100,
                         currency: "INR",
-                        name: "3D Pinaka",
-                        description: "Purchase from 3D Pinaka",
+                        name: "PINAKA TECHNOLOGIES SG PRIVATE LIMITED SG PRIVATE LIMITED",
+                        description: "Purchase from PINAKA TECHNOLOGIES SG PRIVATE LIMITED SG PRIVATE LIMITED",
                         order_id: data.razorpayOrderId,
                         handler: async function (response) {
                             // Verify Payment

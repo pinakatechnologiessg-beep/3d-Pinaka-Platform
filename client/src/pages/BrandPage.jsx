@@ -233,8 +233,8 @@ const BrandPage = () => {
         <main>
             <SEO 
                 title={`${brand.name} Printers`}
-                description={`Shop the latest ${brand.name} 3D printers and materials at 3D Pinaka. Premium quality and best prices for ${brand.name} products in India.`}
-                keywords={`${brand.name}, ${brand.name} 3D printer, ${brand.name} India, buy ${brand.name} online, 3D Pinaka`}
+                description={`Shop the latest ${brand.name} 3D printers and materials at PINAKA TECHNOLOGIES SG PRIVATE LIMITED. Premium quality and best prices for ${brand.name} products in India.`}
+                keywords={`${brand.name}, ${brand.name} 3D printer, ${brand.name} India, buy ${brand.name} online, PINAKA TECHNOLOGIES SG PRIVATE LIMITED`}
             />
             <div style={{ background: 'var(--dark-bg)', padding: '4rem 0', textAlign: 'center', color: 'white' }}>
 

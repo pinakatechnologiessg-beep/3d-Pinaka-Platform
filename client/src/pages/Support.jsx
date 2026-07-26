@@ -71,7 +71,7 @@ const Support = () => {
         <main className="support-page" style={{ background: 'var(--light-bg)', padding: '5rem 0', minHeight: 'calc(100vh - 400px)' }}>
             <SEO 
                 title="Support Center" 
-                description="Contact 3D Pinaka support for any queries, technical assistance, or information about our 3D printers and materials."
+                description="Contact PINAKA TECHNOLOGIES SG PRIVATE LIMITED support for any queries, technical assistance, or information about our 3D printers and materials."
                 url="/support"
             />
             <div className="container" style={{ maxWidth: '800px' }}>

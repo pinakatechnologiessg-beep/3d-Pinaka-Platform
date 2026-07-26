@@ -9,7 +9,7 @@ const TermsAndConditions = () => {
         <main>
             <SEO 
                 title="Terms & Conditions" 
-                description="Read the terms and conditions for using 3D Pinaka's 3D printing services and purchasing our products."
+                description="Read the terms and conditions for using PINAKA TECHNOLOGIES SG PRIVATE LIMITED's 3D printing services and purchasing our products."
                 url="/terms-and-conditions"
             />
             {/* Header Section */}
@@ -33,7 +33,7 @@ const TermsAndConditions = () => {
 
                     <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', fontSize: '0.95rem' }}><strong>Last Updated: May 2026</strong></p>
 
-                    <p>By accessing and using <strong>3DPinaka</strong>, you agree to the following Terms &amp; Conditions.</p>
+                    <p>By accessing and using <strong>PINAKA TECHNOLOGIES SG PRIVATE LIMITED</strong>, you agree to the following Terms &amp; Conditions.</p>
 
                     <h3 style={{ color: 'var(--primary)', marginTop: '2rem', marginBottom: '1rem' }}>1. Services</h3>
                     <p>We provide:</p>
@@ -64,7 +64,7 @@ const TermsAndConditions = () => {
                     <p>Customers remain responsible for all uploaded design files and confirm they possess necessary legal rights for reproduction and manufacturing.</p>
 
                     <h3 style={{ color: 'var(--primary)', marginTop: '2rem', marginBottom: '1rem' }}>6. Limitation of Liability</h3>
-                    <p>Pinaka Technologies SG Pvt Ltd shall not be liable for:</p>
+                    <p>PINAKA TECHNOLOGIES SG PRIVATE LIMITED SG PRIVATE LIMITED shall not be liable for:</p>
                     <ul style={{ paddingLeft: '1.5rem', marginBottom: '1.5rem' }}>
                         <li>Indirect damages</li>
                         <li>Delays caused by courier/logistics</li>

@@ -101,6 +101,25 @@ const Account = () => {
         navigate('/');
     };
 
+    const handleReorder = (order) => {
+        if (order.items && order.items.length > 0) {
+            order.items.forEach(item => {
+                cartService.addToCart({
+                    _id: item.productId,
+                    name: item.productName,
+                    price: item.price || 0
+                }, item.quantity || 1);
+            });
+        } else if (order.productId) {
+            cartService.addToCart({
+                _id: order.productId,
+                name: order.productName,
+                price: order.totalPrice / (order.quantity || 1)
+            }, order.quantity || 1);
+        }
+        navigate('/cart');
+    };
+
     const getStatusIcon = (status) => {
         switch (status) {
             case 'Order Confirmed': return <CheckCircle size={20} color="#16a34a" />;
@@ -212,6 +231,12 @@ const Account = () => {
                                                             alert('Tracking link not available yet.');
                                                         }
                                                     }}>Track</button>
+                                                    {(order.status === 'Delivered' || order.status === 'Completed') && (
+                                                        <button className="track-btn" style={{ background: 'transparent', color: 'var(--primary)', border: '1px solid var(--primary)', marginLeft: '8px' }} onClick={(e) => { 
+                                                            e.stopPropagation(); 
+                                                            handleReorder(order);
+                                                        }}>Reorder</button>
+                                                    )}
                                                 </div>
                                                 
                                                 {/* Expanded view replaced by modal */}
@@ -426,8 +451,17 @@ const Account = () => {
                                 <h4>Items Ordered:</h4>
                                 {(order.items && order.items.length > 0) ? (
                                     order.items.map((item, idx) => (
-                                        <div className="order-item-box" key={idx}>
-                                            <div className="order-item-name">{item.quantity || 1}x {item.productName}</div>
+                                        <div className="order-item-box" key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: 'var(--colorful-bg)', borderRadius: '8px', marginBottom: '10px', border: '1px solid var(--border-color)' }}>
+                                            <div>
+                                                <div className="order-item-name" style={{ fontWeight: 600, color: 'var(--text-dark)', marginBottom: '4px' }}>
+                                                    <Link to={`/product/${encodeURIComponent((item.productName || '').replace(/ /g, '-'))}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+                                                        {item.productName}
+                                                    </Link>
+                                                </div>
+                                                <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                                                    Qty: {item.quantity || 1} {item.price ? `| ₹${item.price.toLocaleString('en-IN')}` : ''}
+                                                </div>
+                                            </div>
                                             {(order.status === 'Delivered' || order.status === 'Completed') && (
                                                 <button className="write-review-btn" onClick={() => {
                                                     setReviewForm({ rating: 5, comment: '', productId: item.productId, productName: item.productName });
@@ -437,8 +471,17 @@ const Account = () => {
                                         </div>
                                     ))
                                 ) : (
-                                    <div className="order-item-box">
-                                        <div className="order-item-name">{order.quantity || 1}x {order.productName}</div>
+                                    <div className="order-item-box" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: 'var(--colorful-bg)', borderRadius: '8px', marginBottom: '10px', border: '1px solid var(--border-color)' }}>
+                                        <div>
+                                            <div className="order-item-name" style={{ fontWeight: 600, color: 'var(--text-dark)', marginBottom: '4px' }}>
+                                                <Link to={`/product/${encodeURIComponent((order.productName || '').replace(/ /g, '-'))}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+                                                    {order.productName}
+                                                </Link>
+                                            </div>
+                                            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                                                Qty: {order.quantity || 1}
+                                            </div>
+                                        </div>
                                         {(order.status === 'Delivered' || order.status === 'Completed') && (
                                             <button className="write-review-btn" onClick={() => {
                                                 setReviewForm({ rating: 5, comment: '', productId: order.productId, productName: order.productName });
@@ -447,6 +490,26 @@ const Account = () => {
                                         )}
                                     </div>
                                 )}
+                                
+                                <div style={{ marginTop: '20px', padding: '16px', background: 'var(--light-bg)', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+                                    <h4 style={{ marginBottom: '12px', borderBottom: '1px solid #e2e8f0', paddingBottom: '8px' }}>Order Summary</h4>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.9rem' }}>
+                                        <span style={{ color: 'var(--text-muted)' }}>Payment Method:</span>
+                                        <strong>{order.paymentMethod || 'COD'} ({order.paymentStatus || 'Pending'})</strong>
+                                    </div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.9rem' }}>
+                                        <span style={{ color: 'var(--text-muted)' }}>Shipping To:</span>
+                                        <span style={{ textAlign: 'right' }}>
+                                            {order.firstName} {order.lastName}<br />
+                                            {order.streetAddress}, {order.city}<br />
+                                            {order.state}, {order.postcode}
+                                        </span>
+                                    </div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '12px', paddingTop: '12px', borderTop: '1px solid #e2e8f0', fontSize: '1rem', fontWeight: 'bold' }}>
+                                        <span>Total Amount:</span>
+                                        <span>₹{order.totalPrice?.toLocaleString('en-IN', {minimumFractionDigits: 2})}</span>
+                                    </div>
+                                </div>
 
                                 <div className="order-tracking-box">
                                     <div className="tracking-timeline">

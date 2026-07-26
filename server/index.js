@@ -149,7 +149,7 @@ app.use('/api/partner-products', partnerProductRoutes);
 app.use('/api/partner-posters', partnerPosterRoutes);
 app.use('/api/marketplaces', marketplaceRoutes);
 app.use('/api/blogs', blogRoutes);
-app.use('/api/sitemap.xml', sitemapRoutes);
+app.use('/sitemap.xml', sitemapRoutes);
 
 
 // Catch-all for API routes to prevent HTML responses for unmatched API endpoints

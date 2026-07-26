@@ -30,7 +30,7 @@ const About = () => {
         <main>
             <SEO 
                 title="About Us" 
-                description="Learn about 3D Pinaka, India's premier destination for cutting-edge additive manufacturing solutions, 3D printers, and premium materials."
+                description="Learn about PINAKA TECHNOLOGIES SG PRIVATE LIMITED, India's premier destination for cutting-edge additive manufacturing solutions, 3D printers, and premium materials."
                 url="/about"
             />
             {/* Hero Section */}
@@ -54,10 +54,10 @@ const About = () => {
                     <div style={{ padding: '0 5px' }}>
                         <h2 style={{ fontSize: '2.5rem', marginBottom: '1.5rem', color: 'var(--text-dark)', lineHeight: '1.3' }}>Empowering Innovation Through Precision 3D Printing</h2>
                         <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', lineHeight: '1.8', marginBottom: '2rem' }}>
-                            Welcome to <strong>3D Pinaka</strong>, India's premier destination for cutting-edge additive manufacturing solutions. Based in the industrial heart of <strong>Kanpur, Uttar Pradesh</strong>, we are more than just an e-commerce store—we are your partners in turning digital concepts into physical reality.
+                            Welcome to <strong>PINAKA TECHNOLOGIES SG PRIVATE LIMITED</strong>, India's premier destination for cutting-edge additive manufacturing solutions. Based in the industrial heart of <strong>Kanpur, Uttar Pradesh</strong>, we are more than just an e-commerce store—we are your partners in turning digital concepts into physical reality.
                         </p>
                         <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', lineHeight: '1.8' }}>
-                            At 3D Pinaka, we specialize in providing high-performance <strong>3D printers, premium filaments, laser engravers, and resin systems</strong> from world-renowned brands like <strong>Bambu Lab, Creality, Anycubic, and Flashforge</strong>.
+                            At PINAKA TECHNOLOGIES SG PRIVATE LIMITED, we specialize in providing high-performance <strong>3D printers, premium filaments, laser engravers, and resin systems</strong> from world-renowned brands like <strong>Bambu Lab, Creality, Anycubic, and Flashforge</strong>.
                         </p>
                     </div>
                     <div style={{ background: 'var(--light-bg)', padding: '2rem', borderRadius: '20px', border: '1px solid var(--border-color)' }}>
@@ -118,7 +118,7 @@ const About = () => {
 
             {/* Our Values Section */}
             <section className="section container reveal" ref={addToRevealRefs} style={{ textAlign: 'center' }}>
-                <h2 style={{ fontSize: '2.5rem', marginBottom: '3rem', padding: '0 15px' }}>Why Choose 3D Pinaka?</h2>
+                <h2 style={{ fontSize: '2.5rem', marginBottom: '3rem', padding: '0 15px' }}>Why Choose PINAKA TECHNOLOGIES SG PRIVATE LIMITED?</h2>
                 <div className="about-values-grid" style={{ padding: '0 15px' }}>
                     <div className="feature-box" style={{ background: 'var(--colorful-bg)', boxShadow: '0 10px 30px rgba(0,0,0,0.05)', border: '1px solid var(--border-color)', margin: 0 }}>
                         <div style={{ color: 'var(--primary)', marginBottom: '1rem' }}><Globe size={40} /></div>
