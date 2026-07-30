@@ -2,11 +2,15 @@
   RewriteEngine On
   RewriteBase /
   
-  # Redirect sitemap.xml to dynamic backend sitemap generator
-  RewriteRule ^sitemap\.xml$ https://mediumaquamarine-goshawk-463282.hostingersite.com/api/sitemap.xml [R=301,L]
+  # Pass sitemap.xml to PHP proxy script
+  RewriteRule ^sitemap\.xml$ sitemap.php [L]
+
+  # Pass /api requests to PHP proxy script to bypass Hostinger bot-blocks
+  RewriteRule ^api/(.*)$ api_proxy.php [L]
   
   RewriteRule ^index\.html$ - [L]
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_URI} !^/(sitemap\.xml|robots\.txt|favicon\.ico)$ [NC]
   RewriteRule . /index.html [L]
 </IfModule>

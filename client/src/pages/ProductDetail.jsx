@@ -313,7 +313,7 @@ const ProductDetail = () => {
                         {activeTab === 'description' && (
                             <div className="description-content">
                                 {product.description ? (
-                                    <div dangerouslySetInnerHTML={{ __html: product.description.replace(/\n/g, '<br/>') }} />
+                                    <div dangerouslySetInnerHTML={{ __html: (product.description.includes('<') && product.description.includes('>')) ? product.description : product.description.replace(/\n/g, '<br/>') }} />
                                 ) : (
                                     <p>No description available for this product.</p>
                                 )}

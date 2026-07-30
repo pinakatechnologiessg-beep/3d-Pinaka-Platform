@@ -7,6 +7,8 @@ import {
 import { getImageUrl, PLACEHOLDER_SVG } from '../utils/imageUtils';
 import './AdminDashboard.css';
 import './AdminDashboardPartners.css';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 const BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/$/, "");
 
@@ -2824,10 +2826,11 @@ const AdminDashboard = () => {
 
                 <div>
                    <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Product Description</label>
-                   <textarea 
-                     value={newProduct.description} 
-                     onChange={e => setNewProduct({...newProduct, description: e.target.value})} 
-                     style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none', minHeight: '100px', fontFamily: 'inherit' }} 
+                   <ReactQuill 
+                     theme="snow"
+                     value={newProduct.description || ''} 
+                     onChange={(content) => setNewProduct({...newProduct, description: content})} 
+                     style={{ backgroundColor: 'white', marginBottom: '50px', height: '200px' }} 
                      placeholder="Detailed description of the product..." 
                    />
                 </div>
@@ -3196,10 +3199,11 @@ const AdminDashboard = () => {
 
                 <div>
                    <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Product Description</label>
-                   <textarea 
+                   <ReactQuill 
+                     theme="snow"
                      value={editProductState.description || ''} 
-                     onChange={e => setEditProductState({...editProductState, description: e.target.value})} 
-                     style={{ width: '100%', padding: '0.8rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none', minHeight: '100px', fontFamily: 'inherit' }} 
+                     onChange={(content) => setEditProductState({...editProductState, description: content})} 
+                     style={{ backgroundColor: 'white', marginBottom: '50px', height: '200px' }} 
                      placeholder="Detailed description of the product..." 
                    />
                 </div>
