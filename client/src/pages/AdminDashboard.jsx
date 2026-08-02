@@ -9,6 +9,7 @@ import './AdminDashboard.css';
 import './AdminDashboardPartners.css';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import AdminQuotation from '../components/AdminQuotation';
 
 const BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/$/, "");
 
@@ -38,6 +39,7 @@ const AdminDashboard = () => {
       { name: 'Marketplaces', icon: <Storefront size={24} /> },
       { name: 'Blogs', icon: <Article size={24} /> },
     { name: 'Support', icon: <Bell size={24} /> },
+    { name: 'Quotation', icon: <Article size={24} /> },
     { name: 'Settings', icon: <Gear size={24} /> }
   ];
 
@@ -791,7 +793,14 @@ const AdminDashboard = () => {
       // Individual fetch helper to prevent cascading failures
       const safeFetch = async (url, setter, options = {}) => {
         try {
-          const res = await fetch(url);
+          const token = localStorage.getItem('token');
+          const res = await fetch(url, {
+            ...options,
+            headers: {
+              ...(options.headers || {}),
+              ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+            }
+          });
           if (res.ok) {
             const data = await res.json();
             if (options.transform) {
@@ -2560,6 +2569,10 @@ const AdminDashboard = () => {
                 </table>
             </div>
           </div>
+        )}
+
+        {activeTab === 'Quotation' && (
+          <AdminQuotation products={adminProducts} />
         )}
 
         {activeTab === 'Settings' && (
