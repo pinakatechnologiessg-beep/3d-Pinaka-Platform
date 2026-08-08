@@ -411,15 +411,6 @@ const Account = () => {
                         )}
                     </div>
                 </div>
-
-                <div className="online-stores-banner">
-                    <div className="online-stores-header">Online Stores</div>
-                    <div className="store-logos-container">
-                        <div className="store-logo-box store-amazon">amazon</div>
-                        <div className="store-logo-box store-flipkart">Flipkart</div>
-                        <div className="store-logo-box store-indiamart">IndiaMART</div>
-                    </div>
-                </div>
             </div>
             
             {/* Order Tracking Modal */}
