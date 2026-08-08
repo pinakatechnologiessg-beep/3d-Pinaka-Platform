@@ -4,6 +4,7 @@ import { API_BASE_URL } from '../api/config';
 import { ArrowLeft, Trash, ShoppingCart, WhatsappLogo, CheckCircle, Package, MapPin, Phone, User as UserIcon, X } from '@phosphor-icons/react';
 import { cartService, SHOW_TOAST } from '../services/cartService';
 import { getImageUrl } from '../utils/imageUtils';
+import { generateProductSlug } from '../utils/stringUtils';
 
 const Cart = () => {
     const navigate = useNavigate();
@@ -325,7 +326,7 @@ Coupon Discount: ₹${orderData.couponDiscount}
                                 <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1.5rem', color: 'var(--text-dark)' }}>Cart Summary</h2>
                                 {cartItems.map((item, index) => (
                                     <div key={index} className="cart-item-new" style={{ display: 'flex', flexWrap: 'wrap', gap: '15px', padding: '15px 0', borderBottom: index === cartItems.length - 1 ? 'none' : '1px dotted var(--border-color)' }}>
-                                        <Link to={`/product/${encodeURIComponent((item.title || '').replace(/ /g, '-'))}`} style={{ width: '80px', height: '80px', border: '1px solid var(--border-color)', borderRadius: '12px', padding: '5px', flexShrink: 0, display: 'block' }}>
+                                        <Link to={`/product/${generateProductSlug(item.title)}`} style={{ width: '80px', height: '80px', border: '1px solid var(--border-color)', borderRadius: '12px', padding: '5px', flexShrink: 0, display: 'block' }}>
                                             <img 
                                                 src={getImageUrl(item.image)} 
                                                 alt={item.title} 
@@ -334,7 +335,7 @@ Coupon Discount: ₹${orderData.couponDiscount}
                                             />
                                         </Link>
                                         <div style={{ flex: 1, minWidth: 0 }}>
-                                            <Link to={`/product/${encodeURIComponent((item.title || '').replace(/ /g, '-'))}`} style={{ textDecoration: 'none' }}>
+                                            <Link to={`/product/${generateProductSlug(item.title)}`} style={{ textDecoration: 'none' }}>
                                                 <h4 style={{ fontSize: '0.95rem', fontWeight: 600, color: '#334155', marginBottom: '8px', lineHeight: '1.4', overflowWrap: 'break-word', wordWrap: 'break-word' }}>{item.title}</h4>
                                             </Link>
                                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '5px' }}>

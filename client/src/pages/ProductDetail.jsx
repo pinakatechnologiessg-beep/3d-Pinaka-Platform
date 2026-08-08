@@ -37,12 +37,21 @@ const ProductDetail = () => {
                 console.log("Product Detail Data:", data); // Debug Step: Console log API response
                 setProduct(data);
                 setActiveImage(getImageUrl(data.image));
-                
-                // Fetch related products
-                const relatedRes = await fetch(`${BASE_URL}/api/products?category=${data.category}`);
-                if (relatedRes.ok) {
-                    const relatedData = await relatedRes.json();
-                    setRelatedProducts(relatedData.filter(p => p._id !== data._id).slice(0, 4));
+                // Fetch related products safely
+                try {
+                    const categoryUrl = `${BASE_URL}/api/products?category=${encodeURIComponent(data.category || '')}`;
+                    const relatedRes = await fetch(categoryUrl);
+                    if (relatedRes.ok) {
+                        const relatedText = await relatedRes.text();
+                        try {
+                            const relatedData = JSON.parse(relatedText);
+                            setRelatedProducts(relatedData.filter(p => p._id !== data._id).slice(0, 4));
+                        } catch (parseErr) {
+                            console.warn("Failed to parse related products JSON");
+                        }
+                    }
+                } catch (relatedErr) {
+                    console.warn("Failed to fetch related products");
                 }
             } catch (err) {
                 setError(err.message);

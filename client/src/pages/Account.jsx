@@ -5,6 +5,7 @@ import { cartService } from '../services/cartService';
 import { API_BASE_URL } from '../api/config';
 import { getImageUrl } from '../utils/imageUtils';
 import './Account.css'; // Import the new CSS
+import { generateProductSlug } from '../utils/stringUtils';
 
 const Account = () => {
     const [user, setUser] = useState(null);
@@ -454,7 +455,7 @@ const Account = () => {
                                         <div className="order-item-box" key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: 'var(--colorful-bg)', borderRadius: '8px', marginBottom: '10px', border: '1px solid var(--border-color)' }}>
                                             <div>
                                                 <div className="order-item-name" style={{ fontWeight: 600, color: 'var(--text-dark)', marginBottom: '4px' }}>
-                                                    <Link to={`/product/${encodeURIComponent((item.productName || '').replace(/ /g, '-'))}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+                                                    <Link to={`/product/${generateProductSlug(item.productName)}`} style={{ color: 'inherit', textDecoration: 'none' }}>
                                                         {item.productName}
                                                     </Link>
                                                 </div>
@@ -474,7 +475,7 @@ const Account = () => {
                                     <div className="order-item-box" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: 'var(--colorful-bg)', borderRadius: '8px', marginBottom: '10px', border: '1px solid var(--border-color)' }}>
                                         <div>
                                             <div className="order-item-name" style={{ fontWeight: 600, color: 'var(--text-dark)', marginBottom: '4px' }}>
-                                                <Link to={`/product/${encodeURIComponent((order.productName || '').replace(/ /g, '-'))}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+                                                <Link to={`/product/${generateProductSlug(order.productName)}`} style={{ color: 'inherit', textDecoration: 'none' }}>
                                                     {order.productName}
                                                 </Link>
                                             </div>

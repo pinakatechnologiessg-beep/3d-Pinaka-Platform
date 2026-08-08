@@ -5,6 +5,7 @@ import { cartService } from '../services/cartService';
 import { getImageUrl, PLACEHOLDER_SVG } from '../utils/imageUtils';
 import { API_BASE_URL } from '../api/config';
 import SEO from '../components/SEO';
+import { generateProductSlug } from '../utils/stringUtils';
 
 
 const parsePriceLocal = (price) => {
@@ -405,7 +406,7 @@ const Products = () => {
                                                 display: 'flex',
                                                 flexDirection: 'column'
                                             }}>
-                                                <Link to={`/product/${encodeURIComponent((product.name || product.title || '').replace(/ /g, '-'))}`} style={{ textDecoration: 'none', display: 'block', flex: 1 }}>
+                                                <Link to={`/product/${generateProductSlug(product.name || product.title)}`} style={{ textDecoration: 'none', display: 'block', flex: 1 }}>
                                                     <div className="image-wrapper" style={{ height: isMobile ? '160px' : '220px', marginBottom: '12px', overflow: 'hidden', borderRadius: '8px', background: 'var(--light-bg)' }}>
                                                         <img 
                                                             src={

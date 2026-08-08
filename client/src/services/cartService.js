@@ -1,3 +1,4 @@
+import { generateProductSlug } from '../utils/stringUtils';
 /**
  * Centralized Service for Managing Cart and Wishlist
  * Handles persistence via localStorage and dispatches global events for UI syncing.
@@ -129,7 +130,7 @@ export const cartService = {
     const items = getFromStorage('wishlist');
     return items.some(item => 
       item.productId === pid || 
-      encodeURIComponent((item.title || '').replace(/ /g, '-')) === pid
+      generateProductSlug(item.title) === pid
     );
   },
 

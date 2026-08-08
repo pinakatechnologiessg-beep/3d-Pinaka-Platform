@@ -9,6 +9,7 @@ import PopupModal from '../components/PopupModal';
 import { API_BASE_URL } from '../api/config';
 
 import SEO from '../components/SEO';
+import { generateProductSlug } from '../utils/stringUtils';
 
 const isColorDark = (color) => {
   if (!color) return true;
@@ -469,7 +470,7 @@ const Home = () => {
                           flexDirection: 'column'
                       }}
                   >
-                      <Link to={product.name ? `/product/${encodeURIComponent((product.name || product.title || '').replace(/ /g, '-'))}` : '/products'} style={{ textDecoration: 'none', display: 'block', flex: 1 }}>
+                      <Link to={product.name ? `/product/${generateProductSlug(product.name || product.title)}` : '/products'} style={{ textDecoration: 'none', display: 'block', flex: 1 }}>
                           <div className="image-wrapper" style={{ height: isMobile ? '180px' : '240px', marginBottom: '15px', overflow: 'hidden', borderRadius: '12px', background: 'var(--light-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
                               <button 
                                   className={`wishlist-btn ${wishlist.some(item => (item.productId || '').toString() === (product._id || product.id || '').toString()) ? 'active' : ''}`} 
@@ -579,7 +580,7 @@ const Home = () => {
                         flexDirection: 'column'
                     }}
                 >
-                    <Link to={product.name ? `/product/${encodeURIComponent((product.name || product.title || '').replace(/ /g, '-'))}` : '/products'} style={{ textDecoration: 'none', display: 'block', flex: 1 }}>
+                    <Link to={product.name ? `/product/${generateProductSlug(product.name || product.title)}` : '/products'} style={{ textDecoration: 'none', display: 'block', flex: 1 }}>
                         <div className="image-wrapper" style={{ height: isMobile ? '160px' : '220px', marginBottom: '12px', overflow: 'hidden', borderRadius: '8px', background: 'var(--light-bg)', position: 'relative' }}>
                             <button 
                                 className={`wishlist-btn ${wishlist.some(item => (item.productId || '').toString() === (product._id || product.id || '').toString()) ? 'active' : ''}`} 

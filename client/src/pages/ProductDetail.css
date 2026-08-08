@@ -353,6 +353,12 @@
     border: 1px solid var(--border-color);
 }
 
+.features-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
 .big-avg {
     font-size: 4rem;
     font-weight: 800;
@@ -736,6 +742,11 @@
   .related-products .products-grid {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 12px;
+  }
+
+  .features-content {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 
   .related-products {

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { CaretDown, CaretRight } from '@phosphor-icons/react';
 import { getImageUrl } from '../utils/imageUtils';
 import { API_BASE_URL } from '../api/config';
+import { generateProductSlug } from '../utils/stringUtils';
 
 const MaterialsMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -94,7 +95,7 @@ const MaterialsMenu = () => {
                     {products.map((product) => (
                       <Link 
                         key={product._id} 
-                        to={`/product/${encodeURIComponent((product.name || '').replace(/ /g, '-'))}`} 
+                        to={`/product/${generateProductSlug(product.name)}`} 
                         className="mega-product-card"
                         onClick={() => setIsOpen(false)}
                       >

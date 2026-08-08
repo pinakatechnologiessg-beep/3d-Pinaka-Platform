@@ -6,6 +6,7 @@ import { getImageUrl, PLACEHOLDER_SVG } from '../utils/imageUtils';
 import { API_BASE_URL } from '../api/config';
 import Logo from './Logo';
 import MaterialsMenu from './MaterialsMenu';
+import { generateProductSlug } from '../utils/stringUtils';
 
 const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu, meta }) => {
   const [showAdminAlert, setShowAdminAlert] = useState(false);
@@ -167,7 +168,7 @@ const Header = ({ user, cartCount, wishlistCount, toggleMobileMenu, meta }) => {
                               />
                             </div>
                             <div className="product-details">
-                              <Link to={`/product/${encodeURIComponent((item.name || '').replace(/ /g, '-'))}`} className="product-name">{item.name}</Link>
+                              <Link to={`/product/${generateProductSlug(item.name)}`} className="product-name">{item.name}</Link>
                               <span className="product-price">₹{item.price?.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2}) || '0.00'}</span>
                             </div>
                           </div>

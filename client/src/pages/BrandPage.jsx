@@ -5,6 +5,7 @@ import { BRANDS } from '../constants/data';
 import { cartService } from '../services/cartService';
 import { getImageUrl } from '../utils/imageUtils';
 import SEO from '../components/SEO';
+import { generateProductSlug } from '../utils/stringUtils';
 
 
 const BrandProductCard = ({ product, revealRef }) => {
@@ -24,7 +25,7 @@ const BrandProductCard = ({ product, revealRef }) => {
                 {product.badge && <span className="mini-badge">{product.badge}</span>}
             </div>
             <div className="image-wrapper">
-                <Link to={`/product/${encodeURIComponent((product.name || product.title || '').replace(/ /g, '-'))}`} style={{ display: 'block', height: '100%' }}>
+                <Link to={`/product/${generateProductSlug(product.name || product.title)}`} style={{ display: 'block', height: '100%' }}>
                     <img
                         src={getImageUrl(product.image)}
                         alt={product.name || product.title} 
@@ -40,7 +41,7 @@ const BrandProductCard = ({ product, revealRef }) => {
             </div>
             <div className="content">
                 <div className="product-cat">{product.category} {product.brand && `| ${product.brand}`}</div>
-                <Link to={`/product/${encodeURIComponent((product.name || product.title || '').replace(/ /g, '-'))}`} className="title" style={{ textDecoration: 'none', color: 'inherit' }}>
+                <Link to={`/product/${generateProductSlug(product.name || product.title)}`} className="title" style={{ textDecoration: 'none', color: 'inherit' }}>
                     {product.name || product.title}
                 </Link>
                 <div className="reviews">
