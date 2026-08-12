@@ -26,6 +26,7 @@ import TermsAndConditions from './pages/TermsAndConditions';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import RefundPolicy from './pages/RefundPolicy';
 import ShippingPolicy from './pages/ShippingPolicy';
+import NotFound from './pages/NotFound';
 import { Navigate } from 'react-router-dom';
 import { cartService, CART_UPDATED, WISHLIST_UPDATED, SHOW_TOAST } from './services/cartService';
 import { API_BASE_URL } from './api/config';
@@ -282,6 +283,7 @@ function App() {
           <Route path="/refund-policy.html" element={<RefundPolicy />} />
           <Route path="/shipping-policy" element={<ShippingPolicy />} />
           <Route path="/shipping-policy.html" element={<ShippingPolicy />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
 
         <MarketplaceBanner />

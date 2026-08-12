@@ -119,7 +119,13 @@ const ProductDetail = () => {
     };
 
     if (loading) return <div className="loading-container"><div className="loading-spinner"></div></div>;
-    if (error) return <div className="error-container"><h2>{error}</h2><Link to="/products" className="btn">Back to Products</Link></div>;
+    if (error) return (
+        <div className="error-container">
+            <SEO title="Product Not Found" noindex={true} />
+            <h2>{error}</h2>
+            <Link to="/products" className="btn">Back to Products</Link>
+        </div>
+    );
     if (!product) return null;
 
     const stats = getRatingStats(product.reviews);

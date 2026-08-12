@@ -1,13 +1,13 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 
-const SEO = ({ title, description, keywords, image, url, type = 'website', productData = null }) => {
+const SEO = ({ title, description, keywords, image, url, type = 'website', productData = null, noindex = false }) => {
   const siteName = 'PINAKA TECHNOLOGIES SG PRIVATE LIMITED';
   const fullTitle = title ? `${title} | ${siteName}` : `${siteName} | Premium 3D Printers & Materials`;
   const defaultDescription = 'Explore PINAKA TECHNOLOGIES SG PRIVATE LIMITED\'s premium collection of 3D printers, filaments, and parts. High-quality 3D printing solutions for professionals and hobbyists.';
   const metaDescription = description || defaultDescription;
   const siteUrl = window.location.origin;
-  const canonicalUrl = url ? `${siteUrl}${url}` : window.location.href;
+  const canonicalUrl = url ? `${siteUrl}${url}` : `${siteUrl}${window.location.pathname}`;
   const metaKeywords = keywords || 'PINAKA TECHNOLOGIES SG PRIVATE LIMITED, 3D Printer, 3D Printing, 3D Printer Filament, Industrial 3D Printers, 3D Printer Materials, 3D Printer Parts';
 
   // Base Schema for Organization
@@ -96,6 +96,7 @@ const SEO = ({ title, description, keywords, image, url, type = 'website', produ
       <title>{fullTitle}</title>
       <meta name='description' content={metaDescription} />
       <meta name='keywords' content={metaKeywords} />
+      {noindex && <meta name="robots" content="noindex" />}
       <link rel="canonical" href={canonicalUrl} />
 
       {/* Open Graph / Facebook */}
