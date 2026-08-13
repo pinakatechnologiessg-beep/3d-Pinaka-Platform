@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Cube, Stack, Wrench, Sparkle, ShieldCheck, Truck, Headphones, Medal, ClockCounterClockwise, CreditCard, Lightning, Cpu, Eye, Thermometer, WhatsappLogo, Heart } from '@phosphor-icons/react';
 import { PRODUCTS, BRANDS } from '../constants/data';
+
 import { cartService } from '../services/cartService';
 import { getImageUrl, parsePriceLocal, PLACEHOLDER_SVG } from '../utils/imageUtils';
 import PopupModal from '../components/PopupModal';
@@ -9,6 +10,7 @@ import PopupModal from '../components/PopupModal';
 import { API_BASE_URL } from '../api/config';
 
 import SEO from '../components/SEO';
+import ClientSlider from '../components/ClientSlider';
 import { generateProductSlug } from '../utils/stringUtils';
 
 const isColorDark = (color) => {
@@ -789,8 +791,11 @@ const Home = () => {
         </div>
       </section>
 
+      <ClientSlider />
+
       {/* Whatsapp Float */}
       <a href="https://wa.me/918299475268" className="whatsapp-float" target="_blank" rel="noreferrer"><WhatsappLogo size={32} /></a>
+      
     </main>
   );
 };

@@ -6,6 +6,7 @@ import { cartService, SHOW_TOAST, WISHLIST_UPDATED } from '../services/cartServi
 import { getImageUrl, PLACEHOLDER_SVG } from '../utils/imageUtils';
 import { API_BASE_URL } from '../api/config';
 import SEO from '../components/SEO';
+import { generateProductSlug } from '../utils/stringUtils';
 import './ProductDetail.css';
 
 
@@ -540,7 +541,7 @@ const ProductDetail = () => {
                         <h2 className="section-title">Related Products</h2>
                         <div className="products-grid">
                             {relatedProducts.map(p => (
-                                <Link to={`/product/${encodeURIComponent((p.name || '').replace(/ /g, '-'))}`} key={p._id} className="product-card">
+                                <Link to={`/product/${generateProductSlug(p.name || '')}`} key={p._id} className="product-card">
                                     <div className="product-img-wrapper">
                                         <img 
                                             src={getImageUrl(p.image)} 

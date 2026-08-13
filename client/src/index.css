@@ -4116,6 +4116,201 @@ img {
     font-size: 1.1rem;
   }
 
+/* Checkout form */
+  .checkout-form-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Wishlist btn smaller */
+  .wishlist-btn {
+    width: 32px;
+    height: 32px;
+    top: 8px;
+    right: 8px;
+  }
+}
+
+/* --- Tablet (481px – 768px) --- */
+@media (min-width: 481px) and (max-width: 768px) {
+
+  .container {
+    padding: 0 16px;
+  }
+
+  .section {
+    padding: 3rem 0;
+  }
+
+  .section-header h2 {
+    font-size: 1.7rem;
+  }
+
+  /* Hero — handled in main hero block above */
+
+  /* Collections — 2 col */
+  .collections-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px;
+  }
+
+  /* Products header */
+  .products-header {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  /* Products grid — 2 col */
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  /* Brand product grid — 2 col */
+  .brand-product-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 16px;
+  }
+
+  /* Features grid — 2 col */
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Tech section */
+  .tech-section {
+    grid-template-columns: 1fr !important;
+    gap: 2rem;
+  }
+
+  /* Testimonials */
+  .testi-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Footer — handled in footer section above */
+
+  /* Filter layout */
+  .filter-layout {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .filter-sidebar {
+    width: 100% !important;
+    min-width: unset !important;
+    position: static !important;
+  }
+
+  /* Cart */
+  .cart-layout {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* --- Tablet landscape / small desktop (769px – 991px) --- */
+@media (min-width: 769px) and (max-width: 991px) {
+
+  .section-header h2 {
+    font-size: 1.9rem;
+  }
+
+  /* Collections — 2 col */
+  .collections-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  /* Products grid — 2 col */
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  /* Brand product grid — 2 col */
+  .brand-product-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Features grid — 2 col */
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Tech section */
+  .tech-section {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  /* Testimonials */
+  .testi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Footer — handled in footer section above */
+
+  /* Cart */
+  .cart-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --- Ensure images never overflow --- */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* --- Prevent horizontal scroll from any element --- */
+* {
+  max-width: 100%;
+}
+
+/* --- Products page header on mobile --- */
+@media (max-width: 768px) {
+  .products-header {
+    flex-direction: row !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+  }
+
+  .products-header > div h2 {
+    font-size: 1.3rem;
+  }
+
+  .products-header button {
+    width: auto !important;
+    align-self: auto !important;
+    white-space: nowrap;
+    padding: 8px 14px !important;
+    font-size: 0.82rem !important;
+    flex-shrink: 0;
+  }
+
+  /* Brand page hero banner */
+  div[style*="padding: '4rem 0'"],
+  div[style*="padding: 4rem 0"] {
+    padding: 2rem 1rem !important;
+  }
+
+  /* Brand page title */
+  div[style*="padding: '4rem 0'"] h1,
+  div[style*="padding: 4rem 0"] h1 {
+    font-size: 1.6rem !important;
+  }
+
+  /* Spec grid in brand cards */
+  .brand-product-card .spec-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .brand-product-card .current-price {
+    font-size: 1.1rem;
+  }
+
   /* Sort dropdown full width on mobile */
   .sort-wrapper {
     width: 100%;
@@ -4146,5 +4341,17 @@ img {
   section[style*="padding: 4rem 2rem"] {
     padding: 2rem 1rem !important;
     border-radius: 12px !important;
+  }
+}
+@media (max-width: 480px) {
+  .products-grid, .brand-product-grid {
+    grid-template-columns: 1fr !important;
+    gap: 15px !important;
+  }
+  .product-img {
+    height: 200px !important;
+  }
+  .collections-grid {
+    grid-template-columns: 1fr !important;
   }
 }
