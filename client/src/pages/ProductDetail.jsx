@@ -536,33 +536,7 @@ const ProductDetail = () => {
                     </div>
                 </div>
 
-                {relatedProducts.length > 0 && (
-                    <section className="related-products">
-                        <h2 className="section-title">Related Products</h2>
-                        <div className="products-grid">
-                            {relatedProducts.map(p => (
-                                <Link to={`/product/${generateProductSlug(p.name || '')}`} key={p._id} className="product-card">
-                                    <div className="product-img-wrapper">
-                                        <img 
-                                            src={getImageUrl(p.image)} 
-                                            alt={p.name} 
-                                            onError={(e) => (e.target.src = PLACEHOLDER_SVG)}
-                                        />
-                                    </div>
-                                    <div className="product-info">
-                                        <div className="product-title">{p.name}</div>
-                                        <div className="product-price" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                            <span style={{ fontWeight: 700, color: 'var(--primary)' }}>₹{p.price?.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
-                                            {p.mrp && p.mrp > p.price && (
-                                                <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', textDecoration: 'line-through' }}>₹{p.mrp?.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
-                                            )}
-                                        </div>
-                                    </div>
-                                </Link>
-                            ))}
-                        </div>
-                    </section>
-                )}
+
             </div>
         </main>
     );
