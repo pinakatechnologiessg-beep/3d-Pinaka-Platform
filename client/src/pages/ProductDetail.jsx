@@ -334,9 +334,9 @@ const ProductDetail = () => {
                                     <p>No description available for this product.</p>
                                 )}
                                 {product.descriptionImages && product.descriptionImages.length > 0 && (
-                                    <div className="description-images-gallery" style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                                    <div className="description-images-gallery">
                                         {product.descriptionImages.map((img, i) => (
-                                            <img key={i} src={getImageUrl(img)} alt={`${product.name} detail ${i + 1}`} style={{ width: '100%', borderRadius: '8px', border: '1px solid var(--border-color)', objectFit: 'contain', maxHeight: '500px' }} />
+                                            <img key={i} src={getImageUrl(img)} alt={`${product.name} detail ${i + 1}`} className="description-gallery-img" />
                                         ))}
                                     </div>
                                 )}
